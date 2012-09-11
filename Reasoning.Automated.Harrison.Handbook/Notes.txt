@@ -1,0 +1,14 @@
+﻿
+Interesting changes from OCaml to F#
+
+1. Exceptions to  Option.
+2. Order of processing items in a map is reversed?
+3. Does % (mod) work differently? i.e. divide by zero
+4. Is map not really a true map that saves state between each use?
+5. Preprocessor doesn't exist. i.e.  CAMPL
+6. OCaml top-level commands such as #trace and #install-printer don't exist.
+7. Num type doesn't exist in F#. Can use either F# Int, F# BigInteger or port the num type to F#.
+
+//#r "System.Numerics.dll"    // Refernce GAC version
+//open System.Numerics        // BigInteger is a type not a module so it is not System.Numerics.BigInteger
+
