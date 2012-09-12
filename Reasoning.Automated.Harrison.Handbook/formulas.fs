@@ -60,13 +60,9 @@
 
 namespace Reasoning.Automated.Harrison.Handbook
 
+open EGT.OCaml.Format
+
 module formulas =
-
-    open EGT.OCaml.Format
-
-    open lib
-//    open intro
-
 // pg. 26
 // ========================================================================= //
 // Polymorphic type of formulas with parser and printer.                     //
@@ -74,15 +70,15 @@ module formulas =
 // Copyright (c) 2003-2007, John Harrison. (See "LICENSE.txt" for details.)  //
 // ========================================================================= //
 
-    type formula<'a> = 
+    type formula<'a> =
         | False
         | True
-        | Atom   of 'a
-        | Not    of formula<'a>
-        | And    of formula<'a> * formula<'a>
-        | Or     of formula<'a> * formula<'a>
-        | Imp    of formula<'a> * formula<'a>
-        | Iff    of formula<'a> * formula<'a>
+        | Atom of 'a
+        | Not of formula<'a>
+        | And of formula<'a> * formula<'a>
+        | Or of formula<'a> * formula<'a>
+        | Imp of formula<'a> * formula<'a>
+        | Iff of formula<'a> * formula<'a>
         | Forall of string * formula<'a>
         | Exists of string * formula<'a>
 
@@ -95,9 +91,11 @@ module formulas =
     // F#:    val parse_ginfix : 'a -> (('b -> 'c) -> 'b -> 'b -> 'c) -> ('b -> 'c) -> ('a list -> 'b * 'a list) -> 'a list -> 'c * 'a list when 'a : equality
     let rec parse_ginfix opsym opupdate sof subparser inp =
         let e1, inp1 = subparser inp
-        if (inp1 <> []) && (List.head inp1 = opsym) then
-            parse_ginfix opsym opupdate (opupdate sof e1) subparser (List.tail inp1)
-        else sof e1, inp1
+        match inp1 with
+        | hd :: tl when hd = opsym ->
+            parse_ginfix opsym opupdate (opupdate sof e1) subparser tl
+        | _ ->
+            sof e1, inp1
 
     // OCaml: val parse_left_infix : 'a -> ('b * 'b -> 'b) ->  ('a list -> 'b * 'a list) -> 'a list -> 'b * 'a list = <fun>
     // F#:    val parse_left_infix : 'a -> ('b * 'b -> 'b) -> (('a list -> 'b * 'a list) -> 'a list -> 'b * 'a list) when 'a : equality
@@ -111,6 +109,8 @@ module formulas =
 
     // OCaml: val parse_list : 'a ->  ('a list -> 'b * 'a list) -> 'a list -> 'b list * 'a list = <fun>
     // F#:    val parse_list : 'a -> (('a list -> 'b * 'a list) -> 'a list -> 'b list * 'a list)  when 'a : equality
+    // TODO : Optimize using continuation-passing style.
+    // (So the list inside the function is built from the bottom up -- list append is expensive!)
     let parse_list opsym =
         parse_ginfix opsym (fun f e1 e2 -> (f e1) @ [e2]) (fun x -> [x])
 
@@ -122,12 +122,14 @@ module formulas =
     // OCaml: val papply : ('a -> 'b) -> 'a * 'c -> 'b * 'c = <fun>
     // F#:    val papply : ('a -> 'b) -> 'a * 'c -> 'b * 'c
     let papply f (ast, rest) = 
-        (f ast, rest)
+        f ast, rest
 
     // OCaml: val nextin : 'a list -> 'a -> bool = <fun>
     // F#:    val nextin : 'a list -> 'a -> bool when 'a : equality
-    let nextin inp tok = 
-        (inp <> []) && (List.head inp = tok)
+    let nextin inp tok =
+        match inp with
+        | hd :: _ when hd = tok -> true
+        | _ -> false
 
     // OCaml: val parse_bracketed : ('a -> 'b * 'c list) -> 'c -> 'a -> 'b * 'c list = <fun>
     // F#:    val parse_bracketed : ('a -> 'b * 'c list) -> 'c -> 'a -> 'b * 'c list when 'c : equality
@@ -144,7 +146,7 @@ module formulas =
 
     // OCaml: val parse_atomic_formula : (string list -> string list -> 'a formula * string list) * (string list -> string list -> 'a formula * string list) -> string list -> string list -> 'a formula * string list = <fun>
     // F#:    val parse_atomic_formula : (string list -> string list -> 'a formula * string list) * (string list -> string list -> 'a formula * string list) -> string list -> string list -> 'a formula * string list
-    let rec parse_atomic_formula (ifn,afn) vs inp =
+    let rec parse_atomic_formula (ifn, afn) vs inp =
         match inp with
         | [] ->
             failwith "formula expected"
@@ -155,32 +157,39 @@ module formulas =
         | "(" :: rest -> 
             try ifn vs inp
             with _ ->
-                parse_bracketed (parse_formula (ifn,afn) vs) ")" rest
+                parse_bracketed (parse_formula (ifn, afn) vs) ")" rest
         | "~" :: rest ->
-            papply (fun p -> Not p) (parse_atomic_formula (ifn,afn) vs rest)
+            papply Not (parse_atomic_formula (ifn, afn) vs rest)
         | "forall" :: x :: rest ->
-            parse_quant (ifn,afn) (x::vs) (fun (x,p) -> Forall(x,p)) x rest
+            parse_quant (ifn, afn) (x :: vs) Forall x rest
         | "exists" :: x :: rest ->
-            parse_quant (ifn,afn) (x::vs) (fun (x,p) -> Exists(x,p)) x rest
+            parse_quant (ifn, afn) (x :: vs) Exists x rest
         | _ -> afn vs inp
 
     // OCaml: val parse_quant : (string list -> string list -> 'a formula * string list) * (string list -> string list -> 'a formula * string list) -> string list -> (string * 'a formula -> 'a formula) -> string -> string list -> 'a formula * string list = <fun>
     // F#:    val parse_quant : (string list -> string list -> 'a formula * string list) * (string list -> string list -> 'a formula * string list) -> string list -> (string * 'a formula -> 'a formula) -> string -> string list -> 'a formula * string list
-    and parse_quant (ifn,afn) vs qcon x inp =
+    and parse_quant (ifn, afn) vs qcon x inp =
         match inp with
         | [] ->
             failwith "Body of quantified term expected"
         | y :: rest ->
-            papply (fun fm -> qcon (x, fm)) (if y = "." then parse_formula (ifn,afn) vs rest else parse_quant (ifn,afn) (y::vs) qcon y rest)
+            if y = "." then
+                parse_formula (ifn, afn) vs rest
+            else
+                parse_quant (ifn, afn) (y :: vs) qcon y rest
+            |> papply (fun fm ->
+                qcon (x, fm))
 
     // OCaml: val parse_formula : (string list -> string list -> 'a formula * string list) * (string list -> string list -> 'a formula * string list) -> string list -> string list -> 'a formula * string list = <fun>
     // F#:    val parse_formula : (string list -> string list -> 'a formula * string list) * (string list -> string list -> 'a formula * string list) -> string list -> string list -> 'a formula * string list
-    and parse_formula (ifn,afn) vs inp =
-        parse_right_infix "<=>" (fun pq -> Iff pq)
-            (parse_right_infix "==>" (fun pq -> Imp pq)
-                (parse_right_infix "\\/" (fun pq -> Or pq)
-                    (parse_right_infix "/\\" (fun pq -> And pq)
-                        (parse_atomic_formula (ifn,afn) vs)))) inp
+    and parse_formula (ifn, afn) vs inp =
+        // TODO : For clarity, reformat this code using the F# pipeline operator (|>)
+        // instead of using nested parenthesis.
+        parse_right_infix "<=>" Iff
+            (parse_right_infix "==>" Imp
+                (parse_right_infix "\\/" Or
+                    (parse_right_infix "/\\" And
+                        (parse_atomic_formula (ifn, afn) vs)))) inp
 
 // pg. 626
 // ------------------------------------------------------------------------- //
@@ -196,20 +205,22 @@ module formulas =
 //        (if p then printf ")" else ())
 
     let bracket p n f x y =
-      (if p then print_string "(" else ());
-      open_box n; f x y; close_box();
-      (if p then print_string ")" else ())
+      if p then print_string "("
+      open_box n
+      f x y
+      close_box ()
+      if p then print_string ")"
 
     // OCaml: val strip_quant : 'a formula -> string list * 'a formula = <fun>
     // F#:    val strip_quant : 'a formula -> string list * 'a formula
     let rec strip_quant fm =
         match fm with
-        | Forall (x,(Forall (y,p) as yp))
-        | Exists (x,(Exists (y,p) as yp)) ->
+        | Forall (x, (Forall (y, p) as yp))
+        | Exists (x, (Exists (y, p) as yp)) ->
             let xs, q = strip_quant yp
             (x :: xs), q
-        | Forall (x,p)
-        | Exists (x,p) ->
+        | Forall (x, p)
+        | Exists (x, p) ->
             [x], p
         | _ ->
             [], fm
@@ -320,27 +331,27 @@ module formulas =
 
     // OCaml: val mk_and : 'a formula -> 'a formula -> 'a formula = <fun>
     // F#:    val mk_and : 'a formula -> 'a formula -> 'a formula
-    let mk_and p q = And (p, q)
+    let inline mk_and p q = And (p, q)
 
     // OCaml: val mk_or : 'a formula -> 'a formula -> 'a formula = <fun>
     // F#:    val mk_or : 'a formula -> 'a formula -> 'a formula
-    let mk_or p q = Or (p, q)
+    let inline mk_or p q = Or (p, q)
 
     // OCaml: val mk_imp : 'a formula -> 'a formula -> 'a formula = <fun>
     // F#:    val mk_imp : 'a formula -> 'a formula -> 'a formula
-    let mk_imp p q = Imp (p, q)
+    let inline mk_imp p q = Imp (p, q)
 
     // OCaml: val mk_iff : 'a formula -> 'a formula -> 'a formula = <fun>
     // F#:    val mk_iff : 'a formula -> 'a formula -> 'a formula
-    let mk_iff p q = Iff (p, q)
+    let inline mk_iff p q = Iff (p, q)
 
     // OCaml: val mk_forall : string -> 'a formula -> 'a formula = <fun>
     // F#:    val mk_forall : string -> 'a formula -> 'a formula
-    let mk_forall x p = Forall (x, p)
+    let inline mk_forall x p = Forall (x, p)
 
     // OCaml: val mk_exists : string -> 'a formula -> 'a formula = <fun>
     // F#:    val mk_exists : string -> 'a formula -> 'a formula
-    let mk_exists x p = Exists (x, p)
+    let inline mk_exists x p = Exists (x, p)
 
 // pg. 30
 // ------------------------------------------------------------------------- //

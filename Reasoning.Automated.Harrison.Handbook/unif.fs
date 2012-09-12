@@ -61,19 +61,8 @@
 namespace Reasoning.Automated.Harrison.Handbook
 
 module unif =
-
-    open lib
     open intro
-//    open formulas
-//    open prop
-//    open propexamples
-//    open defcnf 
-//    open dp
-//    open stal
-//    open bdd
     open folMod
-//    open skolem
-//    open herbrand
 
 // pg. 167
 // ========================================================================= //

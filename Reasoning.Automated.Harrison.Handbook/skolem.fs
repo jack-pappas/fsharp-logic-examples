@@ -61,16 +61,9 @@
 namespace Reasoning.Automated.Harrison.Handbook
 
 module skolem =
-
-    open lib
     open intro
     open formulas
     open prop
-//    open propexamples
-//    open defcnf 
-//    open dp
-//    open stal
-//    open bdd
     open folMod
 
 // ========================================================================= //

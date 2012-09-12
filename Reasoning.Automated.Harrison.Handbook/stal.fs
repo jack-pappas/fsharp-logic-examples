@@ -61,14 +61,10 @@
 namespace Reasoning.Automated.Harrison.Handbook
 
 module stal =
-
-    open lib
     open intro
     open formulas
     open prop
-    //open propexamples
-    open defcnf 
-//    open dp
+    open defcnf
 
 // ========================================================================= //
 // Simple implementation of Stalmarck's algorithm.                           //

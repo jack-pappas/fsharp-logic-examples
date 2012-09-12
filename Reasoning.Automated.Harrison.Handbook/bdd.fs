@@ -61,15 +61,10 @@
 namespace Reasoning.Automated.Harrison.Handbook
 
 module bdd =
-
-    open lib
     open intro
     open formulas
     open prop
-    //open propexamples
-    open defcnf 
-//    open dp
-//    open stal
+    open defcnf
 
 // pg. 101
 // ========================================================================= //

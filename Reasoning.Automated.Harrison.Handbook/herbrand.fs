@@ -61,16 +61,10 @@
 namespace Reasoning.Automated.Harrison.Handbook
 
 module herbrand =
-
-    open lib
     open intro
     open formulas
     open prop
-//    open propexamples
-//    open defcnf 
     open dp
-//    open stal
-//    open bdd
     open folMod
     open skolem
 

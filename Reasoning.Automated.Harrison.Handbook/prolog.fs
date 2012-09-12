@@ -61,22 +61,13 @@
 namespace Reasoning.Automated.Harrison.Handbook
 
 module prolog =
-
-    open lib
     open intro
     open formulas
     open prop
-//    open propexamples
-//    open defcnf 
-//    open dp
-//    open stal
-//    open bdd
     open folMod
     open skolem
-//    open herbrand
     open unif
     open tableaux
-//    open resolution
 
 // ========================================================================= //
 // Backchaining procedure for Horn clauses, and toy Prolog implementation.   //

@@ -61,25 +61,10 @@
 namespace Reasoning.Automated.Harrison.Handbook
 
 module equal =
-
-    open lib
-//    open intro
     open formulas
-//    open prop
-//    open propexamples
-//    open defcnf
-//    open dp
-//    open stal
-//    open bdd
     open folMod
     open skolem
-//    open herbrand
-//    open unif
-//    open tableaux
-//    open resolution
-//    open prolog
-//    open meson
-//    open skolems
+
 //
 // pg. 235
 // ========================================================================= //

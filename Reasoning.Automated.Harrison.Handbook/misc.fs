@@ -1,7 +1,5 @@
 ﻿namespace Reasoning.Automated.Harrison.Handbook.Eric
 
-//open Reasoning.Automated.Harrison.Handbook.prop
-
 module misc =
 
     let mapTuple4 f (a, b, c, d ) = (f a, f b, f c, f d)

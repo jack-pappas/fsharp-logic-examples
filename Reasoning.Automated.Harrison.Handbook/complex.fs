@@ -61,34 +61,11 @@
 namespace Reasoning.Automated.Harrison.Handbook
 
 module complex =
-
-    open lib
     open intro
     open formulas
     open prop
-//    open propexamples
-//    open defcnf
-//    open dp
-//    open stal
-//    open bdd
     open folMod
-//    open skolem
-//    open equal
-//    open herbrand
-//    open unif
-//    open tableaux
-//    open resolution
-//    open prolog
-//    open meson
-//    open skolems
     open equal
-//    open cong
-//    open rewrite
-//    open order
-//    open completion
-//    open eqelim
-//    open paramodulation
-//    open decidable
     open qelim
     open cooper
 

@@ -61,16 +61,8 @@
 namespace Reasoning.Automated.Harrison.Handbook
 
 module folMod =
-
-    open lib
     open intro
     open formulas
-//    open prop
-//    open propexamples
-//    open defcnf 
-//    open dp
-//    open stal
-//    open bdd
 
 // ========================================================================= //
 // Basic stuff for first order logic.                                        //

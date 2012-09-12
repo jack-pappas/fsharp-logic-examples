@@ -61,12 +61,9 @@
 namespace Reasoning.Automated.Harrison.Handbook
 
 module defcnf =
-
-    open lib
     open intro
     open formulas
     open prop
-//    open propexamples
 
 // ========================================================================= //
 // Definitional CNF.                                                         //

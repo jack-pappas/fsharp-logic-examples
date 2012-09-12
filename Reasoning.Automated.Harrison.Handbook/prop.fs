@@ -61,8 +61,6 @@
 namespace Reasoning.Automated.Harrison.Handbook
 
 module prop =
-
-    open lib
     open intro
     open formulas
 
