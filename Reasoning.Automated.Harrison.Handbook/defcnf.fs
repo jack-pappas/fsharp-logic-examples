@@ -76,42 +76,46 @@ module defcnf =
 // Make a stylized variable and update the index.                            //
 // ------------------------------------------------------------------------- //
 
-    let mkprop n = Atom(P("p_" + (string n))), n + 1
+    let mkprop n =
+        let name = sprintf "p_%i" n
+        Atom (P name), n + 1
 
 // pg. 75
 // ------------------------------------------------------------------------- //
 // Core definitional CNF procedure.                                          //
 // ------------------------------------------------------------------------- //
 
-    let rec maincnf (fm,defs,n as trip) =
+    let rec maincnf (fm, defs, n as trip) =
         match fm with
-        | And(p,q) -> defstep mk_and (p,q) trip
-        | Or(p,q) -> defstep mk_or (p,q) trip
-        | Iff(p,q) -> defstep mk_iff (p,q) trip
+        | And (p, q) ->
+            defstep mk_and (p, q) trip
+        | Or (p, q) ->
+            defstep mk_or (p, q) trip
+        | Iff (p, q) ->
+            defstep mk_iff (p, q) trip
         | _ -> trip
 
-    and defstep op (p,q) (fm,defs,n) =
-        let fm1,defs1,n1 = maincnf (p,defs,n)
-        let fm2,defs2,n2 = maincnf (q,defs1,n1)
+    and defstep op (p, q) (fm, defs, n) =
+        let fm1, defs1, n1 = maincnf (p, defs, n)
+        let fm2, defs2, n2 = maincnf (q, defs1, n1)
         let fm' = op fm1 fm2
-        try (fst(apply defs2 fm'),defs2,n2) with 
-        | Failure _ -> 
-            let v,n3 = mkprop n2 
-            (v,(fm'|->(v,Iff(v,fm'))) defs2,n3)
+        try fst(apply defs2 fm'), defs2, n2
+        with _ ->
+            let v, n3 = mkprop n2
+            v, (fm' |-> (v, Iff (v, fm'))) defs2, n3
 
 // pg. 76
 // ------------------------------------------------------------------------- //
 // Make n large enough that "v_m" won't clash with s for any m >= n          //
 // ------------------------------------------------------------------------- //
 
-    let max_varindex pfx =
+    let max_varindex pfx s n =
         let m = String.length pfx
-        fun s n ->
-            let l = String.length s
-            if l <= m || s.[0..m] <> pfx then n else
-            let s' = s.[m.. (l - m)]
-            if List.forall numeric (explode s') then max n (int s')
-            else n
+        let l = String.length s
+        if l <= m || s.[0..m] <> pfx then n else
+        let s' = s.[m.. (l - m)]
+        if List.forall numeric (explode s') then max n (int s')
+        else n
 
 // pg. 77
 // ------------------------------------------------------------------------- //
@@ -120,49 +124,59 @@ module defcnf =
 
     let mk_defcnf fn fm =
         let fm' = nenf fm
-        let n = int 1 + overatoms (max_varindex "p_" ** pname) fm' (int 0)
-        let (fm'',defs,_) = fn (fm',undefined,n)
-        let deflist = List.map (snd ** snd) (graph defs)
-        unions(simpcnf fm'' :: List.map simpcnf deflist)
+        let n = int 1 + overatoms (max_varindex "p_" >>|> pname) fm' (int 0)
+        let fm'', defs, _ = fn (fm', undefined, n)
+        let deflist = List.map (snd >>|> snd) (graph defs)
+        unions <| simpcnf fm'' :: List.map simpcnf deflist
 
-    // Note: added space after list_disj
-    let defcnfOrig fm = list_conj(List.map list_disj (mk_defcnf maincnf fm))
+    let defcnfOrig fm =
+        mk_defcnf maincnf fm
+        |> List.map list_disj
+        |> list_conj
 
 // pg. 78
 // ------------------------------------------------------------------------- //
 // Version tweaked to exploit initial structure.                             //
 // ------------------------------------------------------------------------- //
 
-    let subcnf sfn op (p,q) (fm,defs,n) =
-        let fm1,defs1,n1 = sfn(p,defs,n)
-        let fm2,defs2,n2 = sfn(q,defs1,n1) 
-        (op fm1 fm2,defs2,n2)
+    let subcnf sfn op (p, q) (fm, defs, n) =
+        let fm1, defs1, n1 = sfn (p, defs, n)
+        let fm2, defs2, n2 = sfn (q, defs1, n1) 
+        op fm1 fm2, defs2, n2
 
-    let rec orcnf (fm,defs,n as trip) =
+    let rec orcnf (fm, defs, n as trip) =
         match fm with
-        | Or(p,q) -> subcnf orcnf mk_or (p,q) trip
-        | _       -> maincnf trip
+        | Or (p, q) ->
+            subcnf orcnf mk_or (p,q) trip
+        | _ -> maincnf trip
 
-    let rec andcnf (fm,defs,n as trip) =
+    let rec andcnf (fm, defs, n as trip) =
         match fm with
-        | And(p,q) -> subcnf andcnf mk_and (p,q) trip
-        | _        -> orcnf trip
+        | And (p, q) ->
+            subcnf andcnf mk_and (p,q) trip
+        | _ -> orcnf trip
 
-    let defcnfs fm = mk_defcnf andcnf fm
+    let defcnfs fm =
+        mk_defcnf andcnf fm
 
-    let defcnf fm = list_conj (List.map list_disj (defcnfs fm))
+    let defcnf fm =
+        defcnfs fm
+        |> List.map list_disj
+        |> list_conj
 
 // pg. 78
 // ------------------------------------------------------------------------- //
 // Version that guarantees 3-CNF.                                            //
 // ------------------------------------------------------------------------- //
 
-    let rec andcnf3 (fm,defs,n as trip) =
+    let rec andcnf3 (fm, defs, n as trip) =
         match fm with
-        | And(p,q) -> subcnf andcnf3 mk_and (p,q) trip
-        | _        -> maincnf trip
+        | And (p, q) ->
+            subcnf andcnf3 mk_and (p, q) trip
+        | _ -> maincnf trip
 
-    // Note: added space after list_disj
-    let defcnf3 fm = list_conj (List.map list_disj (mk_defcnf andcnf3 fm))
-
+    let defcnf3 fm =
+        mk_defcnf andcnf3 fm
+        |> List.map list_disj
+        |> list_conj
 

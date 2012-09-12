@@ -141,7 +141,7 @@ module equal =
         else
             let preds = subtract allpreds ["=",2]
             let funcs = functions fm
-            let axioms = itlist (union ** function_congruence) funcs
-                                (itlist (union ** predicate_congruence) preds
+            let axioms = itlist (union >>|> function_congruence) funcs
+                                (itlist (union >>|> predicate_congruence) preds
                                         equivalence_axioms)
             Imp(end_itlist mk_and axioms,fm)

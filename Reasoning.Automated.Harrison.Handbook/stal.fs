@@ -80,9 +80,9 @@ module stal =
 
     let triplicate fm =
         let fm' = nenf fm
-        let n = 1 + overatoms (max_varindex "p_" ** pname) fm' (0)
+        let n = 1 + overatoms (max_varindex "p_" >>|> pname) fm' (0)
         let (p,defs,_) = maincnf (fm',undefined,n)
-        p,List.map (snd ** snd) (graph defs)
+        p,List.map (snd >>|> snd) (graph defs)
 
 // pg. 92
 // ------------------------------------------------------------------------- //
@@ -137,10 +137,10 @@ module stal =
                 // TODO: Figure out how to use match with with this let to remove warning
                 let inst_fn [x;y;z] =
                     let subfn = fpf [P"p"; P"q"; P"r"] [x; y; z]
-                    ddnegate ** psubst subfn
+                    ddnegate >>|> psubst subfn
                 let inst2_fn i (p,q) = align(inst_fn i p,inst_fn i q)
                 let instn_fn i (a,c) = inst2_fn i a,List.map (inst2_fn i) c
-                let inst_trigger = List.map ** instn_fn
+                let inst_trigger = List.map >>|> instn_fn
                 function 
                 | (Iff(x,And(y,z))) -> inst_trigger [x;y;z] trig_and
                 | (Iff(x,Or(y,z))) -> inst_trigger [x;y;z] trig_or
@@ -181,7 +181,7 @@ module stal =
                 (canonize eqv' p |-> union sp_pos sq_pos)
                     ((canonize eqv' p' |-> union sp_neg sq_neg) rfn)
             let nw = union (intersect sp_pos sq_pos) (intersect sp_neg sq_neg)
-            itlist (union ** snd) nw [],(eqv',rfn')
+            itlist (union >>|> snd) nw [],(eqv',rfn')
 
 // pg. 96
 // ------------------------------------------------------------------------- //
@@ -314,7 +314,7 @@ module stal =
         if fm' = False then true else if fm' = True then false 
         else
             let p,triplets = triplicate fm'
-            let trigfn = itlist (itlist include_trig ** trigger)
+            let trigfn = itlist (itlist include_trig >>|> trigger)
                                 triplets undefined
             let vars = List.map (fun p -> Atom p) (unions(List.map atoms triplets))
             saturate_upto vars 0 2 (graph trigfn) [p,True]

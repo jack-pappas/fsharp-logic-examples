@@ -339,7 +339,7 @@ module complex =
     // F:     val basic_complex_qelim : string list -> fol formula -> fol formula
     let basic_complex_qelim vars (Exists(x,p)) =
       let eqs,neqs = List.partition (non negative) (conjuncts p)
-      cqelim (x::vars) (List.map lhs eqs,List.map (lhs ** negate) neqs) init_sgns
+      cqelim (x::vars) (List.map lhs eqs,List.map (lhs >>|> negate) neqs) init_sgns
 
 //  pg. 366
 //  ------------------------------------------------------------------------- //

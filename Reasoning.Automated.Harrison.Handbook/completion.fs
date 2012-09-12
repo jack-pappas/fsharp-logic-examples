@@ -180,7 +180,7 @@ module completion =
                     else
                         let eq' = Atom(R("=",[s';t']))
                         let eqs' = eq'::eqs
-                        eqs',def, ocrits @ itlist ((@) ** critical_pairs eq') eqs' []
+                        eqs',def, ocrits @ itlist ((@) >>|> critical_pairs eq') eqs' []
                 with Failure _ -> (eqs,eq::def,ocrits)
             status trip eqs; 
             complete ord trip
@@ -197,11 +197,11 @@ module completion =
 
     let rec interreduce dun eqs =
         match eqs with
+        | [] -> List.rev dun
         | (Atom(R("=",[l;r])))::oeqs ->
             let dun' = if rewrite (dun @ oeqs) l <> l then dun
                         else mk_eq l (rewrite (dun @ eqs) r)::dun
-            interreduce dun' oeqs
-        | [] -> List.rev dun
+            interreduce dun' oeqs        
 
 // pg. 283
 // ------------------------------------------------------------------------- //
@@ -214,7 +214,7 @@ module completion =
             List.map (fun e -> 
                 let l,r = normalize_and_orient ord [] e
                 mk_eq l r) eqs
-        (interreduce [] ** complete ord) (eqs',[],unions(allpairs critical_pairs eqs' eqs'))
+        (interreduce [] >>|> complete ord) (eqs',[],unions(allpairs critical_pairs eqs' eqs'))
 
 // pg. 286
 // ------------------------------------------------------------------------- //
@@ -251,7 +251,7 @@ module completion =
                     let eq' = Atom(R("=",[s';t']))
                     let eqs' = eq'::eqs
                     eqs',def,
-                    ocrits @ itlist ((@) ** critical_pairs eq') eqs' []
+                    ocrits @ itlist ((@) >>|> critical_pairs eq') eqs' []
                 with Failure _ -> (eqs,eq::def,ocrits)
             status trip eqs; trip
         | _ -> if def = [] then (eqs,def,crits) else

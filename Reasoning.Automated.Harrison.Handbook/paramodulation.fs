@@ -104,7 +104,7 @@ module paramodulation =
         let pcl' = subtract pcl [eq]
         let (l,r) = dest_eq eq
         let rfn i ocl' = image (subst i) (pcl' @ ocl')
-        overlapc (l,r) ocl rfn ** overlapc (r,l) ocl rfn) (List.filter is_eq pcl) []
+        overlapc (l,r) ocl rfn >>|> overlapc (r,l) ocl rfn) (List.filter is_eq pcl) []
 
     let para_clauses cls1 cls2 =
       let cls1' = rename "x" cls1 
@@ -134,4 +134,4 @@ module paramodulation =
 
     let paramodulation fm =
       let fm1 = askolemize(Not(generalize fm))
-      List.map (pure_paramodulation ** list_conj) (simpdnf fm1)
+      List.map (pure_paramodulation >>|> list_conj) (simpdnf fm1)

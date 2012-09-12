@@ -69,12 +69,11 @@ module prop =
 // Basic stuff for propositional logic: datatype, parsing and printing.      //
 // ========================================================================= //
 
-    type prop = 
-        P of string
+    type prop = P of string
 
     // OCaml: val pname : prop -> string = <fun>
     // F#:    val pname : prop -> string
-    let pname(P s) = s
+    let inline pname (P s) = s
 
 // pg. 29
 // ------------------------------------------------------------------------- //
@@ -92,8 +91,9 @@ module prop =
         
     // OCaml: val parse_prop_formula : string -> prop formula = <fun>
     // F#:    val parse_prop_formula : (string -> prop formula)
-    let parse_prop_formula = 
-        make_parser (parse_formula ((fun _ _ -> failwith ""),parse_propvar) [])
+    let parse_prop_formula =
+        parse_formula ((fun _ _ -> failwith ""), parse_propvar) []
+        |> make_parser
         
 // pg. 29
 // ------------------------------------------------------------------------- //
@@ -184,7 +184,7 @@ module prop =
         // [P "p"; P "q"; P "r"]
         let ats = atoms fm
         // 5 + 1 = length of false + length of space
-        let width = itlist (max ** String.length ** pname) ats 5 + 1 in
+        let width = itlist (max >>|> String.length >>|> pname) ats 5 + 1 in
         let fixw s = s+String.replicate(width - String.length s) " "
         let truthstring p = fixw (if p then "true" else "false")
         let mk_row v =
@@ -302,15 +302,15 @@ module prop =
     let rec psimplify fm =
         match fm with
         | Not p ->
-            psimplify1 (Not(psimplify p))
+            psimplify1 (Not (psimplify p))
         | And (p, q) ->
-            psimplify1 (And(psimplify p,psimplify q))
+            psimplify1 (And (psimplify p, psimplify q))
         | Or (p, q) ->
-            psimplify1 (Or(psimplify p,psimplify q))
+            psimplify1 (Or (psimplify p, psimplify q))
         | Imp (p, q) ->
-            psimplify1 (Imp(psimplify p,psimplify q))
+            psimplify1 (Imp (psimplify p, psimplify q))
         | Iff (p, q) ->
-            psimplify1 (Iff(psimplify p,psimplify q))
+            psimplify1 (Iff (psimplify p, psimplify q))
         | fm -> fm
 
 // pg. 51
@@ -345,15 +345,26 @@ module prop =
     // TODO : Optimize using continuation-passing style.
     let rec nnfOrig fm =
         match fm with
-        | And(p,q) -> And (nnfOrig p, nnfOrig q)
-        | Or(p,q) -> Or (nnfOrig p, nnfOrig q)
-        | Imp(p,q) -> Or (nnfOrig(Not p),nnfOrig q)
-        | Iff(p,q) -> Or (And(nnfOrig p,nnfOrig q),And(nnfOrig(Not p),nnfOrig(Not q)))
-        | Not(Not p) -> nnfOrig p
-        | Not(And(p,q)) -> Or(nnfOrig(Not p),nnfOrig(Not q))
-        | Not(Or(p,q)) -> And(nnfOrig(Not p),nnfOrig(Not q))
-        | Not(Imp(p,q)) -> And(nnfOrig p,nnfOrig(Not q))
-        | Not(Iff(p,q)) -> Or(And(nnfOrig p,nnfOrig(Not q)),And(nnfOrig(Not p),nnfOrig q))
+        | And (p, q) ->
+            And (nnfOrig p, nnfOrig q)
+        | Or (p, q) ->
+            Or (nnfOrig p, nnfOrig q)
+        | Imp (p, q) ->
+            Or (nnfOrig (Not p), nnfOrig q)
+        | Iff (p, q) ->
+            Or (And (nnfOrig p, nnfOrig q),
+                And (nnfOrig (Not p), nnfOrig (Not q)))
+        | Not (Not p) ->
+            nnfOrig p
+        | Not (And (p, q)) ->
+            Or (nnfOrig (Not p), nnfOrig (Not q))
+        | Not (Or (p, q)) ->
+            And (nnfOrig (Not p), nnfOrig (Not q))
+        | Not (Imp (p, q)) ->
+            And (nnfOrig p, nnfOrig (Not q))
+        | Not (Iff (p, q)) ->
+            Or (And (nnfOrig p, nnfOrig (Not q)),
+                And (nnfOrig (Not p), nnfOrig q))
         | fm -> fm
 
 // pg. 52

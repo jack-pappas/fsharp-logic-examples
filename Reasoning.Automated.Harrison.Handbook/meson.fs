@@ -113,12 +113,12 @@ module meson =
 
     let puremeson001 fm =
         let cls = simpcnf(specialize(pnf fm))
-        let rules = itlist ((@) ** contrapositives) cls []
+        let rules = itlist ((@) >>|> contrapositives) cls []
         deepen (fun n -> mexpand001 rules [] False (fun x -> x) (undefined,n,0) |> ignore; n) 0
 
     let meson001 fm =
         let fm1 = askolemize(Not(generalize fm))
-        List.map (puremeson001 ** list_conj) (simpdnf fm1)
+        List.map (puremeson001 >>|> list_conj) (simpdnf fm1)
 
 // pg. 221
 // ------------------------------------------------------------------------- //
@@ -167,9 +167,9 @@ module meson =
 
     let puremeson002 fm =   
         let cls = simpcnf(specialize(pnf fm))
-        let rules = itlist ((@) ** contrapositives) cls []
+        let rules = itlist ((@) >>|> contrapositives) cls []
         deepen (fun n -> mexpand002 rules [] False (fun x -> x) (undefined,n,0) |> ignore; n) 0
 
     let meson002 fm =
         let fm1 = askolemize(Not(generalize fm))
-        List.map (puremeson002 ** list_conj) (simpdnf fm1)
+        List.map (puremeson002 >>|> list_conj) (simpdnf fm1)

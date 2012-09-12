@@ -414,8 +414,8 @@ module cooper =
     // OCaml: val integer_qelim : fol formula -> fol formula = <fun>
     // F#:    val integer_qelim : (fol formula -> fol formula)
     let integer_qelim = 
-        simplify ** evalc **
-        lift_qelim linform (cnnf posineq ** evalc) cooper
+        simplify >>|> evalc >>|>
+        lift_qelim linform (cnnf posineq >>|> evalc) cooper
 
 // pg.350
 // ------------------------------------------------------------------------- //
@@ -435,4 +435,4 @@ module cooper =
       | _           -> fm
 
     // F#: val natural_qelim : (fol formula -> fol formula)
-    let natural_qelim = integer_qelim ** relativize(fun x -> Atom(R("<=",[zero; Var x])))
+    let natural_qelim = integer_qelim >>|> relativize(fun x -> Atom(R("<=",[zero; Var x])))

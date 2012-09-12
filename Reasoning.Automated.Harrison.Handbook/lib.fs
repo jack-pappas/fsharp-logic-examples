@@ -68,19 +68,13 @@ module lib =
     // Note: If the OCaml code uses the Pervasives module, the code converted to F# is accessed by
     // open Microsoft.FSharp.Compatibility.OCaml
     // See: http://fsharppowerpack.codeplex.com/ - F# Compatibility Helpers  
-    
-    /// Composes two functions, then applies a value to the resulting function.
-    let inline composeApply f g x =
-        f <| g x
 
     // pg. 618
     // OCaml: val ( ** ) : ('a -> 'b) -> ('c -> 'a) -> 'c -> 'b = <fun>
-    // F#:    val ( << ) : ('a -> 'b) -> ('c -> 'a) -> 'c -> 'b
-    let inline ( ** ) f g x =
-        // TEMP : Replace all uses of this operator with a call to the
-        // 'composeApply' function -- the ** operator is already defined in F#
-        // as the power/exponentiation operator.
-        composeApply f g x
+    // F#:    val ( >>|> ) : ('a -> 'b) -> ('c -> 'a) -> 'c -> 'b
+    /// Composes two functions, then applies a value to the resulting function.
+    let inline ( >>|> ) f g x =
+        f <| g x
 
 // ------------------------------------------------------------------------- //
 // GCD and LCM on arbitrary-precision numbers.                               //

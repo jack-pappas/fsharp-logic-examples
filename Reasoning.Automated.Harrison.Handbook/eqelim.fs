@@ -107,7 +107,7 @@ module eqelim =
       match cl with
       | (Atom(R("=",[s;t])) as eq)::ps ->
             let ps' = modify_T ps
-            let w = Var(variant "w" (itlist (union ** fv) ps' (fv eq)))
+            let w = Var(variant "w" (itlist (union >>|> fv) ps' (fv eq)))
             Not(mk_eq t w)::(mk_eq s w)::ps'
       | p::ps -> p::(modify_T ps)
       | [] -> []
@@ -205,7 +205,7 @@ module eqelim =
           emodify (w::fvs) (Not(mk_eq t (Var w))::cls')
       | None -> cls
 
-    let modify_E cls = emodify (itlist (union ** fv) cls []) cls
+    let modify_E cls = emodify (itlist (union >>|> fv) cls []) cls
 
 // pg. 296
 // ------------------------------------------------------------------------- //
@@ -214,7 +214,7 @@ module eqelim =
 
     let brand cls =
       let cls1 = List.map modify_E cls
-      let cls2 = itlist (union ** modify_S) cls1 []
+      let cls2 = itlist (union >>|> modify_S) cls1 []
       [mk_eq (Var "x") (Var "x")]::(List.map modify_T cls2)
 
 // pg. 296
@@ -224,13 +224,13 @@ module eqelim =
 
     let bpuremeson fm =
       let cls = brand(simpcnf(specialize(pnf fm)))
-      let rules = itlist ((@) ** contrapositives) cls []
+      let rules = itlist ((@) >>|> contrapositives) cls []
       deepen (fun n ->
          mexpand002 rules [] False (fun x -> x) (undefined,n,0) |> ignore;  n) 0
 
     let bmeson fm =
       let fm1 = askolemize(Not(generalize fm))
-      List.map (bpuremeson ** list_conj) (simpdnf fm1)
+      List.map (bpuremeson >>|> list_conj) (simpdnf fm1)
 
     // Moved from section - Older stuff not now in the text
     // to here because it is still in the text.  EGT

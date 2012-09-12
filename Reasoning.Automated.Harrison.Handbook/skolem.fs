@@ -165,10 +165,10 @@ module skolem =
     let rec funcs tm =
         match tm with
         | Var x -> []
-        | Fn(f,args) -> itlist (union ** funcs) args [f,List.length args]
+        | Fn(f,args) -> itlist (union >>|> funcs) args [f,List.length args]
 
     let functions fm =
-        atom_union (fun (R(p,a)) -> itlist (union ** funcs) a []) fm
+        atom_union (fun (R(p,a)) -> itlist (union >>|> funcs) a []) fm
 
 // pg. 149
 // ------------------------------------------------------------------------- //

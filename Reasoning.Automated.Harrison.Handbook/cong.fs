@@ -76,7 +76,7 @@ module cong =
 
     let rec subterms tm =
         match tm with
-        | Fn(f,args) -> itlist (union ** subterms) args [tm]
+        | Fn(f,args) -> itlist (union >>|> subterms) args [tm]
         | _          -> [tm]
 
 // pg. 250
@@ -123,7 +123,7 @@ module cong =
     let ccsatisfiable fms =
         let pos,neg = List.partition positive fms
         let eqps = List.map dest_eq pos 
-        let eqns = List.map (dest_eq ** negate) neg
+        let eqns = List.map (dest_eq >>|> negate) neg
         let lrs = List.map fst eqps @ List.map snd eqps @ List.map fst eqns @ List.map snd eqns
         let pfn = itlist predecessors (unions(List.map subterms lrs)) undefined
         let eqv,_ = itlist emerge eqps (unequal,pfn)

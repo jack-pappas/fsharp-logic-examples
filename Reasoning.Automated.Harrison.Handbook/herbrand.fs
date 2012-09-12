@@ -172,7 +172,7 @@ module herbrand =
         match dunno with
         | [] -> need
         | cl::dknow ->
-            let mfn = dp_mfn cjs0 ** subst ** fpf fvs
+            let mfn = dp_mfn cjs0 >>|> subst >>|> fpf fvs
             let need' =
                 if dpll(itlist mfn (need @ dknow) []) then cl::need 
                 else need

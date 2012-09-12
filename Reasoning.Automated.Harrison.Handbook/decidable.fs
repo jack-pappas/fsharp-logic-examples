@@ -103,7 +103,7 @@ module decidable =
 // ------------------------------------------------------------------------- //
 
     let separate x cjs =
-      let yes,no = List.partition (mem x ** fv) cjs
+      let yes,no = List.partition (mem x >>|> fv) cjs
       if yes = [] then list_conj no
       elif no = [] then Exists(x,list_conj yes)
       else And(Exists(x,list_conj yes),list_conj no)
@@ -208,12 +208,12 @@ module decidable =
 
     let limmeson n fm =
       let cls = simpcnf(specialize(pnf fm))
-      let rules = itlist ((@) ** contrapositives) cls []
+      let rules = itlist ((@) >>|> contrapositives) cls []
       mexpand002 rules [] False (fun x -> x) (undefined,n,0)
 
     let limited_meson n fm =
       let fm1 = askolemize(Not(generalize fm))
-      List.map (limmeson n ** list_conj) (simpdnf fm1)
+      List.map (limmeson n >>|> list_conj) (simpdnf fm1)
 
     let decide_fmp fm =
       let rec test n =
