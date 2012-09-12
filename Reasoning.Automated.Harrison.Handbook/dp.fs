@@ -66,7 +66,7 @@ module dp =
     open intro
     open formulas
     open prop
-    open propexamples
+    //open propexamples
     open defcnf 
 
 // ========================================================================= //
@@ -84,15 +84,18 @@ module dp =
     // OCaml : 'a formula list list -> 'a formula list list = <fun>
     // F#    : 'a formula list list -> 'a formula list list option
     let one_literal_rule clauses =
-        let findExpr = fun cl -> List.length cl = 1
+        let findExpr cl =
+            List.length cl = 1
+
         match List.tryFind findExpr clauses with
+        | None -> None
         | Some value -> 
             let u = List.head value
             let u' = negate u
-            let clauses1 = List.filter (fun cl -> not (mem u cl)) clauses
-            let clauses' = image (fun cl -> subtract cl [u']) clauses1
-            Some(clauses')
-        | None -> None
+            clauses
+            |> List.filter (fun cl -> not (mem u cl))
+            |> image (fun cl -> subtract cl [u'])
+            |> Some
         
     // Note signature difference because of use of F# Some and None
     // OCaml : 'a formula list list -> 'a formula list list = <fun>
@@ -113,9 +116,10 @@ module dp =
         let p' = negate p 
         let pos,notpos = List.partition (mem p) clauses
         let neg,other = List.partition (mem p') notpos
-        let pos' = image (List.filter (fun l -> l <> p)) pos
-        let neg' = image (List.filter (fun l -> l <> p')) neg
-        let res0 = allpairs union pos' neg'
+        let res0 =
+            let pos' = image (List.filter (fun l -> l <> p)) pos
+            let neg' = image (List.filter (fun l -> l <> p')) neg
+            allpairs union pos' neg'
         let clauses' = union other (List.filter (non trivial) res0)
         clauses'
 

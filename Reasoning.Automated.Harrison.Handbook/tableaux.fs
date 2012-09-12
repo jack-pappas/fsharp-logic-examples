@@ -191,6 +191,10 @@ module tableaux =
 // Try to split up the initial formula first; often a big improvement.       //
 // ------------------------------------------------------------------------- //
 
-    let splittab fm = 
-        List.map tabrefute (simpdnf(askolemize(Not(generalize fm))))
+    let splittab fm =
+        generalize fm
+        |> Not
+        |> askolemize
+        |> simpdnf
+        |> List.map tabrefute
 

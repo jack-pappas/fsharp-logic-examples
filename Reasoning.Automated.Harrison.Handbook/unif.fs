@@ -84,8 +84,14 @@ module unif =
 
     let rec istriv env x t =
         match t with
-        | Var y -> y = x || defined env y && istriv env x (apply env y)
-        | Fn(f,args) -> List.exists (istriv env x) args && failwith "cyclic"
+        | Var y ->
+            y = x
+            || defined env y
+            && istriv env x (apply env y)
+        | Fn(f,args) ->
+            if List.exists (istriv env x) args then true
+            else
+                failwith "cyclic"
         
 // ------------------------------------------------------------------------- //
 // Main unification procedure                                                //
