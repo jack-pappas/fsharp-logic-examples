@@ -66,7 +66,7 @@ module bdd =
     open intro
     open formulas
     open prop
-    open propexamples
+    //open propexamples
     open defcnf 
 //    open dp
 //    open stal
