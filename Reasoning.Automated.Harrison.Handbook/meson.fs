@@ -94,16 +94,18 @@ module meson =
         else
             let rec tryfind f l =
                 match l with
-                | []     -> failwith "tryfind"
-                | (h::t) -> try f h with Failure _ -> tryfind f t
+                | [] -> failwith "tryfind"
+                | h :: t ->
+                    try f h
+                    with _ ->
+                        tryfind f t
             try 
-                tryfind (fun a -> cont (unify_literals env (g,negate a),n,k)) ancestors
-            with 
-            | Failure _ -> 
+                tryfind (fun a -> cont (unify_literals env (g, negate a), n, k)) ancestors
+            with _ -> 
                 tryfind (fun rule -> 
-                    let (asm,c),k' = renamerule k rule
-                    itlist (mexpand001 rules (g::ancestors)) asm cont
-                        (unify_literals env (g,c),n-List.length asm,k'))
+                    let (asm, c) ,k' = renamerule k rule
+                    itlist (mexpand001 rules (g :: ancestors)) asm cont
+                        (unify_literals env (g, c), n - List.length asm, k'))
                     rules
                     
 // pg. 220
@@ -126,7 +128,8 @@ module meson =
 // ------------------------------------------------------------------------- //
 
     let rec equal env fm1 fm2 =
-        try unify_literals env (fm1,fm2) = env with Failure _ -> false
+        try unify_literals env (fm1,fm2) = env
+        with _ -> false
 
     let expand2 expfn goals1 n1 goals2 n2 n3 cont env k =
         expfn goals1 (fun (e1,r1,k1) ->
@@ -148,28 +151,32 @@ module meson =
                     let n2 = n - n1
                     let goals1,goals2 = chop_list (m / 2) gs
                     let expfn = expand2 (mexpands002 rules ancestors)
-                    try expfn goals1 n1 goals2 n2 (-1) cont env k with 
-                    | Failure _ -> expfn goals2 n1 goals1 n2 n1 cont env k
+                    try expfn goals1 n1 goals2 n2 -1 cont env k
+                    with _ -> expfn goals2 n1 goals1 n2 n1 cont env k
 
-        if n < 0 then failwith "Too deep"
-        elif List.exists (equal env g) ancestors then failwith "repetition" 
+        if n < 0 then
+            failwith "Too deep"
+        elif List.exists (equal env g) ancestors then
+            failwith "repetition" 
         else
             let rec tryfind f l =
                 match l with
-                | []     -> failwith "tryfind"
-                | (h::t) -> try f h with Failure _ -> tryfind f t
-            try tryfind (fun a -> cont (unify_literals env (g,negate a),n,k)) ancestors with 
+                | [] -> failwith "tryfind"
+                | h :: t ->
+                    try f h
+                    with _ -> tryfind f t
+            try tryfind (fun a -> cont (unify_literals env (g, negate a), n, k)) ancestors with 
             | Failure _ -> 
                 tryfind (fun r -> 
-                    let (asm,c),k' = renamerule k r 
-                    mexpands002 rules (g::ancestors) asm cont (unify_literals env (g,c),n-List.length asm,k')) 
+                    let (asm, c), k' = renamerule k r 
+                    mexpands002 rules (g :: ancestors) asm cont (unify_literals env (g, c), n - List.length asm, k')) 
                     rules
 
     let puremeson002 fm =   
-        let cls = simpcnf(specialize(pnf fm))
+        let cls = simpcnf (specialize (pnf fm))
         let rules = itlist ((@) >>|> contrapositives) cls []
-        deepen (fun n -> mexpand002 rules [] False (fun x -> x) (undefined,n,0) |> ignore; n) 0
+        deepen (fun n -> mexpand002 rules [] False id (undefined, n, 0) |> ignore; n) 0
 
     let meson002 fm =
-        let fm1 = askolemize(Not(generalize fm))
+        let fm1 = askolemize (Not (generalize fm))
         List.map (puremeson002 >>|> list_conj) (simpdnf fm1)

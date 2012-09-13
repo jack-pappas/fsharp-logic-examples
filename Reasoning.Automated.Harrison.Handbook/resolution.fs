@@ -82,14 +82,16 @@ module resolution =
 
     let rec mgu l env =
         match l with
-        | a::b::rest -> mgu (b::rest) (unify_literals env (a,b))
-        | _          -> solve env
+        | a :: b :: rest ->
+            mgu (b :: rest) (unify_literals env (a, b))
+        | _ -> solve env
 
-    let unifiable p q = 
-        let f = (unify_literals undefined)
-        let x = (p,q)
-        try (f x) |> ignore; true with
-        | Failure _ -> false 
+    let unifiable p q =
+        let f = unify_literals undefined
+        let x = p, q
+        try f x |> ignore
+            true
+        with _ -> false 
 
 // pg. 184
 // ------------------------------------------------------------------------- //
@@ -166,18 +168,23 @@ module resolution =
     let rec term_match env eqs =
         match eqs with
         | [] -> env
-        | (Fn(f,fa),Fn(g,ga))::oth when f = g && List.length fa = List.length ga ->
+        | (Fn(f,fa),Fn(g,ga)) :: oth when f = g && List.length fa = List.length ga ->
             term_match env (List.zip fa ga @ oth)
-        | (Var x,t)::oth ->
-            if not (defined env x) then term_match ((x |-> t) env) oth
-            elif apply env x = t then term_match env oth
-            else failwith "term_match"
-        | _ -> failwith "term_match"
+        | (Var x,t) :: oth ->
+            if not (defined env x) then
+                term_match ((x |-> t) env) oth
+            elif apply env x = t then
+                term_match env oth
+            else
+                failwith "term_match"
+        | _ ->
+            failwith "term_match"
 
     let rec match_literals env tmp =
         match tmp with
-        | Atom(R(p,a1)),Atom(R(q,a2)) | Not(Atom(R(p,a1))),Not(Atom(R(q,a2))) ->
-            term_match env [Fn(p,a1),Fn(q,a2)]
+        | Atom (R (p, a1)), Atom (R (q, a2))
+        | Not (Atom (R (p, a1))), Not (Atom (R (q, a2))) ->
+            term_match env [Fn (p, a1), Fn (q, a2)]
         | _ -> failwith "match_literals"
 
 // pg. 187
@@ -188,19 +195,20 @@ module resolution =
     let subsumes_clause cls1 cls2 =
         let rec tryfind f l =
             match l with
-            | []     -> failwith "tryfind"
-            | (h::t) -> try f h with Failure _ -> tryfind f t
+            | [] -> failwith "tryfind"
+            | h :: t ->
+                try f h
+                with _ -> tryfind f t
+
         let rec subsume env cls =
             match cls with
             | [] -> env
-            | l1::clt ->
-                tryfind (fun l2 -> subsume (match_literals env (l1,l2)) clt)
-                        cls2
+            | l1 :: clt ->
+                tryfind (fun l2 -> subsume (match_literals env (l1,l2)) clt) cls2
         try 
             (subsume undefined) cls1 |> ignore
             true 
-        with 
-        | Failure _ -> false
+        with _ -> false
 
 // pg. 191
 // ------------------------------------------------------------------------- //
@@ -210,25 +218,29 @@ module resolution =
     let rec replace cl lis =
         match lis with
         | [] -> [cl]
-        | c::cls -> if subsumes_clause cl c then cl::cls
-                    else c::(replace cl cls)
+        | c :: cls ->
+            if subsumes_clause cl c then
+                cl :: cls
+            else c :: (replace cl cls)
 
     let incorporate gcl cl unused =
         if trivial cl ||
-            List.exists (fun c -> subsumes_clause c cl) (gcl::unused)
-        then unused else replace cl unused
+            List.exists (fun c -> subsumes_clause c cl) (gcl :: unused)
+        then unused
+        else replace cl unused
 
     let rec resloop002 (used,unused) =
         match unused with
         | [] -> failwith "No proof found"
         | cl::ros ->
-            printfn "%s" (string (List.length used) + " used; " + string (List.length unused) + " unused.");
+            printfn "%s" (string (List.length used) + " used; " + string (List.length unused) + " unused.")
             let used' = insert cl used
-            let news = itlist(@) (mapfilter (resolve_clauses cl) used') []
+            let news = itlist (@) (mapfilter (resolve_clauses cl) used') []
             if mem [] news then true
             else resloop002(used',itlist (incorporate cl) news ros)
 
-    let pure_resolution002 fm = resloop002([],simpcnf(specialize(pnf fm)))
+    let pure_resolution002 fm =
+        resloop002([],simpcnf(specialize(pnf fm)))
 
     let resolution002 fm =
         let fm1 = askolemize(Not(generalize fm))
@@ -247,7 +259,7 @@ module resolution =
         match unused with
         | [] -> failwith "No proof found"
         | cl::ros ->
-            printfn "%s" (string (List.length used) + " used; " + string (List.length unused) + " unused.");
+            printfn "%s" (string (List.length used) + " used; " + string (List.length unused) + " unused.")
             let used' = insert cl used
             let news = itlist(@) (mapfilter (presolve_clauses cl) used') []
             if mem [] news then true 

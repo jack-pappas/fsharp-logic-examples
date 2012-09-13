@@ -429,6 +429,7 @@ module lib =
     // pg. 619
     // OCaml: val index : 'a -> 'a list -> int = <fun>
     // F#:    val index : 'a -> ('a list -> int) when 'a : comparison
+    // F# : Use the List.findIndex function here.
     let index x =
         let rec ind n l =
             match l with

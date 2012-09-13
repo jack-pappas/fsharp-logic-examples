@@ -2,20 +2,27 @@
 
 module misc =
 
-    let mapTuple4 f (a, b, c, d ) = (f a, f b, f c, f d)
+    let mapTuple4 f (a, b, c, d) =
+        f a, f b, f c, f d
     
     // Note: The CNF is represented interanally as a list of list.
     // The the first leve; of list have implied and beteween them
     // and the second level of list have implied or between them.
     let print_cnf cnf =
-        let rec print_cnf_util cnf item =
-            match cnf with
-            | []   -> ()
-            | h::t -> 
-                printf "%d " item
-                printfn "%A"  h
-                print_cnf_util t (item + 1)
-        print_cnf_util cnf 0
+        cnf
+        |> List.iteri (fun item h ->
+            printf "%d " item
+            printfn "%A" h)
+//        // TODO : Change to use List.iteri instead of explicitly implementing
+//        // a recursive function to process the list.
+//        let rec print_cnf_util item cnf =
+//            match cnf with
+//            | [] -> ()
+//            | h :: t ->
+//                printf "%d " item
+//                printfn "%A" h
+//                print_cnf_util (item + 1) t
+//        print_cnf_util 0 cnf
 
 
 

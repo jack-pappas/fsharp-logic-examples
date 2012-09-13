@@ -77,7 +77,7 @@ module unif =
             y = x
             || defined env y
             && istriv env x (apply env y)
-        | Fn(f,args) ->
+        | Fn (f, args) ->
             if List.exists (istriv env x) args then true
             else
                 failwith "cyclic"
@@ -89,13 +89,17 @@ module unif =
     let rec unify (env : func<string, term>) eqs =
         match eqs with
         | [] -> env
-        | (Fn(f,fargs),Fn(g,gargs))::oth ->
-            if f = g && List.length fargs = List.length gargs
-            then unify env (List.zip fargs gargs @ oth)
-            else failwith "impossible unification"
-        | (Var x,t)::oth | (t,Var x)::oth ->
-            if defined env x then unify env ((apply env x,t)::oth)
-            else unify (if istriv env x t then env else (x |-> t) env) oth
+        | (Fn (f, fargs), Fn (g, gargs)) :: oth ->
+            if f = g && List.length fargs = List.length gargs then
+                unify env (List.zip fargs gargs @ oth)
+            else
+                failwith "impossible unification"
+        | (Var x, t) :: oth
+        | (t, Var x) :: oth ->
+            if defined env x then
+                unify env ((apply env x,t) :: oth)
+            else
+                unify (if istriv env x t then env else (x |-> t) env) oth
 
 // pg. 169
 // ------------------------------------------------------------------------- //

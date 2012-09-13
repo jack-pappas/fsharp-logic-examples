@@ -82,17 +82,20 @@ module tableaux =
 
     let rec unify_literals env tmp =
         match tmp with
-        | Atom(R(p1,a1)),Atom(R(p2,a2)) -> unify env [Fn(p1,a1),Fn(p2,a2)]
-        | Not(p),Not(q)                 -> unify_literals env (p,q)
-        | False,False                   -> env
-        | _                             -> failwith "Can't unify literals"//
+        | Atom (R (p1, a1)), Atom (R (p2, a2)) ->
+            unify env [Fn(p1,a1),Fn(p2,a2)]
+        | Not p, Not q ->
+            unify_literals env (p,q)
+        | False, False -> env
+        | _ -> failwith "Can't unify literals"
 
 // pg. 174
 // ------------------------------------------------------------------------- //
 // Unify complementary literals.                                             //
 // ------------------------------------------------------------------------- //
 
-    let unify_complements env (p,q) = unify_literals env (p,negate q)
+    let unify_complements env (p,q) =
+        unify_literals env (p, negate q)
 
 // pg. 174
 // ------------------------------------------------------------------------- //
@@ -100,19 +103,22 @@ module tableaux =
 // ------------------------------------------------------------------------- //
 
     // Note: Used book tryfind instead of F# List.tryFind
-    let rec unify_refute djs ( acc : func<string,term>) : func<string,term> =
+    let rec unify_refute djs (acc : func<string, term>) : func<string, term> =
         let rec tryfind f l =
             match l with
-            | []     -> failwith "tryfind"
-            | (h::t) -> 
-                try f h with 
-                | Failure _ -> tryfind f t
+            | [] ->
+                failwith "tryfind"
+            | h::t -> 
+                try f h
+                with _ ->
+                    tryfind f t
+
         match djs with
-        | []         -> acc
-        | head::tail -> 
-            let pos,neg = List.partition positive head
+        | [] -> acc
+        | head :: tail -> 
+            let pos, neg = List.partition positive head
             let unifyResult = unify_complements acc
-            tryfind (unify_refute tail >>|> unify_complements acc) (allpairs (fun p q -> (p,q)) pos neg)
+            tryfind (unify_refute tail >>|> unify_complements acc) (allpairs (fun p q -> (p, q)) pos neg)
 
 
 // pg. 175
@@ -129,15 +135,15 @@ module tableaux =
         | Failure _ -> prawitz_loop djs0 fvs djs1 (n + 1)
 
     let prawitz fm =
-        let fm0 = skolemize (Not(generalize fm))
-        snd(prawitz_loop (simpdnf fm0) (fv fm0) [[]] 0)
+        let fm0 = skolemize (Not (generalize fm))
+        snd <| prawitz_loop (simpdnf fm0) (fv fm0) [[]] 0
 
 // ------------------------------------------------------------------------- //
 // Comparison of number of ground instances.                                 //
 // ------------------------------------------------------------------------- //
 
     let compare fm =
-        prawitz fm,davisputnam fm
+        prawitz fm, davisputnam fm
 
 // pg. 177
 // ------------------------------------------------------------------------- //
@@ -149,34 +155,39 @@ module tableaux =
         else
             match fms with
             | [] -> failwith "tableau: no proof"
-            | And(p,q)::unexp ->
-                tableau (p::q::unexp,lits,n) cont (env,k)
-            | Or(p,q)::unexp ->
-                tableau (p::unexp,lits,n) (tableau (q::unexp,lits,n) cont) (env,k)
-            | Forall(x,p)::unexp ->
-                let y = Var("_" + string k)
+            | And (p, q) :: unexp ->
+                tableau (p :: q :: unexp, lits, n) cont (env, k)
+            | Or (p, q) :: unexp ->
+                tableau (p :: unexp, lits, n) (tableau (q :: unexp, lits, n) cont) (env, k)
+            | Forall (x, p) :: unexp ->
+                let y = Var ("_" + string k)
                 let p' = subst (x |=> y) p
-                tableau (p'::unexp@[Forall(x,p)],lits,n-1) cont (env,k+1)
-            | fm::unexp ->
+                tableau (p' :: unexp @ [Forall (x, p)], lits, n - 1) cont (env, k + 1)
+            | fm :: unexp ->
                 let rec tryfind f l =
                     match l with
                     | []     -> failwith "tryfind"
-                    | (h::t) -> 
-                        try f h with 
-                        | Failure _ -> tryfind f t
-                try tryfind (fun l -> cont(unify_complements env (fm,l),k)) lits with
-                | Failure _ -> tableau (unexp,fm::lits,n) cont (env,k)
+                    | h::t -> 
+                        try f h
+                        with _ ->
+                            tryfind f t
+                try lits |> tryfind (fun l ->
+                    cont (unify_complements env (fm, l), k))
+                with _ ->
+                    tableau (unexp, fm :: lits, n) cont (env, k)
 
     let rec deepen f n =
-        try printf "Searching with depth limit ";
-            printfn "%d" n; f n
-        with Failure _ -> deepen f (n + 1)
+        try printf "Searching with depth limit "
+            printfn "%d" n
+            f n
+        with _ ->
+            deepen f (n + 1)
         
     let tabrefute fms =
-        deepen (fun n -> tableau (fms,[],n) (fun x -> x) (undefined,0) |> ignore; n) 0
+        deepen (fun n -> tableau (fms, [], n) id (undefined, 0) |> ignore; n) 0
 
     let tab fm =
-        let sfm = askolemize(Not(generalize fm)) in
+        let sfm = askolemize (Not (generalize fm))
         if sfm = False then 0 else tabrefute [sfm]
 
 // pg. 178

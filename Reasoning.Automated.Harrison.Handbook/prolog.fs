@@ -79,11 +79,11 @@ module prolog =
 // ------------------------------------------------------------------------- //
 
     let renamerule k (asm,c) =
-        let fvs = fv(list_conj(c::asm))
+        let fvs = fv (list_conj (c :: asm))
         let n = List.length fvs
-        let vvs = List.map (fun i -> "_" + string i) (k -- (k+n-1))
-        let inst = subst(fpf fvs (List.map (fun x -> Var x) vvs))
-        (List.map inst asm,inst c),k+n
+        let vvs = List.map (fun i -> "_" + string i) (k -- (k + n - 1))
+        let inst = subst (fpf fvs (List.map (fun x -> Var x) vvs))
+        (List.map inst asm, inst c), k + n
         
 // pg. 207
 // ------------------------------------------------------------------------- //
@@ -92,14 +92,14 @@ module prolog =
 
     let rec backchain rules n k env goals =
         match goals with
-        [] -> env
-        | g::gs ->
+        | [] -> env
+        | g :: gs ->
             if n = 0 then failwith "Too deep" 
             else
                 let rec tryfind f l =
                     match l with
-                    | []     -> failwith "tryfind"
-                    | (h::t) -> try f h with Failure _ -> tryfind f t
+                    | [] -> failwith "tryfind"
+                    | h :: t -> try f h with _ -> tryfind f t
                 tryfind (
                     fun rule ->
                         let (a,c),k' = 
@@ -113,8 +113,8 @@ module prolog =
         else (List.map negate neg,if pos = [] then False else List.head pos)
 
     let hornprove fm =
-        let rules = List.map hornify (simpcnf(skolemize(Not(generalize fm))))
-        deepen (fun n -> backchain rules n 0 undefined [False],n) 0
+        let rules = List.map hornify (simpcnf (skolemize (Not (generalize fm))))
+        deepen (fun n -> backchain rules n 0 undefined [False], n) 0
 
 // pg. 210
 // ------------------------------------------------------------------------- //
@@ -123,7 +123,7 @@ module prolog =
 
     let parserule s =
         let c,rest =
-            parse_formula (parse_infix_atom,parse_atom) [] (lex(explode s))
+            parse_formula (parse_infix_atom,parse_atom) [] (lex (explode s))
         let asm,rest1 =
             if rest <> [] && List.head rest = ":-"
             then parse_list ","

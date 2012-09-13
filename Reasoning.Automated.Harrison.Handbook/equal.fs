@@ -73,34 +73,37 @@ module equal =
 // Copyright (c) 2003-2007, John Harrison. (See "LICENSE.txt" for details.)  //
 // ========================================================================= //
 
-    let is_eq = 
-        function 
-        | (Atom(R("=",_))) -> true 
-        | _                -> false
+    let is_eq = function 
+        | Atom (R ("=", _)) -> true 
+        | _ -> false
 
-    let mk_eq s t = Atom(R("=",[s;t]))
+    let mk_eq s t =
+        Atom (R ("=", [s; t]))
 
     let dest_eq fm =
         match fm with
-        | Atom(R("=",[s;t])) -> s,t
-        | _ -> failwith "dest_eq: not an equation"
+        | Atom (R ("=", [s;t])) ->
+            s, t
+        | _ ->
+            failwith "dest_eq: not an equation"
 
-    let lhs eq = fst(dest_eq eq) 
-    let rhs eq = snd(dest_eq eq)
+    let lhs eq = fst <| dest_eq eq
+    let rhs eq = snd <| dest_eq eq
 
 // pg. 239
 // ------------------------------------------------------------------------- //
 // The set of predicates in a formula.                                       //
 // ------------------------------------------------------------------------- //
 
-    let rec predicates fm = atom_union (fun (R(p,a)) -> [p,List.length a]) fm
+    let rec predicates fm =
+        atom_union (fun (R (p,a)) -> [p, List.length a]) fm
 
 // pg. 239
 // ------------------------------------------------------------------------- //
 // Code to generate equality axioms for functions.                           //
 // ------------------------------------------------------------------------- //
 
-    let function_congruence (f,n) =
+    let function_congruence (f, n) =
         if n = 0 then [] 
         else
             let argnames_x = List.map (fun n -> "x" + (string n)) (1 -- n)
@@ -144,4 +147,4 @@ module equal =
             let axioms = itlist (union >>|> function_congruence) funcs
                                 (itlist (union >>|> predicate_congruence) preds
                                         equivalence_axioms)
-            Imp(end_itlist mk_and axioms,fm)
+            Imp (end_itlist mk_and axioms,fm)

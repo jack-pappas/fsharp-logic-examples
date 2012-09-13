@@ -221,26 +221,27 @@ module complex =
             let p' = funpow (m - n) (shift1 (List.head vars)) p
             if a = b then pdivide_aux vars a n p k (poly_sub vars s p')
             else pdivide_aux vars a n p (k+1) (poly_sub vars (poly_mul vars a s) (poly_mul vars b p'))
-      fun vars s p -> pdivide_aux vars (head vars p) (degree vars p) p 0 s
+      fun vars s p ->
+        pdivide_aux vars (head vars p) (degree vars p) p 0 s
 
 //  pg. 362
 //  ------------------------------------------------------------------------- //
 //  Datatype of signs.                                                        //
 //  ------------------------------------------------------------------------- //
 
-    type sign = 
-    | Zero 
-    | Nonzero 
-    | Positive 
-    | Negative
+    type sign =
+        | Zero
+        | Nonzero
+        | Positive
+        | Negative
 
     let swap swf s =
-      if not swf then s 
-      else
-        match s with
-        | Positive -> Negative
-        | Negative -> Positive
-        | _        -> s
+        if not swf then s
+        else
+            match s with
+            | Positive -> Negative
+            | Negative -> Positive
+            | s -> s
 
 //  pg. 362
 //  ------------------------------------------------------------------------- //
@@ -249,7 +250,9 @@ module complex =
 //  ------------------------------------------------------------------------- //
 
     let findsign sgns p =
-      try let p',swf = monic p in swap swf (assoc p' sgns)
+      try
+        let p',swf = monic p
+        swap swf (assoc p' sgns)
       with Failure _ -> failwith "findsign"
 
     let assertsign sgns (p,s) =

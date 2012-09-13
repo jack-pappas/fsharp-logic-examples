@@ -89,33 +89,45 @@ module stal =
 // Automatically generate triggering rules to save writing them out.         //
 // ------------------------------------------------------------------------- //
 
-    let atom lit = if negative lit then negate lit else lit
+    let atom lit =
+        if negative lit then negate lit else lit
 
-    let rec align (p,q) =
-        if atom p < atom q then align (q,p) else
-        if negative p then (negate p,negate q) else (p,q)
+    let rec align (p, q) =
+        if atom p < atom q then
+            align (q, p)
+        elif negative p then
+            negate p, negate q
+        else p, q
 
-    let equate2 (p,q) eqv = equate (negate p,negate q) (equate (p,q) eqv)
+    let equate2 (p, q) eqv =
+        equate (negate p, negate q) (equate (p, q) eqv)
 
+    // TODO : Optimize using continuation-passing style.
     let rec irredundant rel eqs =
         match eqs with
-        [] -> []
-        | (p,q)::oth ->
-            if canonize rel p = canonize rel q then irredundant rel oth
-            else insert (p,q) (irredundant (equate2 (p,q) rel) oth)
+        | [] -> []
+        | (p, q) :: oth ->
+            if canonize rel p = canonize rel q then
+                irredundant rel oth
+            else
+                insert (p, q) (irredundant (equate2 (p,q) rel) oth)
 
-    let consequences (p,q as peq) fm eqs =
-        let follows(r,s) = tautology(Imp(And(Iff(p,q),fm),Iff(r,s)))
+    let consequences (p, q as peq) fm eqs =
+        let follows (r, s) =
+            tautology <| Imp (And (Iff (p, q), fm), Iff (r, s))
+
         irredundant (equate2 peq unequal) (List.filter follows eqs)
 
     let triggers fm =
         let poslits = insert True (List.map (fun p -> Atom p) (atoms fm))
         let lits = union poslits (List.map negate poslits)
+        // TODO : From here on down, the code can be reformatted to form a pipeline
+        // using the (|>) operator instead of assigning intermediate results to variables.
         let pairs = allpairs (fun p q -> p,q) lits lits
-        let npairs = List.filter (fun (p,q) -> atom p <> atom q) pairs
-        let eqs = setify(List.map align npairs)
-        let raw = List.map (fun p -> p,consequences p fm eqs) eqs
-        List.filter (fun (p,c) -> c <> []) raw
+        let npairs = List.filter (fun (p, q) -> atom p <> atom q) pairs
+        let eqs = setify <| List.map align npairs
+        let raw = List.map (fun p -> p, consequences p fm eqs) eqs
+        List.filter (fun (p, c) -> not <| List.isEmpty c) raw
 
 // pg. 94
 // ------------------------------------------------------------------------- //

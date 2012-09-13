@@ -83,12 +83,11 @@ module bdd =
 // A BDD contains a variable order, unique and computed table.               //
 // ------------------------------------------------------------------------- //
 
-    type bdd = Bdd of (func<bddnode,int> * func<int,bddnode> * int) * (prop->prop->bool)
-//    type bdd = Bdd of ((bddnode,int)func * (int,bddnode)func * int) * (prop->prop->bool)
+    type bdd = Bdd of (func<bddnode, int> * func<int, bddnode> * int) * (prop -> prop -> bool)
 
     // Note: changed printf to sprintf for use with fsi.AddPrinter
     let print_bdd (Bdd((unique,uback,n),ord)) =
-      sprintf "%A" ("<BDD with " + (string n) + " nodes>")
+        sprintf "<BDD with %i nodes>" n
       
 // pg. 102
 // ------------------------------------------------------------------------- //
@@ -107,8 +106,9 @@ module bdd =
 // ------------------------------------------------------------------------- //
 
     let lookup_unique (Bdd((unique,expand,n),ord) as bdd) node =
-        try bdd,apply unique node with 
-        | Failure _ -> Bdd(((node|->n) unique,(n|->node) expand,n+1),ord),n
+        try bdd,apply unique node
+        with _ ->
+            Bdd(((node|->n) unique,(n|->node) expand,n+1),ord),n
 
 // pg. 102
 // ------------------------------------------------------------------------- //
@@ -174,15 +174,15 @@ module bdd =
 // The other binary connectives.                                             //
 // ------------------------------------------------------------------------- //
 
-    let bdd_or bdc (m1,m2) = 
-        let bdc1,n = bdd_and bdc (-m1,-m2)
-        bdc1,-n
+    let bdd_or bdc (m1, m2) = 
+        let bdc1, n = bdd_and bdc (-m1, -m2)
+        bdc1, -n
 
-    let bdd_imp bdc (m1,m2) = 
-        bdd_or bdc (-m1,m2)
+    let bdd_imp bdc (m1, m2) = 
+        bdd_or bdc (-m1, m2)
 
-    let bdd_iff bdc (m1,m2) =
-        thread bdc bdd_or (bdd_and,(m1,m2)) (bdd_and,(-m1,-m2))
+    let bdd_iff bdc (m1, m2) =
+        thread bdc bdd_or (bdd_and, (m1, m2)) (bdd_and, (-m1, -m2))
 
 // pg. 104
 // ------------------------------------------------------------------------- //
@@ -191,17 +191,25 @@ module bdd =
 
     let rec mkbdd (bdd,comp as bddcomp) fm =
         match fm with
-        | False    -> bddcomp,-1
-        | True     -> bddcomp,1
-        | Atom(s)  -> let bdd',n = mk_node bdd (s,1,-1) 
-                      (bdd',comp),n
-        | Not(p)   -> let bddcomp',n = mkbdd bddcomp p
-                      bddcomp',-n
-        | And(p,q) -> thread bddcomp bdd_and (mkbdd,p) (mkbdd,q)
-        | Or(p,q)  -> thread bddcomp bdd_or (mkbdd,p) (mkbdd,q)
-        | Imp(p,q) -> thread bddcomp bdd_imp (mkbdd,p) (mkbdd,q)
-        | Iff(p,q) -> thread bddcomp bdd_iff (mkbdd,p) (mkbdd,q)
-        | _        -> failwith "mkbdd"
+        | False ->
+            bddcomp, -1
+        | True ->
+            bddcomp, 1
+        | Atom s ->
+            let bdd', n = mk_node bdd (s, 1, -1) 
+            (bdd', comp), n
+        | Not p ->
+            let bddcomp', n = mkbdd bddcomp p
+            bddcomp', -n
+        | And (p, q) ->
+            thread bddcomp bdd_and (mkbdd, p) (mkbdd, q)
+        | Or (p, q)  ->
+            thread bddcomp bdd_or (mkbdd, p) (mkbdd, q)
+        | Imp (p, q) ->
+            thread bddcomp bdd_imp (mkbdd, p) (mkbdd, q)
+        | Iff (p, q) ->
+            thread bddcomp bdd_iff (mkbdd, p) (mkbdd, q)
+        | _ -> failwith "mkbdd"
 
 // pg. 104
 // ------------------------------------------------------------------------- //
@@ -219,30 +227,37 @@ module bdd =
 
     let dest_nimp fm = 
         match fm with 
-        | Not(p) -> p,False 
-        | _      -> dest_imp fm
+        | Not p -> p, False 
+        | _ -> dest_imp fm
 
     let rec dest_iffdef fm =
         match fm with
-        | Iff(Atom(x),r) 
-        | Iff(r,Atom(x)) -> x,r
-        | _              -> failwith "not a defining equivalence"
+        | Iff (Atom x, r)
+        | Iff (r, Atom x) ->
+            x, r
+        | _ -> failwith "not a defining equivalence"
 
-    let restore_iffdef (x,e) fm = Imp(Iff(Atom(x),e),fm)
+    let restore_iffdef (x,e) fm =
+        Imp (Iff (Atom x, e), fm)
 
-    let suitable_iffdef defs (x,q) =
+    let suitable_iffdef defs (x, q) =
         let fvs = atoms q
-        not (List.exists (fun (x',_) -> mem x' fvs) defs)
+        defs
+        |> List.exists (fun (x', _) ->
+            mem x' fvs)
+        |> not
 
     // TODO: Verify use of List.partition works
     let rec sort_defs acc defs fm =
         try 
-            let (x,e) = List.find (suitable_iffdef defs) defs
-            let ps,nonps = List.partition (fun (x',_) -> x' = x) defs
-            let ps' = subtract ps [x,e]
-            sort_defs ((x,e)::acc) nonps (itlist restore_iffdef ps' fm)
-        with 
-        | Failure _ -> List.rev acc,itlist restore_iffdef defs fm
+            let x, e =
+                defs |> List.find (suitable_iffdef defs)
+            let ps, nonps =
+                defs |> List.partition (fun (x', _) -> x' = x)
+            let ps' = subtract ps [x, e]
+            sort_defs ((x, e) :: acc) nonps (itlist restore_iffdef ps' fm)
+        with _ ->
+            List.rev acc, itlist restore_iffdef defs fm
 
 // pg. 106
 // ------------------------------------------------------------------------- //
@@ -251,26 +266,34 @@ module bdd =
 
     let rec mkbdde sfn (bdd,comp as bddcomp) fm =
         match fm with
-        | False    -> bddcomp,-1
-        | True     -> bddcomp,1
-        | Atom(s)  -> try bddcomp,apply sfn s with 
-                      | Failure _ ->
-                         let bdd',n = mk_node bdd (s,1,-1)
-                         (bdd',comp),n
-        | Not(p)   -> let bddcomp',n = mkbdde sfn bddcomp p
-                      bddcomp',-n
-        | And(p,q) -> thread bddcomp bdd_and (mkbdde sfn,p) (mkbdde sfn,q)
-        | Or(p,q)  -> thread bddcomp bdd_or (mkbdde sfn,p) (mkbdde sfn,q)
-        | Imp(p,q) -> thread bddcomp bdd_imp (mkbdde sfn,p) (mkbdde sfn,q)
-        | Iff(p,q) -> thread bddcomp bdd_iff (mkbdde sfn,p) (mkbdde sfn,q)
-        | _        -> failwith "mkbdde"
+        | False ->
+            bddcomp, -1
+        | True ->
+            bddcomp, 1
+        | Atom s ->
+            try bddcomp,apply sfn s
+            with _ ->
+                let bdd',n = mk_node bdd (s, 1, -1)
+                (bdd',comp),n
+        | Not p ->
+            let bddcomp', n = mkbdde sfn bddcomp p
+            bddcomp', -n
+        | And (p, q) ->
+            thread bddcomp bdd_and (mkbdde sfn, p) (mkbdde sfn, q)
+        | Or (p, q)  ->
+            thread bddcomp bdd_or (mkbdde sfn, p) (mkbdde sfn, q)
+        | Imp (p, q) ->
+            thread bddcomp bdd_imp (mkbdde sfn, p) (mkbdde sfn, q)
+        | Iff (p, q) ->
+            thread bddcomp bdd_iff (mkbdde sfn, p) (mkbdde sfn, q)
+        | _ -> failwith "mkbdde"
 
     let rec mkbdds sfn bdd defs fm =
         match defs with
-        | []           -> mkbdde sfn bdd fm
-        | (p,e)::odefs -> let bdd',b = 
-                              mkbdde sfn bdd e
-                          mkbdds ((p |-> b) sfn) bdd' odefs fm
+        | [] -> mkbdde sfn bdd fm
+        | (p, e) :: odefs ->
+            let bdd', b = mkbdde sfn bdd e
+            mkbdds ((p |-> b) sfn) bdd' odefs fm
 
     // TODO : Make this work
 //    let ebddtaut fm =
@@ -283,16 +306,15 @@ module bdd =
 
     let ebddtaut fm =
         let l,r = 
-            try dest_nimp fm  with
-            | Failure _ -> True,fm
-        let eqs,noneqs = 
+            try dest_nimp fm
+            with _ -> True, fm
+        let eqs, noneqs = 
             let parFun fm = 
                 try 
                     dest_iffdef fm |> ignore
                     true
-                with
-                | Failure _ -> false
+                with _ -> false
             List.partition parFun (conjuncts l)
-        let defs,fm' = sort_defs [] (List.map dest_iffdef eqs) (itlist mk_imp noneqs r)
+        let defs, fm' = sort_defs [] (List.map dest_iffdef eqs) (itlist mk_imp noneqs r)
         snd(mkbdds undefined (mk_bdd (<),undefined) defs fm') = 1
 

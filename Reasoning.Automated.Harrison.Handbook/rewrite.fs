@@ -79,11 +79,10 @@ module rewrite =
 
     let rec rewrite1 eqs t =
         match eqs with
-        | Atom(R("=",[l;r]))::oeqs -> 
+        | Atom (R ("=", [l; r])) :: oeqs -> 
             try 
-                tsubst (term_match undefined [l,t]) r
-            with 
-            | Failure _ -> rewrite1 oeqs t
+                tsubst (term_match undefined [l, t]) r
+            with _ -> rewrite1 oeqs t
         | _ -> failwith "rewrite1"
 
 // pg. 263
@@ -91,13 +90,14 @@ module rewrite =
 // Rewriting repeatedly and at depth (top-down).                             //
 // ------------------------------------------------------------------------- //
 
+    // TODO : Optimize using continuation-passing style.
     let rec rewrite eqs tm =
-        try rewrite eqs (rewrite1 eqs tm) with 
-        | Failure _ ->
+        try rewrite eqs (rewrite1 eqs tm)
+        with _ ->
             match tm with
             | Var x -> tm
-            | Fn(f,args) -> 
-                let tm' = Fn(f,List.map (rewrite eqs) args)
+            | Fn (f, args) -> 
+                let tm' = Fn (f,List.map (rewrite eqs) args)
                 if tm' = tm then tm 
                 else rewrite eqs tm'
                 

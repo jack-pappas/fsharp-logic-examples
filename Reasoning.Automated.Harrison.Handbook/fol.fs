@@ -91,26 +91,34 @@ module folMod =
 // Special case of applying a subfunction to the top *terms*.                //
 // ------------------------------------------------------------------------- //
 
-    let onformula f = onatoms(fun (R(p,a)) -> Atom(R(p,List.map f a)))
+    let onformula f =
+        onatoms <| fun (R (p, a)) ->
+            Atom (R (p, List.map f a))
 
 // pg. 628
 // ------------------------------------------------------------------------- //
 // Parsing of terms.                                                         //
 // ------------------------------------------------------------------------- //
 
-    let is_const_name s = List.forall numeric (explode s) || s = "nil"
+    let is_const_name s =
+        s = "nil"
+        || List.forall numeric (explode s)
 
     let rec parse_atomic_term vs inp =
         match inp with
         | [] -> failwith "term expected"
-        | "("::rest -> parse_bracketed (parse_term vs) ")" rest
-        | "-"::rest -> papply (fun t -> Fn("-",[t])) (parse_atomic_term vs rest)
-        | f::"("::")"::rest -> Fn(f,[]),rest
-        | f::"("::rest ->
-            papply (fun args -> Fn(f,args))
-                    (parse_bracketed (parse_list "," (parse_term vs)) ")" rest)
-        | a::rest ->
-            (if is_const_name a && not(mem a vs) then Fn(a,[]) else Var a),rest
+        | "(" :: rest ->
+            parse_bracketed (parse_term vs) ")" rest
+        | "-" :: rest ->
+            parse_atomic_term vs rest
+            |> papply (fun t -> Fn ("-", [t]))
+        | f :: "(" :: ")" :: rest ->
+            Fn (f, []), rest
+        | f :: "(" :: rest ->
+            parse_bracketed (parse_list "," (parse_term vs)) ")" rest
+            |> papply (fun args -> Fn (f, args))
+        | a :: rest ->
+            (if is_const_name a && not (mem a vs) then Fn (a, []) else Var a), rest
 
     and parse_term vs inp =
         parse_right_infix "::" (fun (e1,e2) -> Fn("::",[e1;e2]))
@@ -128,24 +136,29 @@ module folMod =
 // Parsing of formulas.                                                      //
 // ------------------------------------------------------------------------- //
 
-    let parse_infix_atom vs inp =       
-        let tm,rest = parse_term vs inp in
-        if List.exists (nextin rest) ["="; "<"; "<="; ">"; ">="] then                     
-            papply (fun tm' -> Atom(R(List.head rest,[tm;tm'])))                          
-                    (parse_term vs (List.tail rest))                                       
+    let parse_infix_atom vs inp =
+        let tm, rest = parse_term vs inp
+        if List.exists (nextin rest) ["="; "<"; "<="; ">"; ">="] then
+            papply (fun tm' -> Atom (R (List.head rest, [tm; tm'])))
+                    (parse_term vs (List.tail rest))
         else failwith ""
-                                                               
+
     let parse_atom vs inp =
-        try parse_infix_atom vs inp with Failure _ ->                                
-        match inp with                                                               
-        | p::"("::")"::rest -> Atom(R(p,[])),rest                                    
-        | p::"("::rest ->
-            papply (fun args -> Atom(R(p,args)))
-                    (parse_bracketed (parse_list "," (parse_term vs)) ")" rest)
-        | p::rest when p <> "(" -> Atom(R(p,[])),rest
+        try parse_infix_atom vs inp
+        with _ ->
+        match inp with
+        | p :: "(" :: ")" :: rest ->
+            Atom (R (p, [])), rest
+        | p :: "(" :: rest ->
+            parse_bracketed (parse_list "," (parse_term vs)) ")" rest
+            |> papply (fun args -> Atom (R (p, args)))
+        | p::rest when p <> "(" ->
+            Atom (R (p, [])), rest
         | _ -> failwith "parse_atom"
-                                                                               
-    let parse = make_parser (parse_formula (parse_infix_atom,parse_atom) [])              
+
+    let parse =
+        parse_formula (parse_infix_atom, parse_atom) []
+        |> make_parser
 
 // pg. 629
 // ------------------------------------------------------------------------- //
@@ -163,14 +176,22 @@ module folMod =
 
     let rec print_term prec fm =
         match fm with
-        | Var x -> printf "%s" x
-        | Fn("^",[tm1;tm2]) -> print_infix_term true prec 24 "^" tm1 tm2
-        | Fn("/",[tm1;tm2]) -> print_infix_term true prec 22 " /" tm1 tm2
-        | Fn("*",[tm1;tm2]) -> print_infix_term false prec 20 " *" tm1 tm2
-        | Fn("-",[tm1;tm2]) -> print_infix_term true prec 18 " -" tm1 tm2
-        | Fn("+",[tm1;tm2]) -> print_infix_term false prec 16 " +" tm1 tm2
-        | Fn("::",[tm1;tm2]) -> print_infix_term false prec 14 "::" tm1 tm2
-        | Fn(f,args) -> print_fargs f args
+        | Var x ->
+            printf "%s" x
+        | Fn ("^", [tm1; tm2;]) ->
+            print_infix_term true prec 24 "^" tm1 tm2
+        | Fn ("/", [tm1; tm2;]) ->
+            print_infix_term true prec 22 " /" tm1 tm2
+        | Fn ("*", [tm1; tm2;]) ->
+            print_infix_term false prec 20 " *" tm1 tm2
+        | Fn ("-", [tm1; tm2;]) ->
+            print_infix_term true prec 18 " -" tm1 tm2
+        | Fn ("+", [tm1; tm2;]) ->
+            print_infix_term false prec 16 " +" tm1 tm2
+        | Fn ("::", [tm1; tm2;]) ->
+            print_infix_term false prec 14 "::" tm1 tm2
+        | Fn (f, args) ->
+            print_fargs f args
 
     and print_fargs f args =
         printf "%s" f
@@ -231,7 +252,8 @@ module folMod =
         then print_infix_term false 12 12 (" " + p) (el 0 args) (el 1 args)
         else print_fargs p args
 
-    let print_fol_formula = print_qformula print_atom
+    let print_fol_formula =
+        print_qformula print_atom
 
     // Added by EGT
     let rec print_fol_formula_list x =
@@ -304,31 +326,51 @@ module folMod =
 
     let rec fvt tm =
         match tm with
-        | Var x      -> [x]
-        | Fn(f,args) -> unions (List.map fvt args)
+        | Var x -> [x]
+        | Fn (f, args) ->
+            unions <| List.map fvt args
 
     let rec var fm =
         match fm with
-        | False | True                             -> []
-        | Atom(R(p,args))                          -> unions (List.map fvt args)
-        | Not(p)                                   -> var p
-        | And(p,q) | Or(p,q) | Imp(p,q) | Iff(p,q) -> union (var p) (var q)
-        | Forall(x,p) | Exists(x,p)                -> insert x (var p)
+        | False
+        | True -> []
+        | Atom (R (p, args)) ->
+            unions (List.map fvt args)
+        | Not p ->
+            var p
+        | And (p, q)
+        | Or (p, q)
+        | Imp (p, q)
+        | Iff (p, q) ->
+            union (var p) (var q)
+        | Forall(x, p)
+        | Exists(x, p) ->
+            insert x (var p)
 
     let rec fv fm =
         match fm with
-        | False | True                             -> []
-        | Atom(R(p,args))                          -> unions (List.map fvt args)
-        | Not(p)                                   -> fv p
-        | And(p,q) | Or(p,q) | Imp(p,q) | Iff(p,q) -> union (fv p) (fv q)
-        | Forall(x,p) | Exists(x,p)                -> subtract (fv p) [x]
+        | False
+        | True -> []
+        | Atom (R (p, args)) ->
+            unions (List.map fvt args)
+        | Not p ->
+            fv p
+        | And (p, q)
+        | Or (p, q)
+        | Imp (p, q)
+        | Iff (p, q) ->
+            union (fv p) (fv q)
+        | Forall (x, p)
+        | Exists (x, p) ->
+            subtract (fv p) [x]
 
 // pg. 131
 // ------------------------------------------------------------------------- //
 // Universal closure of a formula.                                           //
 // ------------------------------------------------------------------------- //
 
-    let generalize fm = itlist mk_forall (fv fm) fm
+    let generalize fm =
+        itlist mk_forall (fv fm) fm
 
 // pg. 131
 // ------------------------------------------------------------------------- //
@@ -337,8 +379,10 @@ module folMod =
 
     let rec tsubst sfn tm =
         match tm with
-        | Var x      -> tryapplyd sfn x tm
-        | Fn(f,args) -> Fn(f,List.map (tsubst sfn) args)
+        | Var x ->
+            tryapplyd sfn x tm
+        | Fn (f, args) ->
+            Fn (f, List.map (tsubst sfn) args)
 
 // pg. 133
 // ------------------------------------------------------------------------- //
@@ -346,26 +390,36 @@ module folMod =
 // ------------------------------------------------------------------------- //
 
     let rec variant x vars =
-        if mem x vars then variant (x + "'") vars 
+        if mem x vars then
+            variant (x + "'") vars 
         else x
 
 // pg. 134
 // ------------------------------------------------------------------------- //
 // Substitution in formulas, with variable renaming.                         //
 // ------------------------------------------------------------------------- //
-
+    
+    // TODO : Optimize using continuation-passing style.
     let rec subst subfn fm =
         match fm with
-        | False           -> False
-        | True            -> True
-        | Atom(R(p,args)) -> Atom(R(p,List.map (tsubst subfn) args))
-        | Not(p)          -> Not(subst subfn p)
-        | And(p,q)        -> And(subst subfn p,subst subfn q)
-        | Or(p,q)         -> Or(subst subfn p,subst subfn q)
-        | Imp(p,q)        -> Imp(subst subfn p,subst subfn q)
-        | Iff(p,q)        -> Iff(subst subfn p,subst subfn q)
-        | Forall(x,p)     -> substq subfn mk_forall x p
-        | Exists(x,p)     -> substq subfn mk_exists x p
+        | False -> False
+        | True -> True
+        | Atom (R (p, args)) ->
+            Atom (R (p, List.map (tsubst subfn) args))
+        | Not p ->
+            Not (subst subfn p)
+        | And (p, q) ->
+            And (subst subfn p, subst subfn q)
+        | Or (p, q) ->
+            Or (subst subfn p, subst subfn q)
+        | Imp (p, q) ->
+            Imp (subst subfn p, subst subfn q)
+        | Iff (p, q) ->
+            Iff (subst subfn p, subst subfn q)
+        | Forall (x, p) ->
+            substq subfn mk_forall x p
+        | Exists (x, p) ->
+            substq subfn mk_exists x p
 
     and substq subfn quant x p =
         let x' = 
