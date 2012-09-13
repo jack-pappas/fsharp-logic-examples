@@ -43,6 +43,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="lics.fs" />
+    <Compile Include="propexamples.fs" />
     <Compile Include="TestSets001.fs" />
     <Compile Include="TestSets002.fs" />
     <Compile Include="cooper_test.fs" />
