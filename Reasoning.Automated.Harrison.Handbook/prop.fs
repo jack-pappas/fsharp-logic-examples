@@ -517,7 +517,7 @@ module prop =
     // OCaml: val trivial : 'a formula list -> bool = <fun>
     // F#:    val trivial : 'a formula list -> bool when 'a : comparison
     let trivial lits =
-        let pos,neg = List.partition positive lits
+        let pos, neg = List.partition positive lits
         intersect pos (image negate neg) <> []
 
 // pg. 59
@@ -530,8 +530,9 @@ module prop =
     let simpdnf fm =
         if fm = False then [] 
         elif fm = True then [[]] 
-        else (let djs = List.filter (non trivial) (purednf(nnf fm))
-            List.filter (fun d -> not(List.exists (fun d' -> psubset d' d) djs)) djs)
+        else
+            let djs = List.filter (non trivial) (purednf (nnf fm))
+            List.filter (fun d -> not (List.exists (fun d' -> psubset d' d) djs)) djs
 
 // pg. 59
 // ------------------------------------------------------------------------- //
