@@ -169,10 +169,10 @@ module lib =
     // pg.618
     // OCaml: val ( --- ) : num -> num -> num list = <fun>
     // F#:    val ( --- ) : int -> int -> int list
-    let rec (---) = 
-        fun m n -> 
-            if m > n then [] 
-            else m::((m + 1) --- n)
+    let inline (---) m n =
+        // TEMP : Until this function/operator is converted to use 'num'
+        // instead of 'int', simply re-use the implementation for the (--) operator.
+        minusMinusImpl (m, n) id
 
     // pg. 619
     // OCaml: val map2 : ('a -> 'b -> 'c) -> 'a list -> 'b list -> 'c list = <fun>
@@ -198,17 +198,13 @@ module lib =
     // pg. 619
     // OCaml: val hd :   'a list -> 'a = <fun>
     // F#:    val head : 'a list -> 'a
-    // use List.head
-//    let hd l =
-//        match l with
-//        | h::t -> h
-//        | _ -> failwith "hd"
+    let inline hd l =
+        List.head l
         
     // pg. 619
     // OCaml: val tl :   'a list -> 'a list = <fun>
     // F#:    val tail : 'a list -> 'a list
-    // use List.tail
-//    let tl l =
+//    let inline tl l =
 //        match l with
 //        | h::t -> t
 //        | _ -> failwith "tl"
@@ -216,15 +212,8 @@ module lib =
     // pg. 619 - list iterator
     // OCaml: val itlist : ('a -> 'b -> 'b) -> 'a list -> 'b -> 'b = <fun>
     // F#:    val itlist : ('a -> 'b -> 'b) -> 'a list -> 'b -> 'b
-    // TODO: Can this be replaced with List.foldBack ?
-    // F#: List.foldBack : ('a -> 'b -> 'b) -> 'a list -> 'b -> 'b
-    // f - accumulator function
-    // l - list
-    // b - initial value
-    let rec itlist f l b =
-        match l with
-        | [] -> b
-        | (h::t) -> f h (itlist f t b)
+    let inline itlist f l b =
+        List.foldBack f l b
         
     // pg. 619
     // OCaml: val end_itlist : ('a -> 'a -> 'a) -> 'a list -> 'a = <fun>
@@ -303,10 +292,10 @@ module lib =
     let rec last l =
         match l with
         | [] ->
-            failwith "last"
+            failwith "Cannot get the last element of an empty list."
         | [x] -> x
         | _ :: tl ->
-            last tl        
+            last tl
         
     /// Private, recursive implementation of 'butlast' which
     /// improves performance by using continuation-passing-style.
@@ -325,7 +314,7 @@ module lib =
     // F#:    val butlast : 'a list -> 'a list
     // val butlast : 'a list -> 'a list
     let butlast l =
-        butlastImpl l id     
+        butlastImpl l id
         
     // pg. 619
     // OCaml: val find : ('a -> bool) -> 'a list -> 'a = <fun>
@@ -346,12 +335,8 @@ module lib =
     // pg. 619
     // OCaml: val el : int -> 'a list -> 'a = <fun>
     // F#:    val el : int -> 'a list -> 'a
-    //
-    // TODO: Replace with List.nth. Note reversal of parameter positions.
-    // F#:    val nth : 'a list -> int -> 'a
-    let rec el n l =
-        if n = 0 then List.head l 
-        else el (n - 1) (List.tail l)
+    let inline el n l =
+        List.nth l n
 
     // pg. 619
     // OCaml: val map : ('a -> 'b) -> 'a list -> 'b list = <fun>
@@ -382,7 +367,7 @@ module lib =
         match l with
         | [] -> []
         | x :: t ->
-            itlist (fun y a -> (x,y) :: a) t (distinctpairs t)
+            itlist (fun y a -> (x, y) :: a) t (distinctpairs t)
         
     // pg. 619
     // OCaml: val chop_list : int -> 'a list -> 'a list * 'a list = <fun>
@@ -392,8 +377,7 @@ module lib =
         if n = 0 then [], l
         else
             try
-                let m, l' =
-                    chop_list (n-1) (List.tail l) 
+                let m, l' = chop_list (n - 1) (List.tail l) 
                 (List.head l) :: m, l'
             with _ ->
                 failwith "chop_list"
@@ -414,7 +398,7 @@ module lib =
             match l with
             | [] -> failwith "insertat: list too short for position to exist"
             | h :: t ->
-                h :: (insertat (i-1) x t)
+                h :: (insertat (i - 1) x t)
         
     // pg. 619
     // OCaml: val forall2 : ('a -> 'b -> bool) -> 'a list -> 'b list -> bool = <fun>
@@ -429,15 +413,8 @@ module lib =
     // pg. 619
     // OCaml: val index : 'a -> 'a list -> int = <fun>
     // F#:    val index : 'a -> ('a list -> int) when 'a : comparison
-    // F# : Use the List.findIndex function here.
-    let index x =
-        let rec ind n l =
-            match l with
-            | []     -> failwith "index"
-            | (h::t) -> 
-                if compare x h = 0 then n 
-                else ind (n + 1) t
-        ind 0
+    let inline index x =
+        List.findIndex ((=) x)
         
     // pg. 619
     // OCaml: val unzip : ('a * 'b) list -> 'a list * 'b list = <fun>
@@ -487,7 +464,7 @@ module lib =
     let rec assoc a l =
         match l with
         | [] -> failwith "find"
-        | (x, y) :: t -> 
+        | (x, y) :: t ->
             if compare x a = 0 then y
             else assoc a t
 
@@ -498,7 +475,7 @@ module lib =
         match l with
         | [] -> failwith "find"
         | (x, y) :: t ->
-            if compare y a = 0 then x 
+            if compare y a = 0 then x
             else rev_assoc a t
         
 
@@ -512,8 +489,7 @@ module lib =
     // TODO : Optimize using continuation-passing style.
     let rec merge comparer l1 l2 =
         match l1, l2 with
-        | [], [] -> []
-        | [], x -> x
+        | [], x
         | x, [] -> x
         | h1 :: t1, h2 :: t2 ->
             if comparer h1 h2 then
@@ -1084,12 +1060,13 @@ module lib =
             let k = hash x
             let rec und t =
                 match t with
-                | Leaf(h,l) when h = k ->
+                | Leaf (h, l) when h = k ->
                     let l' = undefine_list x l
                     if l' = l then t
                     elif l' = [] then Empty
                     else Leaf (h, l')
-                | Branch(p,b,l,r) when k &&& (b - 1) = p ->
+
+                | Branch (p, b, l, r) when k &&& (b - 1) = p ->
                     if k &&& b = 0 then
                         let l' = und l
                         if l' = l then t
@@ -1103,7 +1080,7 @@ module lib =
                         else
                             match r' with
                             | Empty -> l
-                            | _ -> Branch(p, b, l, r')
+                            | _ -> Branch (p, b, l, r')
                 | _ -> t
             und
 
@@ -1282,7 +1259,7 @@ module lib =
     // pg. ???
     // OCaml: val print_fpf : ('a, 'b) func -> unit = <fun>
     // F#:    val print_fpf : func<'a,'b>   -> unit
-    let print_fpf (f:func<'a,'b>) = printf "<func>"
+    let print_fpf (f : func<'a,'b>) = printf "<func>"
 
 // TODO: Convert to using fsi.AddPrinter()
 // #install_printer print_fpf
@@ -1328,7 +1305,7 @@ module lib =
         | Terminal (p, q) ->
             p, q
         | Nonterminal b ->
-            terminus ptn b        
+            terminus ptn b
         
     // pg. ???
     // OCaml: val tryterminus : 'a partition -> 'a -> 'a * int = <fun>
@@ -1355,11 +1332,11 @@ module lib =
     let equate (a, b) (Partition f as ptn) =
         let a', na = tryterminus ptn a
         let b', nb = tryterminus ptn b
-        if a' = b' then f 
+        if a' = b' then f
         elif na <= nb then
-            itlist id [a' |-> Nonterminal b'; b' |-> Terminal(b', na + nb)] f 
+            itlist id [a' |-> Nonterminal b'; b' |-> Terminal (b', na + nb)] f
         else
-            itlist id [b' |-> Nonterminal a'; a' |-> Terminal(a', na + nb)] f
+            itlist id [b' |-> Nonterminal a'; a' |-> Terminal (a', na + nb)] f
         |> Partition
             
     // pg. 622

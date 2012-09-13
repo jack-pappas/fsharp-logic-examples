@@ -12,3 +12,17 @@ Interesting changes from OCaml to F#
 //#r "System.Numerics.dll"    // Refernce GAC version
 //open System.Numerics        // BigInteger is a type not a module so it is not System.Numerics.BigInteger
 
+
+// OCaml Num type is defined as:
+type num = 
+	| Int of int
+	| Big_int of Big_int.big_int
+	| Ratio of Ratio.ratio
+
+// Define an equivalent F# type as:
+type num =
+	| Int of int
+	// Arbitrary-precision integer.
+	| Big_int of System.Numerics.BigInteger
+	// Arbitrary-precision rational.
+	| Ratio of Microsoft.FSharp.Math.BigRational

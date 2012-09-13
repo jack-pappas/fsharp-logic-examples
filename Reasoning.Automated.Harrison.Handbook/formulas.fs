@@ -431,17 +431,17 @@ module formulas =
         | Not p ->
             Not (onatoms f p)
         | And (p, q) ->
-            And (onatoms f p,onatoms f q)
+            And (onatoms f p, onatoms f q)
         | Or (p, q) ->
             Or (onatoms f p,onatoms f q)
         | Imp (p, q) ->
-            Imp (onatoms f p,onatoms f q)
+            Imp (onatoms f p, onatoms f q)
         | Iff (p, q) ->
-            Iff (onatoms f p,onatoms f q)
+            Iff (onatoms f p, onatoms f q)
         | Forall (x, p) ->
-            Forall (x,onatoms f p)
+            Forall (x, onatoms f p)
         | Exists (x, p) ->
-            Exists (x,onatoms f p)
+            Exists (x, onatoms f p)
         | _ -> fm
 
 // pg. 31

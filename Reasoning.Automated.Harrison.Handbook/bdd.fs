@@ -224,16 +224,16 @@ module bdd =
 
     let bddtaut fm = 
         // Note this is a comparison to 1 not an assignment
-        snd(mkbdd (mk_bdd (<),undefined) fm) = 1
+        snd (mkbdd (mk_bdd (<), undefined) fm) = 1
 
 // pg. 105
 // ------------------------------------------------------------------------- //
 // Towards a more intelligent treatment of "definitions".                    //
 // ------------------------------------------------------------------------- //
 
-    let dest_nimp fm = 
-        match fm with 
-        | Not p -> p, False 
+    let dest_nimp fm =
+        match fm with
+        | Not p -> p, False
         | _ -> dest_imp fm
 
     let rec dest_iffdef fm =
@@ -311,12 +311,12 @@ module bdd =
 //        snd(mkbdds undefined (mk_bdd (<),undefined) defs fm') = 1
 
     let ebddtaut fm =
-        let l,r = 
+        let l, r =
             try dest_nimp fm
             with _ -> True, fm
-        let eqs, noneqs = 
-            let parFun fm = 
-                try 
+        let eqs, noneqs =
+            let parFun fm =
+                try
                     dest_iffdef fm |> ignore
                     true
                 with _ -> false
