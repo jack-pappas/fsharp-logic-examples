@@ -166,7 +166,7 @@ module intro =
     // F#:    val lexwhile : (string -> bool) -> string list -> string * string list
     let rec lexwhile prop inp =
         match inp with
-        | c :: cs when prop c -> 
+        | c :: cs when prop c ->
             let tok, rest = lexwhile prop cs
             c + tok, rest
         | _ -> "", inp
@@ -179,7 +179,7 @@ module intro =
         match snd <| lexwhile space inp with
         | [] -> []
         | c :: cs ->
-            let prop = 
+            let prop =
                 if alphanumeric c then alphanumeric
                 else if symbolic c then symbolic
                 else fun c -> false
@@ -196,7 +196,7 @@ module intro =
     let rec parse_expression i =
         match parse_product i with
         | e1, "+" :: i1 ->
-            let e2, i2 = parse_expression i1 
+            let e2, i2 = parse_expression i1
             Add (e1, e2), i2
         | x -> x
 
@@ -204,8 +204,8 @@ module intro =
     // F#:    val parse_product : string list -> expression * string list
     and parse_product i =
         match parse_atom i with
-        | e1, "*" :: i1 -> 
-            let e2, i2 = parse_product i1 
+        | e1, "*" :: i1 ->
+            let e2, i2 = parse_product i1
             Mul (e1, e2), i2
         | x -> x
 
@@ -213,13 +213,13 @@ module intro =
     // F#:    val parse_atom : string list -> expression * string list
     and parse_atom i =
         match i with
-        | [] -> 
+        | [] ->
             failwith "Expected an expression at end of input"
-        | "("::i1 -> 
+        | "(" :: i1 ->
             match parse_expression i1 with
             | e2, ")" :: i2 -> e2, i2
             | _ -> failwith "Expected closing bracket"
-        | tok :: i1 -> 
+        | tok :: i1 ->
             if List.forall numeric (explode tok) then
                 Const (int tok), i1
             else Var tok, i1
@@ -237,7 +237,7 @@ module intro =
 
         match rest with
         | [] -> expr
-        | _  -> failwith "Unparsed input"
+        | _ -> failwith "Unparsed input"
 
     // OCaml: val default_parser : string -> expression = <fun>
     // F#:    val default_parser : (string -> expression)

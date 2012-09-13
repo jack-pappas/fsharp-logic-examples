@@ -78,7 +78,7 @@ module prolog =
 // Rename a rule.                                                            //
 // ------------------------------------------------------------------------- //
 
-    let renamerule k (asm,c) =
+    let renamerule k (asm, c) =
         let fvs = fv (list_conj (c :: asm))
         let n = List.length fvs
         let vvs = List.map (fun i -> "_" + string i) (k -- (k + n - 1))
@@ -99,18 +99,22 @@ module prolog =
                 let rec tryfind f l =
                     match l with
                     | [] -> failwith "tryfind"
-                    | h :: t -> try f h with _ -> tryfind f t
+                    | h :: t ->
+                        try f h
+                        with _ -> tryfind f t
                 tryfind (
                     fun rule ->
-                        let (a,c),k' = 
+                        let (a, c), k' =
                             renamerule k rule
-                        backchain rules (n - 1) k' (unify_literals env (c,g)) (a @ gs))
+                        backchain rules (n - 1) k' (unify_literals env (c, g)) (a @ gs))
                         rules
 
     let hornify cls =
-        let pos,neg = List.partition positive cls
-        if List.length pos > 1 then failwith "non-Horn clause"
-        else (List.map negate neg,if pos = [] then False else List.head pos)
+        let pos, neg = List.partition positive cls
+        if List.length pos > 1 then
+            failwith "non-Horn clause"
+        else
+            List.map negate neg, (if pos = [] then False else List.head pos)
 
     let hornprove fm =
         let rules = List.map hornify (simpcnf (skolemize (Not (generalize fm))))
@@ -122,14 +126,14 @@ module prolog =
 // ------------------------------------------------------------------------- //
 
     let parserule s =
-        let c,rest =
-            parse_formula (parse_infix_atom,parse_atom) [] (lex (explode s))
-        let asm,rest1 =
+        let c, rest =
+            parse_formula (parse_infix_atom, parse_atom) [] (lex (explode s))
+        let asm, rest1 =
             if rest <> [] && List.head rest = ":-"
             then parse_list ","
-                    (parse_formula (parse_infix_atom,parse_atom) []) (List.tail rest)
-            else [],rest
-        if rest1 = [] then (asm,c) 
+                    (parse_formula (parse_infix_atom, parse_atom) []) (List.tail rest)
+            else [], rest
+        if rest1 = [] then asm, c
         else failwith "Extra material after rule"
 
 // pg. 120
@@ -138,14 +142,14 @@ module prolog =
 // ------------------------------------------------------------------------- //
 
     let simpleprolog rules gl =
-        backchain (List.map parserule rules) (-1) 0 undefined [parse gl]
+        backchain (List.map parserule rules) -1 0 undefined [parse gl]
 
 // ------------------------------------------------------------------------- //
 // With instantiation collection to produce a more readable result.          //
 // ------------------------------------------------------------------------- //
 
     let prolog rules gl =
-        let i = solve(simpleprolog rules gl) in
-        mapfilter (fun x -> Atom(R("=",[Var x; apply i x]))) (fv(parse gl))                      
+        let i = solve (simpleprolog rules gl)
+        mapfilter (fun x -> Atom (R ("=", [Var x; apply i x]))) (fv (parse gl))                      
 
 

@@ -96,7 +96,7 @@ module equal =
 // ------------------------------------------------------------------------- //
 
     let rec predicates fm =
-        atom_union (fun (R (p,a)) -> [p, List.length a]) fm
+        atom_union (fun (R (p, a)) -> [p, List.length a]) fm
 
 // pg. 239
 // ------------------------------------------------------------------------- //
@@ -111,24 +111,24 @@ module equal =
             let args_x = List.map (fun x -> Var x) argnames_x
             let args_y = List.map (fun x -> Var x) argnames_y
             let ant = end_itlist mk_and (List.map2 mk_eq args_x args_y)
-            let con = mk_eq (Fn(f,args_x)) (Fn(f,args_y))
-            [itlist mk_forall (argnames_x @ argnames_y) (Imp(ant,con))]
+            let con = mk_eq (Fn (f, args_x)) (Fn (f, args_y))
+            [itlist mk_forall (argnames_x @ argnames_y) (Imp (ant, con))]
 
 // pg. 240
 // ------------------------------------------------------------------------- //
 // And for predicates.                                                       //
 // ------------------------------------------------------------------------- //
 
-    let predicate_congruence (p,n) =
-        if n = 0 then [] 
+    let predicate_congruence (p, n) =
+        if n = 0 then []
         else
             let argnames_x = List.map (fun n -> "x" + (string n)) (1 -- n)
             let argnames_y = List.map (fun n -> "y" + (string n)) (1 -- n)
             let args_x = List.map (fun x -> Var x) argnames_x
             let args_y = List.map (fun x -> Var x) argnames_y
             let ant = end_itlist mk_and (List.map2 mk_eq args_x args_y)
-            let con = Imp(Atom(R(p,args_x)),Atom(R(p,args_y)))
-            [itlist mk_forall (argnames_x @ argnames_y) (Imp(ant,con))]
+            let con = Imp (Atom (R (p, args_x)), Atom (R (p, args_y)))
+            [itlist mk_forall (argnames_x @ argnames_y) (Imp (ant, con))]
 
 // pg. 240
 // ------------------------------------------------------------------------- //
@@ -140,11 +140,11 @@ module equal =
 
     let equalitize fm =
         let allpreds = predicates fm
-        if not (mem ("=",2) allpreds) then fm
+        if not (mem ("=", 2) allpreds) then fm
         else
-            let preds = subtract allpreds ["=",2]
+            let preds = subtract allpreds ["=", 2]
             let funcs = functions fm
             let axioms = itlist (union >>|> function_congruence) funcs
                                 (itlist (union >>|> predicate_congruence) preds
                                         equivalence_axioms)
-            Imp (end_itlist mk_and axioms,fm)
+            Imp (end_itlist mk_and axioms, fm)

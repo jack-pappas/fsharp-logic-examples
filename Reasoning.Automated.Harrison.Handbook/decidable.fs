@@ -92,8 +92,8 @@ module decidable =
         if funcs <> [] then
             failwith "Not decidable"
         else
-            let consts = if cnsts = [] then ["c",0] else cnsts
-            let cntms = List.map (fun (c,_) -> Fn(c,[])) consts
+            let consts = if cnsts = [] then ["c", 0] else cnsts
+            let cntms = List.map (fun (c, _) -> Fn (c, [])) consts
             let alltuples = groundtuples cntms [] 0 (List.length fvs)
             let cjs = simpcnf sfm
             let grounds = List.map (fun tup -> image (image (subst (fpf fvs tup))) cjs) alltuples
@@ -151,14 +151,18 @@ module decidable =
 
     let anglicize_premiss fm =
         match fm with
-        | Forall (_, Imp (Atom (R (p, _)), Atom (R (q, _)))) -> "all " + p + " are " + q
-        | Forall (_, Imp (Atom (R (p, _)), Not (Atom (R (q, _))))) -> "no " + p + " are " + q
-        | Exists (_, And (Atom (R (p, _)), Atom (R (q, _)))) -> "some " + p + " are " + q
-        | Exists (_, And (Atom (R (p, _)), Not (Atom (R (q, _))))) -> "some " + p + " are not " + q
+        | Forall (_, Imp (Atom (R (p, _)), Atom (R (q, _)))) ->
+            sprintf "all %s are %s" p q
+        | Forall (_, Imp (Atom (R (p, _)), Not (Atom (R (q, _))))) ->
+            sprintf "no %s are %s" p q
+        | Exists (_, And (Atom (R (p, _)), Atom (R (q, _)))) ->
+            sprintf "some %s are %s" p q
+        | Exists (_, And (Atom (R (p, _)), Not (Atom (R (q, _))))) ->
+            sprintf "some %s are not %s" p q
 
-    let anglicize_syllogism (Imp(And(t1,t2),t3)) =
-        "If " + anglicize_premiss t1 + " and " + anglicize_premiss t2 + 
-        ", then " + anglicize_premiss t3
+    let anglicize_syllogism (Imp (And (t1, t2), t3)) =
+        sprintf "If %s and %s, then %s"
+            (anglicize_premiss t1) (anglicize_premiss t2) (anglicize_premiss t3)
 
     let all_possible_syllogisms =
         let sylltypes = [premiss_A; premiss_E; premiss_I; premiss_O]
@@ -198,12 +202,15 @@ module decidable =
     let allpredicates dom n = allmappings (alltuples n dom) [false; true]
 
     let decide_finite n fm =
-        let funcs = functions fm 
-        let preds = predicates fm 
-        let dom = 1 -- n
-        let fints = alldepmappings funcs (allfunctions dom)
-        let pints = alldepmappings preds (allpredicates dom)
-        let interps = allpairs (fun f p -> dom, f, p) fints pints
+        let interps =
+            let dom = 1 -- n
+            let fints =
+                let funcs = functions fm
+                alldepmappings funcs (allfunctions dom)
+            let pints =
+                let preds = predicates fm
+                alldepmappings preds (allpredicates dom)
+            allpairs (fun f p -> dom, f, p) fints pints
         let fm' = generalize fm
         List.forall (fun md -> holds md undefined fm') interps
   
@@ -235,7 +242,7 @@ module decidable =
 // ------------------------------------------------------------------------- //
 
     let decide_monadic fm =
-        let funcs = functions fm 
+        let funcs = functions fm
         let preds = predicates fm
         let monadic, other = List.partition (fun (_, ar) -> ar = 1) preds
         if funcs <> [] || List.exists (fun (_, ar) -> ar > 1) other

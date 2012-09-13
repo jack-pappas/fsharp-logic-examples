@@ -79,7 +79,7 @@ module herbrand =
 // Propositional valuation.                                                  //
 // ------------------------------------------------------------------------- //
 
-    let pholds d fm = eval fm (fun p -> d(Atom p))
+    let pholds d fm = eval fm (fun p -> d (Atom p))
 
 // pg. 156
 // ------------------------------------------------------------------------- //
@@ -87,8 +87,8 @@ module herbrand =
 // ------------------------------------------------------------------------- //
 
     let herbfuns fm =
-        let cns,fns = List.partition (fun (_,ar) -> ar = 0) (functions fm)
-        if cns = [] then ["c",0],fns else cns,fns
+        let cns, fns = List.partition (fun (_, ar) -> ar = 0) (functions fm)
+        if cns = [] then ["c", 0], fns else cns, fns
 
 // pg. 159
 // ------------------------------------------------------------------------- //
@@ -97,9 +97,9 @@ module herbrand =
 
     let rec groundterms cntms funcs n =
         if n = 0 then cntms else
-        itlist (fun (f,m) l -> 
+        itlist (fun (f, m) l -> 
             List.map (fun args -> 
-                Fn(f,args))
+                Fn (f, args))
                 (groundtuples cntms funcs (n - 1) m) @ l)
             funcs []
 
@@ -109,7 +109,7 @@ module herbrand =
             else [] 
         else
             itlist (fun k l -> 
-                allpairs (fun h t -> h::t)
+                allpairs (fun h t -> h :: t)
                     (groundterms cntms funcs k)
                     (groundtuples cntms funcs (n - k) (m - 1)) @ l)
                     (0 -- n) []
@@ -120,15 +120,17 @@ module herbrand =
 // ------------------------------------------------------------------------- //
 
     let rec herbloop mfn tfn fl0 cntms funcs fvs n fl tried tuples =
-        printfn "%s" (string(List.length tried) + " ground instances tried; " + 
-                    string(List.length fl) + " items in list");
+        printfn "%i ground instances tried; %i items in list."
+            (List.length tried) (List.length fl)
+
         match tuples with
-        | [] -> let newtups = groundtuples cntms funcs n (List.length fvs)
-                herbloop mfn tfn fl0 cntms funcs fvs (n + 1) fl tried newtups
-        | tup::tups ->
-                let fl' = mfn fl0 (subst(fpf fvs tup)) fl
-                if not(tfn fl') then tup::tried 
-                else herbloop mfn tfn fl0 cntms funcs fvs n fl' (tup::tried) tups
+        | [] ->
+            let newtups = groundtuples cntms funcs n (List.length fvs)
+            herbloop mfn tfn fl0 cntms funcs fvs (n + 1) fl tried newtups
+        | tup :: tups ->
+            let fl' = mfn fl0 (subst (fpf fvs tup)) fl
+            if not (tfn fl') then tup :: tried
+            else herbloop mfn tfn fl0 cntms funcs fvs n fl' (tup :: tried) tups
 
 // pg. 160
 // ------------------------------------------------------------------------- //
@@ -141,11 +143,11 @@ module herbrand =
         herbloop mfn (fun djs -> djs <> [])
 
     let gilmore fm =
-        let sfm = skolemize(Not(generalize fm))
-        let fvs = fv sfm 
-        let consts,funcs = herbfuns sfm
-        let cntms = image (fun (c,_) -> Fn(c,[])) consts
-        List.length(gilmore_loop (simpdnf sfm) cntms funcs fvs 0 [[]] [] [])
+        let sfm = skolemize (Not (generalize fm))
+        let fvs = fv sfm
+        let consts, funcs = herbfuns sfm
+        let cntms = image (fun (c, _) -> Fn (c, [])) consts
+        List.length (gilmore_loop (simpdnf sfm) cntms funcs fvs 0 [[]] [] [])
 
 // pg. 163
 // ------------------------------------------------------------------------- //
@@ -157,11 +159,11 @@ module herbrand =
     let dp_loop = herbloop dp_mfn dpll
 
     let davisputnam fm =
-        let sfm = skolemize(Not(generalize fm))
+        let sfm = skolemize (Not (generalize fm))
         let fvs = fv sfm 
-        let consts,funcs = herbfuns sfm
-        let cntms = image (fun (c,_) -> Fn(c,[])) consts
-        List.length(dp_loop (simpcnf sfm) cntms funcs fvs 0 [] [] [])
+        let consts, funcs = herbfuns sfm
+        let cntms = image (fun (c, _) -> Fn (c, [])) consts
+        List.length (dp_loop (simpcnf sfm) cntms funcs fvs 0 [] [] [])
 
 // pg. 163
 // ------------------------------------------------------------------------- //
@@ -171,10 +173,10 @@ module herbrand =
     let rec dp_refine cjs0 fvs dunno need =
         match dunno with
         | [] -> need
-        | cl::dknow ->
+        | cl :: dknow ->
             let mfn = dp_mfn cjs0 >>|> subst >>|> fpf fvs
             let need' =
-                if dpll(itlist mfn (need @ dknow) []) then cl::need 
+                if dpll (itlist mfn (need @ dknow) []) then cl :: need
                 else need
             dp_refine cjs0 fvs dknow need'
 
@@ -188,8 +190,8 @@ module herbrand =
 // ------------------------------------------------------------------------- //
 
     let davisputnam' fm =
-        let sfm = skolemize(Not(generalize fm))
+        let sfm = skolemize (Not (generalize fm))
         let fvs = fv sfm 
         let consts,funcs = herbfuns sfm
-        let cntms = image (fun (c,_) -> Fn(c,[])) consts
-        List.length(dp_refine_loop (simpcnf sfm) cntms funcs fvs 0 [] [] [])
+        let cntms = image (fun (c, _) -> Fn (c, [])) consts
+        List.length (dp_refine_loop (simpcnf sfm) cntms funcs fvs 0 [] [] [])

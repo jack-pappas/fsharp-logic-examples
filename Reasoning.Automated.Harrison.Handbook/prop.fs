@@ -171,12 +171,12 @@ module prop =
     let rec onallvaluations subfn v ats =
         match ats with
         | [] -> subfn v
-        | p::ps -> 
-            let v' t q = 
-                if q = p then t 
-                else v(q)
-            onallvaluations subfn (v' false) ps &&
-            onallvaluations subfn (v' true) ps
+        | p :: ps ->
+            let v' t q =
+                if q = p then t
+                else v q
+            onallvaluations subfn (v' false) ps
+            && onallvaluations subfn (v' true) ps
             
     // OCaml: val print_truthtable : prop formula -> unit = <fun>
     // F#:    val print_truthtable : prop formula -> unit
@@ -184,18 +184,21 @@ module prop =
         // [P "p"; P "q"; P "r"]
         let ats = atoms fm
         // 5 + 1 = length of false + length of space
-        let width = itlist (max >>|> String.length >>|> pname) ats 5 + 1 in
-        let fixw s = s+String.replicate(width - String.length s) " "
+        let width = itlist (max >>|> String.length >>|> pname) ats 5 + 1
+        let fixw s = s + String.replicate (width - String.length s) " "
         let truthstring p = fixw (if p then "true" else "false")
         let mk_row v =
-            let lis = List.map (fun x -> truthstring(v x)) ats
-            let ans = truthstring(eval fm v)
-            printf "%s" (itlist (+) lis ("| "+ans)); printfn ""; true
+            let lis = List.map (fun x -> truthstring (v x)) ats
+            let ans = truthstring (eval fm v)
+            printf "%s" (itlist (+) lis ("| " + ans))
+            printfn ""
+            true
         let seperator = String.replicate (width * (List.length ats) + 9) "-"
-        printf "%s" (itlist (fun s t -> fixw(pname s) + t) ats "| formula");
-        printfn ""; printf "%s" seperator; printfn "";
+        printfn "%s" (itlist (fun s t -> fixw(pname s) + t) ats "| formula")
+        printfn "%s" seperator
         let _ = onallvaluations mk_row (fun x -> false) ats
-        printfn "%s" seperator; printfn ""
+        printfn "%s" seperator
+        printfn ""
 
 // pg. 41
 // ------------------------------------------------------------------------- //
@@ -548,15 +551,16 @@ module prop =
 
     // OCaml: val purecnf : 'a formula -> 'a formula list list = <fun>
     // F#:    val purecnf : 'a formula -> 'a formula list list when 'a : comparison
-    let purecnf fm = image (image negate) (purednf(nnf(Not fm)))
+    let purecnf fm = image (image negate) (purednf (nnf (Not fm)))
     
     // OCaml: val simpcnf : 'a formula -> 'a formula list list = <fun>
     // F#:    val simpcnf : 'a formula -> 'a formula list list when 'a : comparison
     let simpcnf fm =
-        if   fm = False then [[]]
-        elif fm = True then [] 
-        else (let cjs = List.filter (non trivial) (purecnf fm)
-            List.filter (fun c -> not(List.exists (fun c' -> psubset c' c) cjs)) cjs)
+        if fm = False then [[]]
+        elif fm = True then []
+        else
+            let cjs = List.filter (non trivial) (purecnf fm)
+            List.filter (fun c -> not (List.exists (fun c' -> psubset c' c) cjs)) cjs
             
     // OCaml: val cnf : 'a formula -> 'a formula = <fun>
     // F#:    val cnf : 'a formula -> 'a formula when 'a : comparison

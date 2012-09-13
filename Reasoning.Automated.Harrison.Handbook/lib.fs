@@ -677,11 +677,11 @@ module lib =
                 // TODO : The first two cases here can be simplified
                 // by using the (<=) to test both cases at once.
                 if h1 = h2 then
-                    h1::(union t1 t2)
+                    h1 :: (union t1 t2)
                 elif h1 < h2 then
-                    h1::(union t1 l2)
+                    h1 :: (union t1 l2)
                 else
-                    h2::(union l1 t2)
+                    h2 :: (union l1 t2)
         fun s1 s2 ->
             union (setify s1) (setify s2)
         

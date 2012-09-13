@@ -85,7 +85,8 @@ module skolem =
             if mem x (fv p) then fm else p
         | Exists (x, p) ->
             if mem x (fv p) then fm else p
-        | _ -> psimplify1 fm
+        | _ ->
+            psimplify1 fm
 
     // OCaml: val simplify : expression  -> expression = <fun>
     // F#:    val simplify : fol formula -> fol formula
@@ -213,22 +214,22 @@ module skolem =
 
     let rec skolem fm fns =
         match fm with
-        | Exists(y,p) ->
-            let xs = fv(fm)
+        | Exists (y, p) ->
+            let xs = fv fm
             let f = variant (if xs = [] then "c_" + y else "f_" + y) fns
-            let fx = Fn(f,List.map (fun x -> Var x) xs)
-            skolem (subst (y |=> fx) p) (f::fns)
+            let fx = Fn (f,List.map (fun x -> Var x) xs)
+            skolem (subst (y |=> fx) p) (f :: fns)
         | Forall (x, p) -> 
-            let p',fns' = skolem p fns 
+            let p', fns' = skolem p fns 
             Forall (x, p'), fns'
-        | And (p, q) -> skolem2 (fun (p,q) -> And (p,q)) (p,q) fns
-        | Or (p, q) -> skolem2 (fun (p,q) -> Or (p,q)) (p,q) fns
-        | _ -> fm,fns
+        | And (p, q) -> skolem2 (fun (p, q) -> And (p, q)) (p, q) fns
+        | Or (p, q) -> skolem2 (fun (p, q) -> Or (p, q)) (p, q) fns
+        | _ -> fm, fns
 
-    and skolem2 cons (p,q) fns =
-        let p',fns' = skolem p fns
-        let q',fns'' = skolem q fns'
-        cons(p',q'),fns''
+    and skolem2 cons (p, q) fns =
+        let p', fns' = skolem p fns
+        let q', fns'' = skolem q fns'
+        cons (p', q'), fns''
 
 // pg. 149
 // ------------------------------------------------------------------------- //
@@ -236,7 +237,7 @@ module skolem =
 // ------------------------------------------------------------------------- //
 
     let askolemize fm =
-        fst(skolem (nnf(simplify fm)) (List.map fst (functions fm)))
+        fst (skolem (nnf (simplify fm)) (List.map fst (functions fm)))
 
     let rec specialize fm =
         match fm with
@@ -244,7 +245,8 @@ module skolem =
             specialize p
         | _ -> fm
 
-    let skolemize fm = specialize(pnf(askolemize fm))
+    let skolemize fm =
+        specialize (pnf (askolemize fm))
 
 
 

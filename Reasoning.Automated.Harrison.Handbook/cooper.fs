@@ -133,7 +133,7 @@ module cooper =
     // F#:    val linear_add : string list -> term -> term -> term
     let rec linear_add vars tm1 tm2 =
         match tm1, tm2 with
-        | Fn ("+",[Fn("*",[c1; Var x1]); r1]), Fn ("+",[Fn("*",[c2; Var x2]); r2]) ->
+        | Fn ("+", [Fn ("*", [c1; Var x1]); r1]), Fn ("+", [Fn ("*", [c2; Var x2]); r2]) ->
             if x1 = x2 then
                 let c = numeral2 (+) c1 c2
                 if c = zero then
@@ -147,7 +147,7 @@ module cooper =
 
         | Fn ("+", [Fn ("*", [c1; Var x1]); r1]), k2 ->
             Fn ("+", [Fn ("*", [c1; Var x1]); linear_add vars r1 k2])
-        | k1, Fn ("+",[Fn ("*",[c2; Var x2]); r2]) ->
+        | k1, Fn ("+", [Fn ("*", [c2; Var x2]); r2]) ->
             Fn ("+", [Fn ("*", [c2; Var x2]); linear_add vars k1 r2])
         | _ ->
             numeral2 (+) tm1 tm2
@@ -204,18 +204,18 @@ module cooper =
     // F#:    val linform : string list -> fol formula -> fol formula
     let linform vars fm =
         match fm with
-        | Atom (R ("divides", [c;t])) ->
-            Atom(R("divides",[numeral1 abs c; lint vars t]))
-        | Atom (R ("=", [s;t])) ->
-            mkatom vars "=" (Fn("-",[t;s]))
-        | Atom (R ("<", [s;t])) ->
-            mkatom vars "<" (Fn("-",[t;s]))
-        | Atom (R (">", [s;t])) ->
-            mkatom vars "<" (Fn("-",[s;t]))
-        | Atom (R ("<=", [s;t])) ->
-            mkatom vars "<" (Fn("-",[Fn("+",[t;Fn("1",[])]);s]))
-        | Atom (R (">=", [s;t])) ->
-            mkatom vars "<" (Fn("-",[Fn("+",[s;Fn("1",[])]);t]))
+        | Atom (R ("divides", [c; t])) ->
+            Atom (R ("divides", [numeral1 abs c; lint vars t]))
+        | Atom (R ("=", [s; t])) ->
+            mkatom vars "=" (Fn ("-", [t; s]))
+        | Atom (R ("<", [s; t])) ->
+            mkatom vars "<" (Fn ("-", [t; s]))
+        | Atom (R (">", [s; t])) ->
+            mkatom vars "<" (Fn ("-", [s; t]))
+        | Atom (R ("<=", [s; t])) ->
+            mkatom vars "<" (Fn ("-", [Fn ("+", [t; Fn ("1", [])]); s]))
+        | Atom (R (">=", [s; t])) ->
+            mkatom vars "<" (Fn ("-", [Fn ("+", [s; Fn ("1", [])]); t]))
         | _ -> fm
   
 // pg.341
@@ -240,7 +240,7 @@ module cooper =
     // F#:    val formlcm : term -> fol formula -> int
     let rec formlcm x fm =
         match fm with
-        | Atom (R (p, [_; Fn ("+", [Fn ("*", [c;y]); z])]))
+        | Atom (R (p, [_; Fn ("+", [Fn ("*", [c; y]); z])]))
             when y = x ->
             abs (dest_numeral c)
         | Not p ->
@@ -386,10 +386,10 @@ module cooper =
     // F#:    val cooper : string list -> fol formula -> fol formula
     let cooper vars fm =
         match fm with
-        | Exists(x0,p0) ->
+        | Exists (x0, p0) ->
             let x = Var x0
             let p = unitycoeff x p0
-            let p_inf = simplify(minusinf x p) 
+            let p_inf = simplify (minusinf x p) 
             let bs = bset x p
             let js = 1 --- divlcm x p
             let p_element j b = linrep vars x (linear_add vars b (mk_numeral j)) p
@@ -494,4 +494,4 @@ module cooper =
 
     // F#: val natural_qelim : (fol formula -> fol formula)
     let natural_qelim =
-        integer_qelim >>|> relativize(fun x -> Atom (R ("<=",[zero; Var x])))
+        integer_qelim >>|> relativize (fun x -> Atom (R ("<=", [zero; Var x])))

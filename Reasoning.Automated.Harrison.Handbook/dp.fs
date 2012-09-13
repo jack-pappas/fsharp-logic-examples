@@ -98,7 +98,7 @@ module dp =
     // OCaml : 'a formula list list -> 'a formula list list = <fun>
     // F#    : 'a formula list list -> 'a formula list list option
     let affirmative_negative_rule clauses =
-        let neg',pos = List.partition negative (unions clauses)
+        let neg', pos = List.partition negative (unions clauses)
         let neg = image negate neg'
         let pos_only = subtract pos neg 
         let neg_only = subtract neg pos
@@ -106,13 +106,13 @@ module dp =
         if pureItem = [] then None
         else
             let clauses' = List.filter (fun cl -> intersect cl pureItem = []) clauses
-            Some(clauses')
+            Some clauses'
             
     // TODO: Verify use of List.partition works
     let resolve_on p clauses =
         let p' = negate p 
-        let pos,notpos = List.partition (mem p) clauses
-        let neg,other = List.partition (mem p') notpos
+        let pos, notpos = List.partition (mem p) clauses
+        let neg, other = List.partition (mem p') notpos
         let res0 =
             let pos' = image (List.filter (fun l -> l <> p)) pos
             let neg' = image (List.filter (fun l -> l <> p')) neg
@@ -121,8 +121,8 @@ module dp =
         clauses'
 
     let resolution_blowup cls l =
-        let m = List.length(List.filter (mem l) cls)
-        let n = List.length(List.filter (mem (negate l)) cls)
+        let m = List.length (List.filter (mem l) cls)
+        let n = List.length (List.filter (mem (negate l)) cls)
         m * n - m - n
 
     let resolution_rule clauses =
@@ -144,25 +144,25 @@ module dp =
             | None ->
                 match affirmative_negative_rule clauses with
                 | Some value -> dp value
-                | None       -> dp (resolution_rule clauses)
+                | None -> dp (resolution_rule clauses)
 
 // pg. 84
 // ------------------------------------------------------------------------- //
 // Davis-Putnam satisfiability tester and tautology checker.                 //
 // ------------------------------------------------------------------------- //
 
-    let dpsat fm = dp(defcnfs fm)
+    let dpsat fm = dp (defcnfs fm)
 
-    let dptaut fm = not(dpsat(Not fm))
+    let dptaut fm = not (dpsat (Not fm))
 
 // pg. 85
 // ------------------------------------------------------------------------- //
 // The same thing but with the DPLL procedure.                               //
 // ------------------------------------------------------------------------- //
 
-    let posneg_count cls l =                         
-        let m = List.length(List.filter (mem l) cls)                 
-        let n = List.length(List.filter (mem (negate l)) cls)
+    let posneg_count cls l =
+        let m = List.length (List.filter (mem l) cls)                 
+        let n = List.length (List.filter (mem (negate l)) cls)
         m + n                                  
 
     let rec dpll clauses =       
@@ -174,14 +174,14 @@ module dp =
             | None ->
                 match affirmative_negative_rule clauses with
                 | Some value -> dpll value
-                | None       -> 
+                | None -> 
                     let pvs = List.filter positive (unions clauses)
                     let p = maximize (posneg_count clauses) pvs
                     dpll (insert [p] clauses) || dpll (insert [negate p] clauses)
                                                      
-    let dpllsat fm = dpll(defcnfs fm)
+    let dpllsat fm = dpll (defcnfs fm)
 
-    let dplltaut fm = not(dpllsat(Not fm))                   
+    let dplltaut fm = not (dpllsat (Not fm))                   
 
 // pg.86
 // ------------------------------------------------------------------------- //
@@ -192,46 +192,54 @@ module dp =
 
     let unassigned =
         let litabs p = 
-            match p with 
-            | Not q -> q 
+            match p with
+            | Not q -> q
             | _ -> p
-        fun cls trail -> subtract (unions(image (image litabs) cls))
-                                (image (litabs >>|> fst) trail)
+        fun cls trail ->
+            subtract (unions (image (image litabs) cls))
+                (image (litabs >>|> fst) trail)
 
-    let rec unit_subpropagate (cls,fn,trail) =
-        let cls' = List.map (List.filter ((not) >>|> defined fn >>|> negate)) cls
-        let uu = function [c] when not(defined fn c) -> [c] | _ -> failwith ""
-        let newunits = unions(mapfilter uu cls')
-        if newunits = [] then (cls',fn,trail) else
-        let trail' = itlist (fun p t -> (p,Deduced)::t) newunits trail
-        let fn' = itlist (fun u -> (u |-> ())) newunits fn
-        unit_subpropagate (cls',fn',trail')
+    let rec unit_subpropagate (cls, fn, trail) =
+        let cls' = List.map (List.filter (not >>|> defined fn >>|> negate)) cls
+        let uu = function
+            | [c] when not (defined fn c) -> [c]
+            | _ -> failwith ""
+        let newunits = unions (mapfilter uu cls')
+        if newunits = [] then
+            cls', fn, trail
+        else
+            let trail' = itlist (fun p t -> (p, Deduced) :: t) newunits trail
+            let fn' = itlist (fun u -> u |-> ()) newunits fn
+            unit_subpropagate (cls', fn', trail')
 
-    let unit_propagate (cls,trail) =
-        let fn = itlist (fun (x,_) -> (x |-> ())) trail undefined
-        let cls',fn',trail' = unit_subpropagate (cls,fn,trail)
-        cls',trail'
+    let unit_propagate (cls, trail) =
+        let fn = itlist (fun (x, _) -> x |-> ()) trail undefined
+        let cls', fn', trail' = unit_subpropagate (cls, fn, trail)
+        cls', trail'
 
     let rec backtrack trail =
         match trail with
-        | (p,Deduced)::tt -> backtrack tt
+        | (p, Deduced) :: tt ->
+            backtrack tt
         | _ -> trail
 
     let rec dpli cls trail =
-        let cls',trail' = unit_propagate (cls,trail)
+        let cls', trail' = unit_propagate (cls, trail)
         if mem [] cls' then
             match backtrack trail with
-            | (p,Guessed)::tt -> dpli cls ((negate p,Deduced)::tt)
+            | (p, Guessed) :: tt ->
+                dpli cls ((negate p, Deduced) :: tt)
             | _ -> false
             else
                 match unassigned cls trail' with
                 | [] -> true
-                | ps -> let p = maximize (posneg_count cls') ps
-                        dpli cls ((p,Guessed)::trail')
+                | ps ->
+                    let p = maximize (posneg_count cls') ps
+                    dpli cls ((p, Guessed) :: trail')
 
     let dplisat fm = dpli (defcnfs fm) []
 
-    let dplitaut fm = not(dplisat(Not fm))
+    let dplitaut fm = not (dplisat (Not fm))
 
 // pg. 88
 // ------------------------------------------------------------------------- //
@@ -240,29 +248,30 @@ module dp =
 
     let rec backjump cls p trail =
         match backtrack trail with
-        | (q,Guessed)::tt ->
-            let cls',trail' = unit_propagate (cls,(p,Guessed)::tt)
+        | (q, Guessed) :: tt ->
+            let cls', trail' = unit_propagate (cls, (p, Guessed) :: tt)
             if mem [] cls' then backjump cls p tt else trail
         | _ -> trail
 
     let rec dplb cls trail =
-        let cls',trail' = unit_propagate (cls,trail)
+        let cls', trail' = unit_propagate (cls, trail)
         if mem [] cls' then
             match backtrack trail with
-            | (p,Guessed)::tt ->
+            | (p, Guessed) :: tt ->
                 let trail' = backjump cls p tt
-                let declits = List.filter (fun (_,d) -> d = Guessed) trail'
+                let declits = List.filter (fun (_, d) -> d = Guessed) trail'
                 let conflict = insert (negate p) (image (negate >>|> fst) declits)
-                dplb (conflict::cls) ((negate p,Deduced)::trail')
+                dplb (conflict :: cls) ((negate p, Deduced) :: trail')
             | _ -> false
         else
             match unassigned cls trail' with
             | [] -> true
-            | ps -> let p = maximize (posneg_count cls') ps
-                    dplb cls ((p,Guessed)::trail')
+            | ps ->
+                let p = maximize (posneg_count cls') ps
+                dplb cls ((p, Guessed) :: trail')
 
     let dplbsat fm = dplb (defcnfs fm) []
 
-    let dplbtaut fm = not(dplbsat(Not fm))
+    let dplbtaut fm = not (dplbsat (Not fm))
 
 

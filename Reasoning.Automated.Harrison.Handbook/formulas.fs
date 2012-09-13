@@ -205,11 +205,11 @@ module formulas =
 //        (if p then printf ")" else ())
 
     let bracket p n f x y =
-      if p then print_string "("
-      open_box n
-      f x y
-      close_box ()
-      if p then print_string ")"
+        if p then print_string "("
+        open_box n
+        f x y
+        close_box ()
+        if p then print_string ")"
 
     // OCaml: val strip_quant : 'a formula -> string list * 'a formula = <fun>
     // F#:    val strip_quant : 'a formula -> string list * 'a formula
@@ -316,13 +316,13 @@ module formulas =
 //        printfn ">>"
 
     let print_qformula pfn fm =
-      open_box 0
-      print_string "<<"
-      open_box 0
-      print_formula pfn fm
-      close_box ()
-      print_string ">>"
-      close_box ()
+        open_box 0
+        print_string "<<"
+        open_box 0
+        print_formula pfn fm
+        close_box ()
+        print_string ">>"
+        close_box ()
 
 // pg.30
 // ------------------------------------------------------------------------- //

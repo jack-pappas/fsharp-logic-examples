@@ -83,9 +83,9 @@ module tableaux =
     let rec unify_literals env tmp =
         match tmp with
         | Atom (R (p1, a1)), Atom (R (p2, a2)) ->
-            unify env [Fn(p1,a1),Fn(p2,a2)]
+            unify env [Fn (p1, a1), Fn (p2, a2)]
         | Not p, Not q ->
-            unify_literals env (p,q)
+            unify_literals env (p, q)
         | False, False -> env
         | _ -> failwith "Can't unify literals"
 
@@ -94,7 +94,7 @@ module tableaux =
 // Unify complementary literals.                                             //
 // ------------------------------------------------------------------------- //
 
-    let unify_complements env (p,q) =
+    let unify_complements env (p, q) =
         unify_literals env (p, negate q)
 
 // pg. 174
@@ -150,7 +150,7 @@ module tableaux =
 // More standard tableau procedure, effectively doing DNF incrementally.     //
 // ------------------------------------------------------------------------- //
 
-    let rec tableau (fms,lits,n) cont (env,k) =
+    let rec tableau (fms, lits, n) cont (env, k) =
         if n < 0 then failwith "no proof at this level" 
         else
             match fms with
@@ -166,13 +166,15 @@ module tableaux =
             | fm :: unexp ->
                 let rec tryfind f l =
                     match l with
-                    | []     -> failwith "tryfind"
-                    | h::t -> 
+                    | [] -> failwith "tryfind"
+                    | h :: t ->
                         try f h
                         with _ ->
                             tryfind f t
-                try lits |> tryfind (fun l ->
-                    cont (unify_complements env (fm, l), k))
+                try
+                    lits
+                    |> tryfind (fun l ->
+                        cont (unify_complements env (fm, l), k))
                 with _ ->
                     tableau (unexp, fm :: lits, n) cont (env, k)
 
@@ -184,7 +186,10 @@ module tableaux =
             deepen f (n + 1)
         
     let tabrefute fms =
-        deepen (fun n -> tableau (fms, [], n) id (undefined, 0) |> ignore; n) 0
+        deepen (fun n ->
+            tableau (fms, [], n) id (undefined, 0)
+            |> ignore
+            n) 0
 
     let tab fm =
         let sfm = askolemize (Not (generalize fm))

@@ -210,7 +210,7 @@ module qelim =
                     let lefts, rights = List.partition (fun (Atom (R ("<", [s; t]))) -> t = Var x) cjs
                     let ls = List.map (fun (Atom (R ("<", [l;_]))) -> l) lefts
                     let rs = List.map (fun (Atom (R ("<", [_;r]))) -> r) rights
-                    list_conj (allpairs (fun l r -> Atom (R ("<", [l;r]))) ls rs)
+                    list_conj (allpairs (fun l r -> Atom (R ("<", [l; r]))) ls rs)
         | _ -> failwith "dlobasic"
 
 // pg. 335
@@ -223,11 +223,11 @@ module qelim =
     let afn_dlo vars fm =
         match fm with
         | Atom (R ("<=", [s; t])) ->
-            Not (Atom (R ("<", [t;s])))
+            Not (Atom (R ("<", [t; s])))
         | Atom (R (">=", [s; t])) ->
-            Not (Atom (R ("<", [s;t])))
+            Not (Atom (R ("<", [s; t])))
         | Atom (R (">", [s; t])) ->
-            Atom (R ("<", [t;s]))
+            Atom (R ("<", [t; s]))
         | _ -> fm
 
     // OCaml : val quelim_dlo : fol formula -> fol formula = <fun>

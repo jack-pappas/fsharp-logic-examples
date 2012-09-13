@@ -86,7 +86,7 @@ module eqelim =
           let dest_eq fm =
             match fm with
             | Atom (R ("=", [s;t])) ->
-                Some(s,t)
+                Some(s, t)
             | _ -> None
 
           // val tryfind : ('a -> ('b * 'c) option) -> 'a list -> ('b * 'c) option
@@ -158,7 +158,7 @@ module eqelim =
                     | Some x -> Some x
                     | None -> tryfind f t
 
-            tryfind find_nestnonvar [s;t]
+            tryfind find_nestnonvar [s; t]
 
         | Atom (R (p, args)) ->
             // TODO : Is this correct? The 'match' always
@@ -166,15 +166,18 @@ module eqelim =
             match find is_nonvar args with
             | Some x -> Some x
             | None -> None
-        | Not p       -> find_nvsubterm p
-//      | False       -> failwith "How did we get here"
-//      | True        -> failwith "How did we get here"
-//      | And(_,_)    -> failwith "How did we get here"
-//      | Or(_,_)     -> failwith "How did we get here"
-//      | Imp(_,_)    -> failwith "How did we get here"
-//      | Iff(_,_)    -> failwith "How did we get here"
-//      | Forall(_,_) -> failwith "How did we get here"
-//      | Exists(_,_) -> failwith "How did we get here"
+
+        | Not p ->
+            find_nvsubterm p
+
+//        | False
+//        | True
+//        | And (_,_)
+//        | Or (_,_)
+//        | Imp (_,_)
+//        | Iff (_,_)
+//        | Forall (_,_)
+//        | Exists (_,_)
         | _ -> failwith "How did we get here"
 
 // pg. 295
@@ -190,7 +193,7 @@ module eqelim =
         | Some x -> x
         | None ->
             match tm with
-            | Fn (f,args) ->
+            | Fn (f, args) ->
                 Fn (f, List.map (replacet rfn) args)
             | _ -> tm
 
@@ -217,12 +220,13 @@ module eqelim =
 
       match t_option with
       | None -> cls
-      | Some t -> 
+      | Some t ->
           let w = variant "w" fvs
           let cls' = List.map (replace (t |=> Some (Var w))) cls
-          emodify (w :: fvs) (Not (mk_eq t (Var w)) :: cls')      
+          emodify (w :: fvs) (Not (mk_eq t (Var w)) :: cls')
 
-    let modify_E cls = emodify (itlist (union >>|> fv) cls []) cls
+    let modify_E cls =
+        emodify (itlist (union >>|> fv) cls []) cls
 
 // pg. 296
 // ------------------------------------------------------------------------- //
@@ -240,14 +244,15 @@ module eqelim =
 // ------------------------------------------------------------------------- //
 
     let bpuremeson fm =
-        let cls = brand(simpcnf(specialize(pnf fm)))
+        let cls = brand (simpcnf (specialize (pnf fm)))
         let rules = itlist ((@) >>|> contrapositives) cls []
         deepen (fun n ->
-            mexpand002 rules [] False id (undefined, n, 0) |> ignore
+            mexpand002 rules [] False id (undefined, n, 0)
+            |> ignore
             n) 0
 
     let bmeson fm =
-      let fm1 = askolemize(Not(generalize fm))
+      let fm1 = askolemize (Not (generalize fm))
       List.map (bpuremeson >>|> list_conj) (simpdnf fm1)
 
     // Moved from section - Older stuff not now in the text

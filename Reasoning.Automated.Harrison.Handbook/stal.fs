@@ -79,10 +79,11 @@ module stal =
 // ------------------------------------------------------------------------- //
 
     let triplicate fm =
-        let fm' = nenf fm
-        let n = 1 + overatoms (max_varindex "p_" >>|> pname) fm' (0)
-        let (p,defs,_) = maincnf (fm',undefined,n)
-        p,List.map (snd >>|> snd) (graph defs)
+        let p, defs, _ =
+            let fm' = nenf fm
+            let n = 1 + overatoms (max_varindex "p_" >>|> pname) fm' 0
+            maincnf (fm', undefined, n)
+        p, List.map (snd >>|> snd) (graph defs)
 
 // pg. 92
 // ------------------------------------------------------------------------- //
@@ -110,7 +111,7 @@ module stal =
             if canonize rel p = canonize rel q then
                 irredundant rel oth
             else
-                insert (p, q) (irredundant (equate2 (p,q) rel) oth)
+                insert (p, q) (irredundant (equate2 (p, q) rel) oth)
 
     let consequences (p, q as peq) fm eqs =
         let follows (r, s) =
@@ -123,7 +124,7 @@ module stal =
         let lits = union poslits (List.map negate poslits)
         // TODO : From here on down, the code can be reformatted to form a pipeline
         // using the (|>) operator instead of assigning intermediate results to variables.
-        let pairs = allpairs (fun p q -> p,q) lits lits
+        let pairs = allpairs (fun p q -> p, q) lits lits
         let npairs = List.filter (fun (p, q) -> atom p <> atom q) pairs
         let eqs = setify <| List.map align npairs
         let raw = List.map (fun p -> p, consequences p fm eqs) eqs
@@ -136,30 +137,40 @@ module stal =
 
     let trigger =
         match List.map triggers
-            [(parse_prop_formula "p <=> q /\ r"); (parse_prop_formula "p <=> q \/ r");
-            (parse_prop_formula "p <=> (q ==> r)"); (parse_prop_formula "p <=> (q <=> r)")] with
-            | [trig_and; trig_or; trig_imp; trig_iff] -> 
-                let p = (parse_prop_formula "p") 
-                let q = (parse_prop_formula "q") 
-                let r = (parse_prop_formula "r")
-                let ddnegate fm = 
-                    match fm with 
-                    | Not(Not p) -> p 
-                    | _ -> fm
-                // TODO: Figure out how to use match with with this let to remove warning
-                let inst_fn [x;y;z] =
-                    let subfn = fpf [P"p"; P"q"; P"r"] [x; y; z]
-                    ddnegate >>|> psubst subfn
-                let inst2_fn i (p,q) = align(inst_fn i p,inst_fn i q)
-                let instn_fn i (a,c) = inst2_fn i a,List.map (inst2_fn i) c
-                let inst_trigger = List.map >>|> instn_fn
-                function 
-                | (Iff(x,And(y,z))) -> inst_trigger [x;y;z] trig_and
-                | (Iff(x,Or(y,z))) -> inst_trigger [x;y;z] trig_or
-                | (Iff(x,Imp(y,z))) -> inst_trigger [x;y;z] trig_imp
-                | (Iff(x,Iff(y,z))) -> inst_trigger [x;y;z] trig_iff
-                | _ -> failwith "How did we get here?"
-            | _ -> failwith "How did we get here?"
+               [parse_prop_formula "p <=> q /\ r";
+                parse_prop_formula "p <=> q \/ r";
+                parse_prop_formula "p <=> (q ==> r)";
+                parse_prop_formula "p <=> (q <=> r)"; ] with
+        | [trig_and; trig_or; trig_imp; trig_iff] ->
+            let p = parse_prop_formula "p"
+            let q = parse_prop_formula "q"
+            let r = parse_prop_formula "r"
+            let ddnegate fm =
+                match fm with
+                | Not (Not p) -> p
+                | _ -> fm
+            // TODO: Figure out how to use match with with this let to remove warning
+            let inst_fn [x; y; z] =
+                let subfn = fpf [P"p"; P"q"; P"r"] [x; y; z]
+                ddnegate >>|> psubst subfn
+            let inst2_fn i (p, q) =
+                align (inst_fn i p, inst_fn i q)
+            let instn_fn i (a, c) =
+                inst2_fn i a, List.map (inst2_fn i) c
+            let inst_trigger = List.map >>|> instn_fn
+            function
+            | Iff (x, And (y, z)) ->
+                inst_trigger [x; y; z] trig_and
+            | Iff (x, Or (y, z)) ->
+                inst_trigger [x; y; z] trig_or
+            | Iff (x, Imp (y, z)) ->
+                inst_trigger [x; y; z] trig_imp
+            | Iff (x, Iff (y, z)) ->
+                inst_trigger [x; y; z] trig_iff
+            | _ ->
+                failwith "How did we get here?"
+        | _ ->
+            failwith "How did we get here?"
 
 // pg. 95
 // ------------------------------------------------------------------------- //
@@ -168,7 +179,7 @@ module stal =
 
     let relevance trigs =
         let insert_relevant p trg f = (p |-> insert trg (tryapplyl f p)) f
-        let insert_relevant2 ((p,q),_ as trg) f =
+        let insert_relevant2 ((p, q),_ as trg) f =
             insert_relevant p trg (insert_relevant q trg f)
         itlist insert_relevant2 trigs undefined
 
@@ -177,23 +188,23 @@ module stal =
 // Merging of equiv classes and relevancies.                                 //
 // ------------------------------------------------------------------------- //
 
-    let equatecons (p0,q0) (eqv,rfn as erf) =
-        let p = canonize eqv p0 
+    let equatecons (p0, q0) (eqv, rfn as erf) =
+        let p = canonize eqv p0
         let q = canonize eqv q0
-        if p = q then [],erf 
+        if p = q then [], erf
         else
-            let p' = canonize eqv (negate p0) 
+            let p' = canonize eqv (negate p0)
             let q' = canonize eqv (negate q0)
-            let eqv' = equate2(p,q) eqv
-            let sp_pos = tryapplyl rfn p 
+            let eqv' = equate2 (p, q) eqv
+            let sp_pos = tryapplyl rfn p
             let sp_neg = tryapplyl rfn p'
-            let sq_pos = tryapplyl rfn q 
+            let sq_pos = tryapplyl rfn q
             let sq_neg = tryapplyl rfn q'
             let rfn' =
                 (canonize eqv' p |-> union sp_pos sq_pos)
                     ((canonize eqv' p' |-> union sp_neg sq_neg) rfn)
             let nw = union (intersect sp_pos sq_pos) (intersect sp_neg sq_neg)
-            itlist (union >>|> snd) nw [],(eqv',rfn')
+            itlist (union >>|> snd) nw [], (eqv', rfn')
 
 // pg. 96
 // ------------------------------------------------------------------------- //
@@ -203,8 +214,8 @@ module stal =
     let rec zero_saturate erf assigs =
         match assigs with
         | [] -> erf
-        | (p,q)::ts -> 
-            let news,erf' = equatecons (p,q) erf
+        | (p, q) :: ts ->
+            let news, erf' = equatecons (p, q) erf
             zero_saturate erf' (union ts news)
 
 // pg. 96
@@ -213,10 +224,10 @@ module stal =
 // ------------------------------------------------------------------------- //
 
     let zero_saturate_and_check erf trigs =
-        let (eqv',rfn' as erf') = zero_saturate erf trigs
+        let (eqv', rfn' as erf') = zero_saturate erf trigs
         let vars = List.filter positive (equated eqv')
-        if List.exists (fun x -> canonize eqv' x = canonize eqv' (Not x)) vars
-        then snd(equatecons (True,Not True) erf') 
+        if List.exists (fun x -> canonize eqv' x = canonize eqv' (Not x)) vars then
+            snd <| equatecons (True, Not True) erf'
         else erf'
 
 // pg. 96
@@ -224,7 +235,8 @@ module stal =
 // Now we can quickly test for contradiction.                                //
 // ------------------------------------------------------------------------- //
 
-    let truefalse pfn = canonize pfn (Not True) = canonize pfn True
+    let truefalse pfn =
+        canonize pfn (Not True) = canonize pfn True
 
 // pg. 97
 // ------------------------------------------------------------------------- //
@@ -233,7 +245,8 @@ module stal =
 
     let rec equateset s0 eqfn =
         match s0 with
-        | a::(b::s2 as s1) -> equateset s1 (snd(equatecons (a,b) eqfn))
+        | a :: (b :: s2 as s1) ->
+            equateset s1 (snd (equatecons (a, b) eqfn))
         | _ -> eqfn
 
 // pg. 97
@@ -244,10 +257,10 @@ module stal =
     let rec inter els (eq1,_ as erf1) (eq2,_ as erf2) rev1 rev2 erf =
         match els with
         | [] -> erf
-        | x::xs ->
-            let b1 = canonize eq1 x 
+        | x :: xs ->
+            let b1 = canonize eq1 x
             let b2 = canonize eq2 x
-            let s1 = apply rev1 b1 
+            let s1 = apply rev1 b1
             let s2 = apply rev2 b2
             let s = intersect s1 s2
             inter (subtract xs s) erf1 erf2 rev1 rev2 (equateset s erf)
@@ -258,8 +271,8 @@ module stal =
 // ------------------------------------------------------------------------- //
 
     let reverseq domain eqv =
-        let al = List.map (fun x -> x,canonize eqv x) domain
-        itlist (fun (y,x) f -> (x |-> insert y (tryapplyl f x)) f)
+        let al = List.map (fun x -> x, canonize eqv x) domain
+        itlist (fun (y, x) f -> (x |-> insert y (tryapplyl f x)) f)
             al undefined
 
 // pg. 97
@@ -268,13 +281,13 @@ module stal =
 // ------------------------------------------------------------------------- //
 
     let stal_intersect (eq1,_ as erf1) (eq2,_ as erf2) erf =
-        if truefalse eq1 then erf2 
-        elif truefalse eq2 then erf1 
+        if truefalse eq1 then erf2
+        elif truefalse eq2 then erf1
         else
-            let dom1 = equated eq1 
+            let dom1 = equated eq1
             let dom2 = equated eq2
             let comdom = intersect dom1 dom2
-            let rev1 = reverseq dom1 eq1 
+            let rev1 = reverseq dom1 eq1
             let rev2 = reverseq dom2 eq2
             inter comdom erf1 erf2 rev1 rev2 erf
 
@@ -285,22 +298,23 @@ module stal =
 
     let rec saturate n erf assigs allvars =
         let (eqv',_ as erf') = zero_saturate_and_check erf assigs
-        if n = 0 || truefalse eqv' then erf' 
+        if n = 0 || truefalse eqv' then erf'
         else
             let (eqv'',_ as erf'') = splits n erf' allvars allvars
-            if eqv'' = eqv' then erf'' 
+            if eqv'' = eqv' then erf''
             else saturate n erf'' [] allvars
 
     and splits n (eqv,_ as erf) allvars vars =
         match vars with
         | [] -> erf
-        | p::ovars ->
-            if canonize eqv p <> p then splits n erf allvars ovars 
+        | p :: ovars ->
+            if canonize eqv p <> p then
+                splits n erf allvars ovars
             else
-                let erf0 = saturate (n - 1) erf [p,Not True] allvars
-                let erf1 = saturate (n - 1) erf [p,True] allvars
+                let erf0 = saturate (n - 1) erf [p, Not True] allvars
+                let erf1 = saturate (n - 1) erf [p, True] allvars
                 let (eqv',_ as erf') = stal_intersect erf0 erf1 erf
-                if truefalse eqv' then erf' 
+                if truefalse eqv' then erf'
                 else splits n erf' allvars ovars
 
 // pg. 98
@@ -309,11 +323,15 @@ module stal =
 // ------------------------------------------------------------------------- //
 
     let rec saturate_upto vars n m trigs assigs =
-        if n > m then failwith("Not " + (string m) + "-easy") 
+        if n > m then
+            failwithf "Not %i-easy" m
         else
-            printfn "%A" ("*** Starting " + (string n) + "-saturation")
-            let (eqv,_) = saturate n (unequal,relevance trigs) assigs vars
-            truefalse eqv || saturate_upto vars (n + 1) m trigs assigs
+            printfn "*** Starting %i-saturation" n
+            let eqv, _ =
+                saturate n (unequal, relevance trigs) assigs vars
+
+            truefalse eqv
+            || saturate_upto vars (n + 1) m trigs assigs
 
 // pg. 98
 // ------------------------------------------------------------------------- //
@@ -321,15 +339,15 @@ module stal =
 // ------------------------------------------------------------------------- //
 
     let stalmarck fm =
-        let include_trig (e,cqs) f = (e |-> union cqs (tryapplyl f e)) f
-        let fm' = psimplify(Not fm)
-        if fm' = False then true else if fm' = True then false 
+        let include_trig (e, cqs) f =
+            (e |-> union cqs (tryapplyl f e)) f
+        let fm' = psimplify <| Not fm
+        if fm' = False then true
+        elif fm' = True then false
         else
-            let p,triplets = triplicate fm'
-            let trigfn = itlist (itlist include_trig >>|> trigger)
-                                triplets undefined
-            let vars = List.map (fun p -> Atom p) (unions(List.map atoms triplets))
-            saturate_upto vars 0 2 (graph trigfn) [p,True]
-
-
+            let p, triplets = triplicate fm'
+            let trigfn =
+                itlist (itlist include_trig >>|> trigger) triplets undefined
+            let vars = List.map (fun p -> Atom p) (unions (List.map atoms triplets))
+            saturate_upto vars 0 2 (graph trigfn) [p, True]
 

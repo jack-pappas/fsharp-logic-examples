@@ -82,7 +82,8 @@ module rewrite =
         | Atom (R ("=", [l; r])) :: oeqs -> 
             try 
                 tsubst (term_match undefined [l, t]) r
-            with _ -> rewrite1 oeqs t
+            with _ ->
+                rewrite1 oeqs t
         | _ -> failwith "rewrite1"
 
 // pg. 263
@@ -97,7 +98,7 @@ module rewrite =
             match tm with
             | Var x -> tm
             | Fn (f, args) -> 
-                let tm' = Fn (f,List.map (rewrite eqs) args)
+                let tm' = Fn (f, List.map (rewrite eqs) args)
                 if tm' = tm then tm 
                 else rewrite eqs tm'
                 

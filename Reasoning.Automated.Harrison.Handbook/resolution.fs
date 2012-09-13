@@ -99,9 +99,9 @@ module resolution =
 // ------------------------------------------------------------------------- //
 
     let rename pfx cls =
-        let fvs = fv(list_disj cls)
-        let vvs = List.map (fun s -> Var(pfx + s)) fvs
-        List.map (subst(fpf fvs vvs)) cls
+        let fvs = fv (list_disj cls)
+        let vvs = List.map (fun s -> Var (pfx + s)) fvs
+        List.map (subst (fpf fvs vvs)) cls
 
 // pg. 184
 // ------------------------------------------------------------------------- //
@@ -109,14 +109,14 @@ module resolution =
 // ------------------------------------------------------------------------- //
 
     let resolvents cl1 cl2 p acc =
-        let ps2 = List.filter (unifiable(negate p)) cl2
+        let ps2 = List.filter (unifiable (negate p)) cl2
         if ps2 = [] then acc 
         else
             let ps1 = List.filter (fun q -> q <> p && unifiable p q) cl1
-            let pairs = allpairs (fun s1 s2 -> s1,s2)
-                                (List.map (fun pl -> p::pl) (allsubsets ps1))
+            let pairs = allpairs (fun s1 s2 -> s1, s2)
+                                (List.map (fun pl -> p :: pl) (allsubsets ps1))
                                 (allnonemptysubsets ps2)
-            itlist (fun (s1,s2) sof ->
+            itlist (fun (s1, s2) sof ->
                     try 
                         image (subst (mgu (s1 @ List.map negate s2) undefined))
                                 (union (subtract cl1 s1) (subtract cl2 s2)) :: sof
@@ -136,17 +136,18 @@ module resolution =
     let rec resloop001 (used,unused) =
         match unused with
         | [] -> failwith "No proof found"
-        | cl::ros ->
-            printfn "%s" (string (List.length used) + " used; " + string (List.length unused) + " unused.");
+        | cl :: ros ->
+            printfn "%i used; %i unused." (List.length used) (List.length unused)
             let used' = insert cl used
-            let news = itlist(@) (mapfilter (resolve_clauses cl) used') []
+            let news = itlist (@) (mapfilter (resolve_clauses cl) used') []
             if mem [] news then true
-            else resloop001 (used',ros@news)
+            else resloop001 (used', ros @ news)
 
-    let pure_resolution001 fm = resloop001([],simpcnf(specialize(pnf fm)))
+    let pure_resolution001 fm =
+        resloop001 ([], simpcnf (specialize (pnf fm)))
 
     let resolution001 fm =
-        let fm1 = askolemize(Not(generalize fm))
+        let fm1 = askolemize (Not (generalize fm))
         List.map (pure_resolution001 >>|> list_conj) (simpdnf fm1)
 
 // pg. 187
@@ -168,9 +169,11 @@ module resolution =
     let rec term_match env eqs =
         match eqs with
         | [] -> env
-        | (Fn(f,fa),Fn(g,ga)) :: oth when f = g && List.length fa = List.length ga ->
+        | (Fn (f, fa), Fn(g, ga)) :: oth
+            when f = g
+            && List.length fa = List.length ga ->
             term_match env (List.zip fa ga @ oth)
-        | (Var x,t) :: oth ->
+        | (Var x, t) :: oth ->
             if not (defined env x) then
                 term_match ((x |-> t) env) oth
             elif apply env x = t then
@@ -232,18 +235,18 @@ module resolution =
     let rec resloop002 (used,unused) =
         match unused with
         | [] -> failwith "No proof found"
-        | cl::ros ->
-            printfn "%s" (string (List.length used) + " used; " + string (List.length unused) + " unused.")
+        | cl :: ros ->
+            printfn "%i used; %i unused." (List.length used) (List.length unused)
             let used' = insert cl used
             let news = itlist (@) (mapfilter (resolve_clauses cl) used') []
             if mem [] news then true
-            else resloop002(used',itlist (incorporate cl) news ros)
+            else resloop002 (used', itlist (incorporate cl) news ros)
 
     let pure_resolution002 fm =
-        resloop002([],simpcnf(specialize(pnf fm)))
+        resloop002 ([], simpcnf (specialize (pnf fm)))
 
     let resolution002 fm =
-        let fm1 = askolemize(Not(generalize fm))
+        let fm1 = askolemize (Not (generalize fm))
         List.map (pure_resolution002 >>|> list_conj) (simpdnf fm1)
 
 // pg. 198
@@ -252,23 +255,25 @@ module resolution =
 // ------------------------------------------------------------------------- //
 
     let presolve_clauses cls1 cls2 =
-        if List.forall positive cls1 || List.forall positive cls2
-        then resolve_clauses cls1 cls2 else []
+        if List.forall positive cls1 || List.forall positive cls2 then
+            resolve_clauses cls1 cls2
+        else []
 
-    let rec presloop (used,unused) =
+    let rec presloop (used, unused) =
         match unused with
         | [] -> failwith "No proof found"
-        | cl::ros ->
-            printfn "%s" (string (List.length used) + " used; " + string (List.length unused) + " unused.")
+        | cl :: ros ->
+            printfn "%i used; %i unused." (List.length used) (List.length unused)
             let used' = insert cl used
-            let news = itlist(@) (mapfilter (presolve_clauses cl) used') []
+            let news = itlist (@) (mapfilter (presolve_clauses cl) used') []
             if mem [] news then true 
-            else presloop(used',itlist (incorporate cl) news ros)
+            else presloop (used', itlist (incorporate cl) news ros)
 
-    let pure_presolution fm = presloop([],simpcnf(specialize(pnf fm)))
+    let pure_presolution fm =
+        presloop ([], simpcnf (specialize (pnf fm)))
 
     let presolution fm =
-        let fm1 = askolemize(Not(generalize fm))
+        let fm1 = askolemize (Not (generalize fm))
         List.map (pure_presolution >>|> list_conj) (simpdnf fm1)
 
 // pg. 201
@@ -277,8 +282,8 @@ module resolution =
 // ------------------------------------------------------------------------- //
 
     let pure_resolution fm =
-        resloop002(List.partition (List.exists positive) (simpcnf(specialize(pnf fm))))
+        resloop002 (List.partition (List.exists positive) (simpcnf (specialize (pnf fm))))
 
     let resolution fm =
-        let fm1 = askolemize(Not(generalize fm))
+        let fm1 = askolemize (Not (generalize fm))
         List.map (pure_resolution >>|> list_conj) (simpdnf fm1)

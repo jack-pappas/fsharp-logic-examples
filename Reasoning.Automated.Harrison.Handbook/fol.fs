@@ -121,12 +121,12 @@ module folMod =
             (if is_const_name a && not (mem a vs) then Fn (a, []) else Var a), rest
 
     and parse_term vs inp =
-        parse_right_infix "::" (fun (e1,e2) -> Fn("::",[e1;e2]))
-            (parse_right_infix "+" (fun (e1,e2) -> Fn("+",[e1;e2]))
-                (parse_left_infix "-" (fun (e1,e2) -> Fn("-",[e1;e2]))
-                    (parse_right_infix "*" (fun (e1,e2) -> Fn("*",[e1;e2]))
-                        (parse_left_infix "/" (fun (e1,e2) -> Fn("/",[e1;e2]))
-                        (parse_left_infix "^" (fun (e1,e2) -> Fn("^",[e1;e2]))
+        parse_right_infix "::" (fun (e1,e2) -> Fn ("::",[e1;e2]))
+            (parse_right_infix "+" (fun (e1,e2) -> Fn ("+",[e1;e2]))
+                (parse_left_infix "-" (fun (e1,e2) -> Fn ("-",[e1;e2]))
+                    (parse_right_infix "*" (fun (e1,e2) -> Fn ("*",[e1;e2]))
+                        (parse_left_infix "/" (fun (e1,e2) -> Fn ("/",[e1;e2]))
+                        (parse_left_infix "^" (fun (e1,e2) -> Fn ("^",[e1;e2]))
                             (parse_atomic_term vs)))))) inp
 
     let parset = make_parser (parse_term [])
@@ -258,8 +258,8 @@ module folMod =
     // Added by EGT
     let rec print_fol_formula_list x =
         match x with
-        | []   -> ()
-        | h::t -> 
+        | [] -> ()
+        | h :: t -> 
             print_qformula print_atom h
             print_fol_formula_list t
         
@@ -270,21 +270,31 @@ module folMod =
 
     let rec termval (domain,func,pred as m) v tm =
         match tm with
-        | Var(x) -> apply v x
-        | Fn(f,args) -> func f (List.map (termval m v) args)
+        | Var x ->
+            apply v x
+        | Fn (f, args) ->
+            func f (List.map (termval m v) args)
 
     let rec holds (domain,func,pred as m) v fm =
         match fm with
         | False -> false
         | True -> true
-        | Atom(R(r,args)) -> pred r (List.map (termval m v) args)
-        | Not(p) -> not(holds m v p)
-        | And(p,q) -> (holds m v p) && (holds m v q)
-        | Or(p,q) -> (holds m v p) || (holds m v q)
-        | Imp(p,q) -> not(holds m v p) || (holds m v q)
-        | Iff(p,q) -> (holds m v p = holds m v q)
-        | Forall(x,p) -> List.forall (fun a -> holds m ((x |-> a) v) p) domain
-        | Exists(x,p) -> List.exists (fun a -> holds m ((x |-> a) v) p) domain
+        | Atom (R (r, args)) ->
+            pred r (List.map (termval m v) args)
+        | Not p ->
+            not(holds m v p)
+        | And (p, q) ->
+            (holds m v p) && (holds m v q)
+        | Or (p, q) ->
+            (holds m v p) || (holds m v q)
+        | Imp (p, q) ->
+            not(holds m v p) || (holds m v q)
+        | Iff (p, q) ->
+            (holds m v p = holds m v q)
+        | Forall (x, p) ->
+            List.forall (fun a -> holds m ((x |-> a) v) p) domain
+        | Exists (x, p) ->
+            List.exists (fun a -> holds m ((x |-> a) v) p) domain
 
 // pg. 125
 // ------------------------------------------------------------------------- //
@@ -293,31 +303,35 @@ module folMod =
 
     let bool_interp =
         let func f args =
-            match (f,args) with
-            | ("0",[])    -> false
-            | ("1",[])    -> true
-            | ("+",[x;y]) -> not(x = y)
-            | ("*",[x;y]) -> x && y
-            | _           -> failwith "uninterpreted function"
+            match f, args with
+            | "0", [] -> false
+            | "1", [] -> true
+            | "+", [x; y] -> not (x = y)
+            | "*", [x; y] -> x && y
+            | _ -> failwith "uninterpreted function"
+
         let pred p args =
-            match (p,args) with
-            | ("=",[x;y]) -> x = y
-            | _           -> failwith "uninterpreted predicate"
-        ([false; true],func,pred)
+            match p, args with
+            | "=", [x; y] -> x = y
+            | _ -> failwith "uninterpreted predicate"
+
+        [false; true], func, pred
 
     let mod_interp n =
         let func f args =
-            match (f,args) with
-            | ("0",[])    -> 0
-            | ("1",[])    -> 1 % n
-            | ("+",[x;y]) -> (x + y) % n
-            | ("*",[x;y]) -> (x * y) % n
-            | _           -> failwith "uninterpreted function"
+            match f, args with
+            | "0", [] -> 0
+            | "1", [] -> 1 % n
+            | "+", [x; y] -> (x + y) % n
+            | "*", [x; y] -> (x * y) % n
+            | _ -> failwith "uninterpreted function"
+
         let pred p args =
-            match (p,args) with
-            | ("=",[x;y]) -> x = y
-            | _           -> failwith "uninterpreted predicate"
-        (0--(n-1),func,pred)
+            match p, args with
+            | "=", [x; y] -> x = y
+            | _ -> failwith "uninterpreted predicate"
+
+        0 -- (n-1), func, pred
 
 // pg. 127
 // ------------------------------------------------------------------------- //
@@ -423,8 +437,8 @@ module folMod =
 
     and substq subfn quant x p =
         let x' = 
-            if List.exists (fun y -> mem x (fvt(tryapplyd subfn y (Var y)))) (subtract (fv p) [x])
-                then variant x (fv(subst (undefine x subfn) p)) 
+            if List.exists (fun y -> mem x (fvt (tryapplyd subfn y (Var y)))) (subtract (fv p) [x])
+                then variant x (fv (subst (undefine x subfn) p)) 
                 else x
         quant x' (subst ((x |-> Var x') subfn) p)
 

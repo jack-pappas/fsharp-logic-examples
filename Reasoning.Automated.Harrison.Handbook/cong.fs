@@ -96,7 +96,7 @@ module cong =
 // Merging of terms, with congruence closure.                                //
 // ------------------------------------------------------------------------- //
 
-    let rec emerge (s,t) (eqv,pfn) =
+    let rec emerge (s, t) (eqv, pfn) =
         let s' = canonize eqv s 
         let t' = canonize eqv t
         if s' = t' then
@@ -126,11 +126,17 @@ module cong =
     let ccsatisfiable fms =
         let pos, neg = List.partition positive fms
         let eqps = List.map dest_eq pos 
-        let eqns = List.map (dest_eq >>|> negate) neg
-        let lrs = List.map fst eqps @ List.map snd eqps @ List.map fst eqns @ List.map snd eqns
-        let pfn = itlist predecessors (unions (List.map subterms lrs)) undefined
+        let eqns = List.map (dest_eq >>|> negate) neg        
+        let pfn =
+            let lrs =
+                List.map fst eqps
+                @ List.map snd eqps
+                @ List.map fst eqns
+                @ List.map snd eqns
+            itlist predecessors (unions (List.map subterms lrs)) undefined
         let eqv, _ = itlist emerge eqps (unequal, pfn)
-        List.forall (fun (l, r) -> not <| equivalent eqv l r) eqns
+        List.forall (fun (l, r) ->
+            not <| equivalent eqv l r) eqns
 
 // pg. 253
 // ------------------------------------------------------------------------- //

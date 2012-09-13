@@ -85,7 +85,7 @@ module paramodulation =
         | Atom (R (f, args)) ->
             listcases (overlaps (l, r)) (fun i a -> rfn i (Atom (R (f, a)))) args []
         | Not p ->
-            overlapl (l,r) p (fun i p -> rfn i (Not p))
+            overlapl (l, r) p (fun i p -> rfn i (Not p))
         | _ -> failwith "overlapl: not a literal"
   
 // pg. 301
@@ -121,9 +121,8 @@ module paramodulation =
 
     let rec paraloop (used, unused) =
         match unused with
-        | cls::ros ->
-            printf "%s" (string(List.length used) + " used; " + string(List.length unused) + " unused.");
-            printfn "";
+        | cls :: ros ->
+            printfn "%i used; %i unused." (List.length used) (List.length unused)
             let used' = insert cls used
             let news =
                 itlist (@) (mapfilter (resolve_clauses cls) used')

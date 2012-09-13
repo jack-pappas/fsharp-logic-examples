@@ -125,7 +125,8 @@ module unif =
 
     let unify_and_apply eqs =
         let i = fullunify eqs
-        let apply (t1,t2) = tsubst i t1,tsubst i t2
+        let apply (t1, t2) =
+            tsubst i t1, tsubst i t2
         List.map apply eqs
 
 
