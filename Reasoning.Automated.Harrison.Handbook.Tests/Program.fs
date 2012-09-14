@@ -60,6 +60,8 @@
 
 namespace Reasoning.Automated.Harrison.Handbook.Tests
 
+open Reasoning.Automated.Harrison.Handbook.compatibility
+
 open Reasoning.Automated.Harrison.Handbook.lib
 open Reasoning.Automated.Harrison.Handbook.intro
 open Reasoning.Automated.Harrison.Handbook.formulas
@@ -81,11 +83,8 @@ open Reasoning.Automated.Harrison.Handbook.skolems
 open Reasoning.Automated.Harrison.Handbook.equal
 open Reasoning.Automated.Harrison.Handbook.rewrite
 
-open System                                 // Console
-
-open Reasoning.Automated.Harrison.Handbook.Eric.misc
-
 module Program =
+    open System
 
     let pause () =
         Console.WriteLine ""

@@ -80,7 +80,9 @@ module tactics =
                 close_box ()
                 printfn ""
             
-//    #install_printer print_goal;;
+    #if INTERACTIVE
+    fsi.AddPrinter print_goal;;
+    #endif
 
     (* ------------------------------------------------------------------------- *)
     (* Setting up goals and terminating them in a theorem.                       *)
@@ -306,7 +308,8 @@ module tactics =
 
     let take = exists_intro_tac
 
-    let cases<'a> = disj_elim_tac<'a> ""
+    let cases fm byfn hyps g =
+        disj_elim_tac "" fm byfn hyps g
 
     (* ------------------------------------------------------------------------- *)
     (* Thesis modification.                                                      *)

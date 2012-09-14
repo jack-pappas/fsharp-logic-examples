@@ -89,12 +89,12 @@ module geom =
             and y = string n + "_y"
             let i = fpf ["x";"y"] [Var x;Var y]
             (x |-> tsubst i x') ((y |-> tsubst i y') f)
-        Iff (z,subst (itlist m (1--5) undefined) z)
+        Iff (z,subst (itlist m (1 -- 5) undefined) z)
     (*
     let invariant_under_translation = invariant (<<|x + X|>>,<<|y + Y|>>)
     *)
     #if INTERACTIVE
-    forall (grobner_decide ** invariant_under_translation) coordinations
+    forall (grobner_decide >>|> invariant_under_translation) coordinations
     #endif
     (*
     let invariant_under_rotation fm =
@@ -102,7 +102,7 @@ module geom =
           invariant (<<|c * x - s * y|>>,<<|s * x + c * y|>>) fm);;
     *)
     #if INTERACTIVE
-    forall (grobner_decide ** invariant_under_rotation) coordinations;;
+    forall (grobner_decide >>|> invariant_under_rotation) coordinations;;
     #endif
 
     (* ------------------------------------------------------------------------- *)
@@ -132,9 +132,9 @@ module geom =
     let invariant_under_shearing = invariant(<<|x + b * y|>>,<<|y|>>);;
     *)
     #if INTERACTIVE
-    forall (grobner_decide ** invariant_under_scaling) coordinations;;
+    forall (grobner_decide >>|> invariant_under_scaling) coordinations;;
 
-    partition (grobner_decide ** invariant_under_shearing) coordinations;;
+    partition (grobner_decide >>|> invariant_under_shearing) coordinations;;
     #endif
 
     (* ------------------------------------------------------------------------- *)
@@ -142,7 +142,7 @@ module geom =
     (* ------------------------------------------------------------------------- *)
 
     #if INTERACTIVE
-    (grobner_decide ** originate)
+    (grobner_decide >>|> originate)
      <<is_midpoint(m,a,c) /\ perpendicular(a,c,m,b)
        ==> lengths_eq(a,b,b,c)>>;;
 
@@ -150,12 +150,12 @@ module geom =
     (* Parallelogram theorem (Chou's expository example at the start).           *)
     (* ------------------------------------------------------------------------- *)
 
-    (grobner_decide ** originate)
+    (grobner_decide >>|> originate)
      <<parallel(a,b,d,c) /\ parallel(a,d,b,c) /\
        is_intersection(e,a,c,b,d)
        ==> lengths_eq(a,e,e,c)>>;;
 
-    (grobner_decide ** originate)
+    (grobner_decide >>|> originate)
      <<parallel(a,b,d,c) /\ parallel(a,d,b,c) /\
        is_intersection(e,a,c,b,d) /\ ~collinear(a,b,c)
        ==> lengths_eq(a,e,e,c)>>;;

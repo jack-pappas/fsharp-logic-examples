@@ -317,12 +317,12 @@ module real =
       casesplit (x::vars) [] pols cont init_sgns;;
 
     let real_qelim =
-      simplify ** evalc **
-      lift_qelim polyatom (simplify ** evalc) basic_real_qelim;;
+      simplify >>|> evalc >>|>
+      lift_qelim polyatom (simplify >>|> evalc) basic_real_qelim;;
 
     let real_qelim' =
-      simplify ** evalc **
-      lift_qelim polyatom (dnf ** cnnf (fun x -> x) ** evalc)
+      simplify >>|> evalc >>|>
+      lift_qelim polyatom (dnf >>|> cnnf (fun x -> x) >>|> evalc)
                           basic_real_qelim
     *)
     #endif
