@@ -21,6 +21,7 @@
     <DefineConstants>TRACE;DEBUG</DefineConstants>
     <WarningLevel>3</WarningLevel>
     <DocumentationFile>bin\Debug\Reasoning.Automated.Harrison.Handbook.XML</DocumentationFile>
+    <NoWarn>25</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -35,6 +36,7 @@
   <Import Project="$(MSBuildExtensionsPath32)\..\Microsoft F#\v4.0\Microsoft.FSharp.Targets" Condition=" Exists('$(MSBuildBinPath)\Microsoft.Build.Tasks.v4.0.dll')" />
   <ItemGroup>
     <Content Include="Notes.txt" />
+    <Compile Include="compatibility.fs" />
     <Compile Include="lib.fs" />
     <Compile Include="intro.fs" />
     <Compile Include="formulas.fs" />
@@ -43,7 +45,6 @@
     <Compile Include="dp.fs" />
     <Compile Include="stal.fs" />
     <Compile Include="bdd.fs" />
-    <Compile Include="misc.fs" />
     <Compile Include="fol.fs" />
     <Compile Include="skolem.fs" />
     <Compile Include="herbrand.fs" />
@@ -64,6 +65,16 @@
     <Compile Include="qelim.fs" />
     <Compile Include="cooper.fs" />
     <Compile Include="complex.fs" />
+    <Compile Include="real.fs" />
+    <Compile Include="grobner.fs" />
+    <Compile Include="geom.fs" />
+    <Compile Include="interpolation.fs" />
+    <Compile Include="combining.fs" />
+    <Compile Include="lcf.fs" />
+    <Compile Include="lcfprop.fs" />
+    <Compile Include="folderived.fs" />
+    <Compile Include="lcffol.fs" />
+    <Compile Include="tactics.fs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="FSharp.PowerPack.Compatibility, Version=2.0.0.0, Culture=neutral, PublicKeyToken=a19089b1c74d0809" />

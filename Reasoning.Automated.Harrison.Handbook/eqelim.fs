@@ -61,13 +61,27 @@
 namespace Reasoning.Automated.Harrison.Handbook
 
 module eqelim =
+    open intro
     open formulas
     open prop
+    open defcnf
+    open dp
+    open stal
+    open bdd
     open folMod
     open skolem
+    open herbrand
+    open unif
     open tableaux
+    open resolution
+    open prolog
     open meson
+    open skolems
     open equal
+    open cong
+    open rewrite
+    open order
+    open completion
 
 // ========================================================================= //
 // Equality elimination including Brand transformation and relatives.        //
@@ -123,62 +137,24 @@ module eqelim =
 // ------------------------------------------------------------------------- //
 
     // val is_nonvar : term -> bool
-    let is_nonvar = function 
-        | Var x -> false 
+    let is_nonvar = function
+        | Var x -> false
         | _ -> true
 
-    // val find_nvsubterm : fol formula -> term option
-    let rec find_nvsubterm fm =
-        // TODO : Replace with List.tryFind
-        let rec find p l =
-            match l with
-            | [] -> None
-            | h :: t -> 
-                if p h then Some h 
-                else find p t
+    let find_nestnonvar tm =
+        match tm with
+        | Var x -> failwith "findnvsubt"
+        | Fn (f, args) ->
+            List.find is_nonvar args
 
+    let rec find_nvsubterm fm =
         match fm with
         | Atom (R ("=", [s; t])) ->
-            let find_nestnonvar tm =
-                match tm with
-                | Var x -> None
-                | Fn (f, args) -> 
-                    // TODO : Is this correct? The 'match' always
-                    // an output which is the same as the input...
-                  match find is_nonvar args with
-                  | Some x -> Some x
-                  | None -> None
-
-            // TODO : Replace with List.tryFind
-            let rec tryfind f l =
-                match l with
-                | [] -> None
-                | h :: t -> 
-                    match f h with 
-                    | Some x -> Some x
-                    | None -> tryfind f t
-
-            tryfind find_nestnonvar [s; t]
-
+            tryfind find_nestnonvar [s;t]
         | Atom (R (p, args)) ->
-            // TODO : Is this correct? The 'match' always
-            // an output which is the same as the input...
-            match find is_nonvar args with
-            | Some x -> Some x
-            | None -> None
-
+            List.find is_nonvar args
         | Not p ->
             find_nvsubterm p
-
-//        | False
-//        | True
-//        | And (_,_)
-//        | Or (_,_)
-//        | Imp (_,_)
-//        | Iff (_,_)
-//        | Forall (_,_)
-//        | Exists (_,_)
-        | _ -> failwith "How did we get here"
 
 // pg. 295
 // ------------------------------------------------------------------------- //
@@ -186,12 +162,10 @@ module eqelim =
 // ------------------------------------------------------------------------- //
 
     // OCaml: val replacet : (term, term) func      -> term -> term = <fun>
-    // F# 1:  val replacet : func<term,term>        -> term -> term
-    // F# 2:  val replacet : func<term,term option> -> term -> term
+    // F#:  val replacet : func<term,term>        -> term -> term
     let rec replacet rfn tm =
-        match apply_none rfn tm with
-        | Some x -> x
-        | None ->
+        try apply rfn tm
+        with Failure _ ->
             match tm with
             | Fn (f, args) ->
                 Fn (f, List.map (replacet rfn) args)
@@ -206,27 +180,15 @@ module eqelim =
 // ------------------------------------------------------------------------- //
 
     let rec emodify fvs cls =
-      let t_option =
-        // TODO : Replace with List.tryFind
-        let rec tryfind f l =
-            match l with
-            | [] -> None
-            | h :: t -> 
-                match f h with 
-                | Some x -> Some x
-                | None -> 
-                    tryfind f t
-        tryfind find_nvsubterm cls
+        try
+            let t = tryfind find_nvsubterm cls
+            let w = variant "w" fvs
+            let cls' = List.map (replace (t |=> Var w)) cls
+            emodify (w :: fvs) (Not (mk_eq t (Var w)) :: cls')
+        with Failure _ ->
+            cls
 
-      match t_option with
-      | None -> cls
-      | Some t ->
-          let w = variant "w" fvs
-          let cls' = List.map (replace (t |=> Some (Var w))) cls
-          emodify (w :: fvs) (Not (mk_eq t (Var w)) :: cls')
-
-    let modify_E cls =
-        emodify (itlist (union >>|> fv) cls []) cls
+    let modify_E cls = emodify (itlist (union >>|> fv) cls []) cls
 
 // pg. 296
 // ------------------------------------------------------------------------- //

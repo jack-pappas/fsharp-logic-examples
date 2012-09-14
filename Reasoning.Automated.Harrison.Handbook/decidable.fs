@@ -62,14 +62,29 @@
 namespace Reasoning.Automated.Harrison.Handbook
 
 module decidable =
+    open intro
     open formulas
     open prop
+    open defcnf
     open dp
+    open stal
+    open bdd
     open folMod
     open skolem
     open herbrand
+    open unif
+    open tableaux
+    open resolution
+    open prolog
     open meson
+    open skolems
     open equal
+    open cong
+    open rewrite
+    open order
+    open completion
+    open eqelim
+    open paramodulation
 
 // pg. 309
 // ========================================================================= //

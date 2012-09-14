@@ -60,6 +60,8 @@
 
 namespace Reasoning.Automated.Harrison.Handbook
 
+open LanguagePrimitives
+
 module defcnf =
     open intro
     open formulas
@@ -76,9 +78,9 @@ module defcnf =
 // Make a stylized variable and update the index.                            //
 // ------------------------------------------------------------------------- //
 
-    let mkprop n =
-        let name = sprintf "p_%i" n
-        Atom (P name), n + 1
+    let mkprop (n : num) =
+        let name = sprintf "p_%O" n
+        Atom (P name), n + (num_of_int 1)
 
 // pg. 75
 // ------------------------------------------------------------------------- //
@@ -109,12 +111,13 @@ module defcnf =
 // Make n large enough that "v_m" won't clash with s for any m >= n          //
 // ------------------------------------------------------------------------- //
 
-    let max_varindex pfx s n =
+    let max_varindex pfx s (n : num) =
         let m = String.length pfx
         let l = String.length s
         if l <= m || s.[0..m] <> pfx then n else
         let s' = s.[m.. (l - m)]
-        if List.forall numeric (explode s') then max n (int s')
+        if List.forall numeric (explode s') then
+            max n (num_of_string s')
         else n
 
 // pg. 77
@@ -124,7 +127,7 @@ module defcnf =
 
     let mk_defcnf fn fm =
         let fm' = nenf fm
-        let n = int 1 + overatoms (max_varindex "p_" >>|> pname) fm' (int 0)
+        let n = GenericOne + overatoms (max_varindex "p_" >>|> pname) fm' GenericZero
         let fm'', defs, _ = fn (fm', undefined, n)
         let deflist = List.map (snd >>|> snd) (graph defs)
         unions <| simpcnf fm'' :: List.map simpcnf deflist

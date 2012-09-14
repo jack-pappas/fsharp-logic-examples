@@ -60,12 +60,33 @@
 
 namespace Reasoning.Automated.Harrison.Handbook
 
+open LanguagePrimitives
+
 module complex =
     open intro
     open formulas
     open prop
+    open defcnf
+    open dp
+    open stal
+    open bdd
     open folMod
+    open skolem
+    open herbrand
+    open unif
+    open tableaux
+    open resolution
+    open prolog
+    open meson
+    open skolems
     open equal
+    open cong
+    open rewrite
+    open order
+    open completion
+    open eqelim
+    open paramodulation
+    open decidable
     open qelim
     open cooper
 
@@ -86,7 +107,7 @@ module complex =
             if earlier vars x y then
                 poly_ladd vars pol2 pol1
             elif earlier vars y x then
-                poly_ladd vars pol1 pol2 
+                poly_ladd vars pol1 pol2
             else
                 let e = poly_add vars c d 
                 let r = poly_add vars p q
@@ -104,14 +125,11 @@ module complex =
       fun pol1 (Fn ("+", [d; Fn ("*", [Var y; q])])) ->
             Fn ("+", [poly_add vars pol1 d; Fn ("*", [Var y; q])])
 
-    // Added by EGT
-    let int_negate x = -x
-
     let rec poly_neg = function 
         | Fn ("+", [c; Fn ("*", [Var x; p])]) ->
             Fn ("+", [poly_neg c; Fn ("*", [Var x; poly_neg p])])
         | n ->
-            numeral1 int_negate n
+            numeral1 (~-) n
 
     let poly_sub vars p q =
         poly_add vars p (poly_neg q)
@@ -140,7 +158,7 @@ module complex =
         funpow n (poly_mul vars p) (Fn ("1", []))
 
     let poly_div vars p q =
-        poly_mul vars p (numeral1 ((/) 1) q)
+        poly_mul vars p (numeral1 ((/) GenericOne) q)
 
     let poly_var x =
         Fn ("+", [zero; Fn ("*", [Var x; Fn ("1", [])])])
@@ -202,7 +220,7 @@ module complex =
     let head vars p =
         last (coefficients vars p)
 
-    let rec behead vars = function 
+    let rec behead vars = function
         | Fn ("+", [c; Fn ("*", [Var x; p])])
             when x = List.head vars ->
             let p' = behead vars p
@@ -236,10 +254,10 @@ module complex =
 
     let monic p =
         let h = headconst p
-        if h = 0 then
+        if h = GenericZero then
             p, false
         else
-            poly_cmul (1 / h) p, h < 0
+            poly_cmul (GenericOne / h) p, h < GenericZero
 
 //  pg. 361
 //  ------------------------------------------------------------------------- //

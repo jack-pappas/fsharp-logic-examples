@@ -60,7 +60,7 @@
 
 namespace Reasoning.Automated.Harrison.Handbook
 
-open Microsoft.FSharp.Core.LanguagePrimitives
+open LanguagePrimitives
 
 /// Misc library functions to set up a nice environment.
 [<AutoOpen>]
@@ -82,15 +82,15 @@ module lib =
 
     // pg. 618
     // OCaml: val gcd_num : num -> num -> num = <fun>
-    // F#:    val gcd_num : int -> int -> int
-    let rec gcd_num n1 n2 =
-        if n2 = 0 then n1
-        else gcd_num n2 (n1 % n2) 
+    // F#:    val gcd_num : num -> num -> num
+    let rec gcd_num (n1 : num) (n2 : num) =
+        if n2 = GenericZero then n1
+        else gcd_num n2 (n1 % n2)
             
     // pg. 618
     // OCaml: val lcm_num : num -> num -> num = <fun>
-    // F#:    val lcm_num : int -> int -> int
-    let lcm_num n1 n2 =
+    // F#:    val lcm_num : num -> num -> num
+    let lcm_num (n1 : num) (n2 : num) =
         (abs (n1 * n2)) / gcd_num n1 n2
 
 // ------------------------------------------------------------------------- //
@@ -169,10 +169,11 @@ module lib =
     // pg.618
     // OCaml: val ( --- ) : num -> num -> num list = <fun>
     // F#:    val ( --- ) : int -> int -> int list
-    let inline (---) m n =
-        // TEMP : Until this function/operator is converted to use 'num'
-        // instead of 'int', simply re-use the implementation for the (--) operator.
-        minusMinusImpl (m, n) id
+    let (*inline*) (---) (m : num) (n : num) =
+        // TODO : Create a private, recursive implementation of this function
+        // like 'minusMinusImpl' (but for the 'num' type instead of 'int').
+        //minusMinusImpl (m, n) id
+        raise <| System.NotImplementedException ()
 
     // pg. 619
     // OCaml: val map2 : ('a -> 'b -> 'c) -> 'a list -> 'b list -> 'c list = <fun>
@@ -574,12 +575,16 @@ module lib =
     // pg. 619
     // OCaml: val tryfind : ('a -> 'b)   -> 'a list -> 'b = <fun>
     // F#:    val tryFind : ('a -> bool) -> 'a list -> 'a option
-    // Use List.tryFind
-    // Note: Signiture differences
-//    let rec tryfind f l =
-//        match l with
-//        | []     -> failwith "tryfind"
-//        | (h::t) -> try f h with Failure _ -> tryfind f t
+    // Use List.tryFind?
+    // Note: Signature differences
+    let rec tryfind f l =
+        match l with
+        | [] ->
+            failwith "tryfind"
+        | h :: t ->
+            try f h
+            with Failure _ ->
+                tryfind f t
         
     // pg. 619
     // OCaml: val mapfilter : ('a -> 'b) -> 'a list -> 'b list = <fun>

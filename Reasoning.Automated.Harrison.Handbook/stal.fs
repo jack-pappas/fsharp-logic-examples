@@ -81,7 +81,7 @@ module stal =
     let triplicate fm =
         let p, defs, _ =
             let fm' = nenf fm
-            let n = 1 + overatoms (max_varindex "p_" >>|> pname) fm' 0
+            let n = (num_of_int 1) + overatoms (max_varindex "p_" >>|> pname) fm' (num_of_int 0)
             maincnf (fm', undefined, n)
         p, List.map (snd >>|> snd) (graph defs)
 

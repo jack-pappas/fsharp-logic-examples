@@ -60,11 +60,33 @@
 
 namespace Reasoning.Automated.Harrison.Handbook
 
+open LanguagePrimitives
+
 module cooper =
+    open intro
     open formulas
     open prop
+    open defcnf
+    open dp
+    open stal
+    open bdd
     open folMod
     open skolem
+    open herbrand
+    open unif
+    open tableaux
+    open resolution
+    open prolog
+    open meson
+    open skolems
+    open equal
+    open cong
+    open rewrite
+    open order
+    open completion
+    open eqelim
+    open paramodulation
+    open decidable
     open qelim
 
 // pg. 337
@@ -85,28 +107,31 @@ module cooper =
     // TODO: is (string n) faster or more accurate then (n.ToString()) ?
   
     // OCaml: val mk_numeral : num -> term = <fun>
-    // F#:    val mk_numeral : 'a -> term
-    let mk_numeral n = Fn (n.ToString(), [])
+    // F#:    val mk_numeral : num -> term
+    let mk_numeral (n : num) =
+        Fn (n.ToString(), [])
 
     // Convert a term to a F# BigIntenger, i.e. OCaml Num
     // OCaml: val dest_numeral : term -> num        = <fun>
-    // F#:    val dest_numeral : term -> int
-    let dest_numeral t =
+    // F#:    val dest_numeral : term -> num
+    let dest_numeral t : num =
         match t with
-        | Fn (ns, []) -> int ns
-        | _ -> failwith "dest_numeral"
+        | Fn (ns, []) ->
+            num_of_string ns
+        | _ ->
+            failwith "dest_numeral"
 
     // OCaml: val is_numeral :  term -> bool = <fun>
     // F#:    val is_numeral : (term -> bool)
     let is_numeral = can dest_numeral
 
-    // OCaml: val numeral1 : (num        -> num)        -> term -> term = <fun>
-    // F#:    val numeral1 : (int        -> 'a)         -> term -> term
+    // OCaml: val numeral1 : (num -> num) -> term -> term = <fun>
+    // F#:    val numeral1 : (num -> num) -> term -> term
     let numeral1 fn n =
         mk_numeral (fn (dest_numeral n))
 
-    // OCaml: val numeral2 : (num        -> num        -> num)        -> term -> term -> term = <fun>
-    // F#:    val numeral2 : (int        -> int        -> 'a)         -> term -> term -> term
+    // OCaml: val numeral2 : (num -> num -> num) -> term -> term -> term = <fun>
+    // F#:    val numeral2 : (num -> num -> num) -> term -> term -> term
     let numeral2 fn m n =
         mk_numeral (fn (dest_numeral m) (dest_numeral n))
 
@@ -120,9 +145,9 @@ module cooper =
 // ------------------------------------------------------------------------- //
 
     // OCaml: val linear_cmul : num        -> term -> term = <fun>
-    // F#:    val linear_cmul : int        -> term -> term
-    let rec linear_cmul n tm =
-        if n = 0 then zero
+    // F#:    val linear_cmul : num        -> term -> term
+    let rec linear_cmul (n : num) tm =
+        if n = GenericZero then zero
         else
             match tm with
             | Fn ("+", [Fn ("*", [c; x]); r]) ->
@@ -154,7 +179,7 @@ module cooper =
 
     // OCaml: val linear_neg : term -> term = <fun>
     // F#:    val linear_neg : term -> term 
-    let linear_neg tm = linear_cmul -1 tm
+    let linear_neg tm = linear_cmul -GenericOne tm
 
     // OCaml: val linear_sub : string list -> term -> term -> term = <fun>
     // F#:    val linear_sub : string list -> term -> term -> term
@@ -237,8 +262,8 @@ module cooper =
 // ------------------------------------------------------------------------- //
 
     // OCaml: val formlcm : term -> fol formula -> num        = <fun>
-    // F#:    val formlcm : term -> fol formula -> int
-    let rec formlcm x fm =
+    // F#:    val formlcm : term -> fol formula -> num
+    let rec formlcm x fm : num =
         match fm with
         | Atom (R (p, [_; Fn ("+", [Fn ("*", [c; y]); z])]))
             when y = x ->
@@ -248,7 +273,8 @@ module cooper =
         | And (p, q)
         | Or (p, q) ->
             lcm_num (formlcm x p) (formlcm x q)
-        | _ -> 1
+        | _ ->
+            GenericOne
   
 // pg.342
 // ------------------------------------------------------------------------- //
@@ -256,7 +282,7 @@ module cooper =
 // ------------------------------------------------------------------------- //
 
     // OCaml: val adjustcoeff : term -> num        -> fol formula -> fol formula = <fun>
-    // F#:    val adjustcoeff : term -> int        -> fol formula -> fol formula
+    // F#:    val adjustcoeff : term -> num        -> fol formula -> fol formula
     let rec adjustcoeff x l fm =
         match fm with
         | Atom (R (p, [d; Fn ("+", [Fn ("*", [c; y]); z])]))
@@ -283,7 +309,7 @@ module cooper =
     let unitycoeff x fm =
         let l = formlcm x fm
         let fm' = adjustcoeff x l fm
-        if l = 1 then fm' 
+        if l = GenericOne then fm' 
         else
             let xp = Fn ("+", [Fn ("*", [Fn ("1", []); x]); zero])
             And (Atom (R ("divides", [mk_numeral l; xp])), adjustcoeff x l fm)
@@ -317,8 +343,8 @@ module cooper =
 // ------------------------------------------------------------------------- //
 
     // OCaml: val divlcm : term -> fol formula -> num        = <fun>
-    // F#:    val divlcm : term -> fol formula -> int
-    let rec divlcm x fm =
+    // F#:    val divlcm : term -> fol formula -> num
+    let rec divlcm x fm : num =
         match fm with
         | Atom (R ("divides", [d; Fn ("+", [Fn ("*", [c; y]); a])]))
             when y = x ->
@@ -328,7 +354,8 @@ module cooper =
         | And (p, q)
         | Or (p, q) ->
             lcm_num (divlcm x p) (divlcm x q)
-        | _ -> 1
+        | _ ->
+            GenericOne
   
 // pg.346
 // ------------------------------------------------------------------------- //
@@ -391,7 +418,7 @@ module cooper =
             let p = unitycoeff x p0
             let p_inf = simplify (minusinf x p) 
             let bs = bset x p
-            let js = 1 --- divlcm x p
+            let js = GenericOne --- divlcm x p
             let p_element j b = linrep vars x (linear_add vars b (mk_numeral j)) p
             let stage j = list_disj (linrep vars x (mk_numeral j) p_inf :: List.map (p_element j) bs)
             let fol_list = List.map stage js
@@ -403,36 +430,14 @@ module cooper =
 // Evaluation of constant expressions.                                       //
 // ------------------------------------------------------------------------- //
 
-// Save as example of using DivideByZeroException
-//    let divides x y =
-//        try
-//          match y with
-//          | 0 -> true       // F# will throw DivideByZeroException so need special case for zero
-//          | _ -> x % y = 0
-//        with
-//          | :? System.DivideByZeroException as ex -> 
-//              printfn "Divide by Zero Exception"
-////                printfn "x: %O, y: %O" x y
-////                printfn "Stack Trace %s " System.Environment.StackTrace 
-////                printfn "Exception! %s " (ex.StackTrace)
-//              true
-
-    // Added EGT
-    let (*inline*) divides x y =
-        //y = 0 || y % x = 0
-        match y with
-        | 0 -> true       // F# will throw DivideByZeroException so need special case for zero
-        | _ -> y % x = 0  // This is correct, it was verified by testing aginst OCaml output.
-
     // OCaml: val operations : (string * (num        -> num        -> bool)) list = [("=", <fun>);                ("<", <fun>);                  (">", <fun>);                  ("<=", <fun>);                  (">=", <fun>);                  ("divides", <fun>)]
-    // F#:    val operations : (string * (int        -> int        -> bool)) list = [("=", <fun:operations@401>); ("<", <fun:operations@402-1>); (">", <fun:operations@403-2>); ("<=", <fun:operations@404-3>); (">=", <fun:operations@405-4>); ("divides", <fun:operations@406-5>)]
-    let operations = ["=",      (=);
-                      "<",      (<); 
-                      ">",      (>);
-                      "<=",     (<=);
-                      ">=",     (>=);
-                      "divides",(fun x y -> divides x y)
-                     ]
+    // F#:    val operations : (string * (num        -> num        -> bool)) list = [("=", <fun:operations@401>); ("<", <fun:operations@402-1>); (">", <fun:operations@403-2>); ("<=", <fun:operations@404-3>); (">=", <fun:operations@405-4>); ("divides", <fun:operations@406-5>)]
+    let operations = ["=", (=);
+                      "<", (<); 
+                      ">", (>);
+                      "<=", (<=);
+                      ">=", (>=);
+                      "divides", divides'; ]
 
 //    // OCaml: val evalc : fol formula -> fol formula = <fun>
 //    // F#:    val evalc : (fol formula -> fol formula)
