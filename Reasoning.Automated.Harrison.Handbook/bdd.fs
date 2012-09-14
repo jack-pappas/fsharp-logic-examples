@@ -88,6 +88,10 @@ module bdd =
     // Note: changed printf to sprintf for use with fsi.AddPrinter
     let print_bdd (Bdd ((unique, uback, n), ord)) =
         sprintf "<BDD with %i nodes>" n
+
+    #if INTERACTIVE
+    fsi.AddPrinter print_bdd;;
+    #endif
       
 // pg. 102
 // ------------------------------------------------------------------------- //
