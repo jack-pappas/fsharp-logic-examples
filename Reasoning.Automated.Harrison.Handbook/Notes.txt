@@ -2,15 +2,33 @@
 Interesting changes from OCaml to F#
 
 1. Exceptions to  Option.
+	This only works sometimes -- when the exception doesn't return any (useful) information.
+	When the exception does return information, it's necessary to use Choice<_,_>.
+	Also, changing functions to use Option or Choice<_,_> instead of exceptions can also
+	alter their type signatures, which can cause the code to suddenly fail to compile.
 2. Order of processing items in a map is reversed?
-3. Does % (mod) work differently? i.e. divide by zero
-4. Is map not really a true map that saves state between each use?
-5. Preprocessor doesn't exist. i.e.  CAMPL
+3. Is map not really a true map that saves state between each use?
+4. Does % (mod) work differently? i.e. divide by zero
+5. Preprocessor doesn't exist. i.e. camlp4 / camlp5
 6. OCaml top-level commands such as #trace and #install-printer don't exist.
-7. Num type doesn't exist in F#. Can use either F# Int, F# BigInteger or port the num type to F#.
+	The OCaml REPL directive
+		#install_printer my_printer;;
+	in F# is
+		fsi.AddPrinter my_printer;;		// my_printer : 'T -> string
 
-//#r "System.Numerics.dll"    // Refernce GAC version
-//open System.Numerics        // BigInteger is a type not a module so it is not System.Numerics.BigInteger
+	The OCaml directives
+		START_INTERACTIVE;;
+		(* code goes here *)
+		END_INTERACTIVE;;
+	can be (roughly) translated to F# as
+		#if INTERACTIVE
+		(* code goes here *)
+		#endif
+
+7. Num type doesn't exist in F#.
+
+	See the ported 'num' type which uses the built in F# int and bigint (BigInteger) types, along with the
+	BigRational type from the F# PowerPack.
 
 -- F# porting notes --
 	-	Turned off F# warning FS0025 (about incomplete pattern matches); these are found extensively in the
