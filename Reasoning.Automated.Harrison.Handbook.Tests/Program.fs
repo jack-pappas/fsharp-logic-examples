@@ -82,6 +82,24 @@ open Reasoning.Automated.Harrison.Handbook.meson
 open Reasoning.Automated.Harrison.Handbook.skolems
 open Reasoning.Automated.Harrison.Handbook.equal
 open Reasoning.Automated.Harrison.Handbook.rewrite
+open Reasoning.Automated.Harrison.Handbook.order
+open Reasoning.Automated.Harrison.Handbook.completion
+open Reasoning.Automated.Harrison.Handbook.eqelim
+open Reasoning.Automated.Harrison.Handbook.paramodulation
+open Reasoning.Automated.Harrison.Handbook.decidable
+open Reasoning.Automated.Harrison.Handbook.qelim
+open Reasoning.Automated.Harrison.Handbook.cooper
+open Reasoning.Automated.Harrison.Handbook.complex
+open Reasoning.Automated.Harrison.Handbook.real
+open Reasoning.Automated.Harrison.Handbook.grobner
+open Reasoning.Automated.Harrison.Handbook.geom
+open Reasoning.Automated.Harrison.Handbook.interpolation
+open Reasoning.Automated.Harrison.Handbook.combining
+open Reasoning.Automated.Harrison.Handbook.lcf
+open Reasoning.Automated.Harrison.Handbook.lcfprop
+open Reasoning.Automated.Harrison.Handbook.folderived
+open Reasoning.Automated.Harrison.Handbook.lcffol
+open Reasoning.Automated.Harrison.Handbook.tactics
 
 module Program =
     open System
@@ -91,32 +109,39 @@ module Program =
         Console.WriteLine "Press any key to continue."
         Console.ReadKey () |> ignore
 
-    let testString_0001 = ""
-    let testString_0002 = "false"
-    let testString_0003 = "true"
-    let testString_0004 = "(true)"
-    let testString_0005 = "~false"
-    let testString_0006 = "~true"
-    let testString_0007 = "~(true)"
-    let testString_0008 = "(~true)"
-    let testString_0009 = "true <=> false"
-    let testString_0010 = "true ==> false"
-    let testString_0011 = "true \/ false"
-    let testString_0012 = "true /\ false"
-    let testString_0013 = "a"
-    let testString_0014 = "a <=> b"
-    let testString_0015 = "a ==> b"
-    let testString_0016 = "a \/ b"
-    let testString_0017 = "a /\ b"
-    let testString_0018 = "forall x. x"
-    let testString_0019 = "(forall x. x)"
-    let testString_0020 = "(forall x. (x))"
-    let testString_0021 = "exists x. x"
-    let testString_0022 = "(exists x. x)"
-    let testString_0023 = "(exists x. (x))"
-    let testString_0024 = "true /\ false \/ true"
-    let testString_0025 = "forall x. x ==> true"
-    let testString_0026 = "forall x. (x ==> true)"
+    do
+        let str = "(p ==> q) \/ (q ==> p)"
+        let qq = default_parser str
+        let theorem = lcftaut qq
+        let qwomwef = "wfewplf".Length
+        ()
+
+    let [<Literal>] testString_0001 = ""
+    let [<Literal>] testString_0002 = "false"
+    let [<Literal>] testString_0003 = "true"
+    let [<Literal>] testString_0004 = "(true)"
+    let [<Literal>] testString_0005 = "~false"
+    let [<Literal>] testString_0006 = "~true"
+    let [<Literal>] testString_0007 = "~(true)"
+    let [<Literal>] testString_0008 = "(~true)"
+    let [<Literal>] testString_0009 = "true <=> false"
+    let [<Literal>] testString_0010 = "true ==> false"
+    let [<Literal>] testString_0011 = "true \/ false"
+    let [<Literal>] testString_0012 = "true /\ false"
+    let [<Literal>] testString_0013 = "a"
+    let [<Literal>] testString_0014 = "a <=> b"
+    let [<Literal>] testString_0015 = "a ==> b"
+    let [<Literal>] testString_0016 = "a \/ b"
+    let [<Literal>] testString_0017 = "a /\ b"
+    let [<Literal>] testString_0018 = "forall x. x"
+    let [<Literal>] testString_0019 = "(forall x. x)"
+    let [<Literal>] testString_0020 = "(forall x. (x))"
+    let [<Literal>] testString_0021 = "exists x. x"
+    let [<Literal>] testString_0022 = "(exists x. x)"
+    let [<Literal>] testString_0023 = "(exists x. (x))"
+    let [<Literal>] testString_0024 = "true /\ false \/ true"
+    let [<Literal>] testString_0025 = "forall x. x ==> true"
+    let [<Literal>] testString_0026 = "forall x. (x ==> true)"
 
     let test_parse_prop_formula inp =
         let result = parse_prop_formula inp
@@ -149,8 +174,7 @@ module Program =
     let test0025 () = test_parse_prop_formula testString_0025
     let test0026 () = test_parse_prop_formula testString_0026
     
-    let pfn = 
-        (fun prec p -> print_propvar prec p)
+    let pfn = print_propvar
 
     let test_print_prop_formula inp =
         let parse_result = parse_prop_formula inp
