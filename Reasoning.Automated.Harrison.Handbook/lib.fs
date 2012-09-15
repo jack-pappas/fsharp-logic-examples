@@ -767,12 +767,12 @@ module lib =
 
     // pg. 620
     // OCaml: val mem : 'a -> 'a list -> bool = <fun>
-    // F#:    val mem : 'a -> 'a list -> bool when 'a : comparison
+    // F#:    val mem : 'a -> 'a list -> bool when 'a : equality
     let rec mem x lis =
         match lis with
         | [] -> false
         | hd :: tl ->
-            compare x hd = 0
+            hd = x
             || mem x tl
 
 // ------------------------------------------------------------------------- //

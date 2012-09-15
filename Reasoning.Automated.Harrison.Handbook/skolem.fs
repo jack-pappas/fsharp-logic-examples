@@ -93,19 +93,19 @@ module skolem =
     let rec simplify fm =
         match fm with
         | Not p ->
-            simplify1 (Not(simplify p))
+            simplify1 (Not (simplify p))
         | And (p, q) ->
-            simplify1 (And(simplify p,simplify q))
+            simplify1 (And (simplify p, simplify q))
         | Or (p, q) ->
-            simplify1 (Or(simplify p,simplify q))
+            simplify1 (Or (simplify p, simplify q))
         | Imp (p, q) ->
-            simplify1 (Imp(simplify p,simplify q))
+            simplify1 (Imp (simplify p, simplify q))
         | Iff (p, q) ->
-            simplify1 (Iff(simplify p,simplify q))
+            simplify1 (Iff (simplify p, simplify q))
         | Forall (x, p) ->
-            simplify1 (Forall(x,simplify p))
+            simplify1 (Forall (x, simplify p))
         | Exists (x, p) ->
-            simplify1 (Exists(x,simplify p))
+            simplify1 (Exists (x, simplify p))
         | _ -> fm
 
 // pg. 141

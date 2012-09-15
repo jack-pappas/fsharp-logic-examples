@@ -121,7 +121,7 @@ module formulas =
 
     // OCaml: val papply : ('a -> 'b) -> 'a * 'c -> 'b * 'c = <fun>
     // F#:    val papply : ('a -> 'b) -> 'a * 'c -> 'b * 'c
-    let papply f (ast, rest) = 
+    let inline papply f (ast, rest) =
         f ast, rest
 
     // OCaml: val nextin : 'a list -> 'a -> bool = <fun>
