@@ -1,6 +1,5 @@
 ﻿
-#I @"E:\Projects\visual studio 2010\Reasoning.Automated.Harrison.Handbook\bin\Debug"
-#r @"Reasoning.Automated.Harrison.Handbook.dll"
+#load "initialization.fsx"
 
 open Reasoning.Automated.Harrison.Handbook.lib
 //open Reasoning.Automated.Harrison.Handbook.intro

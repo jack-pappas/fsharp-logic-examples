@@ -58,25 +58,10 @@
 //
 // ===================================================================
 
-// This file is a script that can be executed with the F# Interactive.  
-// It can be used to explore and test the library project.
-
-// Note that script files will not be part of the Visual Studio project build.
-
-// Note: Errors here are independet of errors in *.fs files for the Visual Studio project.
-
-// Note: If you run a script here then try to compile *.fs files and get "Unable to copy file ... . The process cannot access the file '...' because it is being used by antoher process."
-// The interactive session is the other process. In the interactive session, issue Reset Session by using the interactive session window's context sensitive menu.
-
-// Note: To use the following select all then send to interactive. i.e. Ctrl-A Alt+Enter
-
-#I @"E:\Projects\visual studio 2010\Reasoning.Automated.Harrison.Handbook\bin\Debug"
-#r @"Reasoning.Automated.Harrison.Handbook.dll"
+#load "initialization.fsx"
 
 open Reasoning.Automated.Harrison.Handbook.lib
 open Reasoning.Automated.Harrison.Handbook.intro
-
-// Note: If errors appear here try compiling code. The error may be due to the fact that this open uses a DLL, not source code.
 
 // pg. 14
 // ------------------------------------------------------------------------- //
