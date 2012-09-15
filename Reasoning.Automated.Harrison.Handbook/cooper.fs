@@ -60,9 +60,11 @@
 
 namespace Reasoning.Automated.Harrison.Handbook
 
-open LanguagePrimitives
-
 module cooper =
+    open LanguagePrimitives
+    open FSharpx.Compatibility.OCaml
+    open Num
+
     open intro
     open formulas
     open prop

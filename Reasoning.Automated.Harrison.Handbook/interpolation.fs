@@ -10,6 +10,9 @@
 namespace Reasoning.Automated.Harrison.Handbook
 
 module interpolation =
+    open FSharpx.Compatibility.OCaml
+    open Num
+
     open intro
     open formulas
     open prop

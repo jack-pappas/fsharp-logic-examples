@@ -61,6 +61,9 @@
 namespace Reasoning.Automated.Harrison.Handbook
 
 module stal =
+    open FSharpx.Compatibility.OCaml
+    open Num
+
     open intro
     open formulas
     open prop

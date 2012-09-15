@@ -7,6 +7,9 @@
 namespace Reasoning.Automated.Harrison.Handbook
 
 module real =
+    open FSharpx.Compatibility.OCaml
+    open Num
+
     open intro
     open formulas
     open prop

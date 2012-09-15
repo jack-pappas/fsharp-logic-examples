@@ -60,11 +60,13 @@
 
 namespace Reasoning.Automated.Harrison.Handbook
 
-open LanguagePrimitives
-
 /// Misc library functions to set up a nice environment.
 [<AutoOpen>]
 module lib =
+    open LanguagePrimitives
+    open FSharpx.Compatibility.OCaml
+    open Num
+
     // Note: If the OCaml code uses the Pervasives module, the code converted to F# is accessed by
     // open Microsoft.FSharp.Compatibility.OCaml
     // See: http://fsharppowerpack.codeplex.com/ - F# Compatibility Helpers  
