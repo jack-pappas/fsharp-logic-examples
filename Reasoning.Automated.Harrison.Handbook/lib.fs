@@ -67,10 +67,6 @@ module lib =
     open FSharpx.Compatibility.OCaml
     open Num
 
-    // Note: If the OCaml code uses the Pervasives module, the code converted to F# is accessed by
-    // open Microsoft.FSharp.Compatibility.OCaml
-    // See: http://fsharppowerpack.codeplex.com/ - F# Compatibility Helpers  
-
     // pg. 618
     // OCaml: val ( ** ) : ('a -> 'b) -> ('c -> 'a) -> 'c -> 'b = <fun>
     // F#:    val ( >>|> ) : ('a -> 'b) -> ('c -> 'a) -> 'c -> 'b
