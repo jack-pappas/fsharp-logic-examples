@@ -39,7 +39,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Examples", "Examples", "{F3
 		Examples\unif.fsx = Examples\unif.fsx
 	EndProjectSection
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "FSharpx.Compatibility.OCaml", "FSharp.Compatibility.OCaml\FSharpx.Compatibility.OCaml.fsproj", "{DFE5F3B6-2BFB-46FC-A315-B3A841B3E566}"
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "FSharpx.Compatibility.OCaml", "FSharpx.Compatibility.OCaml\FSharpx.Compatibility.OCaml.fsproj", "{DFE5F3B6-2BFB-46FC-A315-B3A841B3E566}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

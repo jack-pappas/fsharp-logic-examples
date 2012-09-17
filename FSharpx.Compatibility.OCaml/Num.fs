@@ -7,8 +7,9 @@ open System.Numerics
 open Microsoft.FSharp.Math
 
 // TEMP : Alias for 'nat' so it can be used by the function definitions below.
-// What is the underlying type of OCaml's 'nat'? Is it a 32-bit integer or a native-size integer?
-type nat = uint32
+// TODO : For full compatibility, 'nat' needs to be defined as in OCaml, i.e.,
+// as an inductive type which can represent an arbitrary-length unsigned integer.
+type nat = uint64
 
 //
 [<CustomEquality; CustomComparison>]
@@ -340,7 +341,13 @@ type Num =
             |> Num.FromBigRational
 
     override this.ToString () =
-        raise <| System.NotImplementedException "ToString"
+        match this with
+        | Int x ->
+            x.ToString ()
+        | Big_int x ->
+            x.ToString ()
+        | Ratio q ->
+            q.ToString ()
 
     static member private AreEqual (x : Num, y : Num) : bool =
         match x, y with
@@ -428,8 +435,6 @@ type num = Num
 /// special elements 1/0 (infinity) and 0/0 (undefined).</remarks>
 [<CompilationRepresentation(CompilationRepresentationFlags.ModuleSuffix)>]
 module Num =
-    open Microsoft.FSharp.Math
-
     (* TODO :   Add [<CompilerMessage>] to the functions below so when they're used
                 the F# compiler will emit a warning to let the user know they can
                 use the equivalent, built-in F# generic function.

@@ -92,7 +92,7 @@
       <Project>{7915004e-b37e-4b38-8bfa-cdde8602be11}</Project>
       <Private>True</Private>
     </ProjectReference>
-    <ProjectReference Include="..\FSharp.Compatibility.OCaml\FSharpx.Compatibility.OCaml.fsproj">
+    <ProjectReference Include="..\FSharpx.Compatibility.OCaml\FSharpx.Compatibility.OCaml.fsproj">
       <Name>FSharpx.Compatibility.OCaml</Name>
       <Project>{dfe5f3b6-2bfb-46fc-a315-b3a841b3e566}</Project>
       <Private>True</Private>
