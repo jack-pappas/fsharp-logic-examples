@@ -149,29 +149,31 @@ module lib =
 // Handy list operations.                                                    //
 // ------------------------------------------------------------------------- //
 
-    let rec minusMinusImpl (m, n) cont =
+    // pg. 618
+    // OCaml: val ( -- ) : int -> int -> int list = <fun>
+    // F#:    val ( -- ) : int -> int -> int list
+    let rec (--) m n =
+        minusMinusImpl (m, n) id
+
+    and private minusMinusImpl (m, n) cont =
         if m > n then
             cont []
         else
             minusMinusImpl (m + 1, n) <| fun lst ->
                 cont (m :: lst)
 
-    // pg. 618
-    // OCaml: val ( -- ) : int -> int -> int list = <fun>
-    // F#:    val ( -- ) : int -> int -> int list
-    let inline (--) m n =
-        minusMinusImpl (m, n) id
-
-
-    (* TODO : (---) is the same as (--) but uses 'num' instead of 'int' *)
     // pg.618
     // OCaml: val ( --- ) : num -> num -> num list = <fun>
-    // F#:    val ( --- ) : int -> int -> int list
-    let (*inline*) (---) (m : num) (n : num) =
-        // TODO : Create a private, recursive implementation of this function
-        // like 'minusMinusImpl' (but for the 'num' type instead of 'int').
-        //minusMinusImpl (m, n) id
-        raise <| System.NotImplementedException ()
+    // F#:    val ( --- ) : num -> num -> num list
+    let rec (---) (m : num) (n : num) =
+        minusMinusMinusImpl (m, n) id
+    
+    and private minusMinusMinusImpl (m, n) cont =
+        if m > n then
+            cont []
+        else
+            minusMinusMinusImpl (m + Int 1, n) <| fun lst ->
+                cont (m :: lst)
 
     // pg. 619
     // OCaml: val map2 : ('a -> 'b -> 'c) -> 'a list -> 'b list -> 'c list = <fun>
@@ -785,8 +787,8 @@ module lib =
         else
             match l with
             | [] -> []
-            | h::t ->
-                union (image (fun g -> h::g) (allsets (m - 1) t)) (allsets m t)
+            | h :: t ->
+                union (image (fun g -> h :: g) (allsets (m - 1) t)) (allsets m t)
         
     // pg. 620
     // OCaml: val allsubsets : 'a list -> 'a list list = <fun>
