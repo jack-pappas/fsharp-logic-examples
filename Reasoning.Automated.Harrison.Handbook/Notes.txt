@@ -16,20 +16,6 @@ Interesting changes from OCaml to F#
 	in F# is
 		fsi.AddPrinter my_printer;;		// my_printer : 'T -> string
 
-	The OCaml directives
-		START_INTERACTIVE;;
-		(* code goes here *)
-		END_INTERACTIVE;;
-	can be (roughly) translated to F# as
-		#if INTERACTIVE
-		(* code goes here *)
-		#endif
-
-7. Num type doesn't exist in F#.
-
-	See the ported 'num' type which uses the built in F# int and bigint (BigInteger) types, along with the
-	BigRational type from the F# PowerPack.
-
 -- F# porting notes --
 	-	Turned off F# warning FS0025 (about incomplete pattern matches); these are found extensively in the
 		original code and we want to leave the code as-is for now, so the warning was disabled for the time being.

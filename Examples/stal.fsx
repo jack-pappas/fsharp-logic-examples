@@ -80,7 +80,7 @@
 open Reasoning.Automated.Harrison.Handbook.lib
 //open Reasoning.Automated.Harrison.Handbook.intro
 //open Reasoning.Automated.Harrison.Handbook.formulas
-//open Reasoning.Automated.Harrison.Handbook.prop
+open Reasoning.Automated.Harrison.Handbook.prop
 open Reasoning.Automated.Harrison.Handbook.propexamples
 open Reasoning.Automated.Harrison.Handbook.defcnf
 open Reasoning.Automated.Harrison.Handbook.dp

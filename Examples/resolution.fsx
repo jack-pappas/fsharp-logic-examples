@@ -88,7 +88,7 @@ open Reasoning.Automated.Harrison.Handbook.prop
 //open Reasoning.Automated.Harrison.Handbook.stal
 //open Reasoning.Automated.Harrison.Handbook.bdd
 open Reasoning.Automated.Harrison.Handbook.folMod
-//open Reasoning.Automated.Harrison.Handbook.skolem
+open Reasoning.Automated.Harrison.Handbook.skolem
 //open Reasoning.Automated.Harrison.Handbook.herbrand
 //open Reasoning.Automated.Harrison.Handbook.unif
 //open Reasoning.Automated.Harrison.Handbook.tableaux

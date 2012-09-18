@@ -496,7 +496,7 @@ complete_and_simplify ["1"; "*"; "i"] [(parse "i(a) * (a * b) = b")];;
 // Searching with depth limit 3
 // Searching with depth limit 4
 // val it : int list = [5; 4]
-(meson002 ** equalitize) (parse "(forall x y z. x * y = x * z ==> y = z) <=> (forall x z. exists w. forall y. z = x * y ==> w = y)");;
+(meson002 >>|> equalitize) (parse "(forall x y z. x * y = x * z ==> y = z) <=> (forall x z. exists w. forall y. z = x * y ==> w = y)");;
 
 // val it : fol Reasoning.Automated.Harrison.Handbook.formulas.formula =
 //   Or
@@ -750,7 +750,7 @@ complete_and_simplify ["1"; "*"; "i"] eqs002;;
 // Searching with depth limit 3
 // Searching with depth limit 4
 // val it : int list = [5; 4]
-(meson002 ** equalitize) (parse "(forall x y z. x * y = x * z ==> y = z) <=> (forall x z. exists w. forall y. z = x * y ==> w = y)");;
+(meson002 >>|> equalitize) (parse "(forall x y z. x * y = x * z ==> y = z) <=> (forall x z. exists w. forall y. z = x * y ==> w = y)");;
 
 // val it : fol Reasoning.Automated.Harrison.Handbook.formulas.formula =
 //   Or

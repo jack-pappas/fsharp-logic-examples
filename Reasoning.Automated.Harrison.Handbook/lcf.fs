@@ -36,6 +36,8 @@ module lcf =
 (*  |- (exists x. p) <=> ~(forall x. ~p)                                     *)
 (* ------------------------------------------------------------------------- *)
 
+    open EGT.OCaml.Format
+
     open intro
     open formulas
     open prop
@@ -72,7 +74,7 @@ module lcf =
     (*
 
     // TODO : Change this to an interface (IProofSystem)
-    type Proofsystem<'thm> = interface
+    type IProofSystem<'thm> = interface
         abstract member modusponens : 'thm -> 'thm -> 'thm
         abstract member gen : string -> 'thm -> 'thm
         abstract member axiom_addimp : formula<fol> -> formula<fol> -> 'thm
@@ -131,7 +133,7 @@ module lcf =
 (*
     /// Implementation of the abstract data type of theorems.
     type Proven = class
-        interface Proofsystem<formula<fol>> with
+        interface IProofSystem<formula<fol>> with
             member __.modusponens pq p =
                 match pq with
                 | Imp (p', q) when p = p' -> q
@@ -286,13 +288,13 @@ module lcf =
 
 //    include Proven;;
 
-//    let print_thm th =
-//        open_box 0
-//        print_string "|-"
-//        print_space ()
-//        open_box 0
-//        print_formula print_atom (concl th)
-//        close_box ()
-//        close_box ()
+    let print_thm th =
+        open_box 0
+        print_string "|-"
+        print_space ()
+        open_box 0
+        print_formula print_atom (concl th)
+        close_box ()
+        close_box ()
 
     //#install_printer print_thm;;

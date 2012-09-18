@@ -283,7 +283,7 @@ module formulas =
             | Exists (x, p) ->
                 bracket (pr > 0) 2 print_qnt "exists" (strip_quant fm)
 
-        and print_qnt qname (bvs,bod) =
+        and print_qnt qname (bvs, bod) =
             print_string qname
             bvs |> do_list (fun v ->
                 print_string " "

@@ -69,7 +69,7 @@ open Reasoning.Automated.Harrison.Handbook.intro
 // ------------------------------------------------------------------------- //
 
 // val it : expression = Add (Mul (Const 2,Var "x"),Var "y")
-Add(Mul(Const 2,Var "x"),Var "y");;
+Add (Mul (Const 2, Var "x"), Var "y");;
 
 // pg. 16
 // ------------------------------------------------------------------------- //
@@ -78,7 +78,7 @@ Add(Mul(Const 2,Var "x"),Var "y");;
 
 // val e : expression =
 //   Add (Mul (Add (Mul (Const 0,Var "x"),Const 1),Const 3),Const 12)
-let e = Add(Mul(Add(Mul(Const(0),Var "x"),Const(1)),Const(3)),Const(12));;
+let e = Add (Mul (Add (Mul (Const 0, Var "x"), Const 1), Const 3), Const 12);;
 
 // val it : expression = Const 15
 simplify e;;
@@ -86,20 +86,17 @@ simplify e;;
 // pg. 18
 // val it : string list =
 //   ["2"; "*"; "("; "("; "var_1"; "+"; "x'"; ")"; "+"; "11"; ")"]
-lex(explode "2*((var_1 + x') + 11)");;
+lex (explode "2*((var_1 + x') + 11)");;
 
 // val it : string list =
 //   ["if"; "//"; "p1"; "--"; "=="; "*"; "p2"; "++"; ")"; "then"; "f"; "("; ")";
 //    "else"; "g"; "("; ")"]
-lex(explode "if //p1-- == *p2++) then f() else g()");;
+lex (explode "if //p1-- == *p2++) then f() else g()");;
 
 // pg. 20
 // ------------------------------------------------------------------------- //
 // Our parser.                                                               //
 // ------------------------------------------------------------------------- //
-
-// val default_parser : (string -> expression)
-let default_parser = make_parser parse_expression
 
 // val it : expression = Add (Var "x",Const 1)
 default_parser "x + 1";;
