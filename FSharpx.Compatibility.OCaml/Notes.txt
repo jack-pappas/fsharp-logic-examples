@@ -6,6 +6,11 @@
 Design / Implementation Notes
 -------------------------------------------------------------------------------
 
+-	Some modules are already implemented in the F# PowerPack (under the
+	FSharp.PowerPack.Compatibility namespace). However, not all of these modules
+	are completed so they should be compared to the OCaml documentation to
+	determined what functions, if any, still need to be implemented.
+
 -	The GC and Weak modules can be implemented using the System.GC type and
 	the System.Diagnostics.Process / System.Diagnostics.ProcessInfo types.
 -	The Lazy module can be easily re-implemented using F#'s 'lazy' keyword.
