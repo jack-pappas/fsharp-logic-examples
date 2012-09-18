@@ -4,7 +4,7 @@
     Copyright © 2012 Jack Pappas (github.com/jack-pappas)
 
     This code is available under the Apache 2.0 license.
-    See the License.txt file for the complete text of the license. *)
+    See the LICENSE file for the complete text of the license. *)
 
 /// <summary>Operation on arbitrary-precision numbers.</summary>
 /// <remarks>Numbers (type num) are arbitrary-precision rational numbers, plus the
