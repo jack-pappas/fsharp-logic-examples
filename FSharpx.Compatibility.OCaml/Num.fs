@@ -1,6 +1,16 @@
-﻿// TODO : Add copyright header
+﻿(*  OCaml Compatibility Library for F#
+    (FSharpx.Compatibility.OCaml)
 
-namespace FSharpx.Compatibility.OCaml
+    Copyright © 2012 Jack Pappas (github.com/jack-pappas)
+
+    This code is available under the Apache 2.0 license.
+    See the License.txt file for the complete text of the license. *)
+
+/// <summary>Operation on arbitrary-precision numbers.</summary>
+/// <remarks>Numbers (type num) are arbitrary-precision rational numbers, plus the
+/// special elements 1/0 (infinity) and 0/0 (undefined).</remarks>
+[<CompilationRepresentation(CompilationRepresentationFlags.ModuleSuffix)>]
+module FSharpx.Compatibility.OCaml.Num
 
 open System
 open System.Numerics
@@ -430,255 +440,250 @@ type Num =
 /// Type alias for Num, for compatibility with OCaml.
 type num = Num
 
-/// <summary>Operation on arbitrary-precision numbers.</summary>
-/// <remarks>Numbers (type num) are arbitrary-precision rational numbers, plus the
-/// special elements 1/0 (infinity) and 0/0 (undefined).</remarks>
-[<CompilationRepresentation(CompilationRepresentationFlags.ModuleSuffix)>]
-module Num =
-    (* TODO :   Add [<CompilerMessage>] to the functions below so when they're used
-                the F# compiler will emit a warning to let the user know they can
-                use the equivalent, built-in F# generic function.
-                E.g., use the generic 'abs' instead of 'abs_num'. *)
+(* TODO :   Add [<CompilerMessage>] to the functions below so when they're used
+            the F# compiler will emit a warning to let the user know they can
+            use the equivalent, built-in F# generic function.
+            E.g., use the generic 'abs' instead of 'abs_num'. *)
 
-    /// Addition.
-    let inline add_num (x : num) (y : num) : num =
-        x + y
+/// Addition.
+let inline add_num (x : num) (y : num) : num =
+    x + y
 
-    /// Unary negation.
-    let inline minus_num (x : num) : num =
-        -x
+/// Unary negation.
+let inline minus_num (x : num) : num =
+    -x
 
-    let inline (-/) (x : num) (y : num) : num =
-        x - y
+let inline (-/) (x : num) (y : num) : num =
+    x - y
 
-    //
-    let inline sub_num (x : num) (y : num) : num =
-        x - y
+//
+let inline sub_num (x : num) (y : num) : num =
+    x - y
 
-    let inline ( */ ) (x : num) (y : num) : num =
-        x * y
+let inline ( */ ) (x : num) (y : num) : num =
+    x * y
 
-    //
-    let inline mult_num (x : num) (y : num) : num =
-        x * y
+//
+let inline mult_num (x : num) (y : num) : num =
+    x * y
 
-    //
-    let inline square_num (x : num) : num =
-        x * x
+//
+let inline square_num (x : num) : num =
+    x * x
 
-    //
-    let inline div_num (x : num) (y : num) : num =
-        x / y
+//
+let inline div_num (x : num) (y : num) : num =
+    x / y
 
-    //
-    let quo_num (x : num) (y : num) : num =
-        match x, y with
-        | Int x, Int y ->
-            Int (x / y)
-        | Int x, Big_int y ->
-            raise <| System.NotImplementedException "quo_num"
-        | Int x, Ratio y ->
-            raise <| System.NotImplementedException "quo_num"
-        | Big_int x, Int y ->
-            raise <| System.NotImplementedException "quo_num"
-        | Big_int x, Big_int y ->
-            raise <| System.NotImplementedException "quo_num"
-        | Big_int x, Ratio y ->
-            raise <| System.NotImplementedException "quo_num"
-        | Ratio x, Int y ->
-            raise <| System.NotImplementedException "quo_num"
-        | Ratio x, Big_int y ->
-            raise <| System.NotImplementedException "quo_num"
-        | Ratio x, Ratio y ->
-            raise <| System.NotImplementedException "quo_num"
+//
+let quo_num (x : num) (y : num) : num =
+    match x, y with
+    | Int x, Int y ->
+        Int (x / y)
+    | Int x, Big_int y ->
+        raise <| System.NotImplementedException "quo_num"
+    | Int x, Ratio y ->
+        raise <| System.NotImplementedException "quo_num"
+    | Big_int x, Int y ->
+        raise <| System.NotImplementedException "quo_num"
+    | Big_int x, Big_int y ->
+        raise <| System.NotImplementedException "quo_num"
+    | Big_int x, Ratio y ->
+        raise <| System.NotImplementedException "quo_num"
+    | Ratio x, Int y ->
+        raise <| System.NotImplementedException "quo_num"
+    | Ratio x, Big_int y ->
+        raise <| System.NotImplementedException "quo_num"
+    | Ratio x, Ratio y ->
+        raise <| System.NotImplementedException "quo_num"
 
-    //
-    let mod_num (x : num) (y : num) : num =
-        match x, y with
-        | Int x, Int y ->
-            Int (x % y)
-        | Int x, Big_int y ->
-            raise <| System.NotImplementedException "mod_num"
-        | Int x, Ratio y ->
-            raise <| System.NotImplementedException "mod_num"
-        | Big_int x, Int y ->
-            raise <| System.NotImplementedException "mod_num"
-        | Big_int x, Big_int y ->
-            raise <| System.NotImplementedException "mod_num"
-        | Big_int x, Ratio y ->
-            raise <| System.NotImplementedException "mod_num"
-        | Ratio x, Int y ->
-            raise <| System.NotImplementedException "mod_num"
-        | Ratio x, Big_int y ->
-            raise <| System.NotImplementedException "mod_num"
-        | Ratio x, Ratio y ->
-            raise <| System.NotImplementedException "mod_num"
+//
+let mod_num (x : num) (y : num) : num =
+    match x, y with
+    | Int x, Int y ->
+        Int (x % y)
+    | Int x, Big_int y ->
+        raise <| System.NotImplementedException "mod_num"
+    | Int x, Ratio y ->
+        raise <| System.NotImplementedException "mod_num"
+    | Big_int x, Int y ->
+        raise <| System.NotImplementedException "mod_num"
+    | Big_int x, Big_int y ->
+        raise <| System.NotImplementedException "mod_num"
+    | Big_int x, Ratio y ->
+        raise <| System.NotImplementedException "mod_num"
+    | Ratio x, Int y ->
+        raise <| System.NotImplementedException "mod_num"
+    | Ratio x, Big_int y ->
+        raise <| System.NotImplementedException "mod_num"
+    | Ratio x, Ratio y ->
+        raise <| System.NotImplementedException "mod_num"
 
-    //
-    let inline ( **/ ) (x : num) (y : num) : num =
-        num.Pow (x, y)
+//
+let inline ( **/ ) (x : num) (y : num) : num =
+    num.Pow (x, y)
 
-    //
-    let inline power_num (x : num) (y : num) : num =
-        num.Pow (x, y)
+//
+let inline power_num (x : num) (y : num) : num =
+    num.Pow (x, y)
 
-    //
-    let inline abs_num (x : num) : num =
-        num.Abs x
+//
+let inline abs_num (x : num) : num =
+    num.Abs x
 
-    //
-    let inline succ_num (n : num) : num =
-        n + (Int 1)
+//
+let inline succ_num (n : num) : num =
+    n + (Int 1)
 
-    //
-    let inline pred_num (n : num) : num =
-        n - (Int 1)
+//
+let inline pred_num (n : num) : num =
+    n - (Int 1)
 
-    //
-    let incr_num (r : num ref) : unit =
-        r := succ_num !r
+//
+let incr_num (r : num ref) : unit =
+    r := succ_num !r
 
-    //
-    let decr_num (r : num ref) : unit =
-        r := pred_num !r
+//
+let decr_num (r : num ref) : unit =
+    r := pred_num !r
 
-    /// Test if a number is an integer
-    let is_integer_num (n : num) : bool =
-        match n with
-        | Int _
-        | Big_int _ ->
-            true
-        | Ratio q ->
-            (q.Numerator % q.Denominator).IsZero
+/// Test if a number is an integer
+let is_integer_num (n : num) : bool =
+    match n with
+    | Int _
+    | Big_int _ ->
+        true
+    | Ratio q ->
+        (q.Numerator % q.Denominator).IsZero
 
 
-    (* The four following functions approximate a number by an integer *)
+(* The four following functions approximate a number by an integer *)
 
-    //
-    let inline integer_num (n : num) : num =
-        Num.Truncate n
+//
+let inline integer_num (n : num) : num =
+    Num.Truncate n
 
-    //
-    let inline floor_num (n : num) : num =
-        num.Floor n
+//
+let inline floor_num (n : num) : num =
+    num.Floor n
 
-    //
-    let inline round_num (n : num) : num =
-        Num.Round n
+//
+let inline round_num (n : num) : num =
+    Num.Round n
 
-    //
-    let inline ceiling_num (n : num) : num =
-        num.Ceiling n
+//
+let inline ceiling_num (n : num) : num =
+    num.Ceiling n
 
-    //
-    let inline sign_num (n : num) : int =
-        num.Sign n
-
-
-    (* Comparisons between numbers *)
-
-    let inline ( =/ ) (x : num) (y : num) =
-        x = y
-    let inline ( </ ) (x : num) (y : num) =
-        x < y
-    let inline ( >/ ) (x : num) (y : num) =
-        x > y
-    let inline ( <=/ ) (x : num) (y : num) =
-        x <= y
-    let inline ( >=/ ) (x : num) (y : num) =
-        x >= y
-    let inline ( <>/ ) (x : num) (y : num) =
-        x <> y
-    let inline eq_num (x : num) (y : num) =
-        x = y
-    let inline lt_num (x : num) (y : num) =
-        x < y
-    let inline le_num (x : num) (y : num) =
-        x <= y
-    let inline gt_num (x : num) (y : num) =
-        x > y
-    let inline ge_num (x : num) (y : num) =
-        x >= y
-
-    /// Return -1, 0 or 1 if the first argument is less than, equal to, or greater than the second argument.
-    let inline compare_num (x : num) (y : num) =
-        compare x y
-    /// Return the greater of the two arguments.
-    let inline max_num (x : num) (y : num) =
-        num.Max (x, y)
-    /// Return the smaller of the two arguments.
-    let inline min_num (x : num) (y : num) =
-        num.Min (x, y)
+//
+let inline sign_num (n : num) : int =
+    num.Sign n
 
 
-    (* Coercions with strings *)
+(* Comparisons between numbers *)
 
-    //
-    let inline string_of_num (n : num) : string =
-        n.ToString ()
+let inline ( =/ ) (x : num) (y : num) =
+    x = y
+let inline ( </ ) (x : num) (y : num) =
+    x < y
+let inline ( >/ ) (x : num) (y : num) =
+    x > y
+let inline ( <=/ ) (x : num) (y : num) =
+    x <= y
+let inline ( >=/ ) (x : num) (y : num) =
+    x >= y
+let inline ( <>/ ) (x : num) (y : num) =
+    x <> y
+let inline eq_num (x : num) (y : num) =
+    x = y
+let inline lt_num (x : num) (y : num) =
+    x < y
+let inline le_num (x : num) (y : num) =
+    x <= y
+let inline gt_num (x : num) (y : num) =
+    x > y
+let inline ge_num (x : num) (y : num) =
+    x >= y
 
-    //
-    let approx_num_fix (precision : int) (n : num) : string =
-        raise <| System.NotImplementedException "approx_num_fix"
-
-    //
-    let approx_num_exp (precision : int) (n : num) : string =
-        raise <| System.NotImplementedException "approx_num_exp"
-
-    /// Convert a string to a number.
-    /// Raise Failure "num_of_string" if the given string is not a valid representation of an integer
-    let num_of_string (str : string) : num =
-        // If the string can't be parsed (i.e., an exception was thrown),
-        // catch the exception then call "failwith" for
-        // compatibility with OCaml.
-        try
-            num.Parse str
-        with _ ->
-            failwith "num_of_string"
+/// Return -1, 0 or 1 if the first argument is less than, equal to, or greater than the second argument.
+let inline compare_num (x : num) (y : num) =
+    compare x y
+/// Return the greater of the two arguments.
+let inline max_num (x : num) (y : num) =
+    num.Max (x, y)
+/// Return the smaller of the two arguments.
+let inline min_num (x : num) (y : num) =
+    num.Min (x, y)
 
 
-    (* Coercions between numerical types *)
+(* Coercions with strings *)
 
-    let int_of_num (n : num) : int =
-        // TODO : Determine how to handle cases where 'n' is a Ratio or
-        // is a Big_int whose value is too large for an 'int'.
-        raise <| System.NotImplementedException "int_of_num"
+//
+let inline string_of_num (n : num) : string =
+    n.ToString ()
 
-    let inline num_of_int (r : int) : num =
-        Int r
+//
+let approx_num_fix (precision : int) (n : num) : string =
+    raise <| System.NotImplementedException "approx_num_fix"
 
-    let nat_of_num (n : num) : nat =
-        // TODO : Determine how to handle cases where 'n' is a Ratio or
-        // is a Big_int whose value is too large for an 'int'.
-        raise <| System.NotImplementedException "nat_of_num"
+//
+let approx_num_exp (precision : int) (n : num) : string =
+    raise <| System.NotImplementedException "approx_num_exp"
 
-    let num_of_nat (r : nat) : num =
-        raise <| System.NotImplementedException "num_of_nat"
+/// Convert a string to a number.
+/// Raise Failure "num_of_string" if the given string is not a valid representation of an integer
+let num_of_string (str : string) : num =
+    // If the string can't be parsed (i.e., an exception was thrown),
+    // catch the exception then call "failwith" for
+    // compatibility with OCaml.
+    try
+        num.Parse str
+    with _ ->
+        failwith "num_of_string"
 
-    let inline num_of_big_int (i : bigint) : num =
-        Big_int i
 
-    let big_int_of_num (n : num) : bigint =
-        match n with
-        | Int i ->
-            bigint i
-        | Big_int i ->
-            i
-        | Ratio q ->
-            raise <| System.NotImplementedException "big_int_of_num"
+(* Coercions between numerical types *)
 
-    let ratio_of_num (n : num) : BigRational =
-        match n with
-        | Int i ->
-            BigRational.FromInt i
-        | Big_int i ->
-            BigRational.FromBigInt i
-        | Ratio q ->
-            q
+let int_of_num (n : num) : int =
+    // TODO : Determine how to handle cases where 'n' is a Ratio or
+    // is a Big_int whose value is too large for an 'int'.
+    raise <| System.NotImplementedException "int_of_num"
 
-    let inline num_of_ratio (q : BigRational) : num =
-        Ratio q
+let inline num_of_int (r : int) : num =
+    Int r
 
-    let float_of_num (n : num) : float =
-        raise <| System.NotImplementedException "float_of_num"
+let nat_of_num (n : num) : nat =
+    // TODO : Determine how to handle cases where 'n' is a Ratio or
+    // is a Big_int whose value is too large for an 'int'.
+    raise <| System.NotImplementedException "nat_of_num"
+
+let num_of_nat (r : nat) : num =
+    raise <| System.NotImplementedException "num_of_nat"
+
+let inline num_of_big_int (i : bigint) : num =
+    Big_int i
+
+let big_int_of_num (n : num) : bigint =
+    match n with
+    | Int i ->
+        bigint i
+    | Big_int i ->
+        i
+    | Ratio q ->
+        raise <| System.NotImplementedException "big_int_of_num"
+
+let ratio_of_num (n : num) : BigRational =
+    match n with
+    | Int i ->
+        BigRational.FromInt i
+    | Big_int i ->
+        BigRational.FromBigInt i
+    | Ratio q ->
+        q
+
+let inline num_of_ratio (q : BigRational) : num =
+    Ratio q
+
+let float_of_num (n : num) : float =
+    raise <| System.NotImplementedException "float_of_num"
 
