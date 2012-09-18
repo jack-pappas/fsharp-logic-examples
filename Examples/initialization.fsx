@@ -4,17 +4,18 @@
 (* Copyright (c) 2003-2007, John Harrison. (See "LICENSE.txt" for details.)  *)
 (* ========================================================================= *)
 
-#I @"C:\Users\Jack\Desktop\fs-hol-light\Reasoning.Automated.Harrison.Handbook\bin\Debug"
+#I @"C:\Users\Jack\Desktop\fsharp-logic-examples\Reasoning.Automated.Harrison.Handbook\bin\Debug"
 #r @"Reasoning.Automated.Harrison.Handbook.dll"
+#r @"FSharpx.Compatibility.Ocaml.dll"
+#r @"FSharp.PowerPack.dll"
 
 // TODO : Reference the OCaml compatibility DLL so we can use the Format and Num modules.
 
-fsi.PrintWidth <- 72;;                                 (* Reduce margins     *)
-//open Format;;                                       (* Open formatting    *)
-//open Num;;                                          (* Open bignums       *)
+fsi.PrintWidth <- 72;;                                   (* Reduce margins     *)
+//open Format;;                                          (* Open formatting    *)
+open FSharpx.Compatibility.OCaml;;                       (* Open bignums       *)
+open FSharpx.Compatibility.OCaml.Num;;
 
-// TODO : Fix this -- the 'print_string' function is from the Format module,
-// which hasn't been completely ported yet.
-//let print_num n = print_string(string_of_num n);;      (* Avoid range limit  *)
-//fsi.AddPrinter print_num;;                             (* when printing nums *)
+let print_num (n : Num) = n.ToString ();;                (* Avoid range limit  *)
+fsi.AddPrinter print_num;;                               (* when printing nums *)
 

@@ -8,6 +8,7 @@ namespace Reasoning.Automated.Harrison.Handbook
 
 module combining =
     open FSharpx.Compatibility.OCaml
+    open FSharpx.Compatibility.OCaml.Num
 
     open intro
     open formulas

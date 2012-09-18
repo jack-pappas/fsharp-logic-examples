@@ -4,7 +4,8 @@ namespace Reasoning.Automated.Harrison.Handbook
 
 [<AutoOpen>]
 module misc =
-    open FSharpx.Compatibility.OCaml
+    open FSharpx.Compatibility.OCaml    
+    open FSharpx.Compatibility.OCaml.Num
 
     /// <summary>Determines if one number is evenly divisible by another number,
     /// based on the semantics of the OCaml mod (%) operator.</summary>
