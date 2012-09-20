@@ -60,8 +60,6 @@
 
 namespace Reasoning.Automated.Harrison.Handbook
 
-open EGT.OCaml.Format
-
 module formulas =
 // pg. 26
 // ========================================================================= //
@@ -196,20 +194,21 @@ module formulas =
 // Printing of formulas, parametrized by atom printer.                       //
 // ------------------------------------------------------------------------- //
 
+    // Original version with open_box and close_box
+//    let bracket p n f x y =
+//        if p then print_string "("
+//        open_box n
+//        f x y
+//        close_box ()
+//        if p then print_string ")"
+
     // OCaml: val bracket : bool -> int -> ('a -> 'b -> 'c) -> 'a -> 'b -> unit = <fun>
     // F#:    val bracket : bool -> 'a -> ('b -> 'c -> unit) -> 'b -> 'c -> unit
     // Note: No use of OCaml format module. i.e. print_box removed during conversion
-//    let bracket p n f x y =
-//        (if p then printf "(" else ())
-//        f x y
-//        (if p then printf ")" else ())
-
     let bracket p n f x y =
-        if p then print_string "("
-        open_box n
+        (if p then printf "(" else ())
         f x y
-        close_box ()
-        if p then print_string ")"
+        (if p then printf ")" else ())
 
     // OCaml: val strip_quant : 'a formula -> string list * 'a formula = <fun>
     // F#:    val strip_quant : 'a formula -> string list * 'a formula
@@ -224,105 +223,104 @@ module formulas =
             [x], p
         | _ ->
             [], fm
+
+    // Original version with open_box and close_box
+//    let print_formula pfn =
+//        let rec print_formula pr fm =
+//            match fm with
+//            | False ->
+//                print_string "false"
+//            | True ->
+//                print_string "true"
+//            | Atom pargs ->
+//                pfn pr pargs
+//            | Not p ->
+//                bracket (pr > 10) 1 (print_prefix 10) "~" p
+//            | And (p, q) ->
+//                bracket (pr > 8) 0 (print_infix 8 "/\\") p q
+//            | Or (p, q) -> 
+//                bracket (pr > 6) 0 (print_infix  6 "\\/") p q
+//            | Imp (p, q) ->
+//                bracket (pr > 4) 0 (print_infix 4 "==>") p q
+//            | Iff (p, q) ->
+//                bracket (pr > 2) 0 (print_infix 2 "<=>") p q
+//            | Forall (x, p) ->
+//                bracket (pr > 0) 2 print_qnt "forall" (strip_quant fm)
+//            | Exists (x, p) ->
+//                bracket (pr > 0) 2 print_qnt "exists" (strip_quant fm)
+//
+//        and print_qnt qname (bvs, bod) =
+//            print_string qname
+//            bvs |> do_list (fun v ->
+//                print_string " "
+//                print_string v)
+//            print_string "."
+//            print_space ()
+//            open_box 0
+//            print_formula 0 bod
+//            close_box ()
+//
+//        and print_prefix newpr sym p =
+//            print_string sym
+//            print_formula (newpr + 1) p
+//
+//        and print_infix newpr sym p q =
+//            print_formula (newpr + 1) p
+//            print_string (" " + sym)
+//            print_space ()
+//            print_formula newpr q
+//
+//        print_formula 0
         
     // OCaml: val print_formula : (int -> 'a -> unit) -> 'a formula -> unit = <fun>
     // F#:    val print_formula : (int -> 'a -> unit) -> ('a formula -> unit)
     // Note: No use of OCaml format module. i.e. print_box removed during conversion
-//    let print_formula pfn =
-//        let rec print_formula pr fm =
-//            match fm with
-//            | False -> printf "%s" "false"
-//            | True -> printf "%s" "true"
-//            | Atom(pargs) -> pfn pr pargs
-//            | Not(p) -> bracket (pr > 10) 1 (print_prefix 10) "~" p
-//            | And(p,q) -> bracket (pr > 8) 0 (print_infix 8 "/\\") p q
-//            | Or(p,q) ->  bracket (pr > 6) 0 (print_infix  6 "\\/") p q
-//            | Imp(p,q) ->  bracket (pr > 4) 0 (print_infix 4 "==>") p q
-//            | Iff(p,q) ->  bracket (pr > 2) 0 (print_infix 2 "<=>") p q
-//            | Forall(x,p) -> bracket (pr > 0) 2 print_qnt "forall" (strip_quant fm)
-//            | Exists(x,p) -> bracket (pr > 0) 2 print_qnt "exists" (strip_quant fm)
-//        and print_qnt qname (bvs,bod) =
-//            printf "%s" qname
-//            do_list (fun v -> printf " "; printf "%s" v) bvs
-//            printf "%s" ". "
-////            print_space()
-////            open_box 0
-//            print_formula 0 bod
-////            close_box()
-//        and print_prefix newpr sym p =
-//            printf "%s" sym
-//            print_formula (newpr+1) p
-//        and print_infix newpr sym p q =
-//            print_formula (newpr+1) p
-//            printf "%s" (" " + sym + " ")
-////            print_space()
-//            print_formula newpr q
-//        print_formula 0
-
     let print_formula pfn =
         let rec print_formula pr fm =
             match fm with
-            | False ->
-                print_string "false"
-            | True ->
-                print_string "true"
-            | Atom pargs ->
-                pfn pr pargs
-            | Not p ->
-                bracket (pr > 10) 1 (print_prefix 10) "~" p
-            | And (p, q) ->
-                bracket (pr > 8) 0 (print_infix 8 "/\\") p q
-            | Or (p, q) -> 
-                bracket (pr > 6) 0 (print_infix  6 "\\/") p q
-            | Imp (p, q) ->
-                bracket (pr > 4) 0 (print_infix 4 "==>") p q
-            | Iff (p, q) ->
-                bracket (pr > 2) 0 (print_infix 2 "<=>") p q
-            | Forall (x, p) ->
-                bracket (pr > 0) 2 print_qnt "forall" (strip_quant fm)
-            | Exists (x, p) ->
-                bracket (pr > 0) 2 print_qnt "exists" (strip_quant fm)
-
-        and print_qnt qname (bvs, bod) =
-            print_string qname
-            bvs |> do_list (fun v ->
-                print_string " "
-                print_string v)
-            print_string "."
-            print_space ()
-            open_box 0
+            | False -> printf "%s" "false"
+            | True -> printf "%s" "true"
+            | Atom(pargs) -> pfn pr pargs
+            | Not(p) -> bracket (pr > 10) 1 (print_prefix 10) "~" p
+            | And(p,q) -> bracket (pr > 8) 0 (print_infix 8 "/\\") p q
+            | Or(p,q) ->  bracket (pr > 6) 0 (print_infix  6 "\\/") p q
+            | Imp(p,q) ->  bracket (pr > 4) 0 (print_infix 4 "==>") p q
+            | Iff(p,q) ->  bracket (pr > 2) 0 (print_infix 2 "<=>") p q
+            | Forall(x,p) -> bracket (pr > 0) 2 print_qnt "forall" (strip_quant fm)
+            | Exists(x,p) -> bracket (pr > 0) 2 print_qnt "exists" (strip_quant fm)
+        and print_qnt qname (bvs,bod) =
+            printf "%s" qname
+            do_list (fun v -> printf " "; printf "%s" v) bvs
+            printf "%s" ". "
             print_formula 0 bod
-            close_box ()
-
         and print_prefix newpr sym p =
-            print_string sym
-            print_formula (newpr + 1) p
-
+            printf "%s" sym
+            print_formula (newpr+1) p
         and print_infix newpr sym p q =
-            print_formula (newpr + 1) p
-            print_string (" " + sym)
-            print_space ()
+            print_formula (newpr+1) p
+            printf "%s" (" " + sym + " ")
             print_formula newpr q
-
         print_formula 0
+
+    // Original version with open_box and close_box
+//    let print_qformula pfn fm =
+//        open_box 0
+//        print_string "<<"
+//        open_box 0
+//        print_formula pfn fm
+//        close_box ()
+//        print_string ">>"
+//        close_box ()
 
     // OCaml: val print_qformula : (int -> 'a -> unit) -> 'a formula -> unit = <fun>
     // F#:    val print_qformula : (int -> 'a -> unit) -> 'a formula -> unit
     // Note: No use of OCaml format module. i.e. print_box removed during conversion
     // pg. 28
-//    let print_qformula pfn fm =
-//        printf "<<"
-//        print_formula pfn fm
-//        printfn ">>"
-
     let print_qformula pfn fm =
-        open_box 0
-        print_string "<<"
-        open_box 0
+        printf "<<"
         print_formula pfn fm
-        close_box ()
-        print_string ">>"
-        close_box ()
+        printfn ">>"
+
 
 // pg.30
 // ------------------------------------------------------------------------- //

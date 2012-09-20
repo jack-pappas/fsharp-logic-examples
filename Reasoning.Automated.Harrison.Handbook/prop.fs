@@ -116,7 +116,7 @@ module prop =
     // OCaml: val print_propvar : 'a -> prop -> unit = <fun>
     // F#:    val print_propvar : 'a -> prop -> unit
     let print_propvar prec p =
-        EGT.OCaml.Format.print_string (pname p)
+        printf "%O" (pname p)
         
     // OCaml: val print_prop_formula : prop formula -> unit = <fun>
     // F#:    val print_prop_formula : (prop formula -> unit)

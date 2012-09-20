@@ -1,0 +1,6 @@
+E:\Projects\visual studio 2010\Github\fsharp-logic-examples\EGT.OCaml.Format\bin\Debug\EGT.OCaml.Format.XML
+E:\Projects\visual studio 2010\Github\fsharp-logic-examples\EGT.OCaml.Format\bin\Debug\EGT.OCaml.Format.dll
+E:\Projects\visual studio 2010\Github\fsharp-logic-examples\EGT.OCaml.Format\bin\Debug\EGT.OCaml.Format.pdb
+E:\Projects\visual studio 2010\Github\fsharp-logic-examples\EGT.OCaml.Format\obj\Debug\ResolveAssemblyReference.cache
+E:\Projects\visual studio 2010\Github\fsharp-logic-examples\EGT.OCaml.Format\obj\Debug\EGT.OCaml.Format.dll
+E:\Projects\visual studio 2010\Github\fsharp-logic-examples\EGT.OCaml.Format\obj\Debug\EGT.OCaml.Format.pdb

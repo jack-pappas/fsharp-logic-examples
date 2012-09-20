@@ -6,8 +6,6 @@
 
 namespace Reasoning.Automated.Harrison.Handbook
 
-open EGT.OCaml.Format
-
 module tactics =
     open intro
     open formulas
@@ -58,7 +56,7 @@ module tactics =
             printf "%s: " l
             print_formula print_atom fm
             printfn ""
-            close_box ()
+//            close_box ()
 
         fun (Goals (gls, jfn)) ->
             match gls with
@@ -77,7 +75,7 @@ module tactics =
                 printf "---> "
                 //open_hvbox 0
                 print_formula print_atom w
-                close_box ()
+//                close_box ()
                 printfn ""
             
     #if INTERACTIVE

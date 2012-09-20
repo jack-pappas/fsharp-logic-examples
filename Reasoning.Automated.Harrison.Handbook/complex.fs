@@ -423,6 +423,7 @@ module complex =
 
     // OCaml: val complex_qelim : fol formula -> fol formula = <fun>
     // F#:    val complex_qelim : (fol formula -> expression)
+    // TODO: This has to be fixed and working before release.
 //    let complex_qelim =
 //      simplify ** evalc ** lift_qelim polyatom (dnf ** cnnf (fun x -> x) ** evalc) basic_complex_qelim
 

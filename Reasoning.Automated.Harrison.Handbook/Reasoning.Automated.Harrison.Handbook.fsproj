@@ -78,8 +78,12 @@
     <Compile Include="tactics.fs" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="FSharp.PowerPack, Version=2.0.0.0, Culture=neutral, PublicKeyToken=a19089b1c74d0809" />
-    <Reference Include="FSharp.PowerPack.Compatibility, Version=2.0.0.0, Culture=neutral, PublicKeyToken=a19089b1c74d0809" />
+    <Reference Include="FSharp.PowerPack">
+      <HintPath>D:\Program Files (x86)\FSharpPowerPack-2.0.0.0\bin\FSharp.PowerPack.dll</HintPath>
+    </Reference>
+    <Reference Include="FSharp.PowerPack.Compatibility">
+      <HintPath>D:\Program Files (x86)\FSharpPowerPack-2.0.0.0\bin\FSharp.PowerPack.Compatibility.dll</HintPath>
+    </Reference>
     <Reference Include="mscorlib" />
     <Reference Include="FSharp.Core" />
     <Reference Include="System" />
@@ -87,11 +91,6 @@
     <Reference Include="System.Numerics" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\EGT.OCaml.Format\EGT.OCaml.Format.fsproj">
-      <Name>EGT.OCaml.Format</Name>
-      <Project>{7915004e-b37e-4b38-8bfa-cdde8602be11}</Project>
-      <Private>True</Private>
-    </ProjectReference>
     <ProjectReference Include="..\FSharpx.Compatibility.OCaml\FSharpx.Compatibility.OCaml.fsproj">
       <Name>FSharpx.Compatibility.OCaml</Name>
       <Project>{dfe5f3b6-2bfb-46fc-a315-b3a841b3e566}</Project>

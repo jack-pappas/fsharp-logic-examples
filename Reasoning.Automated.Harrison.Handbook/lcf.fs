@@ -36,8 +36,6 @@ module lcf =
 (*  |- (exists x. p) <=> ~(forall x. ~p)                                     *)
 (* ------------------------------------------------------------------------- *)
 
-    open EGT.OCaml.Format
-
     open intro
     open formulas
     open prop
@@ -289,12 +287,12 @@ module lcf =
 //    include Proven;;
 
     let print_thm th =
-        open_box 0
+//        open_box 0
         print_string "|-"
-        print_space ()
-        open_box 0
+//        print_space ()
+//        open_box 0
         print_formula print_atom (concl th)
-        close_box ()
-        close_box ()
+//        close_box ()
+//        close_box ()
 
     //#install_printer print_thm;;

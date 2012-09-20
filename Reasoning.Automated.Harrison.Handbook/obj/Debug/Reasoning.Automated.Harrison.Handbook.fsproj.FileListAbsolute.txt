@@ -1,0 +1,8 @@
+E:\Projects\visual studio 2010\Github\fsharp-logic-examples\Reasoning.Automated.Harrison.Handbook\obj\Debug\ResolveAssemblyReference.cache
+E:\Projects\visual studio 2010\Github\fsharp-logic-examples\Reasoning.Automated.Harrison.Handbook\bin\Debug\Reasoning.Automated.Harrison.Handbook.XML
+E:\Projects\visual studio 2010\Github\fsharp-logic-examples\Reasoning.Automated.Harrison.Handbook\bin\Debug\Reasoning.Automated.Harrison.Handbook.dll
+E:\Projects\visual studio 2010\Github\fsharp-logic-examples\Reasoning.Automated.Harrison.Handbook\bin\Debug\Reasoning.Automated.Harrison.Handbook.pdb
+E:\Projects\visual studio 2010\Github\fsharp-logic-examples\Reasoning.Automated.Harrison.Handbook\bin\Debug\FSharpx.Compatibility.OCaml.dll
+E:\Projects\visual studio 2010\Github\fsharp-logic-examples\Reasoning.Automated.Harrison.Handbook\bin\Debug\FSharpx.Compatibility.OCaml.pdb
+E:\Projects\visual studio 2010\Github\fsharp-logic-examples\Reasoning.Automated.Harrison.Handbook\obj\Debug\Reasoning.Automated.Harrison.Handbook.dll
+E:\Projects\visual studio 2010\Github\fsharp-logic-examples\Reasoning.Automated.Harrison.Handbook\obj\Debug\Reasoning.Automated.Harrison.Handbook.pdb
