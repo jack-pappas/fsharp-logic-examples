@@ -80,9 +80,6 @@
     <Reference Include="FSharp.PowerPack">
       <HintPath>D:\Program Files (x86)\FSharpPowerPack-2.0.0.0\bin\FSharp.PowerPack.dll</HintPath>
     </Reference>
-    <Reference Include="FSharp.PowerPack.Compatibility">
-      <HintPath>D:\Program Files (x86)\FSharpPowerPack-2.0.0.0\bin\FSharp.PowerPack.Compatibility.dll</HintPath>
-    </Reference>
     <Reference Include="mscorlib" />
     <Reference Include="FSharp.Core" />
     <Reference Include="System" />

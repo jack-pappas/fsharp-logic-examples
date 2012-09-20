@@ -288,7 +288,7 @@ module lcf =
 
     let print_thm th =
 //        open_box 0
-        print_string "|-"
+        printfn "|-"
 //        print_space ()
 //        open_box 0
         print_formula print_atom (concl th)
