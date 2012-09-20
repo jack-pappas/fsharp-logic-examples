@@ -1,6 +1,0 @@
-E:\Projects\visual studio 2010\Github\fsharp-logic-examples\FSharpx.Compatibility.OCaml\obj\Debug\ResolveAssemblyReference.cache
-E:\Projects\visual studio 2010\Github\fsharp-logic-examples\FSharpx.Compatibility.OCaml\bin\Debug\FSharp.Compatibility.OCaml.XML
-E:\Projects\visual studio 2010\Github\fsharp-logic-examples\FSharpx.Compatibility.OCaml\bin\Debug\FSharpx.Compatibility.OCaml.dll
-E:\Projects\visual studio 2010\Github\fsharp-logic-examples\FSharpx.Compatibility.OCaml\bin\Debug\FSharpx.Compatibility.OCaml.pdb
-E:\Projects\visual studio 2010\Github\fsharp-logic-examples\FSharpx.Compatibility.OCaml\obj\Debug\FSharpx.Compatibility.OCaml.dll
-E:\Projects\visual studio 2010\Github\fsharp-logic-examples\FSharpx.Compatibility.OCaml\obj\Debug\FSharpx.Compatibility.OCaml.pdb
