@@ -418,7 +418,7 @@ module cooper =
         | Exists (x0, p0) ->
             let x = Var x0
             let p = unitycoeff x p0
-            let p_inf = simplify (minusinf x p) 
+            let p_inf = simplify (minusinf x p)
             let bs = bset x p
             let js = GenericOne --- divlcm x p
             let p_element j b = linrep vars x (linear_add vars b (mk_numeral j)) p
@@ -432,6 +432,14 @@ module cooper =
 // Evaluation of constant expressions.                                       //
 // ------------------------------------------------------------------------- //
 
+    /// <summary>Determines if one number is evenly divisible by another number,
+    /// based on the semantics of the OCaml mod (%) operator.</summary>
+    /// <remarks>The standard mod (%) operator in .NET (and in F#) throws a DivideByZeroException
+    /// when 'y' is zero (0); however, the operation x % 0 simply returns zero (0) in OCaml, so
+    /// that is the behavior preserved by this method.</remarks>
+    let private divides (x : num) (y : num) : bool =
+        (y = Int 0) || x % y = (Int 0)
+
     // OCaml: val operations : (string * (num        -> num        -> bool)) list = [("=", <fun>);                ("<", <fun>);                  (">", <fun>);                  ("<=", <fun>);                  (">=", <fun>);                  ("divides", <fun>)]
     // F#:    val operations : (string * (num        -> num        -> bool)) list = [("=", <fun:operations@401>); ("<", <fun:operations@402-1>); (">", <fun:operations@403-2>); ("<=", <fun:operations@404-3>); (">=", <fun:operations@405-4>); ("divides", <fun:operations@406-5>)]
     let operations = ["=", (=);
@@ -439,7 +447,7 @@ module cooper =
                       ">", (>);
                       "<=", (<=);
                       ">=", (>=);
-                      "divides", divides'; ]
+                      "divides", divides; ]
 
 //    // OCaml: val evalc : fol formula -> fol formula = <fun>
 //    // F#:    val evalc : (fol formula -> fol formula)
