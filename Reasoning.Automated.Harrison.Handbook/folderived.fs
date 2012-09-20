@@ -121,16 +121,16 @@ module folderived =
     (* ------------------------------------------------------------------------- *)
 
     let exists_left_th x p q =
-      let rec p' = Imp (p, False)
-      and q' = Imp (q, False)
-      let th1 = genimp x (imp_swap (imp_trans_th p q False))
-      let th2 = imp_trans th1 (gen_right_th x q' p')
-      let th3 = imp_swap (imp_trans_th q' (Forall (x, p')) False)
-      let th4 = imp_trans2 (imp_trans th2 th3) (axiom_doubleneg q)
-      let th5 = imp_add_concl False (genimp x (iff_imp2 (axiom_not p)))
-      let th6 = imp_trans (iff_imp1 (axiom_not (Forall (x, Not p)))) th5
-      let th7 = imp_trans (iff_imp1 (axiom_exists x p)) th6
-      imp_swap (imp_trans th7 (imp_swap th4))
+        let rec p' = Imp (p, False)
+        and q' = Imp (q, False)
+        let th1 = genimp x (imp_swap (imp_trans_th p q False))
+        let th2 = imp_trans th1 (gen_right_th x q' p')
+        let th3 = imp_swap (imp_trans_th q' (Forall (x, p')) False)
+        let th4 = imp_trans2 (imp_trans th2 th3) (axiom_doubleneg q)
+        let th5 = imp_add_concl False (genimp x (iff_imp2 (axiom_not p)))
+        let th6 = imp_trans (iff_imp1 (axiom_not (Forall (x, Not p)))) th5
+        let th7 = imp_trans (iff_imp1 (axiom_exists x p)) th6
+        imp_swap (imp_trans th7 (imp_swap th4))
 
     (* ------------------------------------------------------------------------- *)
     (* If |- p(x) ==> q then |- (exists x. p(x)) ==> q                           *)
