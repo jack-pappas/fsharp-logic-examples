@@ -1,0 +1,293 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doc>
+<assembly><name>FSharpx.Compatibility.OCaml</name></assembly>
+<members>
+<member name="T:FSharpx.Compatibility.OCaml.NumModule.num">
+<summary>
+ Type alias for Num, for compatibility with OCaml.
+</summary>
+</member>
+<member name="">
+
+</member>
+<member name="T:FSharpx.Compatibility.OCaml.NumModule.Num.Big_int">
+<summary>
+ Arbitrary-precision integer.
+</summary>
+</member>
+<member name="T:FSharpx.Compatibility.OCaml.NumModule.Num.Int">
+<summary>
+ 32-bit signed integer.
+</summary>
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="M:FSharpx.Compatibility.OCaml.NumModule.num_of_string(System.String)">
+<summary>
+ Convert a string to a number.
+ Raise Failure &quot;num_of_string&quot; if the given string is not a valid representation of an integer
+</summary>
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="M:FSharpx.Compatibility.OCaml.NumModule.min_num(FSharpx.Compatibility.OCaml.NumModule.Num,FSharpx.Compatibility.OCaml.NumModule.Num)">
+<summary>
+ Return the smaller of the two arguments.
+</summary>
+</member>
+<member name="M:FSharpx.Compatibility.OCaml.NumModule.max_num(FSharpx.Compatibility.OCaml.NumModule.Num,FSharpx.Compatibility.OCaml.NumModule.Num)">
+<summary>
+ Return the greater of the two arguments.
+</summary>
+</member>
+<member name="M:FSharpx.Compatibility.OCaml.NumModule.compare_num(FSharpx.Compatibility.OCaml.NumModule.Num,FSharpx.Compatibility.OCaml.NumModule.Num)">
+<summary>
+ Return -1, 0 or 1 if the first argument is less than, equal to, or greater than the second argument.
+</summary>
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="M:FSharpx.Compatibility.OCaml.NumModule.is_integer_num(FSharpx.Compatibility.OCaml.NumModule.Num)">
+<summary>
+ Test if a number is an integer
+</summary>
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="M:FSharpx.Compatibility.OCaml.NumModule.minus_num(FSharpx.Compatibility.OCaml.NumModule.Num)">
+<summary>
+ Unary negation.
+</summary>
+</member>
+<member name="M:FSharpx.Compatibility.OCaml.NumModule.add_num(FSharpx.Compatibility.OCaml.NumModule.Num,FSharpx.Compatibility.OCaml.NumModule.Num)">
+<summary>
+ Addition.
+</summary>
+</member>
+<member name="T:FSharpx.Compatibility.OCaml.NumModule">
+ <summary>Operation on arbitrary-precision numbers.</summary>
+ <remarks>Numbers (type num) are arbitrary-precision rational numbers, plus the
+ special elements 1/0 (infinity) and 0/0 (undefined).</remarks>
+</member>
+</members>
+</doc>

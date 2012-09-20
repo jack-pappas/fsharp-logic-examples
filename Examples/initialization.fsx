@@ -4,7 +4,7 @@
 (* Copyright (c) 2003-2007, John Harrison. (See "LICENSE.txt" for details.)  *)
 (* ========================================================================= *)
 
-#I @"C:\Users\Jack\Desktop\fsharp-logic-examples\Reasoning.Automated.Harrison.Handbook\bin\Debug"
+#I @".\..\Reasoning.Automated.Harrison.Handbook\bin\Debug"
 #r @"Reasoning.Automated.Harrison.Handbook.dll"
 #r @"FSharpx.Compatibility.Ocaml.dll"
 #r @"FSharp.PowerPack.dll"

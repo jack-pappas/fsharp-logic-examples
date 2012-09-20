@@ -28,6 +28,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Examples", "Examples", "{F3
 		Examples\prop.fsx = Examples\prop.fsx
 		Examples\propexamples.fsx = Examples\propexamples.fsx
 		Examples\qelim.fsx = Examples\qelim.fsx
+		Examples\real.fsx = Examples\real.fsx
 		Examples\resolution.fsx = Examples\resolution.fsx
 		Examples\rewrite.fsx = Examples\rewrite.fsx
 		Examples\skolem.fsx = Examples\skolem.fsx
