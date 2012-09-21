@@ -1,8 +1,80 @@
-﻿(* ========================================================================= *)
-(* First-order derived rules in the LCF setup.                               *)
-(*                                                                           *)
-(* Copyright (c) 2003-2007, John Harrison. (See "LICENSE.txt" for details.)  *)
-(* ========================================================================= *)
+﻿//  Copyright (c) 2003-2007, John Harrison
+//  All rights reserved.
+//  
+//  Redistribution and use in source and binary forms, with or without
+//  modification, are permitted provided that the following conditions
+//  are met:
+//  
+//  * Redistributions of source code must retain the above copyright
+//  notice, this list of conditions and the following disclaimer.
+//  
+//  * Redistributions in binary form must reproduce the above copyright
+//  notice, this list of conditions and the following disclaimer in the
+//  IMPORTANT:  READ BEFORE DOWNLOADING, COPYING, INSTALLING OR USING.
+//  By downloading, copying, installing or using the software you agree
+//  to this license.  If you do not agree to this license, do not
+//  download, install, copy or use the software.
+//  
+//  Copyright (c) 2003-2007, John Harrison
+//  All rights reserved.
+//  
+//  Redistribution and use in source and binary forms, with or without
+//  modification, are permitted provided that the following conditions
+//  are met:
+//  
+//  * Redistributions of source code must retain the above copyright
+//  notice, this list of conditions and the following disclaimer.
+//  
+//  * Redistributions in binary form must reproduce the above copyright
+//  notice, this list of conditions and the following disclaimer in the
+//  documentation and/or other materials provided with the distribution.
+//  
+//  * The name of John Harrison may not be used to endorse or promote
+//  products derived from this software without specific prior written
+//  permission.
+//  
+//  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+//  "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+//  LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+//  FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+//  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+//  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+//  LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF
+//  USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+//  ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+//  OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
+//  OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+//  SUCH DAMAGE.
+// 
+//  ===================================================================
+// 
+//  Converted to F# 2.0
+// 
+//  Copyright (c) 2012, Jack Pappas, Eric Taucher
+//  All rights reserved.
+// 
+//  Redistribution and use in source and binary forms, with or without
+//  modification, are permitted provided that the following conditions
+//  are met:
+//  
+//  * Redistributions of source code must retain the above copyright
+//  notice, this list of conditions and the previous disclaimer.
+//  
+//  * Redistributions in binary form must reproduce the above copyright
+//  notice, this list of conditions and the previous disclaimer in the
+//  documentation and/or other materials provided with the distribution.
+//  
+//  * The name of Eric Taucher may not be used to endorse or promote
+//  products derived from this software without specific prior written
+//  permission.
+// 
+//  ===================================================================
+
+// ========================================================================= //
+// First-order derived rules in the LCF setup.                               //
+//                                                                           //
+// Copyright (c) 2003-2007, John Harrison. (See "LICENSE.txt" for details.)  //
+// ========================================================================= //
 
 namespace Reasoning.Automated.Harrison.Handbook
 
@@ -42,30 +114,33 @@ module folderived =
     open lcf
     open lcfprop
 
-    (* ------------------------------------------------------------------------- *)
-    (*                         ******                                            *)
-    (*         ------------------------------------------ eq_sym                 *)
-    (*                      |- s = t ==> t = s                                   *)
-    (* ------------------------------------------------------------------------- *)
+    // pg. 489
+    // ------------------------------------------------------------------------- //
+    //                         ******                                            //
+    //         ------------------------------------------ eq_sym                 //
+    //                      |- s = t ==> t = s                                   //
+    // ------------------------------------------------------------------------- //
 
     let eq_sym s t =
         let rth = axiom_eqrefl s
         funpow 2 (fun th -> modusponens (imp_swap th) rth)
                (axiom_predcong "=" [s; s] [t; s])
-
-    (* ------------------------------------------------------------------------- *)
-    (* |- s = t ==> t = u ==> s = u.                                             *)
-    (* ------------------------------------------------------------------------- *)
+               
+    // pg. 489
+    // ------------------------------------------------------------------------- //
+    // |- s = t ==> t = u ==> s = u.                                             //
+    // ------------------------------------------------------------------------- //
 
     let eq_trans s t u =
         let th1 = axiom_predcong "=" [t; u] [s; u]
         let th2 = modusponens (imp_swap th1) (axiom_eqrefl u)
         imp_trans (eq_sym s t) th2
-
-    (* ------------------------------------------------------------------------- *)
-    (*         ---------------------------- icongruence                          *)
-    (*          |- s = t ==> tm[s] = tm[t]                                       *)
-    (* ------------------------------------------------------------------------- *)
+        
+    // pg. 490
+    // ------------------------------------------------------------------------- //
+    //         ---------------------------- icongruence                          //
+    //          |- s = t ==> tm[s] = tm[t]                                       //
+    // ------------------------------------------------------------------------- //
 
     let rec icongruence s t stm ttm =
         if stm = ttm then
@@ -80,45 +155,39 @@ module folderived =
                 let ts = List.map (consequent >>|> concl) ths
                 imp_trans_chain ths (axiom_funcong fs (List.map lhs ts) (List.map rhs ts))
             | _ -> failwith "icongruence: not congruent"
-
-    (* ------------------------------------------------------------------------- *)
-    (* Example.                                                                  *)
-    (* ------------------------------------------------------------------------- *)
-    (*
-    START_INTERACTIVE;;
-    icongruence <<|s|>> <<|t|>> <<|f(s,g(s,t,s),u,h(h(s)))|>>
-                                <<|f(s,g(t,t,s),u,h(h(t)))|>>;;
-    END_INTERACTIVE;;
-    *)
-
-    (* ------------------------------------------------------------------------- *)
-    (* |- (forall x. p ==> q(x)) ==> p ==> (forall x. q(x))                      *)
-    (* ------------------------------------------------------------------------- *)
+    
+    // pg. 490
+    // ------------------------------------------------------------------------- //
+    // |- (forall x. p ==> q(x)) ==> p ==> (forall x. q(x))                      //
+    // ------------------------------------------------------------------------- //
 
     let gen_right_th x p q =
         imp_swap (imp_trans (axiom_impall x p) (imp_swap (axiom_allimp x p q)))
-
-    (* ------------------------------------------------------------------------- *)
-    (*                       |- p ==> q                                          *)
-    (*         ------------------------------------- genimp "x"                  *)
-    (*           |- (forall x. p) ==> (forall x. q)                              *)
-    (* ------------------------------------------------------------------------- *)
+        
+    // pg. 490
+    // ------------------------------------------------------------------------- //
+    //                       |- p ==> q                                          //
+    //         ------------------------------------- genimp "x"                  //
+    //           |- (forall x. p) ==> (forall x. q)                              //
+    // ------------------------------------------------------------------------- //
 
     let genimp x th =
         let p, q = dest_imp (concl th)
         modusponens (axiom_allimp x p q) (gen x th)
-
-    (* ------------------------------------------------------------------------- *)
-    (* If |- p ==> q[x] then |- p ==> forall x. q[x]                             *)
-    (* ------------------------------------------------------------------------- *)
+        
+    // pg. 490
+    // ------------------------------------------------------------------------- //
+    // If |- p ==> q[x] then |- p ==> forall x. q[x]                             //
+    // ------------------------------------------------------------------------- //
 
     let gen_right x th =
         let p, q = dest_imp (concl th)
         modusponens (gen_right_th x p q) (gen x th)
-
-    (* ------------------------------------------------------------------------- *)
-    (* |- (forall x. p(x) ==> q) ==> (exists x. p(x)) ==> q                      *)
-    (* ------------------------------------------------------------------------- *)
+        
+    // pg. 491
+    // ------------------------------------------------------------------------- //
+    // |- (forall x. p(x) ==> q) ==> (exists x. p(x)) ==> q                      //
+    // ------------------------------------------------------------------------- //
 
     let exists_left_th x p q =
         let rec p' = Imp (p, False)
@@ -131,20 +200,22 @@ module folderived =
         let th6 = imp_trans (iff_imp1 (axiom_not (Forall (x, Not p)))) th5
         let th7 = imp_trans (iff_imp1 (axiom_exists x p)) th6
         imp_swap (imp_trans th7 (imp_swap th4))
-
-    (* ------------------------------------------------------------------------- *)
-    (* If |- p(x) ==> q then |- (exists x. p(x)) ==> q                           *)
-    (* ------------------------------------------------------------------------- *)
+        
+    // pg. 491
+    // ------------------------------------------------------------------------- //
+    // If |- p(x) ==> q then |- (exists x. p(x)) ==> q                           //
+    // ------------------------------------------------------------------------- //
 
     let exists_left x th =
         let p, q = dest_imp (concl th)
         modusponens (exists_left_th x p q) (gen x th)
-
-    (* ------------------------------------------------------------------------- *)
-    (*    |- x = t ==> p ==> q    [x not in t and not free in q]                 *)
-    (*  --------------------------------------------------------------- subspec  *)
-    (*                 |- (forall x. p) ==> q                                    *)
-    (* ------------------------------------------------------------------------- *)
+        
+    // pg. 491
+    // ------------------------------------------------------------------------- //
+    //    |- x = t ==> p ==> q    [x not in t and not free in q]                 //
+    //  --------------------------------------------------------------- subspec  //
+    //                 |- (forall x. p) ==> q                                    //
+    // ------------------------------------------------------------------------- //
 
     let subspec th =
         match concl th with
@@ -153,12 +224,13 @@ module folderived =
             modusponens (imp_swap th1) (axiom_existseq x t)
         | _ ->
             failwith "subspec: wrong sort of theorem"
-
-    (* ------------------------------------------------------------------------- *)
-    (*    |- x = y ==> p[x] ==> q[y]  [x not in FV(q); y not in FV(p) or x == y] *)
-    (*  --------------------------------------------------------- subalpha       *)
-    (*                 |- (forall x. p) ==> (forall y. q)                        *)
-    (* ------------------------------------------------------------------------- *)
+            
+    // pg. 492
+    // ------------------------------------------------------------------------- //
+    //    |- x = y ==> p[x] ==> q[y]  [x not in FV(q); y not in FV(p) or x == y] //
+    //  --------------------------------------------------------- subalpha       //
+    //                 |- (forall x. p) ==> (forall y. q)                        //
+    // ------------------------------------------------------------------------- //
 
     let subalpha th =
         match concl th with
@@ -168,11 +240,12 @@ module folderived =
             else
                 gen_right y (subspec th)
         | _ -> failwith "subalpha: wrong sort of theorem"
-
-    (* ------------------------------------------------------------------------- *)
-    (*         ---------------------------------- isubst                         *)
-    (*            |- s = t ==> p[s] ==> p[t]                                     *)
-    (* ------------------------------------------------------------------------- *)
+        
+    // pg. 492
+    // ------------------------------------------------------------------------- //
+    //         ---------------------------------- isubst                         //
+    //            |- s = t ==> p[s] ==> p[t]                                     //
+    // ------------------------------------------------------------------------- //
 
     let rec isubst s t sfm tfm =
         if sfm = tfm then
@@ -208,14 +281,15 @@ module folderived =
                 let th1 = isubst s t (consequent (concl sth))
                                      (antecedent (concl tth))
                 imp_swap (imp_trans sth (imp_swap (imp_trans2 th1 tth)))
-
-    (* ------------------------------------------------------------------------- *)
-    (*                                                                           *)
-    (* -------------------------------------------- alpha "z" <<forall x. p[x]>> *)
-    (*   |- (forall x. p[x]) ==> (forall z. p'[z])                               *)
-    (*                                                                           *)
-    (* [Restriction that z is not free in the initial p[x].]                     *)
-    (* ------------------------------------------------------------------------- *)
+                
+    // pg. 493
+    // ------------------------------------------------------------------------- //
+    //                                                                           //
+    // -------------------------------------------- alpha "z" <<forall x. p[x]>> //
+    //   |- (forall x. p[x]) ==> (forall z. p'[z])                               //
+    //                                                                           //
+    // [Restriction that z is not free in the initial p[x].]                     //
+    // ------------------------------------------------------------------------- //
 
     let alpha z fm =
         match fm with
@@ -224,12 +298,13 @@ module folderived =
             subalpha (isubst (Var x) (Var z) p p')
         | _ ->
             failwith "alpha: not a universal formula"
-
-    (* ------------------------------------------------------------------------- *)
-    (*                                                                           *)
-    (* -------------------------------- ispec t <<forall x. p[x]>>               *)
-    (*   |- (forall x. p[x]) ==> p'[t]                                           *)
-    (* ------------------------------------------------------------------------- *)
+            
+    // pg. 494
+    // ------------------------------------------------------------------------- //
+    //                                                                           //
+    // -------------------------------- ispec t <<forall x. p[x]>>               //
+    //   |- (forall x. p[x]) ==> p'[t]                                           //
+    // ------------------------------------------------------------------------- //
 
     let rec ispec t fm =
         match fm with
@@ -241,68 +316,10 @@ module folderived =
                 subspec(isubst (Var x) t p (subst (x |=> t) p))
         | _ ->
             failwith "ispec: non-universal formula"
-
-    (* ------------------------------------------------------------------------- *)
-    (* Specialization rule.                                                      *)
-    (* ------------------------------------------------------------------------- *)
+            
+    // pg. 494
+    // ------------------------------------------------------------------------- //
+    // Specialization rule.                                                      //
+    // ------------------------------------------------------------------------- //
 
     let spec t th = modusponens (ispec t (concl th)) th
-
-    (* ------------------------------------------------------------------------- *)
-    (* An example.                                                               *)
-    (* ------------------------------------------------------------------------- *)
-
-    (*
-    START_INTERACTIVE;;
-    ispec <<|y|>> <<forall x y z. x + y + z = z + y + x>>;;
-    *)
-
-    (* ------------------------------------------------------------------------- *)
-    (* Additional tests not in main text.                                        *)
-    (* ------------------------------------------------------------------------- *)
-    (*
-    isubst <<|x + x|>> <<|2 * x|>>
-            <<x + x = x ==> x = 0>> <<2 * x = x ==> x = 0>>;;
-
-    isubst <<|x + x|>>  <<|2 * x|>>
-           <<(x + x = y + y) ==> (y + y + y = x + x + x)>>
-           <<2 * x = y + y ==> y + y + y = x + 2 * x>>;;
-
-    ispec <<|x|>> <<forall x y z. x + y + z = y + z + z>> ;;
-
-    ispec <<|x|>> <<forall x. x = x>> ;;
-
-    ispec <<|w + y + z|>> <<forall x y z. x + y + z = y + z + z>> ;;
-
-    ispec <<|x + y + z|>> <<forall x y z. x + y + z = y + z + z>> ;;
-
-    ispec <<|x + y + z|>> <<forall x y z. nothing_much>> ;;
-
-    isubst <<|x + x|>> <<|2 * x|>>
-           <<(x + x = y + y) <=> (something \/ y + y + y = x + x + x)>> ;;
-
-    isubst <<|x + x|>>  <<|2 * x|>>
-           <<(exists x. x = 2) <=> exists y. y + x + x = y + y + y>>
-           <<(exists x. x = 2) <=> (exists y. y + 2 * x = y + y + y)>>;;
-
-    isubst <<|x|>>  <<|y|>>
-            <<(forall z. x = z) <=> (exists x. y < z) /\ (forall y. y < x)>>
-            <<(forall z. y = z) <=> (exists x. y < z) /\ (forall y'. y' < y)>>;;
-    *)
-
-    (* ------------------------------------------------------------------------- *)
-    (* The bug is now fixed.                                                     *)
-    (* ------------------------------------------------------------------------- *)
-    (*
-    ispec <<|x'|>> <<forall x x' x''. x + x' + x'' = 0>>;;
-
-    ispec <<|x''|>> <<forall x x' x''. x + x' + x'' = 0>>;;
-
-    ispec <<|x' + x''|>> <<forall x x' x''. x + x' + x'' = 0>>;;
-
-    ispec <<|x + x' + x''|>> <<forall x x' x''. x + x' + x'' = 0>>;;
-
-    ispec <<|2 * x|>> <<forall x x'. x + x' = x' + x>>;;
-
-    END_INTERACTIVE;;
-    *)
