@@ -373,16 +373,16 @@ module complex =
 //  ------------------------------------------------------------------------- //
 
     let rec cqelim vars (eqs, neqs) sgns =
-        try
-            let c = List.find (is_constant vars) eqs
+        match List.tryFind (is_constant vars) eqs with
+        | Some c ->
             try 
                 let sgns' = assertsign sgns (c, Zero)
                 let eqs' = subtract eqs [c]
                 And (mk_eq c zero, cqelim vars (eqs', neqs) sgns')
             with 
             | Failure "assertsign" -> False
-        with
-        | Failure _ ->
+
+        | None ->
             if eqs = [] then
                 list_conj (List.map (poly_nonzero vars sgns) neqs)
             else
@@ -399,7 +399,8 @@ module complex =
                             True
                         else
                             let q = end_itlist (poly_mul vars) neqs
-                            poly_nondiv vars sgns' p (poly_pow vars q (degree vars p)))
+                            poly_nondiv vars sgns' p (poly_pow vars q (degree vars p)))            
+
 
 //  pg. 365
 //  ------------------------------------------------------------------------- //
