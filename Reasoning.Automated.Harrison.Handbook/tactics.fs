@@ -1,8 +1,80 @@
-﻿(* ========================================================================= *)
-(* Goals, LCF-like tactics and Mizar-like proofs.                            *)
-(*                                                                           *)
-(* Copyright (c) 2003-2007, John Harrison. (See "LICENSE.txt" for details.)  *)
-(* ========================================================================= *)
+﻿//  Copyright (c) 2003-2007, John Harrison
+//  All rights reserved.
+//  
+//  Redistribution and use in source and binary forms, with or without
+//  modification, are permitted provided that the following conditions
+//  are met:
+//  
+//  * Redistributions of source code must retain the above copyright
+//  notice, this list of conditions and the following disclaimer.
+//  
+//  * Redistributions in binary form must reproduce the above copyright
+//  notice, this list of conditions and the following disclaimer in the
+//  IMPORTANT:  READ BEFORE DOWNLOADING, COPYING, INSTALLING OR USING.
+//  By downloading, copying, installing or using the software you agree
+//  to this license.  If you do not agree to this license, do not
+//  download, install, copy or use the software.
+//  
+//  Copyright (c) 2003-2007, John Harrison
+//  All rights reserved.
+//  
+//  Redistribution and use in source and binary forms, with or without
+//  modification, are permitted provided that the following conditions
+//  are met:
+//  
+//  * Redistributions of source code must retain the above copyright
+//  notice, this list of conditions and the following disclaimer.
+//  
+//  * Redistributions in binary form must reproduce the above copyright
+//  notice, this list of conditions and the following disclaimer in the
+//  documentation and/or other materials provided with the distribution.
+//  
+//  * The name of John Harrison may not be used to endorse or promote
+//  products derived from this software without specific prior written
+//  permission.
+//  
+//  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+//  "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+//  LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+//  FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+//  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+//  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+//  LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF
+//  USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+//  ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+//  OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
+//  OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+//  SUCH DAMAGE.
+// 
+//  ===================================================================
+// 
+//  Converted to F# 2.0
+// 
+//  Copyright (c) 2012, Jack Pappas, Eric Taucher
+//  All rights reserved.
+// 
+//  Redistribution and use in source and binary forms, with or without
+//  modification, are permitted provided that the following conditions
+//  are met:
+//  
+//  * Redistributions of source code must retain the above copyright
+//  notice, this list of conditions and the previous disclaimer.
+//  
+//  * Redistributions in binary form must reproduce the above copyright
+//  notice, this list of conditions and the previous disclaimer in the
+//  documentation and/or other materials provided with the distribution.
+//  
+//  * The name of Eric Taucher may not be used to endorse or promote
+//  products derived from this software without specific prior written
+//  permission.
+// 
+//  ===================================================================
+
+// ========================================================================= //
+// Goals, LCF-like tactics and Mizar-like proofs.                            //
+//                                                                           //
+// Copyright (c) 2003-2007, John Harrison. (See "LICENSE.txt" for details.)  //
+// ========================================================================= //
 
 namespace Reasoning.Automated.Harrison.Handbook
 
@@ -44,11 +116,13 @@ module tactics =
     open folderived
     open lcffol
     
+    // pg. 507
     type goals = Goals of ((string * formula<fol>) list * formula<fol>)list * (thm list -> thm)
-
-    (* ------------------------------------------------------------------------- *)
-    (* Printer for goals (just shows first goal plus total number).              *)
-    (* ------------------------------------------------------------------------- *)
+    
+    // pg. 507
+    // ------------------------------------------------------------------------- //
+    // Printer for goals (just shows first goal plus total number).              //
+    // ------------------------------------------------------------------------- //
 
     let print_goal : goals -> unit =
         let print_hyp (l, fm) =
@@ -56,7 +130,7 @@ module tactics =
             printf "%s: " l
             print_formula print_atom fm
             printfn ""
-//            close_box ()
+            //close_box ()
 
         fun (Goals (gls, jfn)) ->
             match gls with
@@ -75,16 +149,13 @@ module tactics =
                 printf "---> "
                 //open_hvbox 0
                 print_formula print_atom w
-//                close_box ()
+                //close_box ()
                 printfn ""
-            
-    #if INTERACTIVE
-    fsi.AddPrinter print_goal;;
-    #endif
-
-    (* ------------------------------------------------------------------------- *)
-    (* Setting up goals and terminating them in a theorem.                       *)
-    (* ------------------------------------------------------------------------- *)
+    
+    // pg. 508
+    // ------------------------------------------------------------------------- //
+    // Setting up goals and terminating them in a theorem.                       //
+    // ------------------------------------------------------------------------- //
 
     let set_goal p =
         let chk th =
@@ -104,31 +175,51 @@ module tactics =
 
     let prove p prf : thm =
         tac_proof (set_goal p) prf
+        
+    // pg. 508
+    // ------------------------------------------------------------------------- //
+    // Conjunction introduction tactic.                                          //
+    // ------------------------------------------------------------------------- //
 
-    /// Conjunction introduction tactic.
     let conj_intro_tac (Goals ((asl, And (p, q)) :: gls, jfn)) =
         let jfn' (thp :: thq :: ths) =
             jfn(imp_trans_chain [thp; thq] (and_pair p q) :: ths)
         Goals ((asl, p) :: (asl, q) :: gls, jfn')
+        
+    // pg. 509
+    // ------------------------------------------------------------------------- //
+    // Handy idiom for tactic that does not split subgoals.                      //
+    // ------------------------------------------------------------------------- //
 
-    /// Handy idiom for tactic that does not split subgoals.
     let jmodify jfn tfn (th :: oths) =
         jfn (tfn th :: oths)
+        
+    // pg. 509
+    // ------------------------------------------------------------------------- //
+    // Version of gen_right with a bound variable change.                        //
+    // ------------------------------------------------------------------------- //
 
-    /// Version of gen_right with a bound variable change.
     let gen_right_alpha y x (th : thm) : thm =
         let th1 = gen_right y th
         imp_trans th1 (alpha x (consequent (concl th1)))
+        
+    // pg. 509
+    // ------------------------------------------------------------------------- //
+    // Universal introduction.                                                   //
+    // ------------------------------------------------------------------------- //
 
-    /// Universal introduction.
     let forall_intro_tac y (Goals ((asl, (Forall (x, p) as fm)) :: gls, jfn)) =
         if mem y (fv fm) || List.exists (mem y >>|> fv >>|> snd) asl then
             failwith "fix: variable already free in goal"
         else
             Goals ((asl,subst(x |=> Var y) p) :: gls,
                     jmodify jfn (gen_right_alpha y x))
+                    
+    // pg. 510
+    // ------------------------------------------------------------------------- //
+    // Another inference rule: |- P[t] ==> exists x. P[x]                        //
+    // ------------------------------------------------------------------------- //
 
-    /// Another inference rule: |- P[t] ==> exists x. P[x]
     let right_exists x t p : thm =
         let th = contrapos (ispec t (Forall (x, Not p)))
         let p' = match antecedent (concl th) with Not (Not p') -> p'
@@ -138,33 +229,57 @@ module tactics =
             iff_imp2 (axiom_not (Not p'));
             th;
             iff_imp2 (axiom_exists x p); ]
+            
+    // pg. 510
+    // ------------------------------------------------------------------------- //
+    // Existential introduction.                                                 //
+    // ------------------------------------------------------------------------- //
 
-    /// Existential introduction.
     let exists_intro_tac t (Goals ((asl, Exists (x, p)) :: gls, jfn)) =
         Goals ((asl, subst(x |=> t) p) :: gls,
             jmodify jfn (fun th -> imp_trans th (right_exists x t p)))
+            
+    // pg. 510
+    // ------------------------------------------------------------------------- //
+    // Implication introduction tactic.                                          //
+    // ------------------------------------------------------------------------- //
 
-    /// Implication introduction tactic.
     let imp_intro_tac s (Goals ((asl, Imp (p, q)) :: gls, jfn)) =
         let jmod = if asl = [] then add_assum True else imp_swap >>|> shunt
         Goals (((s, p) :: asl, q) :: gls, jmodify jfn jmod)
+        
+    // pg. 510
+    // ------------------------------------------------------------------------- //
+    // Append contextual hypothesis to unconditional theorem.                    //
+    // ------------------------------------------------------------------------- //
 
-    /// Append contextual hypothesis to unconditional theorem.
     let assumptate (Goals ((asl, w) :: gls, jfn)) (th : thm) : thm =
         add_assum (list_conj (List.map snd asl)) th
+        
+    // pg. 511
+    // ------------------------------------------------------------------------- //
+    // Append contextual hypothesis to unconditional theorem.                    //
+    // ------------------------------------------------------------------------- //
 
-    /// Get the first assumption (quicker than head of assumps result).
     let firstassum asl : thm =
         let rec p = snd (hd asl)
         and q = list_conj (List.map snd (List.tail asl))
         if List.tail asl = [] then imp_refl p else and_left p q
+        
+    // pg. 511
+    // ------------------------------------------------------------------------- //
+    // Import "external" theorem.                                                //
+    // ------------------------------------------------------------------------- //
 
-    /// Import "external" theorem.
     let using ths p g =
         let ths' = List.map (fun th -> itlist gen (fv (concl th)) th) ths
         List.map (assumptate g) ths'
+        
+    // pg. 511
+    // ------------------------------------------------------------------------- //
+    // Turn assumptions p1,...,pn into theorems |- p1 /\ ... /\ pn ==> pi        //
+    // ------------------------------------------------------------------------- //
 
-    /// Turn assumptions p1,...,pn into theorems |- p1 /\ ... /\ pn ==> pi
     let rec assumps asl =
         match asl with
         | [] -> []
@@ -175,40 +290,68 @@ module tactics =
             let q = antecedent (concl (snd (hd ths)))
             let rth = and_right p q
             (l, and_left p q) :: List.map (fun (l, th) -> l, imp_trans rth th) ths
+            
+    // pg. 511
+    // ------------------------------------------------------------------------- //
+    // Produce canonical theorem from list of theorems or assumption labels.     //
+    // ------------------------------------------------------------------------- //
 
-    /// Produce canonical theorem from list of theorems or assumption labels.
     let by hyps p (Goals ((asl, w) :: gls, jfn)) =
         let ths = assumps asl
         List.map (fun s -> assoc s ths) hyps
+        
+    // pg. 512
+    // ------------------------------------------------------------------------- //
+    // Main automatic justification step.                                        //
+    // ------------------------------------------------------------------------- //
 
-    /// Main automatic justification step.
     let justify byfn hyps p g =
         match byfn hyps p g with
         | [th] when consequent (concl th) = p -> th
         | ths ->
             let th = lcffol (itlist (mk_imp >>|> consequent >>|> concl) ths p)
             if ths = [] then assumptate g th else imp_trans_chain ths th
+            
+    // pg. 512
+    // ------------------------------------------------------------------------- //
+    // Nested subproof.                                                          //
+    // ------------------------------------------------------------------------- //
 
-    /// Nested subproof.
     let proof tacs p (Goals ((asl, w) :: gls, jfn)) =
         [tac_proof (Goals([asl, p], fun [th] -> th)) tacs]
+        
+    // pg. 512
+    // ------------------------------------------------------------------------- //
+    // Nested subproof.                                                          //
+    // ------------------------------------------------------------------------- //
 
-    /// Trivial justification, producing no hypotheses.
     let rec at once p gl = []
     and once = []
+    
+    // pg. 512
+    // ------------------------------------------------------------------------- //
+    // Nested subproof.                                                          //
+    // ------------------------------------------------------------------------- //
 
-    /// Hence an automated terminal tactic.
     let auto_tac byfn hyps (Goals ((asl, w) :: gls, jfn) as g) =
         let th = justify byfn hyps w g
         Goals (gls, fun ths -> jfn (th :: ths))
+        
+    // pg. 512
+    // ------------------------------------------------------------------------- //
+    // A "lemma" tactic.                                                         //
+    // ------------------------------------------------------------------------- //
 
-    /// A "lemma" tactic.
     let lemma_tac s p byfn hyps (Goals ((asl, w) :: gls, jfn) as g) =
         let tr = imp_trans (justify byfn hyps p g)
         let mfn = if asl = [] then tr else imp_unduplicate >>|> tr >>|> shunt
         Goals (((s, p) :: asl, w) :: gls, jmodify jfn mfn)
+        
+    // pg. 513
+    // ------------------------------------------------------------------------- //
+    // Elimination tactic for existential quantification.                        //
+    // ------------------------------------------------------------------------- //
 
-    /// Elimination tactic for existential quantification.
     let exists_elim_tac l (Exists (x, p) as fm) byfn hyps (Goals ((asl, w) :: gls, jfn) as g) =
         if List.exists (mem x >>|> fv) (w :: List.map snd asl) then
             failwith "exists_elim_tac: variable free in assumptions"
@@ -217,8 +360,12 @@ module tactics =
             let jfn' pth =
                 imp_unduplicate(imp_trans th (exists_left x (shunt pth)))
             Goals (((l, p) :: asl, w) :: gls, jmodify jfn jfn')
+            
+    // pg. 513
+    // ------------------------------------------------------------------------- //
+    // Elimination tactic for existential quantification.                        //
+    // ------------------------------------------------------------------------- //
 
-    /// If |- p ==> r and |- q ==> r then |- p \/ q ==> r
     let ante_disj th1 th2 =
         let p, r = dest_imp (concl th1)
         let q, s = dest_imp (concl th2)
@@ -227,8 +374,12 @@ module tactics =
         let th4 = contrapos (imp_trans (iff_imp2 (axiom_not r)) th3)
         let th5 = imp_trans (iff_imp1 (axiom_or p q)) th4
         right_doubleneg (imp_trans th5 (iff_imp1 (axiom_not (Imp (r, False)))))
+        
+    // pg. 513
+    // ------------------------------------------------------------------------- //
+    // Elimination tactic for existential quantification.                        //
+    // ------------------------------------------------------------------------- //
 
-    /// Elimination tactic for disjunction.
     let disj_elim_tac l fm byfn hyps (Goals ((asl, w) :: gls, jfn) as g) =
         let th = justify byfn hyps fm g
         let p, q = match fm with Or (p, q) -> p, q
@@ -236,49 +387,11 @@ module tactics =
             let th1 = imp_trans th (ante_disj (shunt pth) (shunt qth))
             jfn (imp_unduplicate th1 :: ths)
         Goals (((l, p) :: asl, w) :: ((l, q) :: asl, w) :: gls, jfn')
-
-    (* ------------------------------------------------------------------------- *)
-    (* A simple example.                                                         *)
-    (* ------------------------------------------------------------------------- *)
-
-    #if INTERACTIVE
-    (*
-    let g0 = set_goal
-     <<(forall x. x <= x) /\
-       (forall x y z. x <= y /\ y <= z ==> x <= z) /\
-       (forall x y. f(x) <= y <=> x <= g(y))
-       ==> (forall x y. x <= y ==> f(x) <= f(y)) /\
-           (forall x y. x <= y ==> g(x) <= g(y))>>;;
-
-    let g1 = imp_intro_tac "ant" g0;;
-
-    let g2 = conj_intro_tac g1;;
-
-    let g3 = funpow 2 (auto_tac by ["ant"]) g2;;
-
-    extract_thm g3;;
-    *)
-
-    (* ------------------------------------------------------------------------- *)
-    (* All packaged up together.                                                 *)
-    (* ------------------------------------------------------------------------- *)
-
-    (*
-    prove <<(forall x. x <= x) /\
-            (forall x y z. x <= y /\ y <= z ==> x <= z) /\
-            (forall x y. f(x) <= y <=> x <= g(y))
-            ==> (forall x y. x <= y ==> f(x) <= f(y)) /\
-                (forall x y. x <= y ==> g(x) <= g(y))>>
-          [imp_intro_tac "ant";
-           conj_intro_tac;
-           auto_tac by ["ant"];
-           auto_tac by ["ant"]];;
-    *)
-    #endif
-
-    (* ------------------------------------------------------------------------- *)
-    (* Declarative proof.                                                        *)
-    (* ------------------------------------------------------------------------- *)
+    
+    // pg. 515
+    // ------------------------------------------------------------------------- //
+    // Declarative proof.                                                        //
+    // ------------------------------------------------------------------------- //
 
     let multishunt i th =
         let th1 = imp_swap (funpow i (imp_swap >>|> shunt) th)
@@ -308,10 +421,11 @@ module tactics =
 
     let cases fm byfn hyps g =
         disj_elim_tac "" fm byfn hyps g
-
-    (* ------------------------------------------------------------------------- *)
-    (* Thesis modification.                                                      *)
-    (* ------------------------------------------------------------------------- *)
+        
+    // pg. 517
+    // ------------------------------------------------------------------------- //
+    // Thesis modification.                                                      //
+    // ------------------------------------------------------------------------- //
 
     let conclude p byfn hyps (Goals ((asl, w) :: gls, jfn) as gl) =
         let th = justify byfn hyps p gl
@@ -324,18 +438,20 @@ module tactics =
             else
                 let mfn th' = imp_trans_chain [th; th'] (and_pair p q)
                 Goals ((asl, q) :: gls, jmodify jfn mfn)
-
-    (* ------------------------------------------------------------------------- *)
-    (* A useful shorthand for solving the whole goal.                            *)
-    (* ------------------------------------------------------------------------- *)
+                
+    // pg. 517
+    // ------------------------------------------------------------------------- //
+    // A useful shorthand for solving the whole goal.                            //
+    // ------------------------------------------------------------------------- //
 
     let rec our thesis byfn hyps (Goals ((asl, w) :: gls, jfn) as gl) =
         conclude w byfn hyps gl
     and thesis = ""
-
-    (* ------------------------------------------------------------------------- *)
-    (* Termination.                                                              *)
-    (* ------------------------------------------------------------------------- *)
+    
+    // pg. 518
+    // ------------------------------------------------------------------------- //
+    // Termination.                                                              //
+    // ------------------------------------------------------------------------- //
 
     let qed (Goals ((asl, w) :: gls, jfn) as gl) =
         if w = True then
@@ -343,268 +459,18 @@ module tactics =
         else
             failwith "qed: non-trivial goal"
 
-    (* ------------------------------------------------------------------------- *)
-    (* A simple example.                                                         *)
-    (* ------------------------------------------------------------------------- *)
+    // Not in book
+    // ------------------------------------------------------------------------- //
+    // Some amusing efficiency tests versus a "direct" spec.                     //
+    // ------------------------------------------------------------------------- //
 
-    (*
-    START_INTERACTIVE;;
-    let ewd954 = prove
-     <<(forall x y. x <= y <=> x * y = x) /\
-       (forall x y. f(x * y) = f(x) * f(y))
-       ==> forall x y. x <= y ==> f(x) <= f(y)>>
-     [note("eq_sym",<<forall x y. x = y ==> y = x>>)
-        using [eq_sym <<|x|>> <<|y|>>];
-      note("eq_trans",<<forall x y z. x = y /\ y = z ==> x = z>>)
-        using [eq_trans <<|x|>> <<|y|>> <<|z|>>];
-      note("eq_cong",<<forall x y. x = y ==> f(x) = f(y)>>)
-        using [axiom_funcong "f" [<<|x|>>] [<<|y|>>]];
-      assume ["le",<<forall x y. x <= y <=> x * y = x>>;
-              "hom",<<forall x y. f(x * y) = f(x) * f(y)>>];
-      fix "x"; fix "y";
-      assume ["xy",<<x <= y>>];
-      so have <<x * y = x>> by ["le"];
-      so have <<f(x * y) = f(x)>> by ["eq_cong"];
-      so have <<f(x) = f(x * y)>> by ["eq_sym"];
-      so have <<f(x) = f(x) * f(y)>> by ["eq_trans"; "hom"];
-      so have <<f(x) * f(y) = f(x)>> by ["eq_sym"];
-      so conclude <<f(x) <= f(y)>> by ["le"];
-      qed];;
-    END_INTERACTIVE;;
-    *)
-
-    (* ------------------------------------------------------------------------- *)
-    (* More examples not in the main text.                                       *)
-    (* ------------------------------------------------------------------------- *)
-
-    (*
-    START_INTERACTIVE;;
-    prove
-     <<(exists x. p(x)) ==> (forall x. p(x) ==> p(f(x)))
-       ==> exists y. p(f(f(f(f(y)))))>>
-      [assume ["A",<<exists x. p(x)>>];
-       assume ["B",<<forall x. p(x) ==> p(f(x))>>];
-       note ("C",<<forall x. p(x) ==> p(f(f(f(f(x)))))>>)
-       proof
-        [have <<forall x. p(x) ==> p(f(f(x)))>> by ["B"];
-         so conclude <<forall x. p(x) ==> p(f(f(f(f(x)))))>> at once;
-         qed];
-       consider ("a",<<p(a)>>) by ["A"];
-       take <<|a|>>;
-       so conclude <<p(f(f(f(f(a)))))>> by ["C"];
-       qed];;
-    *)
-
-    (* ------------------------------------------------------------------------- *)
-    (* Alternative formulation with lemma construct.                             *)
-    (* ------------------------------------------------------------------------- *)
-
-    (*
-    let lemma (s,p) (Goals((asl,w)::gls,jfn) as gl) =
-      Goals((asl,p)::((s,p)::asl,w)::gls,
-            fun (thp::thw::oths) ->
-                jfn(imp_unduplicate(imp_trans thp (shunt thw)) :: oths)) in
-    prove
-     <<(exists x. p(x)) ==> (forall x. p(x) ==> p(f(x)))
-       ==> exists y. p(f(f(f(f(y)))))>>
-      [assume ["A",<<exists x. p(x)>>];
-       assume ["B",<<forall x. p(x) ==> p(f(x))>>];
-       lemma ("C",<<forall x. p(x) ==> p(f(f(f(f(x)))))>>);
-         have <<forall x. p(x) ==> p(f(f(x)))>> by ["B"];
-         so conclude <<forall x. p(x) ==> p(f(f(f(f(x)))))>> at once;
-         qed;
-       consider ("a",<<p(a)>>) by ["A"];
-       take <<|a|>>;
-       so conclude <<p(f(f(f(f(a)))))>> by ["C"];
-       qed];;
-    *)
-
-    (* ------------------------------------------------------------------------- *)
-    (* Running a series of proof steps one by one on goals.                      *)
-    (* ------------------------------------------------------------------------- *)
-
-    let run prf g = itlist id (List.rev prf) g
-
-    (* ------------------------------------------------------------------------- *)
-    (* LCF-style interactivity.                                                  *)
-    (* ------------------------------------------------------------------------- *)
-
-    let current_goal = ref[set_goal False]
-
-    let g x =
-        current_goal := [set_goal x]
-        hd(!current_goal)
-
-    let e t =
-        current_goal := (t(hd(!current_goal))::(!current_goal))
-        hd(!current_goal)
-
-    let es t =
-        current_goal := (run t (hd(!current_goal))::(!current_goal))
-        hd(!current_goal)
-
-    let b () =
-        current_goal := List.tail(!current_goal)
-        hd(!current_goal)
-
-    (* ------------------------------------------------------------------------- *)
-    (* Examples.                                                                 *)
-    (* ------------------------------------------------------------------------- *)
-    (*
-    prove <<p(a) ==> (forall x. p(x) ==> p(f(x)))
-            ==> exists y. p(y) /\ p(f(y))>>
-          [our thesis at once;
-           qed];;
-
-    prove
-     <<(exists x. p(x)) ==> (forall x. p(x) ==> p(f(x)))
-       ==> exists y. p(f(f(f(f(y)))))>>
-      [assume ["A",<<exists x. p(x)>>];
-       assume ["B",<<forall x. p(x) ==> p(f(x))>>];
-       note ("C",<<forall x. p(x) ==> p(f(f(f(f(x)))))>>) proof
-        [have <<forall x. p(x) ==> p(f(f(x)))>> by ["B"];
-         so our thesis at once;
-         qed];
-       consider ("a",<<p(a)>>) by ["A"];
-       take <<|a|>>;
-       so our thesis by ["C"];
-       qed];;
-
-    prove <<forall a. p(a) ==> (forall x. p(x) ==> p(f(x)))
-                      ==> exists y. p(y) /\ p(f(y))>>
-          [fix "c";
-           assume ["A",<<p(c)>>];
-           assume ["B",<<forall x. p(x) ==> p(f(x))>>];
-           take <<|c|>>;
-           conclude <<p(c)>> by ["A"];
-           note ("C",<<p(c) ==> p(f(c))>>) by ["B"];
-           so our thesis by ["C"; "A"];
-           qed];;
-
-    prove <<p(c) ==> (forall x. p(x) ==> p(f(x)))
-                      ==> exists y. p(y) /\ p(f(y))>>
-          [assume ["A",<<p(c)>>];
-           assume ["B",<<forall x. p(x) ==> p(f(x))>>];
-           take <<|c|>>;
-           conclude <<p(c)>> by ["A"];
-           our thesis by ["A"; "B"];
-           qed];;
-
-    prove <<forall a. p(a) ==> (forall x. p(x) ==> p(f(x)))
-                      ==> exists y. p(y) /\ p(f(y))>>
-          [fix "c";
-           assume ["A",<<p(c)>>];
-           assume ["B",<<forall x. p(x) ==> p(f(x))>>];
-           take <<|c|>>;
-           conclude <<p(c)>> by ["A"];
-           note ("C",<<p(c) ==> p(f(c))>>) by ["B"];
-           our thesis by ["C"; "A"];
-           qed];;
-
-    prove <<forall a. p(a) ==> (forall x. p(x) ==> p(f(x)))
-                      ==> exists y. p(y) /\ p(f(y))>>
-          [fix "c";
-           assume ["A",<<p(c)>>];
-           assume ["B",<<forall x. p(x) ==> p(f(x))>>];
-           take <<|c|>>;
-           note ("D",<<p(c)>>) by ["A"];
-           note ("C",<<p(c) ==> p(f(c))>>) by ["B"];
-           our thesis by ["C"; "A"; "D"];
-           qed];;
-
-
-    prove <<(p(a) \/ p(b)) ==> q ==> exists y. p(y)>>
-      [assume ["A",<<p(a) \/ p(b)>>];
-       assume ["",<<q>>];
-       cases <<p(a) \/ p(b)>> by ["A"];
-         take <<|a|>>;
-         so our thesis at once;
-         qed;
-
-         take <<|b|>>;
-         so our thesis at once;
-         qed];;
-
-    prove
-      <<(p(a) \/ p(b)) /\ (forall x. p(x) ==> p(f(x))) ==> exists y. p(f(y))>>
-      [assume ["base",<<p(a) \/ p(b)>>;
-               "Step",<<forall x. p(x) ==> p(f(x))>>];
-       cases <<p(a) \/ p(b)>> by ["base"];
-         so note("A",<<p(a)>>) at once;
-         note ("X",<<p(a) ==> p(f(a))>>) by ["Step"];
-         take <<|a|>>;
-         our thesis by ["A"; "X"];
-         qed;
-
-         take <<|b|>>;
-         so our thesis by ["Step"];
-         qed];;
-
-    prove
-     <<(exists x. p(x)) ==> (forall x. p(x) ==> p(f(x))) ==> exists y. p(f(y))>>
-      [assume ["A",<<exists x. p(x)>>];
-       assume ["B",<<forall x. p(x) ==> p(f(x))>>];
-       consider ("a",<<p(a)>>) by ["A"];
-       so note ("concl",<<p(f(a))>>) by ["B"];
-       take <<|a|>>;
-       our thesis by ["concl"];
-       qed];;
-
-    prove <<(forall x. p(x) ==> q(x)) ==> (forall x. q(x) ==> p(x))
-           ==> (p(a) <=> q(a))>>
-      [assume ["A",<<forall x. p(x) ==> q(x)>>];
-       assume ["B",<<forall x. q(x) ==> p(x)>>];
-       note ("von",<<p(a) ==> q(a)>>) by ["A"];
-       note ("bis",<<q(a) ==> p(a)>>) by ["B"];
-       our thesis by ["von"; "bis"];
-       qed];;
-    *)
-
-    (*** Mizar-like
-
-    prove
-      <<(p(a) \/ p(b)) /\ (forall x. p(x) ==> p(f(x))) ==> exists y. p(f(y))>>
-      [assume ["A",<<antecedent>>];
-       note ("Step",<<forall x. p(x) ==> p(f(x))>>) by ["A"];
-       per_cases by ["A"];
-         suppose ("base",<<p(a)>>);
-         note ("X",<<p(a) ==> p(f(a))>>) by ["Step"];
-         take <<|a|>>;
-         our thesis by ["base"; "X"];
-         qed;
-
-         suppose ("base",<<p(b)>>);
-         our thesis by ["Step"; "base"];
-         qed;
-       endcase];;
-
-    *****)
-
-//    END_INTERACTIVE;;
-
-    (* ------------------------------------------------------------------------- *)
-    (* Some amusing efficiency tests versus a "direct" spec.                     *)
-    (* ------------------------------------------------------------------------- *)
-
-    (*****
-
-    let test n = gen "x"
+    let test001 n = gen "x"
 
     let double_th th =
-      let tm = concl th in modusponens (modusponens (and_pair tm tm) th) th;;
+      let tm = concl th in modusponens (modusponens (and_pair tm tm) th) th
 
-    let testcase n =
-      gen "x" (funpow n double_th (lcftaut <<p(x) ==> q(1) \/ p(x)>>));;
+    let testcase n = gen "x" (funpow n double_th (lcftaut (parse "p(x) ==> q(1) \/ p(x)")))
 
-    let test n = time (spec <<|2|>>) (testcase n),
-                 time (subst ("x" |=> <<|2|>>)) (concl(testcase n));
-                 ();;
-
-    test 10;;
-    test 11;;
-    test 12;;
-    test 13;;
-    test 14;;
-    test 15;;
-
-    ****)
+    let test002 n = 
+        time (spec (parset "2"))  (testcase n),
+        time (subst ("x" |=> (parset "2"))) (concl(testcase n))
