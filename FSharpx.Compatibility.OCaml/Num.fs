@@ -152,6 +152,14 @@ type Num =
 
     static member op_Division (x : Num, y : Num) : Num =
         match x, y with
+        (*  Cases to handle division-by-zero;
+            in OCaml, x / 0 = 0. *)
+        | _, Int 0 ->
+            Int 0
+        | _, Big_int y when y.IsZero ->
+            Int 0
+
+        (* Standard cases *)
         | Int x, Int y ->
             Int (x / y)
         | Int x, Big_int y ->
@@ -181,6 +189,8 @@ type Num =
 
     static member op_Modulus (x : Num, y : Num) : Num =
         match x, y with
+        (* TODO :   May need to add special case for when y = 0
+                    to ensure behavior is the same as in Ocaml. *)
         | Int x, Int y ->
             Int (x % y)
         | Int x, Big_int y ->
