@@ -1,11 +1,83 @@
-﻿(* ========================================================================= *)
-(* Implementation/proof of the Craig-Robinson interpolation theorem.         *)
-(*                                                                           *)
-(* This is based on the proof in Kreisel & Krivine, which works very nicely  *)
-(* in our context.                                                           *)
-(*                                                                           *)
-(* Copyright (c) 2003-2007, John Harrison. (See "LICENSE.txt" for details.)  *)
-(* ========================================================================= *)
+﻿//  Copyright (c) 2003-2007, John Harrison
+//  All rights reserved.
+//  
+//  Redistribution and use in source and binary forms, with or without
+//  modification, are permitted provided that the following conditions
+//  are met:
+//  
+//  * Redistributions of source code must retain the above copyright
+//  notice, this list of conditions and the following disclaimer.
+//  
+//  * Redistributions in binary form must reproduce the above copyright
+//  notice, this list of conditions and the following disclaimer in the
+//  IMPORTANT:  READ BEFORE DOWNLOADING, COPYING, INSTALLING OR USING.
+//  By downloading, copying, installing or using the software you agree
+//  to this license.  If you do not agree to this license, do not
+//  download, install, copy or use the software.
+//  
+//  Copyright (c) 2003-2007, John Harrison
+//  All rights reserved.
+//  
+//  Redistribution and use in source and binary forms, with or without
+//  modification, are permitted provided that the following conditions
+//  are met:
+//  
+//  * Redistributions of source code must retain the above copyright
+//  notice, this list of conditions and the following disclaimer.
+//  
+//  * Redistributions in binary form must reproduce the above copyright
+//  notice, this list of conditions and the following disclaimer in the
+//  documentation and/or other materials provided with the distribution.
+//  
+//  * The name of John Harrison may not be used to endorse or promote
+//  products derived from this software without specific prior written
+//  permission.
+//  
+//  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+//  "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+//  LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+//  FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+//  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+//  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+//  LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF
+//  USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+//  ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+//  OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
+//  OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+//  SUCH DAMAGE.
+// 
+//  ===================================================================
+// 
+//  Converted to F# 2.0
+// 
+//  Copyright (c) 2012, Eric Taucher
+//  All rights reserved.
+// 
+//  Redistribution and use in source and binary forms, with or without
+//  modification, are permitted provided that the following conditions
+//  are met:
+//  
+//  * Redistributions of source code must retain the above copyright
+//  notice, this list of conditions and the previous disclaimer.
+//  
+//  * Redistributions in binary form must reproduce the above copyright
+//  notice, this list of conditions and the previous disclaimer in the
+//  documentation and/or other materials provided with the distribution.
+//  
+//  * The name of Eric Taucher may not be used to endorse or promote
+//  products derived from this software without specific prior written
+//  permission.
+// 
+//  ===================================================================
+
+// ========================================================================= //
+// Implementation/proof of the Craig-Robinson interpolation theorem.         //
+//                                                                           //
+// This is based on the proof in Kreisel & Krivine, which works very nicely  //
+// in our context.                                                           //
+//                                                                           //
+// Copyright (c) 2003-2007, John Harrison. (See "LICENSE.txt" for details.)  //
+// ========================================================================= //
 
 namespace Reasoning.Automated.Harrison.Handbook
 
@@ -44,17 +116,19 @@ module interpolation =
     open grobner
     open geom
 
-    (* ------------------------------------------------------------------------- *)
-    (* Interpolation for propositional logic.                                    *)
-    (* ------------------------------------------------------------------------- *)
+    // pg. 428
+    // ------------------------------------------------------------------------- //
+    // Interpolation for propositional logic.                                    //
+    // ------------------------------------------------------------------------- //
 
     let pinterpolate p q =
         let orify a r = Or (psubst (a |=> False) r, psubst (a |=> True) r)
         psimplify (itlist orify (subtract (atoms p) (atoms q)) p)
-
-    (* ------------------------------------------------------------------------- *)
-    (* Relation-symbol interpolation for universal closed formulas.              *)
-    (* ------------------------------------------------------------------------- *)
+        
+    // pg. 429
+    // ------------------------------------------------------------------------- //
+    // Relation-symbol interpolation for universal closed formulas.              //
+    // ------------------------------------------------------------------------- //
 
     let urinterpolate p q =
         let fm = specialize (prenex (And (p, q)))
@@ -65,24 +139,12 @@ module interpolation =
         let fmis = List.map (fun tup -> subst (fpf fvs tup) fm) tups
         let ps, qs = List.unzip (List.map (fun (And (p, q)) -> p, q) fmis)
         pinterpolate (list_conj (setify ps)) (list_conj (setify qs))
+    
+    // pg. 432
+    // ------------------------------------------------------------------------- //
+    // Pick the topmost terms starting with one of the given function symbols.   //
+    // ------------------------------------------------------------------------- //
 
-    (* ------------------------------------------------------------------------- *)
-    (* Example.                                                                  *)
-    (* ------------------------------------------------------------------------- *)
-
-    #if INTERACTIVE
-    let p = prenex
-     <<(forall x. R(x,f(x))) /\ (forall x y. S(x,y) <=> R(x,y) \/ R(y,x))>>
-    and q = prenex
-     <<(forall x y z. S(x,y) /\ S(y,z) ==> T(x,z)) /\ ~T(0,0)>>;;
-
-    let c = urinterpolate p q;;
-
-    meson(Imp(p,c));;
-    meson(Imp(q,Not c));;
-    #endif
-
-    /// Pick the topmost terms starting with one of the given function symbols.
     let rec toptermt fns tm =
         match tm with
         | Var x -> []
@@ -92,10 +154,11 @@ module interpolation =
 
     let topterms fns =
         atom_union (fun (R (p, args)) -> itlist (union >>|> toptermt fns) args [])
-
-    (* ------------------------------------------------------------------------- *)
-    (* Interpolation for arbitrary universal formulas.                           *)
-    (* ------------------------------------------------------------------------- *)
+        
+    // pg. 433
+    // ------------------------------------------------------------------------- //
+    // Interpolation for arbitrary universal formulas.                           //
+    // ------------------------------------------------------------------------- //
 
     let uinterpolate p q =
         let rec fp = functions p
@@ -115,21 +178,11 @@ module interpolation =
         let tts = topterms (union (subtract fp fq) (subtract fq fp)) c
         let tms = sort (decreasing termsize) tts
         simpinter tms 1 c
-
-    (* ------------------------------------------------------------------------- *)
-    (* The same example now gives a true interpolant.                            *)
-    (* ------------------------------------------------------------------------- *)
-
-    #if INTERACTIVE
-    let c = uinterpolate p q;;
-
-    meson(Imp(p,c));;
-    meson(Imp(q,Not c));;
-    #endif
-
-    (* ------------------------------------------------------------------------- *)
-    (* Now lift to arbitrary formulas with no common free variables.             *)
-    (* ------------------------------------------------------------------------- *)
+    
+    // pg. 434
+    // ------------------------------------------------------------------------- //
+    // Now lift to arbitrary formulas with no common free variables.             //
+    // ------------------------------------------------------------------------- //
 
     let cinterpolate p q =
         let fm = nnf (And (p, q))
@@ -137,10 +190,11 @@ module interpolation =
         and fns = List.map fst (functions fm)
         let And (p', q'), _ = skolem efm fns
         uinterpolate p' q'
-
-    (* ------------------------------------------------------------------------- *)
-    (* Now to completely arbitrary formulas.                                     *)
-    (* ------------------------------------------------------------------------- *)
+        
+    // pg. 434
+    // ------------------------------------------------------------------------- //
+    // Now to completely arbitrary formulas.                                     //
+    // ------------------------------------------------------------------------- //
 
     let interpolate p q =
         let rec vs = List.map (fun v -> Var v) (intersect (fv p) (fv q))
@@ -152,28 +206,11 @@ module interpolation =
         let rec p' = replace fn_vc p
         and q' = replace fn_vc q
         replace fn_cv (cinterpolate p' q')
-
-    (* ------------------------------------------------------------------------- *)
-    (* Example.                                                                  *)
-    (* ------------------------------------------------------------------------- *)
-
-    #if INTERACTIVE
-    let p =
-     <<(forall x. exists y. R(x,y)) /\
-       (forall x y. S(v,x,y) <=> R(x,y) \/ R(y,x))>>
-    and q =
-     <<(forall x y z. S(v,x,y) /\ S(v,y,z) ==> T(x,z)) /\
-       (exists u. ~T(u,u))>>;;
-
-    let c = interpolate p q;;
-
-    meson(Imp(p,c));;
-    meson(Imp(q,Not c));;
-    #endif
-
-    (* ------------------------------------------------------------------------- *)
-    (* Lift to logic with equality.                                              *)
-    (* ------------------------------------------------------------------------- *)
+    
+    // pg. 435
+    // ------------------------------------------------------------------------- //
+    // Lift to logic with equality.                                              //
+    // ------------------------------------------------------------------------- //
 
     let einterpolate p q =
         let rec p' = equalitize p
@@ -181,88 +218,3 @@ module interpolation =
         let rec p'' = if p' = p then p else And (fst (dest_imp p'), p)
         and q'' = if q' = q then q else And (fst (dest_imp q'), q)
         interpolate p'' q''
-
-    (* ------------------------------------------------------------------------- *)
-    (* More examples, not in the text.                                           *)
-    (* ------------------------------------------------------------------------- *)
-
-    #if INTERACTIVE
-    let p = <<(p ==> q /\ r)>>
-    and q = <<~((q ==> p) ==> s ==> (p <=> q))>>;;
-
-    let c = interpolate p q;;
-
-    tautology(Imp(And(p,q),False));;
-
-    tautology(Imp(p,c));;
-    tautology(Imp(q,Not c));;
-
-    (* ------------------------------------------------------------------------- *)
-    (* A more interesting example.                                               *)
-    (* ------------------------------------------------------------------------- *)
-
-    let p = <<(forall x. exists y. R(x,y)) /\
-              (forall x y. S(x,y) <=> R(x,y) \/ R(y,x))>>
-    and q = <<(forall x y z. S(x,y) /\ S(y,z) ==> T(x,z)) /\ ~T(u,u)>>;;
-
-    meson(Imp(And(p,q),False));;
-
-    let c = interpolate p q;;
-
-    meson(Imp(p,c));;
-    meson(Imp(q,Not c));;
-
-    (* ------------------------------------------------------------------------- *)
-    (* A variant where u is free in both parts.                                  *)
-    (* ------------------------------------------------------------------------- *)
-
-    let p = <<(forall x. exists y. R(x,y)) /\
-              (forall x y. S(x,y) <=> R(x,y) \/ R(y,x)) /\
-              (forall v. R(u,v) ==> Q(v,u))>>
-    and q = <<(forall x y z. S(x,y) /\ S(y,z) ==> T(x,z)) /\ ~T(u,u)>>;;
-
-    meson(Imp(And(p,q),False));;
-
-    let c = interpolate p q;;
-    meson(Imp(p,c));;
-    meson(Imp(q,Not c));;
-
-    (* ------------------------------------------------------------------------- *)
-    (* Way of generating examples quite easily (see K&K exercises).              *)
-    (* ------------------------------------------------------------------------- *)
-
-    let test_interp fm =
-        let rec p = generalize (skolemize fm)
-        and q = generalize (skolemize (Not fm))
-        let c = interpolate p q
-        meson(Imp(And(p,q),False))
-        meson(Imp(p,c))
-        meson(Imp(q,Not c))
-        c
-
-    test_interp <<forall x. P(x) ==> exists y. forall z. P(z) ==> Q(y)>>;;
-
-    test_interp <<forall y. exists y. forall z. exists a.
-                    P(a,x,y,z) ==> P(x,y,z,a)>>;;
-
-    (* ------------------------------------------------------------------------- *)
-    (* Hintikka's examples.                                                      *)
-    (* ------------------------------------------------------------------------- *)
-
-    let p = <<forall x. L(x,b)>>
-    and q = <<(forall y. L(b,y) ==> m = y) /\ ~(m = b)>>;;
-
-    let c = einterpolate p q;;
-
-    meson(Imp(p,c));;
-    meson(Imp(q,Not c));;
-
-    let p =
-     <<(forall x. A(x) /\ C(x) ==> B(x)) /\ (forall x. D(x) \/ ~D(x) ==> C(x))>>
-    and q =
-     <<~(forall x. E(x) ==> A(x) ==> B(x))>>;;
-
-    let c = interpolate p q;;
-    meson(Imp(p,c));;
-    meson(Imp(q,Not c));;
-    #endif
