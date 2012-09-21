@@ -281,12 +281,11 @@ module combining =
         | _ -> failwith "dest_def"
 
     let rec redeqs eqs =
-        try
-            let eq = List.find (can dest_def) eqs
+        match List.tryFind (can dest_def) eqs with
+        | None -> eqs
+        | Some eq ->
             let x, t = dest_def eq
             redeqs (List.map (subst (x |=> t)) (subtract eqs [eq]))
-        with Failure _ ->
-            eqs
             
     // pg. 443
     // ------------------------------------------------------------------------- //
