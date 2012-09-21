@@ -1,8 +1,68 @@
-﻿(* ========================================================================= *)
-(* Grobner basis algorithm.                                                  *)
-(*                                                                           *)
-(* Copyright (c) 2003-2007, John Harrison. (See "LICENSE.txt" for details.)  *)
-(* ========================================================================= *)
+﻿// IMPORTANT:  READ BEFORE DOWNLOADING, COPYING, INSTALLING OR USING.
+// By downloading, copying, installing or using the software you agree
+// to this license.  If you do not agree to this license, do not
+// download, install, copy or use the software.
+// 
+// Copyright (c) 2003-2007, John Harrison
+// All rights reserved.
+// 
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions
+// are met:
+// 
+// * Redistributions of source code must retain the above copyright
+// notice, this list of conditions and the following disclaimer.
+// 
+// * Redistributions in binary form must reproduce the above copyright
+// notice, this list of conditions and the following disclaimer in the
+// documentation and/or other materials provided with the distribution.
+// 
+// * The name of John Harrison may not be used to endorse or promote
+// products derived from this software without specific prior written
+// permission.
+// 
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+// "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+// LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+// FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+// CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+// SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+// LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF
+// USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+// ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+// OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
+// OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+// SUCH DAMAGE.
+//
+// ===================================================================
+//
+// Converted to F# 2.0
+//
+// Copyright (c) 2012, Jack Pappas, Eric Taucher
+// All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions
+// are met:
+// 
+// * Redistributions of source code must retain the above copyright
+// notice, this list of conditions and the previous disclaimer.
+// 
+// * Redistributions in binary form must reproduce the above copyright
+// notice, this list of conditions and the previous disclaimer in the
+// documentation and/or other materials provided with the distribution.
+// 
+// * The name of Eric Taucher may not be used to endorse or promote
+// products derived from this software without specific prior written
+// permission.
+//
+// ===================================================================
+
+// ========================================================================= //
+// Grobner basis algorithm.                                                  //
+//                                                                           //
+// Copyright (c) 2003-2007, John Harrison. (See "LICENSE.txt" for details.)  //
+// ========================================================================= //
 
 namespace Reasoning.Automated.Harrison.Handbook
 
@@ -39,9 +99,10 @@ module grobner =
     open complex
     open real
 
-    (* ------------------------------------------------------------------------- *)
-    (* Operations on monomials.                                                  *)
-    (* ------------------------------------------------------------------------- *)
+    // pg. 384
+    // ------------------------------------------------------------------------- //
+    // Operations on monomials.                                                  //
+    // ------------------------------------------------------------------------- //
 
     let mmul (c1, m1) (c2, m2) =
         // TODO : Modify this to use the F# BigInt type (arbitary-precision integer)
@@ -58,19 +119,21 @@ module grobner =
 
     let mlcm (c1, m1) (c2, m2) =
         (Int 1, List.map2 max m1 m2)
-
-    (* ------------------------------------------------------------------------- *)
-    (* Monomial ordering.                                                        *)
-    (* ------------------------------------------------------------------------- *)
+        
+    // pg. 384
+    // ------------------------------------------------------------------------- //
+    // Monomial ordering.                                                        //
+    // ------------------------------------------------------------------------- //
 
     let morder_lt m1 m2 =
         let rec n1 = itlist (+) m1 0
         and n2 = itlist (+) m2 0
         n1 < n2 || n1 = n2 && lexord (>) m1 m2
-
-    (* ------------------------------------------------------------------------- *)
-    (* Arithmetic on canonical multivariate polynomials.                         *)
-    (* ------------------------------------------------------------------------- *)
+        
+    // pg. 385
+    // ------------------------------------------------------------------------- //
+    // Arithmetic on canonical multivariate polynomials.                         //
+    // ------------------------------------------------------------------------- //
 
     let mpoly_mmul cm pol = List.map (mmul cm) pol
 
@@ -118,10 +181,11 @@ module grobner =
 
     let mpoly_div p q =
         mpoly_mul p (mpoly_inv q)
-
-    (* ------------------------------------------------------------------------- *)
-    (* Convert formula into canonical form.                                      *)
-    (* ------------------------------------------------------------------------- *)
+        
+    // pg. 386
+    // ------------------------------------------------------------------------- //
+    // Convert formula into canonical form.                                      //
+    // ------------------------------------------------------------------------- //
 
     let rec mpolynate vars tm =
         match tm with
@@ -149,18 +213,30 @@ module grobner =
         | _ ->
             failwith "mpolyatom: not an equation"
 
-    /// Reduce monomial cm by polynomial pol, returning replacement for cm.
+    // pg. 404
+    // ------------------------------------------------------------------------- //
+    // Reduce monomial cm by polynomial pol, returning replacement for cm.       //
+    // ------------------------------------------------------------------------- //
+
     let reduce1 cm pol =
         match pol with
         | [] -> failwith "reduce1"
         | hm :: cms ->
             let c, m = mdiv cm hm
             mpoly_mmul (-c, m) cms
+            
+    // pg. 404
+    // ------------------------------------------------------------------------- //
+    // Try this for all polynomials in a basis.                                  //
+    // ------------------------------------------------------------------------- //
 
-    /// Try this for all polynomials in a basis.
     let reduceb cm pols = tryfind (reduce1 cm) pols
+    
+    // pg. 404
+    // ------------------------------------------------------------------------- //
+    // Reduction of a polynomial (always picking largest monomial possible).     //
+    // ------------------------------------------------------------------------- //
 
-    /// Reduction of a polynomial (always picking largest monomial possible).
     let rec reduce pols pol =
         match pol with
         | [] -> []
@@ -168,8 +244,12 @@ module grobner =
             try reduce pols (mpoly_add (reduceb cm pols) ptl)
             with Failure _ ->
                 cm :: (reduce pols ptl)
+                
+    // pg. 408
+    // ------------------------------------------------------------------------- //
+    // Compute S-polynomial of two polynomials.                                  //
+    // ------------------------------------------------------------------------- //
 
-    /// Compute S-polynomial of two polynomials.
     let spoly pol1 pol2 =
         match pol1, pol2 with
         | [], _
@@ -178,8 +258,12 @@ module grobner =
             let m = mlcm m1 m2
             mpoly_sub (mpoly_mmul (mdiv m m1) ptl1)
                       (mpoly_mmul (mdiv m m2) ptl2)
+                      
+    // pg. 411
+    // ------------------------------------------------------------------------- //
+    // Grobner basis algorithm.                                                  //
+    // ------------------------------------------------------------------------- //
 
-    /// Grobner basis algorithm.
     let rec grobner basis pairs =
         printfn "%i basis elements and %i pairs" (List.length basis) (List.length pairs)
         match pairs with
@@ -190,18 +274,30 @@ module grobner =
             else if List.forall (List.forall ((=) 0) >>|> snd) sp then [sp] else
             let newcps = List.map (fun p -> p, sp) basis
             grobner (sp :: basis) (opairs @ newcps)
+            
+    // pg. 412
+    // ------------------------------------------------------------------------- //
+    // Overall function.                                                         //
+    // ------------------------------------------------------------------------- //
 
-    /// Overall function.
     let groebner basis =
         grobner basis (distinctpairs basis)
+        
+    // pg. 412
+    // ------------------------------------------------------------------------- //
+    // Use the Rabinowitsch trick to eliminate inequations.                      //
+    // That is, replace p =/= 0 by exists v. 1 - v * p = 0                       //
+    // ------------------------------------------------------------------------- //
 
-    /// Use the Rabinowitsch trick to eliminate inequations. 
-    /// That is, replace p =/= 0 by exists v. 1 - v * p = 0.
     let rabinowitsch vars v p =
         mpoly_sub (mpoly_const vars (Int 1))
                     (mpoly_mul (mpoly_var vars v) p)
 
-    /// Universal complex number decision procedure based on Grobner bases.
+    // pg. 413
+    // ------------------------------------------------------------------------- //
+    // Universal complex number decision procedure based on Grobner bases.       //
+    // ------------------------------------------------------------------------- //
+
     let grobner_trivial fms =
         let vars0 = itlist (union >>|> fv) fms []
         let eqs, neqs = List.partition positive fms
@@ -216,5 +312,28 @@ module grobner =
     let grobner_decide fm =
         let fm1 = specialize (prenex (nnf (simplify fm)))
         List.forall grobner_trivial (simpdnf (nnf (Not fm1)))
+
+    // Not in book
+    // ------------------------------------------------------------------------- //
+    // For looking at things it's nice to map back to normal term.               //
+    // ------------------------------------------------------------------------- //
+
+    let term_of_varpow vars (x,k) =
+      if k = 1 then Var x else Fn("^",[Var x; mk_numeral(Int k)])
+
+    let term_of_varpows vars lis =
+      let tms = List.filter (fun (a,b) -> b <> 0) (List.zip vars lis) in
+      end_itlist (fun s t -> Fn("*",[s;t])) (List.map (term_of_varpow vars) tms)
+
+    let term_of_monomial vars (c,m) =
+      if List.forall (fun x -> x = 0) m then mk_numeral c
+      else if c =/ Int 1 then term_of_varpows vars m
+      else Fn("*",[mk_numeral c; term_of_varpows vars m])
+
+    let term_of_poly vars pol =
+      end_itlist (fun s t -> Fn("+",[s;t])) (List.map (term_of_monomial vars) pol)
+
+    let grobner_basis vars pols =
+      List.map (term_of_poly vars) (groebner (List.map (mpolyatom vars) pols))
 
     
