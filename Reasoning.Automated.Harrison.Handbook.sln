@@ -28,6 +28,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Examples", "Examples", "{F3
 		Examples\lcffol.fsx = Examples\lcffol.fsx
 		Examples\lcfprop.fsx = Examples\lcfprop.fsx
 		Examples\lib.fsx = Examples\lib.fsx
+		Examples\limitations.fsx = Examples\limitations.fsx
 		Examples\meson.fsx = Examples\meson.fsx
 		Examples\order.fsx = Examples\order.fsx
 		Examples\paramodulation.fsx = Examples\paramodulation.fsx

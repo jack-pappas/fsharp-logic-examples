@@ -1,74 +1,8 @@
-﻿//  Copyright (c) 2003-2007, John Harrison
-//  All rights reserved.
-//  
-//  Redistribution and use in source and binary forms, with or without
-//  modification, are permitted provided that the following conditions
-//  are met:
-//  
-//  * Redistributions of source code must retain the above copyright
-//  notice, this list of conditions and the following disclaimer.
-//  
-//  * Redistributions in binary form must reproduce the above copyright
-//  notice, this list of conditions and the following disclaimer in the
-//  IMPORTANT:  READ BEFORE DOWNLOADING, COPYING, INSTALLING OR USING.
-//  By downloading, copying, installing or using the software you agree
-//  to this license.  If you do not agree to this license, do not
-//  download, install, copy or use the software.
-//  
-//  Copyright (c) 2003-2007, John Harrison
-//  All rights reserved.
-//  
-//  Redistribution and use in source and binary forms, with or without
-//  modification, are permitted provided that the following conditions
-//  are met:
-//  
-//  * Redistributions of source code must retain the above copyright
-//  notice, this list of conditions and the following disclaimer.
-//  
-//  * Redistributions in binary form must reproduce the above copyright
-//  notice, this list of conditions and the following disclaimer in the
-//  documentation and/or other materials provided with the distribution.
-//  
-//  * The name of John Harrison may not be used to endorse or promote
-//  products derived from this software without specific prior written
-//  permission.
-//  
-//  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-//  "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-//  LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
-//  FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-//  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-//  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-//  LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF
-//  USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-//  ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-//  OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
-//  OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
-//  SUCH DAMAGE.
-// 
-//  ===================================================================
-// 
-//  Converted to F# 2.0
-// 
-//  Copyright (c) 2012, Jack Pappas, Eric Taucher
-//  All rights reserved.
-// 
-//  Redistribution and use in source and binary forms, with or without
-//  modification, are permitted provided that the following conditions
-//  are met:
-//  
-//  * Redistributions of source code must retain the above copyright
-//  notice, this list of conditions and the previous disclaimer.
-//  
-//  * Redistributions in binary form must reproduce the above copyright
-//  notice, this list of conditions and the previous disclaimer in the
-//  documentation and/or other materials provided with the distribution.
-//  
-//  * The name of Eric Taucher may not be used to endorse or promote
-//  products derived from this software without specific prior written
-//  permission.
-// 
-//  ===================================================================
+﻿// ========================================================================= //
+// Copyright (c) 2003-2007, John Harrison.                                   //
+// Copyright (c) 2012 Jack Pappas, Eric Taucher                              //
+// (See "LICENSE.txt" for details.)                                          //
+// ========================================================================= //
 
 namespace Reasoning.Automated.Harrison.Handbook
 
@@ -115,37 +49,41 @@ module limitations =
     open lcffol
     open tactics
 
-    (* ========================================================================= *)
-    (* Goedel's theorem and relatives.                                           *)
-    (* ========================================================================= *)
+    // ========================================================================= //
+    // Goedel's theorem and relatives.                                           //
+    // ========================================================================= //
 
-    (* ------------------------------------------------------------------------- *)
-    (* Produce numeral in zero-successor form.                                   *)
-    (* ------------------------------------------------------------------------- *)
+    // pg. 530
+    // ------------------------------------------------------------------------- //
+    // Produce numeral in zero-successor form.                                   //
+    // ------------------------------------------------------------------------- //
 
     let rec numeral n =
         // TODO : Fix comparison here. 'n' could be Big_int 0, for example.
         if n = Int 0 then Fn ("0", [])
         else Fn ("S", [numeral (n - Int 1)])
-
-    (* ------------------------------------------------------------------------- *)
-    (* Map strings to numbers. This is bijective, to avoid certain quibbles.     *)
-    (* ------------------------------------------------------------------------- *)
+        
+    // pg. 532
+    // ------------------------------------------------------------------------- //
+    // Map strings to numbers. This is bijective, to avoid certain quibbles.     //
+    // ------------------------------------------------------------------------- //
 
     let number (s : string) =
         itlist (fun i g ->
             Int (1 + int (char s.[i])) + (Int 256) * g) (0 -- (String.length s - 1)) (Int 0)
-
-    (* ------------------------------------------------------------------------- *)
-    (* Injective pairing function with "pair x y" always nonzero.                *)
-    (* ------------------------------------------------------------------------- *)
+            
+    // pg. 532
+    // ------------------------------------------------------------------------- //
+    // Injective pairing function with "pair x y" always nonzero.                //
+    // ------------------------------------------------------------------------- //
 
     let pair x y =
         (x + y) * (x + y) + x + Int 1
-
-    (* ------------------------------------------------------------------------- *)
-    (* Goedel numbering of terms and formulas.                                   *)
-    (* ------------------------------------------------------------------------- *)
+        
+    // pg. 533
+    // ------------------------------------------------------------------------- //
+    // Goedel numbering of terms and formulas.                                   //
+    // ------------------------------------------------------------------------- //
 
     let rec gterm tm =
         match tm with
@@ -190,33 +128,18 @@ module limitations =
             pair (Int 10) (pair (number x) (gform p))
         | _ ->
             failwith "gform: not in the language"
-
-    (* ------------------------------------------------------------------------- *)
-    (* One explicit example.                                                     *)
-    (* ------------------------------------------------------------------------- *)
-    (*
-    START_INTERACTIVE;;
-    gform <<~(x = 0)>>;;
-    END_INTERACTIVE;;
-    *)
-    (* ------------------------------------------------------------------------- *)
-    (* Some more examples of things in or not in the set of true formulas.       *)
-    (* ------------------------------------------------------------------------- *)
-    (*
-    START_INTERACTIVE;;
-    gform <<x = x>>;;
-    gform <<0 < 0>>;;
-    END_INTERACTIVE;;
-    *)
-    (* ------------------------------------------------------------------------- *)
-    (* The "gnumeral" function.                                                  *)
-    (* ------------------------------------------------------------------------- *)
+    
+    // pg. 537
+    // ------------------------------------------------------------------------- //
+    // The "gnumeral" function.                                                  //
+    // ------------------------------------------------------------------------- //
 
     let gnumeral n = gterm (numeral n)
-
-    (* ------------------------------------------------------------------------- *)
-    (* Intuition for the self-referential sentence.                              *)
-    (* ------------------------------------------------------------------------- *)
+    
+    // pg. 538
+    // ------------------------------------------------------------------------- //
+    // Intuition for the self-referential sentence.                              //
+    // ------------------------------------------------------------------------- //
 
     let diag s =
         let rec replacex n l =
@@ -233,50 +156,39 @@ module limitations =
             | h :: t ->
                 h + replacex n t
         replacex 0 (explode s)
-    (*
-    START_INTERACTIVE;;
-    diag("p(x)");;
-    diag("This string is diag(x)");;
-    END_INTERACTIVE;;
-    *)
-    let phi = diag "P(diag(x))"
 
-    (* ------------------------------------------------------------------------- *)
-    (* Pseudo-substitution variant.                                              *)
-    (* ------------------------------------------------------------------------- *)
-    (*
+    let phi = diag "P(diag(x))"
+    
+    // pg. 538
+    // ------------------------------------------------------------------------- //
+    // Pseudo-substitution variant.                                              //
+    // ------------------------------------------------------------------------- //
+
     let qdiag s = sprintf "let `x' be `%s' in %s"
     let phi = qdiag "P(qdiag(x))"
-    *)
-    (* ------------------------------------------------------------------------- *)
-    (* Analogous construct in natural language.                                  *)
-    (* ------------------------------------------------------------------------- *)
-    (*
-    START_INTERACTIVE;;
-    diag("The result of substituting the quotation of x for `x' in x \
-            has property P");;
-    END_INTERACTIVE;;
-    *)
-    (* ------------------------------------------------------------------------- *)
-    (* Quine from Martin Jambon.                                                 *)
-    (* ------------------------------------------------------------------------- *)
-    (*
-    (fun s -> Printf.printf "%s\n%S\n" s s)
-    "(fun s -> Printf.printf \"%s\\n%S\\n\" s s)";;
-    *)
-    (* ------------------------------------------------------------------------- *)
-    (* Diagonalization and quasi-diagonalization of formulas.                    *)
-    (* ------------------------------------------------------------------------- *)
-    (*
+    
+    // pg. ???
+    // ------------------------------------------------------------------------- //
+    // Quine from Martin Jambon.                                                 //
+    // ------------------------------------------------------------------------- //
+
+    (fun s -> Printf.printf "%s\n%S\n" s s) "(fun s -> Printf.printf \"%s\\n%S\\n\" s s)"
+    
+    // pg. 538
+    // ------------------------------------------------------------------------- //
+    // Diagonalization and quasi-diagonalization of formulas.                    //
+    // ------------------------------------------------------------------------- //
+
     let diag x p =
         subst (x |=> numeral (gform p)) p
 
     let qdiag x p =
         Exists (x, And (mk_eq (Var x) (numeral (gform p)), p))
-    *)
-    (* ------------------------------------------------------------------------- *)
-    (* Decider for delta-sentences.                                              *)
-    (* ------------------------------------------------------------------------- *)
+        
+    // pg. 548
+    // ------------------------------------------------------------------------- //
+    // Decider for delta-sentences.                                              //
+    // ------------------------------------------------------------------------- //
 
     let rec dtermval v tm =
         match tm with
@@ -331,22 +243,10 @@ module limitations =
                 else dtermval v t
             pred (fun n -> dholds ((x |-> n) v) p) (Int 0 --- m)
 
-    (* ------------------------------------------------------------------------- *)
-    (* Examples.                                                                 *)
-    (* ------------------------------------------------------------------------- *)
-    (*
-    START_INTERACTIVE;;
-    let prime_form p = subst("p" |=> numeral(Int p))
-     <<S(S(0)) <= p /\
-       forall n. n < p ==> (exists x. x <= p /\ p = n * x) ==> n = S(0)>>;;
-
-    dholds undefined (prime_form 100);;
-    dholds undefined (prime_form 101);;
-    END_INTERACTIVE;;
-    *)
-    (* ------------------------------------------------------------------------- *)
-    (* Test sigma/pi status (don't check the language of arithmetic).            *)
-    (* ------------------------------------------------------------------------- *)
+    // pg. 550
+    // ------------------------------------------------------------------------- //
+    // Test sigma/pi status (don't check the language of arithmetic).            //
+    // ------------------------------------------------------------------------- //
 
     type formulaclass = Sigma | Pi | Delta
 
@@ -382,20 +282,10 @@ module limitations =
         | Forall (x, p) ->
             n <> 0 && classify (opp c) (n - 1) fm
 
-    (* ------------------------------------------------------------------------- *)
-    (* Example.                                                                  *)
-    (* ------------------------------------------------------------------------- *)
-    (*
-    START_INTERACTIVE;;
-    classify Sigma 1
-      <<forall x. x < 2
-                  ==> exists y z. forall w. w < x + 2
-                                            ==> w + x + y + z = 42>>;;
-    END_INTERACTIVE;;
-    *)
-    (* ------------------------------------------------------------------------- *)
-    (* Verification of true Sigma_1 formulas, refutation of false Pi_1 formulas. *)
-    (* ------------------------------------------------------------------------- *)
+    // pg. 551
+    // ------------------------------------------------------------------------- //
+    // Verification of true Sigma_1 formulas, refutation of false Pi_1 formulas. //
+    // ------------------------------------------------------------------------- //
 
     let rec veref sign m v fm =
         match fm with
@@ -441,62 +331,51 @@ module limitations =
             List.forall (fun n -> veref sign m ((x |-> n) v) p) (Int 0 --- m)
 
     let sholds = veref id
+    
+    // pg. 552
+    // ------------------------------------------------------------------------- //
+    // Find adequate bound for all existentials to make sentence true.           //
+    // ------------------------------------------------------------------------- //
 
-    (* ------------------------------------------------------------------------- *)
-    (* Find adequate bound for all existentials to make sentence true.           *)
-    (* ------------------------------------------------------------------------- *)
-    (*
     let sigma_bound fm =
         first (Int 0) (fun n -> sholds n undefined fm)
-    *)
-    (* ------------------------------------------------------------------------- *)
-    (* Example.                                                                  *)
-    (* ------------------------------------------------------------------------- *)
-    (*
-    START_INTERACTIVE;;
-    sigma_bound
-      <<exists p x.
-         p < x /\
-         (S(S(0)) <= p /\
-          forall n. n < p
-                    ==> (exists x. x <= p /\ p = n * x) ==> n = S(0)) /\
-         ~(x = 0) /\
-         forall z. z <= x
-                   ==> (exists w. w <= x /\ x = z * w)
-                       ==> z = S(0) \/ exists x. x <= z /\ z = p * x>>;;
-    END_INTERACTIVE;;
-    *)
-    (* ------------------------------------------------------------------------- *)
-    (* Turing machines.                                                          *)
-    (* ------------------------------------------------------------------------- *)
+    
+    // pg. 558
+    // ------------------------------------------------------------------------- //
+    // Turing machines.                                                          //
+    // ------------------------------------------------------------------------- //
 
     type symbol = Blank | One
 
     type direction = Left | Right | Stay
-
-    (* ------------------------------------------------------------------------- *)
-    (* Type of the tape.                                                         *)
-    (* ------------------------------------------------------------------------- *)
+    
+    // pg. 558
+    // ------------------------------------------------------------------------- //
+    // Type of the tape.                                                         //
+    // ------------------------------------------------------------------------- //
 
     type tape = Tape of int * func<int, symbol>
-
-    (* ------------------------------------------------------------------------- *)
-    (* Look at current character.                                                *)
-    (* ------------------------------------------------------------------------- *)
+    
+    // pg. 558
+    // ------------------------------------------------------------------------- //
+    // Look at current character.                                                //
+    // ------------------------------------------------------------------------- //
 
     let look (Tape(r,f)) =
         tryapplyd f r Blank
-
-    (* ------------------------------------------------------------------------- *)
-    (* Write a symbol on the tape.                                               *)
-    (* ------------------------------------------------------------------------- *)
+        
+    // pg. 559
+    // ------------------------------------------------------------------------- //
+    // Write a symbol on the tape.                                               //
+    // ------------------------------------------------------------------------- //
 
     let write s (Tape(r, f)) =
         Tape (r, (r |-> s) f)
-
-    (* ------------------------------------------------------------------------- *)
-    (* Move machine left or right.                                               *)
-    (* ------------------------------------------------------------------------- *)
+        
+    // pg. 559
+    // ------------------------------------------------------------------------- //
+    // Move machine left or right.                                               //
+    // ------------------------------------------------------------------------- //
 
     let move dir (Tape (r, f)) =
         let d =
@@ -504,16 +383,18 @@ module limitations =
             elif dir = Right then 1
             else 0
         Tape (r + d, f)
-
-    (* ------------------------------------------------------------------------- *)
-    (* Configurations, i.e. state and tape together.                             *)
-    (* ------------------------------------------------------------------------- *)
+        
+    // pg. 559
+    // ------------------------------------------------------------------------- //
+    // Configurations, i.e. state and tape together.                             //
+    // ------------------------------------------------------------------------- //
 
     type config = Config of int * tape
-
-    (* ------------------------------------------------------------------------- *)
-    (* Keep running till we get to an undefined state.                           *)
-    (* ------------------------------------------------------------------------- *)
+    
+    // pg. 559
+    // ------------------------------------------------------------------------- //
+    // Keep running till we get to an undefined state.                           //
+    // ------------------------------------------------------------------------- //
 
     let rec run prog (Config (state, tape) as config) =
         let stt = state, look tape
@@ -521,29 +402,32 @@ module limitations =
             let char, dir, state' = apply prog stt
             run prog (Config (state', move dir (write char tape)))
         else config
-
-    (* ------------------------------------------------------------------------- *)
-    (* Tape with set of canonical input arguments.                               *)
-    (* ------------------------------------------------------------------------- *)
+        
+    // pg. 560
+    // ------------------------------------------------------------------------- //
+    // Tape with set of canonical input arguments.                               //
+    // ------------------------------------------------------------------------- //
 
     let input_tape =
         let writen n =
             funpow n (move Left >>|> write One) >>|> move Left >>|> write Blank
         fun args ->
             itlist writen args (Tape (0, undefined))
-
-    (* ------------------------------------------------------------------------- *)
-    (* Read the result of the tape.                                              *)
-    (* ------------------------------------------------------------------------- *)
+            
+    // pg. 560
+    // ------------------------------------------------------------------------- //
+    // Read the result of the tape.                                              //
+    // ------------------------------------------------------------------------- //
 
     let rec output_tape tape =
         let tape' = move Right tape
         if look tape' = Blank then 0
         else 1 + output_tape tape'
-
-    (* ------------------------------------------------------------------------- *)
-    (* Overall program execution.                                                *)
-    (* ------------------------------------------------------------------------- *)
+        
+    // pg. 560
+    // ------------------------------------------------------------------------- //
+    // Overall program execution.                                                //
+    // ------------------------------------------------------------------------- //
 
     let exec prog args =
         let c = Config (1, input_tape args)
@@ -551,48 +435,20 @@ module limitations =
         | Config (_, t) ->
             output_tape t
 
-    (* ------------------------------------------------------------------------- *)
-    (* Example program (successor).                                              *)
-    (* ------------------------------------------------------------------------- *)
-    (*
-    START_INTERACTIVE;;
-    let prog_suc = itlist (fun m -> m)
-     [(1,Blank) |-> (Blank,Right,2);
-      (2,One) |-> (One,Right,2);
-      (2,Blank) |-> (One,Right,3);
-      (3,Blank) |-> (Blank,Left,4);
-      (3,One) |-> (Blank,Left,4);
-      (4,One) |-> (One,Left,4);
-      (4,Blank) |-> (Blank,Stay,0)]
-     undefined;;
-
-    exec prog_suc [0];;
-
-    exec prog_suc [1];;
-
-    exec prog_suc [19];;
-    END_INTERACTIVE;;
-    *)
-    (* ------------------------------------------------------------------------- *)
-    (* Robinson axioms.                                                          *)
-    (* ------------------------------------------------------------------------- *)
-    (*
-    let robinson =
-     <<(forall m n. S(m) = S(n) ==> m = n) /\
-       (forall n. ~(n = 0) <=> exists m. n = S(m)) /\
-       (forall n. 0 + n = n) /\
-       (forall m n. S(m) + n = S(m + n)) /\
-       (forall n. 0 * n = 0) /\
-       (forall m n. S(m) * n = n + m * n) /\
-       (forall m n. m <= n <=> exists d. m + d = n) /\
-       (forall m n. m < n <=> S(m) <= n)>>;;
+    // pg. 565
+    // ------------------------------------------------------------------------- //
+    // Robinson axioms.                                                          //
+    // ------------------------------------------------------------------------- //
+    //
+    let robinson = (parse "(forall m n. S(m) = S(n) ==> m = n) /\ (forall n. ~(n = 0) <=> exists m. n = S(m)) /\ (forall n. 0 + n = n) /\ (forall m n. S(m) + n = S(m + n)) /\ (forall n. 0 * n = 0) /\ (forall m n. S(m) * n = n + m * n) /\ (forall m n. m <= n <=> exists d. m + d = n) /\ (forall m n. m < n <=> S(m) <= n)")
 
     let [suc_inj; num_cases; add_0; add_suc; mul_0;
-         mul_suc; le_def; lt_def] = conjths robinson;;
-    *)
-    (* ------------------------------------------------------------------------- *)
-    (* Particularly useful "right handed" inference rules.                       *)
-    (* ------------------------------------------------------------------------- *)
+         mul_suc; le_def; lt_def] = conjths robinson
+
+    // pg. 565
+    // ------------------------------------------------------------------------- //
+    // Particularly useful "right handed" inference rules.                       //
+    // ------------------------------------------------------------------------- //
 
     let right_spec t th = imp_trans th (ispec t (consequent(concl th)))
 
@@ -610,11 +466,12 @@ module limitations =
         let s, t = dest_eq (consequent (concl th1))
         let t', u = dest_eq (consequent (concl th2))
         imp_trans_chain [th1; th2] (eq_trans s t u)
+        
+    // pg. 566
+    // ------------------------------------------------------------------------- //
+    // Evalute constant expressions (allow non-constant on RHS in last clause).  //
+    // ------------------------------------------------------------------------- //
 
-    (* ------------------------------------------------------------------------- *)
-    (* Evalute constant expressions (allow non-constant on RHS in last clause).  *)
-    (* ------------------------------------------------------------------------- *)
-    (*
     let rec robop tm =
         match tm with
         | Fn (op, [Fn ("0", []); t]) ->
@@ -645,128 +502,106 @@ module limitations =
             right_trans (imp_trans th1 th4) th2
         | _ ->
             add_assum robinson (axiom_eqrefl tm)
-    *)
-    (* ------------------------------------------------------------------------- *)
-    (* Example.                                                                  *)
-    (* ------------------------------------------------------------------------- *)
-    (*
-    START_INTERACTIVE;;
-    robeval <<|S(0) + (S(S(0)) * ((S(0) + S(S(0)) + S(0))))|>>;;
-    END_INTERACTIVE;;
-    *)
-    (* ------------------------------------------------------------------------- *)
-    (* Consequences of the axioms.                                               *)
-    (* ------------------------------------------------------------------------- *)
-    (*
-    let robinson_consequences =
-     <<(forall n. S(n) = 0 ==> false) /\
-       (forall n. 0 = S(n) ==> false) /\
-       (forall m n. (m = n ==> false) ==> (S(m) = S(n) ==> false)) /\
-       (forall m n. (exists d. m + d = n) ==> m <= n) /\
-       (forall m n. S(m) <= n ==> m < n) /\
-       (forall m n. (forall d. d <= n ==> d = m ==> false)
-                    ==> m <= n ==> false) /\
-       (forall m n. (forall d. d < n ==> d = m ==> false)
-                    ==> m < n ==> false) /\
-       (forall n. n <= 0 \/ exists m. S(m) = n) /\
-       (forall n. n <= 0 ==> n = 0) /\
-       (forall m n. S(m) <= S(n) ==> m <= n) /\
-       (forall m n. m < S(n) ==> m <= n) /\
-       (forall n. n < 0 ==> false)>>;;
+    
+    // pg. 567
+    // ------------------------------------------------------------------------- //
+    // Consequences of the axioms.                                               //
+    // ------------------------------------------------------------------------- //
+
+    let robinson_consequences = (parse "(forall n. S(n) = 0 ==> false) /\ (forall n. 0 = S(n) ==> false) /\ (forall m n. (m = n ==> false) ==> (S(m) = S(n) ==> false)) /\ (forall m n. (exists d. m + d = n) ==> m <= n) /\ (forall m n. S(m) <= n ==> m < n) /\ (forall m n. (forall d. d <= n ==> d = m ==> false) ==> m <= n ==> false) /\ (forall m n. (forall d. d < n ==> d = m ==> false) ==> m < n ==> false) /\ (forall n. n <= 0 \/ exists m. S(m) = n) /\ (forall n. n <= 0 ==> n = 0) /\ (forall m n. S(m) <= S(n) ==> m <= n) /\ (forall m n. m < S(n) ==> m <= n) /\ (forall n. n < 0 ==> false)")
 
     let robinson_thm =
       prove (Imp(robinson,robinson_consequences))
-      [note("eq_refl",<<forall x. x = x>>) using [axiom_eqrefl (Var "x")];
-       note("eq_trans",<<forall x y z. x = y ==> y = z ==> x = z>>)
+      [note("eq_refl",(parse "forall x. x = x")) using [axiom_eqrefl (Var "x")];
+       note("eq_trans",(parse "forall x y z. x = y ==> y = z ==> x = z"))
           using [eq_trans (Var "x") (Var "y") (Var "z")];
-       note("eq_sym",<<forall x y. x = y ==> y = x>>)
+       note("eq_sym",(parse "forall x y. x = y ==> y = x"))
           using [eq_sym (Var "x") (Var "y")];
-       note("suc_cong",<<forall a b. a = b ==> S(a) = S(b)>>)
+       note("suc_cong",(parse "forall a b. a = b ==> S(a) = S(b)"))
           using [axiom_funcong "S" [Var "a"] [Var "b"]];
        note("add_cong",
-            <<forall a b c d. a = b /\ c = d ==> a + c = b + d>>)
+            (parse "forall a b c d. a = b /\ c = d ==> a + c = b + d"))
           using [axiom_funcong "+" [Var "a"; Var "c"] [Var "b"; Var "d"]];
        note("le_cong",
-            <<forall a b c d. a = b /\ c = d ==> a <= c ==> b <= d>>)
+            (parse "forall a b c d. a = b /\ c = d ==> a <= c ==> b <= d"))
           using [axiom_predcong "<=" [Var "a"; Var "c"] [Var "b"; Var "d"]];
        note("lt_cong",
-            <<forall a b c d. a = b /\ c = d ==> a < c ==> b < d>>)
+            (parse "forall a b c d. a = b /\ c = d ==> a < c ==> b < d"))
           using [axiom_predcong "<" [Var "a"; Var "c"] [Var "b"; Var "d"]];
 
-       assume ["suc_inj",<<forall m n. S(m) = S(n) ==> m = n>>;
-               "num_nz",<<forall n. ~(n = 0) <=> exists m. n = S(m)>>;
-               "add_0",<<forall n. 0 + n = n>>;
-               "add_suc",<<forall m n. S(m) + n = S(m + n)>>;
-               "mul_0",<<forall n. 0 * n = 0>>;
-               "mul_suc",<<forall m n. S(m) * n = n + m * n>>;
-               "le_def",<<forall m n. m <= n <=> exists d. m + d = n>>;
-               "lt_def",<<forall m n. m < n <=> S(m) <= n>>];
-       note("not_suc_0",<<forall n. ~(S(n) = 0)>>) by ["num_nz"; "eq_refl"];
-       so conclude <<forall n. S(n) = 0 ==> false>> at once;
-       so conclude <<forall n. 0 = S(n) ==> false>> by ["eq_sym"];
-       note("num_cases",<<forall n. (n = 0) \/ exists m. n = S(m)>>)
+       assume ["suc_inj",(parse "forall m n. S(m) = S(n) ==> m = n");
+               "num_nz",(parse "forall n. ~(n = 0) <=> exists m. n = S(m)");
+               "add_0",(parse "forall n. 0 + n = n");
+               "add_suc",(parse "forall m n. S(m) + n = S(m + n)");
+               "mul_0",(parse "forall n. 0 * n = 0");
+               "mul_suc",(parse "forall m n. S(m) * n = n + m * n");
+               "le_def",(parse "forall m n. m <= n <=> exists d. m + d = n");
+               "lt_def",(parse "forall m n. m < n <=> S(m) <= n")];
+       note("not_suc_0",(parse "forall n. ~(S(n) = 0)")) by ["num_nz"; "eq_refl"];
+       so conclude (parse "forall n. S(n) = 0 ==> false") at once;
+       so conclude (parse "forall n. 0 = S(n) ==> false") by ["eq_sym"];
+       note("num_cases",(parse "forall n. (n = 0) \/ exists m. n = S(m)"))
              by ["num_nz"];
-       note("suc_inj_eq",<<forall m n. S(m) = S(n) <=> m = n>>)
+       note("suc_inj_eq",(parse "forall m n. S(m) = S(n) <=> m = n"))
          by ["suc_inj"; "suc_cong"];
        so conclude
-         <<forall m n. (m = n ==> false) ==> (S(m) = S(n) ==> false)>>
+         (parse "forall m n. (m = n ==> false) ==> (S(m) = S(n) ==> false)")
          at once;
-       conclude <<forall m n. (exists d. m + d = n) ==> m <= n>>
+       conclude (parse "forall m n. (exists d. m + d = n) ==> m <= n")
          by ["le_def"];
-       conclude <<forall m n. S(m) <= n ==> m < n>> by ["lt_def"];
-       conclude <<forall m n. (forall d. d <= n ==> d = m ==> false)
-                              ==> m <= n ==> false>>
+       conclude (parse "forall m n. S(m) <= n ==> m < n") by ["lt_def"];
+       conclude (parse "forall m n. (forall d. d <= n ==> d = m ==> false) ==> m <= n ==> false")
          by ["eq_refl"; "le_cong"];
-       conclude <<forall m n. (forall d. d < n ==> d = m ==> false)
-                              ==> m < n ==> false>>
+       conclude (parse "forall m n. (forall d. d < n ==> d = m ==> false) ==> m < n ==> false")
          by ["eq_refl"; "lt_cong"];
-       have <<0 <= 0>> by ["le_def"; "add_0"];
-       so have <<forall x. x = 0 ==> x <= 0>>
+       have (parse "0 <= 0") by ["le_def"; "add_0"];
+       so have (parse "forall x. x = 0 ==> x <= 0")
          by ["le_cong"; "eq_refl"; "eq_sym"];
-       so conclude <<forall n. n <= 0 \/ (exists m. S(m) = n)>>
+       so conclude (parse "forall n. n <= 0 \/ (exists m. S(m) = n)")
          by ["num_nz"; "eq_sym"];
-       note("add_eq_0",<<forall m n. m + n = 0 ==> m = 0 /\ n = 0>>) proof
+       note("add_eq_0",(parse "forall m n. m + n = 0 ==> m = 0 /\ n = 0")) proof
         [fix "m"; fix "n";
-         assume ["A",<<m + n = 0>>];
-         cases <<m = 0 \/ exists p. m = S(p)>> by ["num_cases"];
-           so conclude <<m = 0>> at once;
-           so have <<m + n = 0 + n>> by ["add_cong"; "eq_refl"];
+         assume ["A",(parse "m + n = 0")];
+         cases (parse "m = 0 \/ exists p. m = S(p)") by ["num_cases"];
+           so conclude (parse "m = 0") at once;
+           so have (parse "m + n = 0 + n") by ["add_cong"; "eq_refl"];
            so our thesis by ["A"; "add_0"; "eq_sym"; "eq_trans"];
          qed;
-           so consider ("p",<<m = S(p)>>) at once;
-           so have <<m + n = S(p) + n>> by ["add_cong"; "eq_refl"];
-           so have <<m + n = S(p + n)>> by ["eq_trans"; "add_suc"];
-           so have <<S(p + n) = 0>> by ["A"; "eq_sym"; "eq_trans"];
+           so consider ("p",(parse "m = S(p)")) at once;
+           so have (parse "m + n = S(p) + n") by ["add_cong"; "eq_refl"];
+           so have (parse "m + n = S(p + n)") by ["eq_trans"; "add_suc"];
+           so have (parse "S(p + n) = 0") by ["A"; "eq_sym"; "eq_trans"];
            so our thesis by ["not_suc_0"];
          qed];
-       so conclude <<forall n. n <= 0 ==> n = 0>> by ["le_def"];
-       have <<forall m n. S(m) <= S(n) ==> m <= n>> proof
+       so conclude (parse "forall n. n <= 0 ==> n = 0") by ["le_def"];
+       have (parse "forall m n. S(m) <= S(n) ==> m <= n") proof
         [fix "m"; fix "n";
-         assume ["lesuc",<<S(m) <= S(n)>>];
-         so consider("d",<<S(m) + d = S(n)>>) by ["le_def"];
-         so have <<S(m + d) = S(n)>> by ["add_suc"; "eq_sym"; "eq_trans"];
-         so have <<m + d = n>> by ["suc_inj"];
-         so conclude <<m <= n>> by ["le_def"];
+         assume ["lesuc",(parse "S(m) <= S(n)")];
+         so consider("d",(parse "S(m) + d = S(n)")) by ["le_def"];
+         so have (parse "S(m + d) = S(n)") by ["add_suc"; "eq_sym"; "eq_trans"];
+         so have (parse "m + d = n") by ["suc_inj"];
+         so conclude (parse "m <= n") by ["le_def"];
          qed];
-       so conclude <<forall m n. S(m) <= S(n) ==> m <= n>> at once;
-       so conclude <<forall m n. m < S(n) ==> m <= n>> by ["lt_def"];
+       so conclude (parse "forall m n. S(m) <= S(n) ==> m <= n") at once;
+       so conclude (parse "forall m n. m < S(n) ==> m <= n") by ["lt_def"];
        fix "n";
-       assume ["hyp",<<n < 0>>];
-       so have <<S(n) <= 0>> by ["lt_def"];
-       so consider("d",<<S(n) + d = 0>>) by ["le_def"];
-       so have <<S(n + d) = 0>> by ["add_suc"; "eq_trans"; "eq_sym"];
+       assume ["hyp",(parse "n < 0")];
+       so have (parse "S(n) <= 0") by ["lt_def"];
+       so consider("d",(parse "S(n) + d = 0")) by ["le_def"];
+       so have (parse "S(n + d) = 0") by ["add_suc"; "eq_trans"; "eq_sym"];
        so our thesis by ["not_suc_0"];
-       qed];;
+       qed]
 
     let [suc_0_l; suc_0_r; suc_inj_false;
          expand_le; expand_lt; expand_nle; expand_nlt;
          num_lecases; le_0; le_suc; lt_suc; lt_0] =
-        map (imp_trans robinson_thm) (conjths robinson_consequences);;
-    *)
-    (* ------------------------------------------------------------------------- *)
-    (* Prove or disprove equations between ground terms.                         *)
-    (* ------------------------------------------------------------------------- *)
-    (*
+        map (imp_trans robinson_thm) (conjths robinson_consequences)
+
+    // pg. 567
+    // ------------------------------------------------------------------------- //
+    // Prove or disprove equations between ground terms.                         //
+    // ------------------------------------------------------------------------- //
+
     let rob_eq s t =
         let rec sth = robeval s
         and tth = robeval t
@@ -791,30 +626,25 @@ module limitations =
         let th = rob_nen (s',t')
         let xth = axiom_predcong "=" [s; t] [s'; t']
         right_imp_trans (right_mp (imp_trans sth xth) tth) th
-    *)
-    (*
-    START_INTERACTIVE;;
-    rob_ne <<|S(0) + S(0) + S(0)|>> <<|S(S(0)) * S(S(0))|>>;;
-    rob_ne <<|0 + 0 * S(0)|>> <<|S(S(0)) + 0|>>;;
-    rob_ne <<|S(S(0)) + 0|>> <<|0 + 0 + 0 * 0|>>;;
-    END_INTERACTIVE;;
-    *)
-    (* ------------------------------------------------------------------------- *)
-    (* Dual version of "eliminate_connective" for unnegated case.                *)
-    (* ------------------------------------------------------------------------- *)
+    
+    // pg. 570
+    // ------------------------------------------------------------------------- //
+    // Dual version of "eliminate_connective" for unnegated case.                //
+    // ------------------------------------------------------------------------- //
 
     let introduce_connective fm =
         if not <| negativef fm then
             iff_imp2 (expand_connective fm)
         else
             imp_add_concl False (iff_imp1 (expand_connective (negatef fm)))
-
-    (* ------------------------------------------------------------------------- *)
-    (* This is needed to preserve the canonical form for bounded quantifiers.    *)
-    (*                                                                           *)
-    (* |- (forall x. p(x) ==> q(x) ==> false)                                    *)
-    (*    ==> (exists x. p(x) /\ q(x)) ==> false                                 *)
-    (* ------------------------------------------------------------------------- *)
+            
+    // pg. 570
+    // ------------------------------------------------------------------------- //
+    // This is needed to preserve the canonical form for bounded quantifiers.    //
+    //                                                                           //
+    // |- (forall x. p(x) ==> q(x) ==> false)                                    //
+    //    ==> (exists x. p(x) /\ q(x)) ==> false                                 //
+    // ------------------------------------------------------------------------- //
 
     let elim_bex fm =
         match fm with
@@ -826,11 +656,12 @@ module limitations =
             imp_trans (genimp x th2) (exists_left_th x pq False)
         | _ ->
             failwith "elim_bex"
-
-    (* ------------------------------------------------------------------------- *)
-    (* Eliminate some concepts in terms of others.                               *)
-    (* ------------------------------------------------------------------------- *)
-    (*
+            
+    // pg. 570
+    // ------------------------------------------------------------------------- //
+    // Eliminate some concepts in terms of others.                               //
+    // ------------------------------------------------------------------------- //
+    //
     let sigma_elim fm =
         match fm with
         | Atom (R ("<=", [s;t])) ->
@@ -845,13 +676,14 @@ module limitations =
             add_assum robinson (elim_bex fm)
         | _ ->
             add_assum robinson (introduce_connective fm)
-    *)
-    (* ------------------------------------------------------------------------- *)
-    (* |- R ==> forall x. x <= 0 ==> P(x)  |- R ==> forall x. x <= n ==> P(S(x)) *)
-    (* ----------------------------------------------------------------------    *)
-    (*         |- R ==> forall x. x <= S(n) ==> P(x)                             *)
-    (* ------------------------------------------------------------------------- *)
-    (*
+
+    // pg. 571
+    // ------------------------------------------------------------------------- //
+    // |- R ==> forall x. x <= 0 ==> P(x)  |- R ==> forall x. x <= n ==> P(S(x)) //
+    // ----------------------------------------------------------------------    //
+    //         |- R ==> forall x. x <= S(n) ==> P(x)                             //
+    // ------------------------------------------------------------------------- //
+    //
     let boundquant_step th0 th1 =
         match concl th0,concl th1 with
         | Imp (_, Forall (x, Imp (_, p))),
@@ -872,11 +704,12 @@ module limitations =
           and a2 = antecedent (concl th8)
           let tha = modusponens (isubst zero zero a1 a2) (axiom_eqrefl zero)
           gen_right x (imp_unduplicate (imp_trans (imp_trans th9 tha) th8))
-    *)
-    (* ------------------------------------------------------------------------- *)
-    (* Main sigma-prover.                                                        *)
-    (* ------------------------------------------------------------------------- *)
-    (*
+          
+    // pg. 572
+    // ------------------------------------------------------------------------- //
+    // Main sigma-prover.                                                        //
+    // ------------------------------------------------------------------------- //
+
     let rec sigma_prove fm =
         match fm with
         | False ->
@@ -910,11 +743,12 @@ module limitations =
         | _ ->
             let th = sigma_elim fm
             right_mp th (sigma_prove (antecedent (consequent (concl th))))
-    *)
-    (* ------------------------------------------------------------------------- *)
-    (* Evaluate the bound for a bounded quantifier                               *)
-    (* ------------------------------------------------------------------------- *)
-    (*
+
+    // pg. 572
+    // ------------------------------------------------------------------------- //
+    // Evaluate the bound for a bounded quantifier                               //
+    // ------------------------------------------------------------------------- //
+
     and bounded_prove (a, x, t, q) =
         let tth = robeval t
         let u = rhs (consequent (concl tth))
@@ -924,11 +758,12 @@ module limitations =
         let a,b = dest_imp (consequent (concl th3))
         let th4 = imp_swap (imp_trans_th a b q)
         gen_right x (right_mp (imp_trans th3 th4) (right_spec (Var x) th1))
-    *)
-    (* ------------------------------------------------------------------------- *)
-    (* Actual expansion of a bounded quantifier.                                 *)
-    (* ------------------------------------------------------------------------- *)
-    (*
+        
+    // pg. 573
+    // ------------------------------------------------------------------------- //
+    // Actual expansion of a bounded quantifier.                                 //
+    // ------------------------------------------------------------------------- //
+
     and boundednum_prove (a, x, t, q) =
         match a, t with
         | "<", Fn ("0", []) ->
@@ -949,64 +784,3 @@ module limitations =
             and fm'' = Forall (x, Imp (Atom (R ("<=", [Var x; u])),
                                 subst (x |=> Fn ("S", [Var x])) q))
             boundquant_step (sigma_prove fm') (sigma_prove fm'')
-    *)
-    (* ------------------------------------------------------------------------- *)
-    (* Example in the text.                                                      *)
-    (* ------------------------------------------------------------------------- *)
-    (*
-    START_INTERACTIVE;;
-    sigma_prove
-      <<exists p.
-          S(S(0)) <= p /\
-          forall n. n < p
-                    ==> (exists x. x <= p /\ p = n * x) ==> n = S(0)>>;;
-    END_INTERACTIVE;;
-    *)
-    (* ------------------------------------------------------------------------- *)
-    (* The essence of Goedel's first theorem.                                    *)
-    (* ------------------------------------------------------------------------- *)
-    (*
-    START_INTERACTIVE;;
-    meson
-     <<(True(G) <=> ~(|--(G))) /\ Pi(G) /\
-       (forall p. Sigma(p) ==> (|--(p) <=> True(p))) /\
-       (forall p. True(Not(p)) <=> ~True(p)) /\
-       (forall p. Pi(p) ==> Sigma(Not(p)))
-       ==> (|--(Not(G)) <=> |--(G))>>;;
-    END_INTERACTIVE;;
-    *)
-    (* ------------------------------------------------------------------------- *)
-    (* Godel's second theorem.                                                   *)
-    (* ------------------------------------------------------------------------- *)
-    (*
-    START_INTERACTIVE;;
-    let godel_2 = prove
-     <<(forall p. |--(p) ==> |--(Pr(p))) /\
-       (forall p q. |--(imp(Pr(imp(p,q)),imp(Pr(p),Pr(q))))) /\
-       (forall p. |--(imp(Pr(p),Pr(Pr(p)))))
-       ==> (forall p q. |--(imp(p,q)) /\ |--(p) ==> |--(q)) /\
-           (forall p q. |--(imp(q,imp(p,q)))) /\
-           (forall p q r. |--(imp(imp(p,imp(q,r)),imp(imp(p,q),imp(p,r)))))
-           ==> |--(imp(G,imp(Pr(G),F))) /\ |--(imp(imp(Pr(G),F),G))
-               ==> |--(imp(Pr(F),F)) ==> |--(F)>>
-     [assume["lob1",<<forall p. |--(p) ==> |--(Pr(p))>>;
-             "lob2",<<forall p q. |--(imp(Pr(imp(p,q)),imp(Pr(p),Pr(q))))>>;
-             "lob3",<<forall p. |--(imp(Pr(p),Pr(Pr(p))))>>];
-      assume["logic",<<(forall p q. |--(imp(p,q)) /\ |--(p) ==> |--(q)) /\
-                       (forall p q. |--(imp(q,imp(p,q)))) /\
-                       (forall p q r. |--(imp(imp(p,imp(q,r)),
-                                          imp(imp(p,q),imp(p,r)))))>>];
-      assume ["fix1",<<|--(imp(G,imp(Pr(G),F)))>>;
-              "fix2",<<|--(imp(imp(Pr(G),F),G))>>];
-      assume["consistency",<<|--(imp(Pr(F),F))>>];
-      have <<|--(Pr(imp(G,imp(Pr(G),F))))>> by ["lob1"; "fix1"];
-      so have <<|--(imp(Pr(G),Pr(imp(Pr(G),F))))>> by ["lob2"; "logic"];
-      so have <<|--(imp(Pr(G),imp(Pr(Pr(G)),Pr(F))))>> by ["lob2"; "logic"];
-      so have <<|--(imp(Pr(G),Pr(F)))>> by ["lob3"; "logic"];
-      so note("L",<<|--(imp(Pr(G),F))>>) by ["consistency"; "logic"];
-      so have <<|--(G)>> by ["fix2"; "logic"];
-      so have <<|--(Pr(G))>> by ["lob1"; "logic"];
-      so conclude <<|--(F)>> by ["L"; "logic"];
-      qed];;
-    END_INTERACTIVE;;
-    *)
