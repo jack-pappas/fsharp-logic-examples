@@ -42,6 +42,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Examples", "Examples", "{F3
 		Examples\skolems.fsx = Examples\skolems.fsx
 		Examples\stal.fsx = Examples\stal.fsx
 		Examples\tableaux.fsx = Examples\tableaux.fsx
+		Examples\tactics.fsx = Examples\tactics.fsx
 		Examples\unif.fsx = Examples\unif.fsx
 	EndProjectSection
 EndProject

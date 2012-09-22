@@ -38,7 +38,7 @@
 //
 // Converted to F# 2.0
 //
-// Copyright (c) 2012, Eric Taucher
+// Copyright (c) 2012, Eric Taucher, Jack Pappas
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -63,13 +63,22 @@
 open Reasoning.Automated.Harrison.Handbook.lib
 
 // pg. 621
+
+// val smallsqs : func<int,int> =
+//   Branch
+//     (0,1,Leaf (2,[(2, 4)]),
+//      Branch (1,2,Leaf (1,[(1, 1)]),Leaf (3,[(3, 9)])))
 let smallsqs = fpf [1;2;3] [1;4;9];;
 
+// val it : (int * int) list = [(1, 1); (2, 4); (3, 9)]
 graph smallsqs;;
 
+// val it : (int * int) list = [(1, 1); (3, 9)]
 graph (undefine 2 smallsqs);;
 
+// val it : (int * int) list = [(1, 1); (2, 4); (3, 0)]
 graph ((3 |-> 0) smallsqs);;
 
+// val it : int = 9
 apply smallsqs 3;;
 
