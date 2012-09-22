@@ -1306,7 +1306,7 @@ module lib =
 
     // pg. 618
     // OCaml: val first : num -> (num -> bool) -> num = <fun>
-    // F#:    val first : int -> (int -> bool) -> int
+    // F#:    val first : num -> (num -> bool) -> num
     let rec first n p =
         if p n then n
-        else first (n + 1) p
+        else first (n + Int 1) p
