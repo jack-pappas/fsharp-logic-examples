@@ -105,8 +105,9 @@ module dp =
         let pureItem = union pos_only (image negate neg_only)
         if pureItem = [] then None
         else
-            let clauses' = List.filter (fun cl -> intersect cl pureItem = []) clauses
-            Some clauses'
+            clauses
+            |> List.filter (fun cl -> intersect cl pureItem = [])
+            |> Some
             
     // TODO: Verify use of List.partition works
     let resolve_on p clauses =
@@ -163,21 +164,34 @@ module dp =
     let posneg_count cls l =
         let m = List.length (List.filter (mem l) cls)                 
         let n = List.length (List.filter (mem (negate l)) cls)
-        m + n                                  
+        m + n
 
-    let rec dpll clauses =       
-        if clauses = [] then true 
-        elif mem [] clauses then false 
+    
+    let rec private dpllImpl clauses cont =
+        if clauses = [] then
+            cont true 
+        elif mem [] clauses then
+            cont false 
         else
             match one_literal_rule clauses with
-            | Some value -> dpll value
+            | Some value ->
+                dpllImpl value cont
             | None ->
                 match affirmative_negative_rule clauses with
-                | Some value -> dpll value
-                | None -> 
-                    let pvs = List.filter positive (unions clauses)
-                    let p = maximize (posneg_count clauses) pvs
-                    dpll (insert [p] clauses) || dpll (insert [negate p] clauses)
+                | Some value ->
+                    dpllImpl value cont
+                | None ->
+                    let p =
+                        unions clauses
+                        |> List.filter positive
+                        |> maximize (posneg_count clauses)
+
+                    dpllImpl (insert [p] clauses) <| fun p' ->
+                    dpllImpl (insert [negate p] clauses) <| fun q' ->
+                        cont (p' || q')
+
+    let dpll clauses =
+        dpllImpl clauses id
                                                      
     let dpllsat fm = dpll (defcnfs fm)
 
@@ -200,11 +214,13 @@ module dp =
                 (image (litabs >>|> fst) trail)
 
     let rec unit_subpropagate (cls, fn, trail) =
-        let cls' = List.map (List.filter (not >>|> defined fn >>|> negate)) cls
-        let uu = function
-            | [c] when not (defined fn c) -> [c]
-            | _ -> failwith ""
-        let newunits = unions (mapfilter uu cls')
+        let cls' = List.map (List.filter (not >>|> defined fn >>|> negate)) cls        
+        let newunits =
+            let uu = function
+                | [c] when not (defined fn c) -> [c]
+                | _ -> failwith ""
+            unions (mapfilter uu cls')
+
         if newunits = [] then
             cls', fn, trail
         else
@@ -258,9 +274,10 @@ module dp =
         if mem [] cls' then
             match backtrack trail with
             | (p, Guessed) :: tt ->
-                let trail' = backjump cls p tt
-                let declits = List.filter (fun (_, d) -> d = Guessed) trail'
-                let conflict = insert (negate p) (image (negate >>|> fst) declits)
+                let trail' = backjump cls p tt                
+                let conflict =
+                    let declits = List.filter (fun (_, d) -> d = Guessed) trail'
+                    insert (negate p) (image (negate >>|> fst) declits)
                 dplb (conflict :: cls) ((negate p, Deduced) :: trail')
             | _ -> false
         else

@@ -128,28 +128,42 @@ module prop =
 // Interpretation of formulas.                                               //
 // ------------------------------------------------------------------------- //
 
-    // Note: added cases for Exists and Forall to avoid compiler warning
-    // OCaml: val eval : 'a formula -> ('a -> bool) -> bool = <fun>
-    // F#:    val eval : 'a formula -> ('a -> bool) -> bool
-    // TODO : Optimize using continuation-passing style.
-    let rec eval fm v =
+    let rec private evalImpl fm v cont =
         match fm with
-        | False -> false
-        | True -> true
-        | Atom x -> v x
+        | False ->
+            cont false
+        | True ->
+            cont true
+        | Atom x ->
+            cont (v x)
         | Not p ->
-            not <| eval p v
+            evalImpl p v <| fun p' ->
+                cont (not p')
         | And (p, q) ->
-            (eval p v) && (eval q v)
+            evalImpl p v <| fun p' ->
+            evalImpl q v <| fun q' ->
+                cont (p' && q')
         | Or (p, q) ->
-            (eval p v) || (eval q v)
+            evalImpl p v <| fun p' ->
+            evalImpl q v <| fun q' ->
+                cont (p' || q')
         | Imp (p, q) ->
-            not(eval p v) || (eval q v)
+            evalImpl p v <| fun p' ->
+            evalImpl q v <| fun q' ->
+                cont (not p' || q')
         | Iff (p, q) ->
-            (eval p v) = (eval q v)
+            evalImpl p v <| fun p' ->
+            evalImpl q v <| fun q' ->
+                cont (p' = q')
         | Exists _
         | Forall _ ->
             failwith "Not part of propositional logic."
+
+    // Note: added cases for Exists and Forall to avoid compiler warning
+    // OCaml: val eval : 'a formula -> ('a -> bool) -> bool = <fun>
+    // F#:    val eval : 'a formula -> ('a -> bool) -> bool
+    let eval fm v =
+        evalImpl fm v id
 
 // pg. 35
 // ------------------------------------------------------------------------- //
@@ -158,7 +172,7 @@ module prop =
 
     // OCaml: val atoms : 'a formula -> 'a list = <fun>
     // F#:    val atoms : 'a formula -> 'a list when 'a : comparison
-    let atoms fm = 
+    let atoms fm =
         atom_union (fun a -> [a]) fm
 
 // pg. 35
@@ -166,17 +180,22 @@ module prop =
 // Code to print out truth tables.                                           //
 // ------------------------------------------------------------------------- //
 
-    // OCaml: val onallvaluations : (('a -> bool) -> bool) -> ('a -> bool) -> 'a list -> bool = <fun>
-    // F#:    val onallvaluations : (('a -> bool) -> bool) -> ('a -> bool) -> 'a list -> bool when 'a : equality
-    let rec onallvaluations subfn v ats =
+    let rec onallvaluationsImpl subfn v ats cont =
         match ats with
-        | [] -> subfn v
+        | [] ->
+            cont (subfn v)
         | p :: ps ->
             let v' t q =
-                if q = p then t
-                else v q
-            onallvaluations subfn (v' false) ps
-            && onallvaluations subfn (v' true) ps
+                if q = p then t else v q
+
+            onallvaluationsImpl subfn (v' false) ps <| fun lhs ->
+            onallvaluationsImpl subfn (v' true) ps <| fun rhs ->
+                cont (lhs && rhs)
+
+    // OCaml: val onallvaluations : (('a -> bool) -> bool) -> ('a -> bool) -> 'a list -> bool = <fun>
+    // F#:    val onallvaluations : (('a -> bool) -> bool) -> ('a -> bool) -> 'a list -> bool when 'a : equality
+    let onallvaluations subfn v ats =
+        onallvaluationsImpl subfn v ats id
             
     // OCaml: val print_truthtable : prop formula -> unit = <fun>
     // F#:    val print_truthtable : prop formula -> unit
@@ -217,12 +236,12 @@ module prop =
 
     // OCaml: val unsatisfiable : 'a formula -> bool = <fun>
     // F#:    val unsatisfiable : 'a formula -> bool when 'a : comparison
-    let unsatisfiable fm = 
+    let unsatisfiable fm =
         tautology <| Not fm
         
     // OCaml: val satisfiable : 'a formula -> bool = <fun>
     // F#:    val satisfiable : 'a formula -> bool when 'a : comparison
-    let satisfiable fm = 
+    let satisfiable fm =
         not <| unsatisfiable fm
 
 // pg. 41
@@ -241,23 +260,32 @@ module prop =
 // Dualization.                                                              //
 // ------------------------------------------------------------------------- //
 
-    // OCaml: val dual : 'a formula -> 'a formula = <fun>
-    // F#:    val dual : 'a formula -> 'a formula
-    // TODO : Optimize using continuation-passing style.
-    let rec dual fm =
+    let rec private dualImpl fm cont =
         match fm with
-        | False -> True
-        | True -> False
-        | Atom p -> fm
+        | False ->
+            cont True
+        | True ->
+            cont False
+        | Atom p ->
+            cont fm
         | Not p ->
-            Not (dual p)
+            dualImpl p <| fun p' ->
+                cont (Not p')
         | And (p, q) ->
-            Or (dual p, dual q)
+            dualImpl p <| fun p' ->
+            dualImpl q <| fun q' ->
+                cont (Or (p', q'))
         | Or (p, q) ->
-            And (dual p, dual q)
+            dualImpl p <| fun p' ->
+            dualImpl q <| fun q' ->
+                cont (And (p', q'))
         | _ ->
             failwith "Formula involves connectives ==> or <=>"
 
+    // OCaml: val dual : 'a formula -> 'a formula = <fun>
+    // F#:    val dual : 'a formula -> 'a formula
+    let dual fm =
+        dualImpl fm id
 
 // pg. 50
 // ------------------------------------------------------------------------- //
@@ -298,23 +326,39 @@ module prop =
             Not p
 
         | fm -> fm
-        
+
+    let rec private psimplifyImpl fm cont =
+        match psimplify1 fm with
+        (* Cases which need to be recursively simplified. *)
+        | Not p ->
+            psimplifyImpl p <| fun p' ->
+                cont (psimplify1 (Not p'))
+        | And (p, q) ->
+            psimplifyImpl p <| fun p' ->
+            psimplifyImpl q <| fun q' ->
+                cont (psimplify1 (And (p', q')))
+        | Or (p, q) ->
+            psimplifyImpl p <| fun p' ->
+            psimplifyImpl q <| fun q' ->
+                cont (psimplify1 (Or (p', q')))
+        | Imp (p, q) ->
+            psimplifyImpl p <| fun p' ->
+            psimplifyImpl q <| fun q' ->
+                cont (psimplify1 (Imp (p', q')))
+        | Iff (p, q) ->
+            psimplifyImpl p <| fun p' ->
+            psimplifyImpl q <| fun q' ->
+                cont (psimplify1 (Iff (p', q')))
+
+        (* This formula can't be simplified any further. *)
+        | fm ->
+            cont fm
+
     // OCaml: val psimplify : 'a formula -> 'a formula = <fun>
     // F#:    val psimplify : 'a formula -> 'a formula
-    // TODO : Optimize using continuation-passing style.
-    let rec psimplify fm =
-        match fm with
-        | Not p ->
-            psimplify1 (Not (psimplify p))
-        | And (p, q) ->
-            psimplify1 (And (psimplify p, psimplify q))
-        | Or (p, q) ->
-            psimplify1 (Or (psimplify p, psimplify q))
-        | Imp (p, q) ->
-            psimplify1 (Imp (psimplify p, psimplify q))
-        | Iff (p, q) ->
-            psimplify1 (Iff (psimplify p, psimplify q))
-        | fm -> fm
+    let psimplify fm =
+        psimplifyImpl fm id
+
 
 // pg. 51
 // ------------------------------------------------------------------------- //
@@ -341,6 +385,34 @@ module prop =
 // ------------------------------------------------------------------------- //
 // Negation normal form.                                                     //
 // ------------------------------------------------------------------------- //
+
+//    let rec private nnfOrigImpl fm cont =
+//        match fm with
+//        | And (p, q) ->
+//            nnfOrigImpl p <| fun p' ->
+//            nnfOrigImpl q <| fun q' ->
+//                cont (And (p', q'))
+//        | Or (p, q) ->
+//            nnfOrigImpl p <| fun p' ->
+//            nnfOrigImpl q <| fun q' ->
+//                cont (Or (p', q'))
+//        | Imp (p, q) ->
+//            Or (nnfOrig (Not p), nnfOrig q)
+//        | Iff (p, q) ->
+//            Or (And (nnfOrig p, nnfOrig q),
+//                And (nnfOrig (Not p), nnfOrig (Not q)))
+//        | Not (Not p) ->
+//            nnfOrigImpl p cont
+//        | Not (And (p, q)) ->
+//            Or (nnfOrig (Not p), nnfOrig (Not q))
+//        | Not (Or (p, q)) ->
+//            And (nnfOrig (Not p), nnfOrig (Not q))
+//        | Not (Imp (p, q)) ->
+//            And (nnfOrig p, nnfOrig (Not q))
+//        | Not (Iff (p, q)) ->
+//            Or (And (nnfOrig p, nnfOrig (Not q)),
+//                And (nnfOrig (Not p), nnfOrig q))
+//        | fm -> fm
 
     // Note: Changed name from nnf to nnfOrig to avoid F# compiler error.
     // OCaml: val nnf :     'a formula -> 'a formula = <fun>
@@ -436,7 +508,10 @@ module prop =
     // OCaml: val mk_lits : 'a formula list -> ('a -> bool) -> 'a formula = <fun>
     // F#:    val mk_lits : 'a formula list -> ('a -> bool) -> 'a formula when 'a : equality
     let mk_lits pvs v =
-        list_conj (List.map (fun p -> if eval p v then p else Not p) pvs)
+        pvs
+        |> List.map (fun p ->
+            if eval p v then p else Not p)
+        |> list_conj
         
     // OCaml: val allsatvaluations : (('a -> bool) -> bool) -> ('a -> bool) -> 'a list -> ('a -> bool) list = <fun>
     // F#:    val allsatvaluations :  (('a -> bool) -> bool) -> ('a -> bool) -> 'a list -> ('a -> bool) list when 'a : equality
@@ -457,36 +532,51 @@ module prop =
     // F#:    val dnfOrig : 'a formula -> 'a formula when 'a : comparison
     let dnfOrig fm =
         let pvs = atoms fm
-        let satvals = allsatvaluations (eval fm) (fun s -> false) pvs
-        list_disj (List.map (mk_lits (List.map (fun p -> Atom p) pvs)) satvals)
+        let satvals = allsatvaluations (eval fm) (fun _ -> false) pvs
+        list_disj (List.map (mk_lits (List.map Atom pvs)) satvals)
 
 // pg. 57
 // ------------------------------------------------------------------------- //
 // DNF via distribution.                                                     //
 // ------------------------------------------------------------------------- //
 
+    let rec private distribOrigImpl fm cont =
+        match fm with
+        | And (p, Or (q, r)) ->
+            distribOrigImpl (And (p, q)) <| fun p' ->
+            distribOrigImpl (And (p, r)) <| fun q' ->
+                cont (Or (p', q'))
+        | And (Or (p, q), r) ->
+            distribOrigImpl (And (p, r)) <| fun p' ->
+            distribOrigImpl (And (q, r)) <| fun q' ->
+                cont (Or (p', q'))
+        | fm ->
+            cont fm
+
     // Note: Changed name from distrib to distribOrig to avoid F# compiler error.
     // OCaml: val distrib :     'a formula -> 'a formula = <fun>
     // F#:    val distribOrig : 'a formula -> 'a formula
-    // TODO : Optimize using continuation-passing style.
-    let rec distribOrig fm =
-        match fm with
-        | And (p, Or (q, r)) ->
-            Or (distribOrig (And (p, q)), distribOrig (And (p, r)))
-        | And (Or (p, q), r) ->
-            Or (distribOrig (And (p, r)), distribOrig (And (q, r)))
-        | _ -> fm
-        
-    // OCaml: val rawdnf : 'a formula -> 'a formula = <fun>
-    // F#:    val rawdnf : 'a formula -> 'a formula
-    // TODO : Optimize using continuation-passing style.
-    let rec rawdnf fm =
+    let distribOrig fm =
+        distribOrigImpl fm id
+
+    //
+    let rec private rawdnfImpl fm cont =
         match fm with
         | And (p, q) ->
-            distribOrig <| And (rawdnf p, rawdnf q)
+            rawdnfImpl p <| fun p' ->
+            rawdnfImpl q <| fun q' ->
+                cont (distribOrig (And (p, q)))
         | Or (p, q) ->
-            Or (rawdnf p, rawdnf q)
-        | _ -> fm
+            rawdnfImpl p <| fun p' ->
+            rawdnfImpl q <| fun q' ->
+                cont (Or (p', q'))
+        | fm ->
+            cont fm
+
+    // OCaml: val rawdnf : 'a formula -> 'a formula = <fun>
+    // F#:    val rawdnf : 'a formula -> 'a formula
+    let rawdnf fm =
+        rawdnfImpl fm id
 
 // pg. 58
 // ------------------------------------------------------------------------- //
@@ -497,17 +587,25 @@ module prop =
     // F#:    val distrib : 'a list list -> 'a list list -> 'a list list when 'a : comparison
     let distrib s1 s2 =
         setify <| allpairs union s1 s2
-    
-    // OCaml: val purednf : 'a formula -> 'a formula list list = <fun>
-    // F#:    val purednf : 'a formula -> 'a formula list list when 'a : comparison
-    // TODO : Optimize using continuation-passing style.
-    let rec purednf fm =
+
+    //
+    let rec private purednfImpl fm cont =
         match fm with
         | And (p, q) ->
-            distrib (purednf p) (purednf q)
+            purednfImpl p <| fun p' ->
+            purednfImpl q <| fun q' ->
+                cont (distrib p' q')
         | Or (p, q) ->
-            union (purednf p) (purednf q)
-        | _ -> [[fm]]
+            purednfImpl p <| fun p' ->
+            purednfImpl q <| fun q' ->
+                cont (union p' q')
+        | _ ->
+            cont [[fm]]
+
+    // OCaml: val purednf : 'a formula -> 'a formula list list = <fun>
+    // F#:    val purednf : 'a formula -> 'a formula list list when 'a : comparison
+    let purednf fm =
+        purednfImpl fm id
 
 // pg. 59
 // ------------------------------------------------------------------------- //

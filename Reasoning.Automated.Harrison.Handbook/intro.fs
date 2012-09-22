@@ -86,37 +86,54 @@ module intro =
 // Simplification example.                                                   //
 // ------------------------------------------------------------------------- //
 
-    // OCaml: val simplify1 : expression -> expression
-    // F#:    val simplify1 : expression -> expression
-    let private simplify1 expr =
+
+    (* TODO :   Maybe simplify this a bit by breaking 'simplifyImpl' into two mutually-recursive
+                functions -- one with the simplification rules, and another with the recursive
+                traversal rules. *)
+
+    //
+    let rec private simplifyImpl expr cont =
         match expr with
         | Mul (Const 0, x)
         | Mul (x, Const 0) ->
-            Const 0
+            cont <| Const 0
         | Add (Const 0, x)
-        | Add (x, Const 0)        
+        | Add (x, Const 0)
         | Mul (Const 1, x)
         | Mul (x, Const 1) ->
-            x
+            cont x
         | Add (Const m, Const n) ->
-            Const (m + n)
+            cont <| Const (m + n)
         | Mul (Const m, Const n) ->
-            Const (m * n)
-        | _ -> expr
+            cont <| Const (m * n)
+
+        (* Cases which need to be simplified recursively. *)
+        | Add (e1, e2) ->
+            // Try to simplify each of the sub-expressions.
+            simplifyImpl e1 <| fun e1' ->
+            simplifyImpl e2 <| fun e2' ->
+            // Create a new Add using the (possibly) simplified sub-expressions,
+            // then try to simplify it as well.
+            simplifyImpl (Add (e1', e2')) <| fun expr' ->
+                // Apply the now-simplified expression to the continuation to
+                // continue simplifying any remaining parts of the complete expression
+                // (i.e., the expression originally passed to 'simplify').
+                cont expr'
+
+        | Mul (e1, e2) ->
+            simplifyImpl e1 <| fun e1' ->
+            simplifyImpl e2 <| fun e2' ->
+            simplifyImpl (Mul (e1', e2')) <| fun expr' ->
+                cont expr'
+
+        (* None of the remaining cases can be simplified. *)
+        | _ ->
+            cont expr
 
     // OCaml: val simplify : expression -> expression = <fun>
     // F#:    val simplify : expression -> expression
-    // TODO : Optimize using continuation-passing style.
-    let rec simplify expr =
-        match expr with
-        | Add (e1, e2) ->
-            Add (simplify e1, simplify e2)
-            |> simplify1
-        | Mul (e1, e2) ->
-            Mul (simplify e1, simplify e2)
-            |> simplify1
-        | _ ->
-            simplify1 expr
+    let simplify expr =
+        simplifyImpl expr id
 
 // pg. 17
 // ------------------------------------------------------------------------- //
@@ -182,29 +199,39 @@ module intro =
     // F#:    val alphanumeric : (string -> bool)
     let alphanumeric = matches "abcdefghijklmnopqrstuvwxyz_'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
 
-    // OCaml: val lexwhile : (string -> bool) -> string list -> string * string list = <fun>
-    // F#:    val lexwhile : (string -> bool) -> string list -> string * string list
-    let rec lexwhile prop inp =
+    //
+    let rec private lexwhileImpl prop inp cont =
         match inp with
         | c :: cs when prop c ->
-            let tok, rest = lexwhile prop cs
-            c + tok, rest
-        | _ -> "", inp
+            lexwhileImpl prop cs <| fun (tok, rest) ->
+                cont (c + tok, rest)
+        | _ ->
+            cont ("", inp)
 
-    // OCaml: val lex : string list -> string list = <fun>
-    // F#:    val lex : string list -> string list
-    // TODO : Optimize this function using continuation-passing style
-    // or, better yet, an imperative loop.
-    let rec lex inp =
+    // OCaml: val lexwhile : (string -> bool) -> string list -> string * string list = <fun>
+    // F#:    val lexwhile : (string -> bool) -> string list -> string * string list
+    let lexwhile prop inp =
+        lexwhileImpl prop inp id
+
+    //
+    let rec private lexImpl inp cont =
         match snd <| lexwhile space inp with
-        | [] -> []
+        | [] ->
+            cont []
         | c :: cs ->
-            let prop =
-                if alphanumeric c then alphanumeric
-                else if symbolic c then symbolic
-                else fun c -> false
-            let toktl, rest = lexwhile prop cs
-            (c + toktl) :: lex rest
+            let toktl, rest =
+                let prop =
+                    if alphanumeric c then alphanumeric
+                    else if symbolic c then symbolic
+                    else fun _ -> false                
+                lexwhile prop cs
+
+            lexImpl rest <| fun tail ->
+                cont ((c + toktl) :: tail)
+
+    //
+    let lex inp =
+        lexImpl inp id
 
 // pg. 19
 // ------------------------------------------------------------------------- //
@@ -214,35 +241,48 @@ module intro =
     // OCaml: val parse_expression : string list -> expression * string list = <fun>
     // F#:    val parse_expression : string list -> expression * string list
     let rec parse_expression i =
+        parseExpressionImpl i id
+
+    and private parseExpressionImpl i cont =
         match parse_product i with
         | e1, "+" :: i1 ->
-            let e2, i2 = parse_expression i1
-            Add (e1, e2), i2
-        | x -> x
+            parseExpressionImpl i1 <| fun (e2, i2) ->
+                cont (Add (e1, e2), i2)
+        | x ->
+            cont x
 
     // OCaml: val parse_product : string list -> expression * string list = <fun>
     // F#:    val parse_product : string list -> expression * string list
     and parse_product i =
+        parseProductImpl i id
+
+    and private parseProductImpl i cont =
         match parse_atom i with
         | e1, "*" :: i1 ->
-            let e2, i2 = parse_product i1
-            Mul (e1, e2), i2
-        | x -> x
+            parseProductImpl i1 <| fun (e2, i2) ->
+                cont (Mul (e1, e2), i2)
+        | x ->
+            cont x
 
     // OCaml: val parse_atom : string list -> expression * string list = <fun>
     // F#:    val parse_atom : string list -> expression * string list
     and parse_atom i =
+        parseAtomImpl i id
+
+    and private parseAtomImpl i cont =
         match i with
         | [] ->
             failwith "Expected an expression at end of input"
         | "(" :: i1 ->
             match parse_expression i1 with
-            | e2, ")" :: i2 -> e2, i2
+            | e2, ")" :: i2 ->
+                cont (e2, i2)
             | _ -> failwith "Expected closing bracket"
         | tok :: i1 ->
             if List.forall numeric (explode tok) then
                 Const (int tok), i1
             else Var tok, i1
+            |> cont
 
 // pg. 20
 // ------------------------------------------------------------------------- //
@@ -268,38 +308,52 @@ module intro =
 // Conservatively bracketing first attempt at printer.                       //
 // ------------------------------------------------------------------------- //
 
+    let rec private stringOfExpImpl e cont =
+        match e with
+        | Var s ->
+            cont s
+        | Const n ->
+            cont (string n)
+        | Add (e1, e2) ->
+            stringOfExpImpl e1 <| fun e1' ->
+            stringOfExpImpl e2 <| fun e2' ->
+                sprintf "(%s + %s)" e1' e2'
+        | Mul (e1, e2) ->
+            stringOfExpImpl e1 <| fun e1' ->
+            stringOfExpImpl e2 <| fun e2' ->
+                sprintf "(%s * %s)" e1' e2'
+
     // OCaml: val string_of_exp : expression -> string = <fun>
     // F#:    val string_of_exp : expression -> string
-    // TODO : Optimize using continuation-passing style.
-    let rec string_of_exp e =
-        match e with
-        | Var s -> s
-        | Const n -> string n
-        | Add (e1, e2) ->
-            "(" + (string_of_exp e1) + " + " + (string_of_exp e2) + ")"
-        | Mul (e1, e2) ->
-            "(" + (string_of_exp e1) + " * " + (string_of_exp e2) + ")"
+    let string_of_exp e =
+        stringOfExpImpl e id
 
 // pg. 22
 // ------------------------------------------------------------------------- //
 // Somewhat better attempt.                                                  //
 // ------------------------------------------------------------------------- //
 
+    let rec private stringOfExp2Impl pr e cont =
+        match e with
+        | Var s ->
+            cont s
+        | Const n ->
+            cont (string n)
+        | Add (e1, e2) ->
+            stringOfExp2Impl 3 e1 <| fun e1' ->
+            stringOfExp2Impl 2 e2 <| fun e2' ->
+                let s = e1' + " + " + e2'
+                cont <| if 2 < pr then "(" + s + ")" else s
+        | Mul (e1, e2) ->
+            stringOfExp2Impl 3 e1 <| fun e1' ->
+            stringOfExp2Impl 2 e2 <| fun e2' ->
+                let s = e1' + " * " + e2'
+                cont <| if 2 < pr then "(" + s + ")" else s
+
     // OCaml: val string_of_exp   : int -> expression -> string = <fun>
     // F#:    val string_of_exp_2 : int -> expression -> string
-    // TODO : Optimize using continuation-passing style.
-    let rec string_of_exp_2 pr e =
-        match e with
-        | Var s -> s
-        | Const n -> string n
-        | Add (e1, e2) ->
-            let s = (string_of_exp_2 3 e1) + " + " + (string_of_exp_2 2 e2)
-            if 2 < pr then "(" + s + ")" 
-            else s
-        | Mul (e1, e2) ->
-            let s = (string_of_exp_2 5 e1) + " * " + (string_of_exp_2 4 e2)
-            if 4 < pr then "(" + s + ")" 
-            else s
+    let string_of_exp_2 pr e =
+        stringOfExp2Impl pr e id
 
     // OCaml: val print_exp : expression -> unit = <fun>
     // F#:    val print_exp : expression -> unit

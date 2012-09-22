@@ -142,6 +142,8 @@ module formulas =
 // Parsing of formulas, parametrized by atom parser "pfn".                   //
 // ------------------------------------------------------------------------- //
 
+    (* TODO : Optimize parsing using CPS. *)
+
     // OCaml: val parse_atomic_formula : (string list -> string list -> 'a formula * string list) * (string list -> string list -> 'a formula * string list) -> string list -> string list -> 'a formula * string list = <fun>
     // F#:    val parse_atomic_formula : (string list -> string list -> 'a formula * string list) * (string list -> string list -> 'a formula * string list) -> string list -> string list -> 'a formula * string list
     let rec parse_atomic_formula (ifn, afn) vs inp =
@@ -419,37 +421,74 @@ module formulas =
 // Apply a function to the atoms, otherwise keeping structure.               //
 // ------------------------------------------------------------------------- //
 
-    // OCaml: val onatoms : ('a -> 'a formula) -> 'a formula -> 'a formula = <fun>
-    // F#:    val onatoms : ('a -> 'a formula) -> 'a formula -> 'a formula
-    // TODO : Optimize using continuation-passing style.
-    let rec onatoms f fm =
+    let rec private onatomsImpl f fm cont =
         match fm with
         | Atom a ->
-            f a
+            cont (f a)
         | Not p ->
-            Not (onatoms f p)
+            onatomsImpl f p <| fun p' ->
+                cont (Not p')
         | And (p, q) ->
-            And (onatoms f p, onatoms f q)
+            onatomsImpl f p <| fun p' ->
+            onatomsImpl f q <| fun q' ->
+                cont (And (p', q'))
         | Or (p, q) ->
-            Or (onatoms f p,onatoms f q)
+            onatomsImpl f p <| fun p' ->
+            onatomsImpl f q <| fun q' ->
+                cont (Or (p', q'))
         | Imp (p, q) ->
-            Imp (onatoms f p, onatoms f q)
+            onatomsImpl f p <| fun p' ->
+            onatomsImpl f q <| fun q' ->
+                cont (Imp (p', q'))
         | Iff (p, q) ->
-            Iff (onatoms f p, onatoms f q)
+            onatomsImpl f p <| fun p' ->
+            onatomsImpl f q <| fun q' ->
+                cont (Iff (p', q'))
         | Forall (x, p) ->
-            Forall (x, onatoms f p)
+            onatomsImpl f p <| fun p' ->
+                cont (Forall (x, p'))
         | Exists (x, p) ->
-            Exists (x, onatoms f p)
-        | _ -> fm
+            onatomsImpl f p <| fun p' ->
+                cont (Exists (x, p'))
+        | _ ->
+            cont fm
+
+    // OCaml: val onatoms : ('a -> 'a formula) -> 'a formula -> 'a formula = <fun>
+    // F#:    val onatoms : ('a -> 'a formula) -> 'a formula -> 'a formula
+    let onatoms f fm =
+        onatomsImpl f fm id
 
 // pg. 31
 // ------------------------------------------------------------------------- //
 // Formula analog of list iterator "itlist".                                 //
 // ------------------------------------------------------------------------- //
 
+    let rec private overatomsImpl f fm b cont =
+        match fm with
+        | Atom a ->
+            cont (f a b)
+        | Not p ->
+            overatomsImpl f p b cont
+        | And (p, q)
+        | Or (p, q)
+        | Imp (p, q)
+        | Iff (p, q) ->
+            overatomsImpl f q b <| fun q' ->
+                overatomsImpl f p q' cont
+        | Forall (x, p)
+        | Exists (x, p) ->
+            overatomsImpl f p b cont
+        | _ ->
+            cont b
+
     // OCaml: val overatoms : ('a -> 'b -> 'b) -> 'a formula -> 'b -> 'b = <fun>
     // F#:    val overatoms : ('a -> 'b -> 'b) -> 'a formula -> 'b -> 'b
-    // TODO : Optimize using continuation-passing style.
+        // TODO : Ensure output is the same as the original.
+    let overatoms' f fm b =
+        overatomsImpl f fm b id
+
+    // OCaml: val overatoms : ('a -> 'b -> 'b) -> 'a formula -> 'b -> 'b = <fun>
+    // F#:    val overatoms : ('a -> 'b -> 'b) -> 'a formula -> 'b -> 'b
     let rec overatoms f fm b =
         match fm with
         | Atom a ->

@@ -88,60 +88,136 @@ module skolem =
         | _ ->
             psimplify1 fm
 
-    // OCaml: val simplify : expression  -> expression = <fun>
-    // F#:    val simplify : fol formula -> fol formula
-    let rec simplify fm =
-        match fm with
+    let rec private simplifyImpl fm cont =
+        match simplify1 fm with
+        (* Cases which need to be recursively simplified. *)
         | Not p ->
-            simplify1 (Not (simplify p))
+            simplifyImpl p <| fun p' ->
+                cont (simplify1 (Not p'))
         | And (p, q) ->
-            simplify1 (And (simplify p, simplify q))
+            simplifyImpl p <| fun p' ->
+            simplifyImpl q <| fun q' ->
+                cont (simplify1 (And (p', q')))
         | Or (p, q) ->
-            simplify1 (Or (simplify p, simplify q))
+            simplifyImpl p <| fun p' ->
+            simplifyImpl q <| fun q' ->
+                cont (simplify1 (Or (p', q')))
         | Imp (p, q) ->
-            simplify1 (Imp (simplify p, simplify q))
+            simplifyImpl p <| fun p' ->
+            simplifyImpl q <| fun q' ->
+                cont (simplify1 (Imp (p', q')))
         | Iff (p, q) ->
-            simplify1 (Iff (simplify p, simplify q))
+            simplifyImpl p <| fun p' ->
+            simplifyImpl q <| fun q' ->
+                cont (simplify1 (Iff (p', q')))
         | Forall (x, p) ->
-            simplify1 (Forall (x, simplify p))
+            simplifyImpl p <| fun p' ->
+                cont (simplify1 (Forall (x, p')))
         | Exists (x, p) ->
-            simplify1 (Exists (x, simplify p))
-        | _ -> fm
+            simplifyImpl p <| fun p' ->
+                cont (simplify1 (Exists (x, p')))
+
+        (* This formula can't be simplified any further. *)
+        | fm ->
+            cont fm
+
+    // OCaml: val simplify : 'a formula -> 'a formula = <fun>
+    // F#:    val simplify : 'a formula -> 'a formula
+    let simplify fm =
+        simplifyImpl fm id
 
 // pg. 141
 // ------------------------------------------------------------------------- //
 // Negation normal form.                                                     //
 // ------------------------------------------------------------------------- //
 
-    let rec nnf fm =
+    let rec private nnfImpl fm cont =
         match fm with
         | And (p, q) ->
-            And (nnf p, nnf q)
+            nnfImpl p <| fun p' ->
+            nnfImpl q <| fun q' ->
+                cont (And (p', q'))
         | Or (p, q) ->
-            Or (nnf p, nnf q)
+            nnfImpl p <| fun p' ->
+            nnfImpl q <| fun q' ->
+                cont (Or (p', q'))
         | Imp (p, q) ->
-            Or (nnf (Not p), nnf q)
+            nnfImpl (Not p) <| fun p' ->
+            nnfImpl q <| fun q' ->
+                cont (Or (p', q'))
         | Iff (p, q) ->
-            Or (And (nnf p, nnf q), And (nnf (Not p), nnf (Not q)))
+            nnfImpl p <| fun p' ->
+            nnfImpl q <| fun q' ->
+            nnfImpl (Not p) <| fun not_p' ->
+            nnfImpl (Not q) <| fun not_q' ->
+                cont (Or (And (p', q'), And (not_p', not_q')))
         | Not (Not p) ->
-            nnf p
+            nnfImpl p cont
         | Not (And (p, q)) ->
-            Or (nnf (Not p), nnf (Not q))
+            nnfImpl (Not p) <| fun not_p' ->
+            nnfImpl (Not q) <| fun not_q' ->
+                cont (Or (not_p', not_q'))
         | Not (Or (p, q)) ->
-            And (nnf (Not p), nnf (Not q))
+            nnfImpl (Not p) <| fun not_p' ->
+            nnfImpl (Not q) <| fun not_q' ->
+                cont (And (not_p', not_q'))
         | Not (Imp (p, q)) ->
-            And (nnf p, nnf (Not q))
+            nnfImpl p <| fun p' ->
+            nnfImpl (Not q) <| fun not_q' ->
+                cont (And (p', not_q'))
         | Not (Iff (p, q)) ->
-            Or (And (nnf p, nnf (Not q)), And (nnf (Not p), nnf q))
+            nnfImpl p <| fun p' ->
+            nnfImpl (Not q) <| fun not_q' ->
+            nnfImpl (Not p) <| fun not_p' ->
+            nnfImpl q <| fun q' ->
+                cont (Or (And (p', not_q'), And (not_p', q)))
         | Forall (x, p) ->
-            Forall (x, nnf p)
+            nnfImpl p <| fun p' ->
+                cont (Forall (x, p'))
         | Exists (x, p) ->
-            Exists (x, nnf p)
+            nnfImpl p <| fun p' ->
+                cont (Exists (x, p'))
         | Not (Forall (x, p)) ->
-            Exists (x, nnf (Not p))
+            nnfImpl (Not p) <| fun not_p' ->
+                cont (Exists (x, not_p'))
         | Not (Exists (x, p)) ->
-            Forall (x, nnf (Not p))
-        | _ -> fm
+            nnfImpl (Not p) <| fun not_p' ->
+                cont (Forall (x, not_p'))
+        | fm ->
+            cont fm
+
+    let nnf fm =
+        nnfImpl fm id
+
+//    let rec nnf fm =
+//        match fm with
+//        | And (p, q) ->
+//            And (nnf p, nnf q)
+//        | Or (p, q) ->
+//            Or (nnf p, nnf q)
+//        | Imp (p, q) ->
+//            Or (nnf (Not p), nnf q)
+//        | Iff (p, q) ->
+//            Or (And (nnf p, nnf q), And (nnf (Not p), nnf (Not q)))
+//        | Not (Not p) ->
+//            nnf p
+//        | Not (And (p, q)) ->
+//            Or (nnf (Not p), nnf (Not q))
+//        | Not (Or (p, q)) ->
+//            And (nnf (Not p), nnf (Not q))
+//        | Not (Imp (p, q)) ->
+//            And (nnf p, nnf (Not q))
+//        | Not (Iff (p, q)) ->
+//            Or (And (nnf p, nnf (Not q)), And (nnf (Not p), nnf q))
+//        | Forall (x, p) ->
+//            Forall (x, nnf p)
+//        | Exists (x, p) ->
+//            Exists (x, nnf p)
+//        | Not (Forall (x, p)) ->
+//            Exists (x, nnf (Not p))
+//        | Not (Exists (x, p)) ->
+//            Forall (x, nnf (Not p))
+//        | _ -> fm
 
 // pg. 143
 // ------------------------------------------------------------------------- //
@@ -178,17 +254,28 @@ module skolem =
         let q' = if r then subst (y |=> Var z) q else q
         quant z (pullquants(op p' q'))
 
-    let rec prenex fm =
+
+    let rec private prenexImpl fm cont =
         match fm with
         | Forall (x, p) ->
-            Forall (x, prenex p)
+            prenexImpl p <| fun p' ->
+                cont (Forall (x, p'))
         | Exists (x, p) ->
-            Exists (x, prenex p)
+            prenexImpl p <| fun p' ->
+                cont (Exists (x, p'))
         | And (p, q) ->
-            pullquants (And (prenex p, prenex q))
+            prenexImpl p <| fun p' ->
+            prenexImpl q <| fun q' ->
+                cont (pullquants (And (p', q')))
         | Or (p, q) ->
-            pullquants (Or (prenex p, prenex q))
-        | _ -> fm
+            prenexImpl p <| fun p' ->
+            prenexImpl q <| fun q' ->
+                cont (pullquants (Or (p', q')))
+        | _ ->
+            cont fm
+
+    let prenex fm =
+        prenexImpl fm id
 
     let pnf fm =
         prenex (nnf (simplify fm))
@@ -212,24 +299,33 @@ module skolem =
 // Core Skolemization function.                                              //
 // ------------------------------------------------------------------------- //
 
-    let rec skolem fm fns =
+    let rec private skolemImpl fm fns cont =
         match fm with
         | Exists (y, p) ->
             let xs = fv fm
             let f = variant (if xs = [] then "c_" + y else "f_" + y) fns
-            let fx = Fn (f,List.map (fun x -> Var x) xs)
-            skolem (subst (y |=> fx) p) (f :: fns)
-        | Forall (x, p) -> 
-            let p', fns' = skolem p fns 
-            Forall (x, p'), fns'
-        | And (p, q) -> skolem2 (fun (p, q) -> And (p, q)) (p, q) fns
-        | Or (p, q) -> skolem2 (fun (p, q) -> Or (p, q)) (p, q) fns
-        | _ -> fm, fns
+            let fx = Fn (f, List.map Var xs)
+            skolemImpl (subst (y |=> fx) p) (f :: fns) cont
+        | Forall (x, p) ->
+            skolemImpl p fns <| fun (p', fns') ->
+                cont (Forall (x, p'), fns')
+        | And (p, q) ->
+            skolem2Impl And (p, q) fns cont
+        | Or (p, q) ->
+            skolem2Impl Or (p, q) fns cont
+        | _ ->
+            cont (fm, fns)
 
-    and skolem2 cons (p, q) fns =
-        let p', fns' = skolem p fns
-        let q', fns'' = skolem q fns'
-        cons (p', q'), fns''
+    and skolem2Impl cons (p, q) fns cont =
+        skolemImpl p fns <| fun (p', fns') ->
+        skolemImpl q fns' <| fun (q', fns'') ->
+            cont (cons (p', q'), fns'')
+
+    let skolem fm fns =
+        skolemImpl fm fns id
+
+    let skolem2 cons (p, q) fns =
+        skolem2Impl cons (p, q) fns id
 
 // pg. 149
 // ------------------------------------------------------------------------- //
