@@ -74,6 +74,7 @@
     <Compile Include="folderived.fs" />
     <Compile Include="lcffol.fs" />
     <Compile Include="tactics.fs" />
+    <Compile Include="limitations.fs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="FSharp.PowerPack">
