@@ -172,7 +172,7 @@ module limitations =
     // Quine from Martin Jambon.                                                 //
     // ------------------------------------------------------------------------- //
 
-    (fun s -> Printf.printf "%s\n%S\n" s s) "(fun s -> Printf.printf \"%s\\n%S\\n\" s s)"
+    (fun s -> Printf.printf "%s\n%s\n" s s) "(fun s -> Printf.printf \"%s\\n%S\\n\" s s)"
     
     // pg. 538
     // ------------------------------------------------------------------------- //
@@ -442,15 +442,16 @@ module limitations =
     //
     let robinson = (parse "(forall m n. S(m) = S(n) ==> m = n) /\ (forall n. ~(n = 0) <=> exists m. n = S(m)) /\ (forall n. 0 + n = n) /\ (forall m n. S(m) + n = S(m + n)) /\ (forall n. 0 * n = 0) /\ (forall m n. S(m) * n = n + m * n) /\ (forall m n. m <= n <=> exists d. m + d = n) /\ (forall m n. m < n <=> S(m) <= n)")
 
-    let [suc_inj; num_cases; add_0; add_suc; mul_0;
-         mul_suc; le_def; lt_def] = conjths robinson
+    let [suc_inj; num_cases; add_0; add_suc;
+            mul_0; mul_suc; le_def; lt_def;] =
+        conjths robinson
 
     // pg. 565
     // ------------------------------------------------------------------------- //
     // Particularly useful "right handed" inference rules.                       //
     // ------------------------------------------------------------------------- //
 
-    let right_spec t th = imp_trans th (ispec t (consequent(concl th)))
+    let right_spec t th = imp_trans th (ispec t (consequent (concl th)))
 
     let right_mp ith th =
         imp_unduplicate (imp_trans th (imp_swap ith))
@@ -511,25 +512,25 @@ module limitations =
     let robinson_consequences = (parse "(forall n. S(n) = 0 ==> false) /\ (forall n. 0 = S(n) ==> false) /\ (forall m n. (m = n ==> false) ==> (S(m) = S(n) ==> false)) /\ (forall m n. (exists d. m + d = n) ==> m <= n) /\ (forall m n. S(m) <= n ==> m < n) /\ (forall m n. (forall d. d <= n ==> d = m ==> false) ==> m <= n ==> false) /\ (forall m n. (forall d. d < n ==> d = m ==> false) ==> m < n ==> false) /\ (forall n. n <= 0 \/ exists m. S(m) = n) /\ (forall n. n <= 0 ==> n = 0) /\ (forall m n. S(m) <= S(n) ==> m <= n) /\ (forall m n. m < S(n) ==> m <= n) /\ (forall n. n < 0 ==> false)")
 
     let robinson_thm =
-      prove (Imp(robinson,robinson_consequences))
-      [note("eq_refl",(parse "forall x. x = x")) using [axiom_eqrefl (Var "x")];
-       note("eq_trans",(parse "forall x y z. x = y ==> y = z ==> x = z"))
+      prove (Imp (robinson, robinson_consequences)) [
+        note("eq_refl",(parse "forall x. x = x")) using [axiom_eqrefl (Var "x")];
+        note("eq_trans",(parse "forall x y z. x = y ==> y = z ==> x = z"))
           using [eq_trans (Var "x") (Var "y") (Var "z")];
-       note("eq_sym",(parse "forall x y. x = y ==> y = x"))
+        note("eq_sym",(parse "forall x y. x = y ==> y = x"))
           using [eq_sym (Var "x") (Var "y")];
-       note("suc_cong",(parse "forall a b. a = b ==> S(a) = S(b)"))
+        note("suc_cong",(parse "forall a b. a = b ==> S(a) = S(b)"))
           using [axiom_funcong "S" [Var "a"] [Var "b"]];
-       note("add_cong",
+        note("add_cong",
             (parse "forall a b c d. a = b /\ c = d ==> a + c = b + d"))
           using [axiom_funcong "+" [Var "a"; Var "c"] [Var "b"; Var "d"]];
-       note("le_cong",
+        note("le_cong",
             (parse "forall a b c d. a = b /\ c = d ==> a <= c ==> b <= d"))
           using [axiom_predcong "<=" [Var "a"; Var "c"] [Var "b"; Var "d"]];
-       note("lt_cong",
+        note("lt_cong",
             (parse "forall a b c d. a = b /\ c = d ==> a < c ==> b < d"))
           using [axiom_predcong "<" [Var "a"; Var "c"] [Var "b"; Var "d"]];
 
-       assume ["suc_inj",(parse "forall m n. S(m) = S(n) ==> m = n");
+        assume ["suc_inj",(parse "forall m n. S(m) = S(n) ==> m = n");
                "num_nz",(parse "forall n. ~(n = 0) <=> exists m. n = S(m)");
                "add_0",(parse "forall n. 0 + n = n");
                "add_suc",(parse "forall m n. S(m) + n = S(m + n)");
@@ -537,47 +538,47 @@ module limitations =
                "mul_suc",(parse "forall m n. S(m) * n = n + m * n");
                "le_def",(parse "forall m n. m <= n <=> exists d. m + d = n");
                "lt_def",(parse "forall m n. m < n <=> S(m) <= n")];
-       note("not_suc_0",(parse "forall n. ~(S(n) = 0)")) by ["num_nz"; "eq_refl"];
-       so conclude (parse "forall n. S(n) = 0 ==> false") at once;
-       so conclude (parse "forall n. 0 = S(n) ==> false") by ["eq_sym"];
-       note("num_cases",(parse "forall n. (n = 0) \/ exists m. n = S(m)"))
+        note("not_suc_0",(parse "forall n. ~(S(n) = 0)")) by ["num_nz"; "eq_refl"];
+        so conclude (parse "forall n. S(n) = 0 ==> false") at once;
+        so conclude (parse "forall n. 0 = S(n) ==> false") by ["eq_sym"];
+        note("num_cases",(parse "forall n. (n = 0) \/ exists m. n = S(m)"))
              by ["num_nz"];
-       note("suc_inj_eq",(parse "forall m n. S(m) = S(n) <=> m = n"))
+        note("suc_inj_eq",(parse "forall m n. S(m) = S(n) <=> m = n"))
          by ["suc_inj"; "suc_cong"];
-       so conclude
-         (parse "forall m n. (m = n ==> false) ==> (S(m) = S(n) ==> false)")
-         at once;
-       conclude (parse "forall m n. (exists d. m + d = n) ==> m <= n")
-         by ["le_def"];
-       conclude (parse "forall m n. S(m) <= n ==> m < n") by ["lt_def"];
-       conclude (parse "forall m n. (forall d. d <= n ==> d = m ==> false) ==> m <= n ==> false")
-         by ["eq_refl"; "le_cong"];
-       conclude (parse "forall m n. (forall d. d < n ==> d = m ==> false) ==> m < n ==> false")
-         by ["eq_refl"; "lt_cong"];
-       have (parse "0 <= 0") by ["le_def"; "add_0"];
-       so have (parse "forall x. x = 0 ==> x <= 0")
-         by ["le_cong"; "eq_refl"; "eq_sym"];
-       so conclude (parse "forall n. n <= 0 \/ (exists m. S(m) = n)")
-         by ["num_nz"; "eq_sym"];
-       note("add_eq_0",(parse "forall m n. m + n = 0 ==> m = 0 /\ n = 0")) proof
-        [fix "m"; fix "n";
-         assume ["A",(parse "m + n = 0")];
-         cases (parse "m = 0 \/ exists p. m = S(p)") by ["num_cases"];
-           so conclude (parse "m = 0") at once;
-           so have (parse "m + n = 0 + n") by ["add_cong"; "eq_refl"];
-           so our thesis by ["A"; "add_0"; "eq_sym"; "eq_trans"];
-         qed;
-           so consider ("p",(parse "m = S(p)")) at once;
-           so have (parse "m + n = S(p) + n") by ["add_cong"; "eq_refl"];
-           so have (parse "m + n = S(p + n)") by ["eq_trans"; "add_suc"];
-           so have (parse "S(p + n) = 0") by ["A"; "eq_sym"; "eq_trans"];
-           so our thesis by ["not_suc_0"];
-         qed];
+        so conclude
+            (parse "forall m n. (m = n ==> false) ==> (S(m) = S(n) ==> false)")
+            at once;
+        conclude (parse "forall m n. (exists d. m + d = n) ==> m <= n")
+            by ["le_def"];
+        conclude (parse "forall m n. S(m) <= n ==> m < n") by ["lt_def"];
+        conclude (parse "forall m n. (forall d. d <= n ==> d = m ==> false) ==> m <= n ==> false")
+            by ["eq_refl"; "le_cong"];
+        conclude (parse "forall m n. (forall d. d < n ==> d = m ==> false) ==> m < n ==> false")
+            by ["eq_refl"; "lt_cong"];
+        have (parse "0 <= 0") by ["le_def"; "add_0"];
+        so have (parse "forall x. x = 0 ==> x <= 0")
+            by ["le_cong"; "eq_refl"; "eq_sym"];
+        so conclude (parse "forall n. n <= 0 \/ (exists m. S(m) = n)")
+            by ["num_nz"; "eq_sym"];
+        note ("add_eq_0", parse "forall m n. m + n = 0 ==> m = 0 /\ n = 0") proof [
+            fix "m"; fix "n";
+             assume ["A",(parse "m + n = 0")];
+             cases (parse "m = 0 \/ exists p. m = S(p)") by ["num_cases"];
+               so conclude (parse "m = 0") at once;
+               so have (parse "m + n = 0 + n") by ["add_cong"; "eq_refl"];
+               so our thesis by ["A"; "add_0"; "eq_sym"; "eq_trans"];
+             qed;
+               so consider ("p",(parse "m = S(p)")) at once;
+               so have (parse "m + n = S(p) + n") by ["add_cong"; "eq_refl"];
+               so have (parse "m + n = S(p + n)") by ["eq_trans"; "add_suc"];
+               so have (parse "S(p + n) = 0") by ["A"; "eq_sym"; "eq_trans"];
+               so our thesis by ["not_suc_0"];
+             qed];
        so conclude (parse "forall n. n <= 0 ==> n = 0") by ["le_def"];
        have (parse "forall m n. S(m) <= S(n) ==> m <= n") proof
         [fix "m"; fix "n";
          assume ["lesuc",(parse "S(m) <= S(n)")];
-         so consider("d",(parse "S(m) + d = S(n)")) by ["le_def"];
+         so consider ("d", parse "S(m) + d = S(n)") by ["le_def"];
          so have (parse "S(m + d) = S(n)") by ["add_suc"; "eq_sym"; "eq_trans"];
          so have (parse "m + d = n") by ["suc_inj"];
          so conclude (parse "m <= n") by ["le_def"];
@@ -587,15 +588,15 @@ module limitations =
        fix "n";
        assume ["hyp",(parse "n < 0")];
        so have (parse "S(n) <= 0") by ["lt_def"];
-       so consider("d",(parse "S(n) + d = 0")) by ["le_def"];
+       so consider ("d", parse "S(n) + d = 0") by ["le_def"];
        so have (parse "S(n + d) = 0") by ["add_suc"; "eq_trans"; "eq_sym"];
        so our thesis by ["not_suc_0"];
-       qed]
+       qed; ]
 
     let [suc_0_l; suc_0_r; suc_inj_false;
          expand_le; expand_lt; expand_nle; expand_nlt;
          num_lecases; le_0; le_suc; lt_suc; lt_0] =
-        map (imp_trans robinson_thm) (conjths robinson_consequences)
+            List.map (imp_trans robinson_thm) (conjths robinson_consequences)
 
     // pg. 567
     // ------------------------------------------------------------------------- //
