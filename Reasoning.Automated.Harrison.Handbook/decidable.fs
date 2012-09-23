@@ -245,7 +245,7 @@ module decidable =
 
     let decide_fmp fm =
         let rec test n =
-            try limited_meson n fm
+            try limited_meson n fm |> ignore
                 true
             with _ ->
                 if decide_finite n fm then test (n + 1) else false
