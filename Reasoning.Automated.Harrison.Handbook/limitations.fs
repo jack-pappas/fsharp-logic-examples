@@ -141,7 +141,7 @@ module limitations =
     // Intuition for the self-referential sentence.                              //
     // ------------------------------------------------------------------------- //
 
-    let diag s =
+    let diag001 s =
         let rec replacex n l =
             match l with
             | [] ->
@@ -157,15 +157,15 @@ module limitations =
                 h + replacex n t
         replacex 0 (explode s)
 
-    let phi = diag "P(diag(x))"
+    let phi001 = diag001 "P(diag(x))"
     
     // pg. 538
     // ------------------------------------------------------------------------- //
     // Pseudo-substitution variant.                                              //
     // ------------------------------------------------------------------------- //
 
-    let qdiag s = sprintf "let `x' be `%s' in %s"
-    let phi = qdiag "P(qdiag(x))"
+    let qdiag001 s = sprintf "let `x' be `%s' in %s"
+    let phi002 = qdiag001 "P(qdiag(x))"
     
     // pg. ???
     // ------------------------------------------------------------------------- //
@@ -179,10 +179,10 @@ module limitations =
     // Diagonalization and quasi-diagonalization of formulas.                    //
     // ------------------------------------------------------------------------- //
 
-    let diag x p =
+    let diag002 x p =
         subst (x |=> numeral (gform p)) p
 
-    let qdiag x p =
+    let qdiag002 x p =
         Exists (x, And (mk_eq (Var x) (numeral (gform p)), p))
         
     // pg. 548
