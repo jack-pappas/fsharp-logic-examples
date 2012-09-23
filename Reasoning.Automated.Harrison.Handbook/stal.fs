@@ -1,7 +1,8 @@
 ﻿// ========================================================================= //
 // Copyright (c) 2003-2007, John Harrison.                                   //
 // Copyright (c) 2012 Eric Taucher, Jack Pappas                              //
-// (See "LICENSE.txt" for details.)                                          //
+// (See "LICENSE.txt" for details.)                                          //    
+// Stalmarck's method is protected by patents covering commercial use.       //
 // ========================================================================= //
 
 namespace Reasoning.Automated.Harrison.Handbook
