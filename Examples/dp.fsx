@@ -19,10 +19,8 @@ open Reasoning.Automated.Harrison.Handbook.dp
 // Examples.                                                                 //
 // ------------------------------------------------------------------------- //
 
-// val it : bool = true
 tautology(prime 11);;
 
-// val it : bool = true
 dptaut(prime 11);;
 
 // pg. 85
@@ -30,7 +28,6 @@ dptaut(prime 11);;
 // Example.                                                                  //
 // ------------------------------------------------------------------------- //
 
-// val it : bool = true
 dplltaut(prime 11);;
 
 // pg. 89
@@ -38,9 +35,6 @@ dplltaut(prime 11);;
 // Examples.                                                                 //
 // ------------------------------------------------------------------------- //
 
-// Note: This takes a long time. So long that I canceled it after 15 minutes.
-// TODO: Run this at night and time it.
 dplitaut(prime 101);;
 
-// val it : bool = true
 dplbtaut(prime 101);;
