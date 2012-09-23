@@ -197,7 +197,7 @@ module formulas =
 //
 //        and print_qnt qname (bvs, bod) =
 //            print_string qname
-//            bvs |> do_list (fun v ->
+//            bvs |> List.iter (fun v ->
 //                print_string " "
 //                print_string v)
 //            print_string "."
@@ -236,7 +236,7 @@ module formulas =
             | Exists(x,p) -> bracket (pr > 0) 2 print_qnt "exists" (strip_quant fm)
         and print_qnt qname (bvs,bod) =
             printf "%s" qname
-            do_list (fun v -> printf " "; printf "%s" v) bvs
+            List.iter (fun v -> printf " "; printf "%s" v) bvs
             printf "%s" ". "
             print_formula 0 bod
         and print_prefix newpr sym p =

@@ -145,7 +145,7 @@ module tactics =
                     printf "%i subgoals starting with" (List.length gls)
 
                 printfn ""
-                do_list print_hyp (List.rev asl)
+                List.iter print_hyp (List.rev asl)
                 printf "---> "
                 //open_hvbox 0
                 print_formula print_atom w

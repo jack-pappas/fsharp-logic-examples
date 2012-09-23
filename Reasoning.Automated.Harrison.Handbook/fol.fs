@@ -200,7 +200,7 @@ module folMod =
 //        open_box 0;
         print_term 0 (List.head args); 
 //        print_break 0 0;
-        do_list (
+        List.iter (
                 fun t -> 
                     printf ","
     //                print_break 0 0;

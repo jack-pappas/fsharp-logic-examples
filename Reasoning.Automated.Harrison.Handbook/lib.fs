@@ -396,10 +396,10 @@ module lib =
     // OCaml: val do_list : ('a -> 'b) -> 'a list -> unit = <fun>
     // F#:    val do_list : ('a -> unit) -> 'a list -> unit
     // F# : Use List.iter.
-    let inline do_list f l =
-        // TEMP : Leave this function as an alias for List.iter until
-        // all usages can be replaced; then this function can be discarded.
-        List.iter f l
+//    let inline do_list f l =
+//        // TEMP : Leave this function as an alias for List.iter until
+//        // all usages can be replaced; then this function can be discarded.
+//        List.iter f l
 
 // ------------------------------------------------------------------------- //
 // Association lists.                                                        //
