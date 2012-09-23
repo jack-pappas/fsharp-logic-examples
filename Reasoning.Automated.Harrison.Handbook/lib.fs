@@ -177,10 +177,10 @@ module lib =
     // OCaml: val itlist2 : ('a -> 'b -> 'c -> 'c) -> 'a list -> 'b list -> 'c -> 'c = <fun>
     // F#:    val itlist2 : ('a -> 'b -> 'c -> 'c) -> 'a list -> 'b list -> 'c -> 'c
     // F# : Use List.foldBack2
-    let inline itlist2 f l1 l2 b =
-        // TEMP : Leave this function as an alias for List.foldBack2 until
-        // all of the usages can be replaced.
-        List.foldBack2 f l1 l2 b
+//    let inline itlist2 f l1 l2 b =
+//        // TEMP : Leave this function as an alias for List.foldBack2 until
+//        // all of the usages can be replaced.
+//        List.foldBack2 f l1 l2 b
         
     // pg. 619
     // OCaml: val zip : 'a list -> 'b list -> ('a * 'b) list = <fun>
@@ -1184,7 +1184,7 @@ module lib =
     // OCaml: val fpf : 'a list -> 'b list -> ('a, 'b) func = <fun>
     // F#:    val fpf : 'a list -> 'b list -> func<'a,'b> when 'a : comparison
     let fpf xs ys =
-        itlist2 (|->) xs ys undefined
+        List.foldBack2 (|->) xs ys undefined
 
 // ------------------------------------------------------------------------- //
 // Grab an arbitrary element.                                                //

@@ -350,7 +350,7 @@ module lcffol =
         let ssk = sort (decreasing (termsize >>|> snd)) isk
         let vs = List.map (fun i -> Var ("Y_" + string i)) (1 -- List.length ssk)
         let vfn =
-            replacet (itlist2 (fun (p, t) v -> t |-> v) ssk vs undefined)
+            replacet (List.foldBack2 (fun (p, t) v -> t |-> v) ssk vs undefined)
         let th = thp (vfn >>|> ifn, onformula vfn (List.foldBack mk_skol ssk False))
         repeat (elim_skolemvar >>|> imp_swap) th
         

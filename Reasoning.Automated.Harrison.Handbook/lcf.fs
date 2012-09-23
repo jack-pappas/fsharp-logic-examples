@@ -262,11 +262,11 @@ module lcf =
 //                mk_eq t t
 //
 //            member __.axiom_funcong f lefts rights =
-//                itlist2 (fun s t p -> Imp (mk_eq s t, p)) lefts rights
+//                List.foldBack2 (fun s t p -> Imp (mk_eq s t, p)) lefts rights
 //                    (mk_eq (Fn (f, lefts)) (Fn (f, rights)))
 //
 //            member __.axiom_predcong p lefts rights =
-//                itlist2 (fun s t p -> Imp (mk_eq s t, p)) lefts rights
+//                List.foldBack2 (fun s t p -> Imp (mk_eq s t, p)) lefts rights
 //                    (Imp (Atom (R (p, lefts)), Atom (R (p, rights))))
 //
 //            member __.axiom_iffimp1 p q =
@@ -338,11 +338,11 @@ module lcf =
             mk_eq t t
 
         let axiom_funcong f lefts rights : thm =
-            itlist2 (fun s t p -> Imp (mk_eq s t, p)) lefts rights
+            List.foldBack2 (fun s t p -> Imp (mk_eq s t, p)) lefts rights
                 (mk_eq (Fn (f, lefts)) (Fn (f, rights)))
 
         let axiom_predcong p lefts rights : thm =
-            itlist2 (fun s t p -> Imp (mk_eq s t, p)) lefts rights
+            List.foldBack2 (fun s t p -> Imp (mk_eq s t, p)) lefts rights
                 (Imp (Atom (R (p, lefts)), Atom (R (p, rights))))
 
         let axiom_iffimp1 p q : thm =
