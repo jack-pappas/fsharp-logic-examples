@@ -1,7 +1,10 @@
+// ========================================================================= //
+// Copyright (c) 2012 Jack Pappas                                            //
+// (See "LICENSE.txt" for details.)                                          //
+// ========================================================================= //
+
 (* ========================================================================= *)
 (* Tweak F# default state ready for theorem proving code.                    *)
-(*                                                                           *)
-(* Copyright (c) 2003-2007, John Harrison. (See "LICENSE.txt" for details.)  *)
 (* ========================================================================= *)
 
 #I @".\..\Reasoning.Automated.Harrison.Handbook\bin\Debug"

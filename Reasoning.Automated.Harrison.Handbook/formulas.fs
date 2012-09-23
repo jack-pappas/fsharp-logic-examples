@@ -10,8 +10,6 @@ module formulas =
 // pg. 26
 // ========================================================================= //
 // Polymorphic type of formulas with parser and printer.                     //
-//                                                                           //
-// Copyright (c) 2003-2007, John Harrison. (See "LICENSE.txt" for details.)  //
 // ========================================================================= //
 
     type formula<'a> =
