@@ -144,7 +144,7 @@ module geom =
             and y = string n + "_y"
             let i = fpf ["x";"y"] [Var x;Var y]
             (x |-> tsubst i x') ((y |-> tsubst i y') f)
-        Iff (z,subst (itlist m (1 -- 5) undefined) z)
+        Iff (z,subst (List.foldBack m (1 -- 5) undefined) z)
 
     // OCaml: val invariant_under_translation : string * fol formula -> fol formula = <fun>
     // F#:    val invariant_under_translation : (string * formula<fol> -> formula<fol>)
@@ -194,7 +194,7 @@ module geom =
           | (Fn ("+", [c; Fn ("*", [Var x; _])]) as q) :: qs ->
                 if x <> List.head vars then
                     if mem (List.head vars) (fvt p) then
-                        itlist (pprove vars triang) (coefficients vars p) degens
+                        List.foldBack (pprove vars triang) (coefficients vars p) degens
                     else
                         pprove (List.tail vars) triang p degens
                 else
@@ -202,7 +202,7 @@ module geom =
                     if k = 0 then pprove vars qs p' degens
                     else
                         let degens' = Not (mk_eq (head vars q) zero) :: degens
-                        itlist (pprove vars qs) (coefficients vars p') degens'
+                        List.foldBack (pprove vars qs) (coefficients vars p') degens'
                         
     // pg. 421
     //  ------------------------------------------------------------------------- // 
@@ -230,10 +230,10 @@ module geom =
     // F#:    val wu : formula<fol> -> string list -> string list -> formula<fol> list
     let wu fm vars zeros =
         let gfm0 = coordinate fm
-        let gfm = subst(itlist (fun v -> v |-> zero) zeros undefined) gfm0
+        let gfm = subst(List.foldBack (fun v -> v |-> zero) zeros undefined) gfm0
         if not (set_eq vars (fv gfm)) then failwith "wu: bad parameters" else
         let ant, con = dest_imp gfm
         let pols = List.map (lhs >>|> polyatom vars) (conjuncts ant)
         let ps = List.map (lhs >>|> polyatom vars) (conjuncts con)
         let tri = triangulate vars [] pols
-        itlist (fun p -> union (pprove vars tri p [])) ps []
+        List.foldBack (fun p -> union (pprove vars tri p [])) ps []

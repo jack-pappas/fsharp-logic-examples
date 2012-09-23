@@ -112,7 +112,7 @@ module equal =
             let args_y = List.map (fun x -> Var x) argnames_y
             let ant = end_itlist mk_and (List.map2 mk_eq args_x args_y)
             let con = mk_eq (Fn (f, args_x)) (Fn (f, args_y))
-            [itlist mk_forall (argnames_x @ argnames_y) (Imp (ant, con))]
+            [List.foldBack mk_forall (argnames_x @ argnames_y) (Imp (ant, con))]
 
 // pg. 240
 // ------------------------------------------------------------------------- //
@@ -128,7 +128,7 @@ module equal =
             let args_y = List.map (fun x -> Var x) argnames_y
             let ant = end_itlist mk_and (List.map2 mk_eq args_x args_y)
             let con = Imp (Atom (R (p, args_x)), Atom (R (p, args_y)))
-            [itlist mk_forall (argnames_x @ argnames_y) (Imp (ant, con))]
+            [List.foldBack mk_forall (argnames_x @ argnames_y) (Imp (ant, con))]
 
 // pg. 240
 // ------------------------------------------------------------------------- //
@@ -144,7 +144,7 @@ module equal =
         else
             let preds = subtract allpreds ["=", 2]
             let funcs = functions fm
-            let axioms = itlist (union >>|> function_congruence) funcs
-                                (itlist (union >>|> predicate_congruence) preds
+            let axioms = List.foldBack (union >>|> function_congruence) funcs
+                                (List.foldBack (union >>|> predicate_congruence) preds
                                         equivalence_axioms)
             Imp (end_itlist mk_and axioms, fm)

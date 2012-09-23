@@ -390,7 +390,7 @@ module formulas =
 
 // pg. 31
 // ------------------------------------------------------------------------- //
-// Formula analog of list iterator "itlist".                                 //
+// Formula analog of list iterator "List.foldBack".                          //
 // ------------------------------------------------------------------------- //
 
     // OCaml: val overatoms : ('a -> 'b -> 'b) -> 'a formula -> 'b -> 'b = <fun>

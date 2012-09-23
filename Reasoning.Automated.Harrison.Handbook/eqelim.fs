@@ -125,7 +125,7 @@ module eqelim =
         | [] -> []
         | (Atom (R ("=", [s; t])) as eq) :: ps ->
             let ps' = modify_T ps
-            let w = Var (variant "w" (itlist (union >>|> fv) ps' (fv eq)))
+            let w = Var (variant "w" (List.foldBack (union >>|> fv) ps' (fv eq)))
             Not (mk_eq t w) :: (mk_eq s w) :: ps'
         | p :: ps ->
             p :: (modify_T ps)
@@ -188,7 +188,7 @@ module eqelim =
         with Failure _ ->
             cls
 
-    let modify_E cls = emodify (itlist (union >>|> fv) cls []) cls
+    let modify_E cls = emodify (List.foldBack (union >>|> fv) cls []) cls
 
 // pg. 296
 // ------------------------------------------------------------------------- //
@@ -197,7 +197,7 @@ module eqelim =
 
     let brand cls =
         let cls1 = List.map modify_E cls
-        let cls2 = itlist (union >>|> modify_S) cls1 []
+        let cls2 = List.foldBack (union >>|> modify_S) cls1 []
         [mk_eq (Var "x") (Var "x")] :: (List.map modify_T cls2)
 
 // pg. 296
@@ -207,7 +207,7 @@ module eqelim =
 
     let bpuremeson fm =
         let cls = brand (simpcnf (specialize (pnf fm)))
-        let rules = itlist ((@) >>|> contrapositives) cls []
+        let rules = List.foldBack ((@) >>|> contrapositives) cls []
         deepen (fun n ->
             mexpand002 rules [] False id (undefined, n, 0)
             |> ignore

@@ -106,7 +106,7 @@ module qelim =
         if ycjs = [] then p
         else
             let q = bfn (Exists (x, list_conj ycjs))
-            itlist mk_and ncjs q
+            List.foldBack mk_and ncjs q
 
 //    // OCaml : val lift_qelim : (string list -> fol formula -> fol formula) -> (fol formula -> fol formula) -> (string list -> fol formula -> fol formula) -> fol formula -> fol formula = <fun>
 //    // F# :    val lift_qelim : (string list -> fol formula -> fol formula) -> (fol formula -> fol formula) -> (string list -> fol formula -> fol formula) -> (fol formula -> fol formula)

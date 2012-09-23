@@ -102,7 +102,7 @@ sigma_bound (parse "exists p x. p < x /\ (S(S(0)) <= p /\ forall n. n < p ==> (e
 // Example program (successor).                                              //
 // ------------------------------------------------------------------------- //
 
-let prog_suc = itlist (fun m -> m) [(1,Blank) |-> (Blank,Right,2);  (2,One) |-> (One,Right,2);  (2,Blank) |-> (One,Right,3); (3,Blank) |-> (Blank,Left,4); (3,One) |-> (Blank,Left,4); (4,One) |-> (One,Left,4); (4,Blank) |-> (Blank,Stay,0)]  undefined;;
+let prog_suc = List.foldBack (fun m -> m) [(1,Blank) |-> (Blank,Right,2);  (2,One) |-> (One,Right,2);  (2,Blank) |-> (One,Right,3); (3,Blank) |-> (Blank,Left,4); (3,One) |-> (Blank,Left,4); (4,One) |-> (One,Left,4); (4,Blank) |-> (Blank,Stay,0)]  undefined;;
 
 exec prog_suc [0];;
 

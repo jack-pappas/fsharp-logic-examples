@@ -117,7 +117,7 @@ module paramodulation =
 // ------------------------------------------------------------------------- //
 
     let paramodulate pcl ocl =
-        itlist (fun eq ->
+        List.foldBack (fun eq ->
             let pcl' = subtract pcl [eq]
             let l, r = dest_eq eq
             let rfn i ocl' = image (subst i) (pcl' @ ocl')
@@ -140,11 +140,11 @@ module paramodulation =
             printfn "%i used; %i unused." (List.length used) (List.length unused)
             let used' = insert cls used
             let news =
-                itlist (@) (mapfilter (resolve_clauses cls) used')
-                    (itlist (@) (mapfilter (para_clauses cls) used') [])
+                List.foldBack (@) (mapfilter (resolve_clauses cls) used')
+                    (List.foldBack (@) (mapfilter (para_clauses cls) used') [])
             if mem [] news then true 
             else
-                paraloop (used', itlist (incorporate cls) news ros)
+                paraloop (used', List.foldBack (incorporate cls) news ros)
 
     let pure_paramodulation fm =
       paraloop ([], [mk_eq (Var "x") (Var "x")] :: simpcnf (specialize (pnf fm)))

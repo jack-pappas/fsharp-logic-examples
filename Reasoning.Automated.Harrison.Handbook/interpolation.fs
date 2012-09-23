@@ -123,7 +123,7 @@ module interpolation =
 
     let pinterpolate p q =
         let orify a r = Or (psubst (a |=> False) r, psubst (a |=> True) r)
-        psimplify (itlist orify (subtract (atoms p) (atoms q)) p)
+        psimplify (List.foldBack orify (subtract (atoms p) (atoms q)) p)
         
     // pg. 429
     // ------------------------------------------------------------------------- //
@@ -150,10 +150,10 @@ module interpolation =
         | Var x -> []
         | Fn (f, args) ->
             if mem (f, List.length args) fns then [tm]
-            else itlist (union >>|> toptermt fns) args []
+            else List.foldBack (union >>|> toptermt fns) args []
 
     let topterms fns =
-        atom_union (fun (R (p, args)) -> itlist (union >>|> toptermt fns) args [])
+        atom_union (fun (R (p, args)) -> List.foldBack (union >>|> toptermt fns) args [])
         
     // pg. 433
     // ------------------------------------------------------------------------- //
@@ -186,7 +186,7 @@ module interpolation =
 
     let cinterpolate p q =
         let fm = nnf (And (p, q))
-        let rec efm = itlist mk_exists (fv fm) fm
+        let rec efm = List.foldBack mk_exists (fv fm) fm
         and fns = List.map fst (functions fm)
         let And (p', q'), _ = skolem efm fns
         uinterpolate p' q'
@@ -199,7 +199,7 @@ module interpolation =
     let interpolate p q =
         let rec vs = List.map (fun v -> Var v) (intersect (fv p) (fv q))
         and fns = functions (And (p, q))
-        let n = itlist (max_varindex "c_" >>|> fst) fns (Int 0) + (Int 1)
+        let n = List.foldBack (max_varindex "c_" >>|> fst) fns (Int 0) + (Int 1)
         let cs = List.map (fun i -> Fn ("c_" + i.ToString(), [])) (n --- (n + Int (List.length vs - 1)))
         let rec fn_vc = fpf vs cs
         and fn_cv = fpf cs vs

@@ -181,7 +181,7 @@ module completion =
 //               let eq' = Atom(R("=",[s';t'])) in
 //               let eqs' = eq'::eqs in
 //               eqs',def,
-//               ocrits @ itlist ((@) ** critical_pairs eq') eqs' []
+//               ocrits @ List.foldBack ((@) ** critical_pairs eq') eqs' []
 //           with Failure _ -> (eqs,eq::def,ocrits) in
 //         status trip eqs; complete ord trip
 //   | _ -> if def = [] then eqs else
@@ -199,7 +199,7 @@ module completion =
                     else
                         let eq' = Atom (R ("=", [s'; t']))
                         let eqs' = eq' :: eqs
-                        eqs', def, ocrits @ itlist ((@) >>|> critical_pairs eq') eqs' []
+                        eqs', def, ocrits @ List.foldBack ((@) >>|> critical_pairs eq') eqs' []
                 with Failure _ ->
                     eqs, eq :: def, ocrits
             status trip eqs
@@ -279,7 +279,7 @@ module completion =
                         let eq' = Atom (R ("=", [s';t']))
                         let eqs' = eq' :: eqs
                         eqs', def,
-                          ocrits @ itlist ((@) >>|> critical_pairs eq') eqs' []
+                          ocrits @ List.foldBack ((@) >>|> critical_pairs eq') eqs' []
                 with Failure _ ->
                     eqs, eq :: def, ocrits
 

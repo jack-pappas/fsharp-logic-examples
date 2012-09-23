@@ -184,7 +184,7 @@ module stal =
         let insert_relevant p trg f = (p |-> insert trg (tryapplyl f p)) f
         let insert_relevant2 ((p, q),_ as trg) f =
             insert_relevant p trg (insert_relevant q trg f)
-        itlist insert_relevant2 trigs undefined
+        List.foldBack insert_relevant2 trigs undefined
 
 // pg. 96
 // ------------------------------------------------------------------------- //
@@ -207,7 +207,7 @@ module stal =
                 (canonize eqv' p |-> union sp_pos sq_pos)
                     ((canonize eqv' p' |-> union sp_neg sq_neg) rfn)
             let nw = union (intersect sp_pos sq_pos) (intersect sp_neg sq_neg)
-            itlist (union >>|> snd) nw [], (eqv', rfn')
+            List.foldBack (union >>|> snd) nw [], (eqv', rfn')
 
 // pg. 96
 // ------------------------------------------------------------------------- //
@@ -275,7 +275,7 @@ module stal =
 
     let reverseq domain eqv =
         let al = List.map (fun x -> x, canonize eqv x) domain
-        itlist (fun (y, x) f -> (x |-> insert y (tryapplyl f x)) f)
+        List.foldBack (fun (y, x) f -> (x |-> insert y (tryapplyl f x)) f)
             al undefined
 
 // pg. 97
@@ -350,7 +350,7 @@ module stal =
         else
             let p, triplets = triplicate fm'
             let trigfn =
-                itlist (itlist include_trig >>|> trigger) triplets undefined
+                List.foldBack (List.foldBack include_trig >>|> trigger) triplets undefined
             let vars = List.map (fun p -> Atom p) (unions (List.map atoms triplets))
             saturate_upto vars 0 2 (graph trigfn) [p, True]
 

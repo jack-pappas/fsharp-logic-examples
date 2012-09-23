@@ -218,7 +218,7 @@ integer_qelim
  (parse "exists a b. a > 1 /\ b > 1 /\ ((2 * b = a) \/ (2 * b = 3 * a + 1)) /\ ((2 * a = b) \/ (2 * a = 3 * b + 1))");;
 
 let fm001 = dnf (parse "((2 * b = a) \/ (2 * b = 3 * a + 1)) /\ ((2 * c = b) \/ (2 * c = 3 * b + 1)) /\ ((2 * d = c) \/ (2 * d = 3 * c + 1)) /\ ((2 * e = d) \/ (2 * e = 3 * d + 1)) /\ ((2 * f = e) \/ (2 * f = 3 * e + 1)) /\ (f = a)");;
-let fms = List.map (itlist (fun x p -> Exists(x,And(Atom(R(">",[Var x; Fn("1",[])])),p))) ["b"; "c"; "d"; "e"; "f"]) (disjuncts fm001);;
+let fms = List.map (List.foldBack (fun x p -> Exists(x,And(Atom(R(">",[Var x; Fn("1",[])])),p))) ["b"; "c"; "d"; "e"; "f"]) (disjuncts fm001);;
 let fm002 = el 15 fms;;
 integer_qelim fm002;;
 

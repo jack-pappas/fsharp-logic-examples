@@ -69,7 +69,7 @@ module limitations =
     // ------------------------------------------------------------------------- //
 
     let number (s : string) =
-        itlist (fun i g ->
+        List.foldBack (fun i g ->
             Int (1 + int (char s.[i])) + (Int 256) * g) (0 -- (String.length s - 1)) (Int 0)
             
     // pg. 532
@@ -412,7 +412,7 @@ module limitations =
         let writen n =
             funpow n (move Left >>|> write One) >>|> move Left >>|> write Blank
         fun args ->
-            itlist writen args (Tape (0, undefined))
+            List.foldBack writen args (Tape (0, undefined))
             
     // pg. 560
     // ------------------------------------------------------------------------- //
@@ -485,7 +485,7 @@ module limitations =
                 let th1 =
                     if op = "+" then add_suc
                     else mul_suc
-                itlist right_spec [t;u] th1
+                List.foldBack right_spec [t;u] th1
             right_trans th2 (robeval (rhs (consequent (concl th2))))
 
     and robeval tm =
@@ -615,7 +615,7 @@ module limitations =
         | Fn("0", []), Fn("S", [t']) ->
             right_spec t' suc_0_r
         | Fn("S", [u]), Fn("S", [v]) ->
-            right_mp (itlist right_spec [v; u] suc_inj_false) (rob_nen (u, v))
+            right_mp (List.foldBack right_spec [v; u] suc_inj_false) (rob_nen (u, v))
         | _ ->
             failwith "rob_ne: true equation or unexpected term"
 
@@ -666,13 +666,13 @@ module limitations =
     let sigma_elim fm =
         match fm with
         | Atom (R ("<=", [s;t])) ->
-            itlist right_spec [t;s] expand_le
+            List.foldBack right_spec [t;s] expand_le
         | Atom (R ("<" ,[s;t])) ->
-            itlist right_spec [t;s] expand_lt
+            List.foldBack right_spec [t;s] expand_lt
         | Imp (Atom (R ("<=", [s;t])), False) ->
-            itlist right_spec [t;s] expand_nle
+            List.foldBack right_spec [t;s] expand_nle
         | Imp (Atom (R ("<", [s;t])), False) ->
-            itlist right_spec [t;s] expand_nlt
+            List.foldBack right_spec [t;s] expand_nlt
         | Imp (Exists (x, And (p, q)), False) ->
             add_assum robinson (elim_bex fm)
         | _ ->
@@ -689,7 +689,7 @@ module limitations =
         match concl th0,concl th1 with
         | Imp (_, Forall (x, Imp (_, p))),
               Imp (_, Forall (_, Imp (Atom (R ("<=", [_;t])) ,_))) ->
-          let th2 = itlist right_spec [t; Var x] le_suc
+          let th2 = List.foldBack right_spec [t; Var x] le_suc
           let th3 = right_imp_trans th2 (right_spec (Var x) th1)
           let y = variant "y" (var (concl th1))
           let q = Imp (Atom (R ("<=", [Var x; Fn ("S", [t])])), p)
@@ -770,7 +770,7 @@ module limitations =
         | "<", Fn ("0", []) ->
             gen_right x (imp_trans2 (right_spec (Var x) lt_0) (ex_falso q))
         | "<", Fn ("S", [u]) ->
-            let th1 = itlist right_spec [u; Var x] lt_suc
+            let th1 = List.foldBack right_spec [u; Var x] lt_suc
             let th2 = boundednum_prove ("<=", x, u, q)
             let th3 = imp_trans2 th1 (imp_swap (right_spec (Var x) th2))
             gen_right x (imp_unduplicate (imp_front 2 th3))

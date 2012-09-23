@@ -171,7 +171,7 @@ module tactics =
             failwith "extract_thm: unsolved goals"
 
     let tac_proof g prf : thm =
-        extract_thm (itlist id (List.rev prf) g)
+        extract_thm (List.foldBack id (List.rev prf) g)
 
     let prove p prf : thm =
         tac_proof (set_goal p) prf
@@ -272,7 +272,7 @@ module tactics =
     // ------------------------------------------------------------------------- //
 
     let using ths p g =
-        let ths' = List.map (fun th -> itlist gen (fv (concl th)) th) ths
+        let ths' = List.map (fun th -> List.foldBack gen (fv (concl th)) th) ths
         List.map (assumptate g) ths'
         
     // pg. 511
@@ -309,7 +309,7 @@ module tactics =
         match byfn hyps p g with
         | [th] when consequent (concl th) = p -> th
         | ths ->
-            let th = lcffol (itlist (mk_imp >>|> consequent >>|> concl) ths p)
+            let th = lcffol (List.foldBack (mk_imp >>|> consequent >>|> concl) ths p)
             if ths = [] then assumptate g th else imp_trans_chain ths th
             
     // pg. 512

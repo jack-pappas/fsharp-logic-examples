@@ -97,7 +97,7 @@ module herbrand =
 
     let rec groundterms cntms funcs n =
         if n = 0 then cntms else
-        itlist (fun (f, m) l -> 
+        List.foldBack (fun (f, m) l -> 
             List.map (fun args -> 
                 Fn (f, args))
                 (groundtuples cntms funcs (n - 1) m) @ l)
@@ -108,7 +108,7 @@ module herbrand =
             if n = 0 then [[]] 
             else [] 
         else
-            itlist (fun k l -> 
+            List.foldBack (fun k l -> 
                 allpairs (fun h t -> h :: t)
                     (groundterms cntms funcs k)
                     (groundtuples cntms funcs (n - k) (m - 1)) @ l)
@@ -176,7 +176,7 @@ module herbrand =
         | cl :: dknow ->
             let mfn = dp_mfn cjs0 >>|> subst >>|> fpf fvs
             let need' =
-                if dpll (itlist mfn (need @ dknow) []) then cl :: need
+                if dpll (List.foldBack mfn (need @ dknow) []) then cl :: need
                 else need
             dp_refine cjs0 fvs dknow need'
 

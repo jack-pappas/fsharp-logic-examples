@@ -220,7 +220,7 @@ module combining =
 
     let homogenize langs fms =
         let fvs = unions (List.map fv fms)
-        let n = (Int 1) + itlist (max_varindex "v_") fvs (Int 0)
+        let n = (Int 1) + List.foldBack (max_varindex "v_") fvs (Int 0)
         homo langs fms (fun res n defs -> res) n []
 
     // pg. 439
@@ -261,7 +261,7 @@ module combining =
         | _ -> []
 
     let arrangement part =
-        itlist (union >>|> arreq) part
+        List.foldBack (union >>|> arreq) part
              (List.map (fun (v, w) -> Not (mk_eq (Var v) (Var w)))
                   (distinctpairs (List.map List.head part)))
                   
@@ -299,8 +299,8 @@ module combining =
 
     let allpartitions =
         let allinsertions x l acc =
-            itlist (fun p acc -> ((x :: p) :: (subtract l [p])) :: acc) l (([x] :: l) :: acc)
-        fun l -> itlist (fun h y -> itlist (allinsertions h) y []) l [[]]
+            List.foldBack (fun p acc -> ((x :: p) :: (subtract l [p])) :: acc) l (([x] :: l) :: acc)
+        fun l -> List.foldBack (fun h y -> List.foldBack (allinsertions h) y []) l [[]]
 
     let nelop_refute001 vars ldseps =
         List.forall (trydps ldseps >>|> arrangement) (allpartitions vars)

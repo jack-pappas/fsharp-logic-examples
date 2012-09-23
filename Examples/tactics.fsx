@@ -232,7 +232,7 @@ prove
 // Running a series of proof steps one by one on goals.                      //
 // ------------------------------------------------------------------------- //
 
-let run prf g = itlist id (List.rev prf) g
+let run prf g = List.foldBack id (List.rev prf) g
 
 // ------------------------------------------------------------------------- //
 // LCF-style interactivity.                                                  //

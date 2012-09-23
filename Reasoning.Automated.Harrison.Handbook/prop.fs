@@ -117,17 +117,17 @@ module prop =
         // [P "p"; P "q"; P "r"]
         let ats = atoms fm
         // 5 + 1 = length of false + length of space
-        let width = itlist (max >>|> String.length >>|> pname) ats 5 + 1
+        let width = List.foldBack (max >>|> String.length >>|> pname) ats 5 + 1
         let fixw s = s + String.replicate (width - String.length s) " "
         let truthstring p = fixw (if p then "true" else "false")
         let mk_row v =
             let lis = List.map (fun x -> truthstring (v x)) ats
             let ans = truthstring (eval fm v)
-            printf "%s" (itlist (+) lis ("| " + ans))
+            printf "%s" (List.foldBack (+) lis ("| " + ans))
             printfn ""
             true
         let seperator = String.replicate (width * (List.length ats) + 9) "-"
-        printfn "%s" (itlist (fun s t -> fixw(pname s) + t) ats "| formula")
+        printfn "%s" (List.foldBack (fun s t -> fixw(pname s) + t) ats "| formula")
         printfn "%s" seperator
         let _ = onallvaluations mk_row (fun x -> false) ats
         printfn "%s" seperator

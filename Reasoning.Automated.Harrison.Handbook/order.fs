@@ -92,7 +92,7 @@ module order =
         match tm with
         | Var x -> 1
         | Fn (f, args) ->
-            itlist (fun t n -> termsize t + n) args 1
+            List.foldBack (fun t n -> termsize t + n) args 1
 
 // pg. 267
 // ------------------------------------------------------------------------- //

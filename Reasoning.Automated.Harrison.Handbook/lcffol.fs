@@ -170,13 +170,13 @@ module lcffol =
         imp_unduplicate (imp_trans (ispec (e y) (onformula e fm)) th)
 
     let ex_falso' fms (e, s) =
-        ex_falso (itlist (mk_imp >>|> onformula e) fms s)
+        ex_falso (List.foldBack (mk_imp >>|> onformula e) fms s)
 
     let complits' (p :: fl, lits) i (e, s) =
         let l1, p' :: l2 = chop_list i lits
-        itlist (imp_insert >>|> onformula e) (fl @ l1)
+        List.foldBack (imp_insert >>|> onformula e) (fl @ l1)
              (imp_contr (onformula e p)
-                        (itlist (mk_imp >>|> onformula e) l2 s))
+                        (List.foldBack (mk_imp >>|> onformula e) l2 s))
 
     let deskol' (skh : fol formula) thp (e, s) =
         let th = thp (e, s)
@@ -316,7 +316,7 @@ module lcffol =
 
     let simpcont thp (env, sks, k) =
       let ifn = tsubst (solve env)
-      thp (ifn, onformula ifn (itlist mk_skol sks False))
+      thp (ifn, onformula ifn (List.foldBack mk_skol sks False))
       
     // pg. 502
     //  ------------------------------------------------------------------------- // 
@@ -351,7 +351,7 @@ module lcffol =
         let vs = List.map (fun i -> Var ("Y_" + string i)) (1 -- List.length ssk)
         let vfn =
             replacet (itlist2 (fun (p, t) v -> t |-> v) ssk vs undefined)
-        let th = thp (vfn >>|> ifn, onformula vfn (itlist mk_skol ssk False))
+        let th = thp (vfn >>|> ifn, onformula vfn (List.foldBack mk_skol ssk False))
         repeat (elim_skolemvar >>|> imp_swap) th
         
     // pg. 504
@@ -361,7 +361,7 @@ module lcffol =
 
     let lcffol fm =
         let fvs = fv fm
-        let fm' = Imp(itlist mk_forall fvs fm,False)
+        let fm' = Imp(List.foldBack mk_forall fvs fm,False)
         let th1 = deepen (fun n -> lcfrefute fm' n deskolcont) 0
         let th2 = modusponens (axiom_doubleneg (negatef fm')) th1
-        itlist (fun v -> spec (Var v)) (List.rev fvs) th2
+        List.foldBack (fun v -> spec (Var v)) (List.rev fvs) th2

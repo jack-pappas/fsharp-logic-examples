@@ -77,7 +77,7 @@ module cong =
     let rec subterms tm =
         match tm with
         | Fn (f, args) ->
-            itlist (union >>|> subterms) args [tm]
+            List.foldBack (union >>|> subterms) args [tm]
         | _ -> [tm]
 
 // pg. 250
@@ -107,7 +107,7 @@ module cong =
             let eqv' = equate (s, t) eqv
             let st' = canonize eqv' s'
             let pfn' = (st' |-> union sp tp) pfn
-            itlist (fun (u, v) (eqv, pfn) ->
+            List.foldBack (fun (u, v) (eqv, pfn) ->
                         if congruent eqv (u, v) then emerge (u, v) (eqv, pfn)
                         else eqv, pfn)
                     (allpairs (fun u v -> (u, v)) sp tp) (eqv', pfn')
@@ -120,7 +120,7 @@ module cong =
     let predecessors t pfn =
         match t with
         | Fn (f, a) ->
-            itlist (fun s f -> (s |-> insert t (tryapplyl f s)) f) (setify a) pfn
+            List.foldBack (fun s f -> (s |-> insert t (tryapplyl f s)) f) (setify a) pfn
         | _ -> pfn
 
     let ccsatisfiable fms =
@@ -133,8 +133,8 @@ module cong =
                 @ List.map snd eqps
                 @ List.map fst eqns
                 @ List.map snd eqns
-            itlist predecessors (unions (List.map subterms lrs)) undefined
-        let eqv, _ = itlist emerge eqps (unequal, pfn)
+            List.foldBack predecessors (unions (List.map subterms lrs)) undefined
+        let eqv, _ = List.foldBack emerge eqps (unequal, pfn)
         List.forall (fun (l, r) ->
             not <| equivalent eqv l r) eqns
 

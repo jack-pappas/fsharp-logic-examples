@@ -207,10 +207,10 @@ module decidable =
             allpairs (fun h t -> h :: t) l tups
 
     let allmappings dom ran =
-        itlist (fun p -> allpairs (valmod p) ran) dom [undef]
+        List.foldBack (fun p -> allpairs (valmod p) ran) dom [undef]
 
     let alldepmappings dom ran =
-        itlist (fun (p, n) -> allpairs (valmod p) (ran n)) dom [undef]
+        List.foldBack (fun (p, n) -> allpairs (valmod p) (ran n)) dom [undef]
 
     let allfunctions dom n = allmappings (alltuples n dom) dom
 
@@ -236,7 +236,7 @@ module decidable =
 
     let limmeson n fm =
         let cls = simpcnf (specialize (pnf fm))
-        let rules = itlist ((@) >>|> contrapositives) cls []
+        let rules = List.foldBack ((@) >>|> contrapositives) cls []
         mexpand002 rules [] False id (undefined, n, 0)
 
     let limited_meson n fm =

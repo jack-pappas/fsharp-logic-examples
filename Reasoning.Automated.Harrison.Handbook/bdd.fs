@@ -265,9 +265,9 @@ module bdd =
             let ps, nonps =
                 defs |> List.partition (fun (x', _) -> x' = x)
             let ps' = subtract ps [x, e]
-            sort_defs ((x, e) :: acc) nonps (itlist restore_iffdef ps' fm)
+            sort_defs ((x, e) :: acc) nonps (List.foldBack restore_iffdef ps' fm)
         with _ ->
-            List.rev acc, itlist restore_iffdef defs fm
+            List.rev acc, List.foldBack restore_iffdef defs fm
 
 // pg. 106
 // ------------------------------------------------------------------------- //
@@ -311,7 +311,7 @@ module bdd =
 //            try dest_nimp fm with
 //            | Failure _ -> True,fm
 //        let eqs,noneqs = List.partition (can dest_iffdef) (conjuncts l)
-//        let defs,fm' = sort_defs [] (List.map dest_iffdef eqs) (itlist mk_imp noneqs r)
+//        let defs,fm' = sort_defs [] (List.map dest_iffdef eqs) (List.foldBack mk_imp noneqs r)
 //        snd(mkbdds undefined (mk_bdd (<),undefined) defs fm') = 1
 
     let ebddtaut fm =
@@ -325,6 +325,6 @@ module bdd =
                     true
                 with _ -> false
             List.partition parFun (conjuncts l)
-        let defs, fm' = sort_defs [] (List.map dest_iffdef eqs) (itlist mk_imp noneqs r)
+        let defs, fm' = sort_defs [] (List.map dest_iffdef eqs) (List.foldBack mk_imp noneqs r)
         snd (mkbdds undefined (mk_bdd (<), undefined) defs fm') = 1
 

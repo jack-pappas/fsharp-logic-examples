@@ -208,12 +208,12 @@ module dp =
         if newunits = [] then
             cls', fn, trail
         else
-            let trail' = itlist (fun p t -> (p, Deduced) :: t) newunits trail
-            let fn' = itlist (fun u -> u |-> ()) newunits fn
+            let trail' = List.foldBack (fun p t -> (p, Deduced) :: t) newunits trail
+            let fn' = List.foldBack (fun u -> u |-> ()) newunits fn
             unit_subpropagate (cls', fn', trail')
 
     let unit_propagate (cls, trail) =
-        let fn = itlist (fun (x, _) -> x |-> ()) trail undefined
+        let fn = List.foldBack (fun (x, _) -> x |-> ()) trail undefined
         let cls', fn', trail' = unit_subpropagate (cls, fn, trail)
         cls', trail'
 

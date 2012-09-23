@@ -159,8 +159,8 @@ module lib =
     // pg. 619 - list iterator
     // OCaml: val itlist : ('a -> 'b -> 'b) -> 'a list -> 'b -> 'b = <fun>
     // F#:    val itlist : ('a -> 'b -> 'b) -> 'a list -> 'b -> 'b
-    let inline itlist f l b =
-        List.foldBack f l b
+//    let inline itlist f l b =
+//        List.foldBack f l b
         
     // pg. 619
     // OCaml: val end_itlist : ('a -> 'a -> 'a) -> 'a list -> 'a = <fun>
@@ -304,7 +304,7 @@ module lib =
         match l1 with
         | [] -> []
         | h1 :: t1 ->
-            itlist (fun x a -> f h1 x :: a) l2 (allpairs f t1 l2)
+            List.foldBack (fun x a -> f h1 x :: a) l2 (allpairs f t1 l2)
 
     // pg. 620
     // OCaml: val distinctpairs : 'a list -> ('a * 'a) list = <fun>
@@ -314,7 +314,7 @@ module lib =
         match l with
         | [] -> []
         | x :: t ->
-            itlist (fun y a -> (x, y) :: a) t (distinctpairs t)
+            List.foldBack (fun y a -> (x, y) :: a) t (distinctpairs t)
         
     // pg. 619
     // OCaml: val chop_list : int -> 'a list -> 'a list * 'a list = <fun>
@@ -704,7 +704,7 @@ module lib =
     // OCaml: val unions : 'a list list -> 'a list = <fun>
     // F#:    val unions : 'a list list -> 'a list when 'a : comparison
     let unions s =
-        itlist (@) s []
+        List.foldBack (@) s []
         |> setify
 
 // ------------------------------------------------------------------------- //
@@ -1285,9 +1285,9 @@ module lib =
         let b', nb = tryterminus ptn b
         if a' = b' then f
         elif na <= nb then
-            itlist id [a' |-> Nonterminal b'; b' |-> Terminal (b', na + nb)] f
+            List.foldBack id [a' |-> Nonterminal b'; b' |-> Terminal (b', na + nb)] f
         else
-            itlist id [b' |-> Nonterminal a'; a' |-> Terminal (a', na + nb)] f
+            List.foldBack id [b' |-> Nonterminal a'; a' |-> Terminal (a', na + nb)] f
         |> Partition
             
     // pg. 622

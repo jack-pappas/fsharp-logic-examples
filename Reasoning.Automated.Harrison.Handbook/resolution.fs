@@ -116,7 +116,7 @@ module resolution =
             let pairs = allpairs (fun s1 s2 -> s1, s2)
                                 (List.map (fun pl -> p :: pl) (allsubsets ps1))
                                 (allnonemptysubsets ps2)
-            itlist (fun (s1, s2) sof ->
+            List.foldBack (fun (s1, s2) sof ->
                     try 
                         image (subst (mgu (s1 @ List.map negate s2) undefined))
                                 (union (subtract cl1 s1) (subtract cl2 s2)) :: sof
@@ -126,7 +126,7 @@ module resolution =
     let resolve_clauses cls1 cls2 =
         let cls1' = rename "x" cls1 
         let cls2' = rename "y" cls2
-        itlist (resolvents cls1' cls2') cls1' []
+        List.foldBack (resolvents cls1' cls2') cls1' []
 
 // pg. 185
 // ------------------------------------------------------------------------- //
@@ -139,7 +139,7 @@ module resolution =
         | cl :: ros ->
             printfn "%i used; %i unused." (List.length used) (List.length unused)
             let used' = insert cl used
-            let news = itlist (@) (mapfilter (resolve_clauses cl) used') []
+            let news = List.foldBack (@) (mapfilter (resolve_clauses cl) used') []
             if mem [] news then true
             else resloop001 (used', ros @ news)
 
@@ -238,9 +238,9 @@ module resolution =
         | cl :: ros ->
             printfn "%i used; %i unused." (List.length used) (List.length unused)
             let used' = insert cl used
-            let news = itlist (@) (mapfilter (resolve_clauses cl) used') []
+            let news = List.foldBack (@) (mapfilter (resolve_clauses cl) used') []
             if mem [] news then true
-            else resloop002 (used', itlist (incorporate cl) news ros)
+            else resloop002 (used', List.foldBack (incorporate cl) news ros)
 
     let pure_resolution002 fm =
         resloop002 ([], simpcnf (specialize (pnf fm)))
@@ -265,9 +265,9 @@ module resolution =
         | cl :: ros ->
             printfn "%i used; %i unused." (List.length used) (List.length unused)
             let used' = insert cl used
-            let news = itlist (@) (mapfilter (presolve_clauses cl) used') []
+            let news = List.foldBack (@) (mapfilter (presolve_clauses cl) used') []
             if mem [] news then true 
-            else presloop (used', itlist (incorporate cl) news ros)
+            else presloop (used', List.foldBack (incorporate cl) news ros)
 
     let pure_presolution fm =
         presloop ([], simpcnf (specialize (pnf fm)))

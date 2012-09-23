@@ -126,8 +126,8 @@ module grobner =
     // ------------------------------------------------------------------------- //
 
     let morder_lt m1 m2 =
-        let rec n1 = itlist (+) m1 0
-        and n2 = itlist (+) m2 0
+        let rec n1 = List.foldBack (+) m1 0
+        and n2 = List.foldBack (+) m2 0
         n1 < n2 || n1 = n2 && lexord (>) m1 m2
         
     // pg. 385
@@ -299,7 +299,7 @@ module grobner =
     // ------------------------------------------------------------------------- //
 
     let grobner_trivial fms =
-        let vars0 = itlist (union >>|> fv) fms []
+        let vars0 = List.foldBack (union >>|> fv) fms []
         let eqs, neqs = List.partition positive fms
         let rvs = List.map (fun n -> variant ("_" + string n) vars0)
                     (1 -- List.length neqs)

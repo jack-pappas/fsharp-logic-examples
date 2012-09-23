@@ -338,7 +338,7 @@ module lcfprop =
     // ------------------------------------------------------------------------- //
 
     let imp_trans_chain ths th =
-        itlist (fun a b -> imp_unduplicate (imp_trans a (imp_swap b)))
+        List.foldBack (fun a b -> imp_unduplicate (imp_trans a (imp_swap b)))
              (List.rev (List.tail ths)) (imp_trans (List.head ths) th)
              
     // pg. 483
@@ -430,7 +430,7 @@ module lcfprop =
 
     let shunt th =
         let p, q = dest_and (antecedent (concl th))
-        modusponens (itlist imp_add_assum [p; q] th) (and_pair p q)
+        modusponens (List.foldBack imp_add_assum [p; q] th) (and_pair p q)
         
     // pg. 484
     // ------------------------------------------------------------------------- //
@@ -571,7 +571,7 @@ module lcfprop =
     let rec lcfptab fms lits =
         match fms with
         | False :: fl ->
-            ex_falso (itlist mk_imp (fl @ lits) False)
+            ex_falso (List.foldBack mk_imp (fl @ lits) False)
 
         | (Imp (p, q) as fm) :: fl when p = q ->
             add_assum fm (lcfptab fl lits)
@@ -588,8 +588,8 @@ module lcfprop =
         | (Imp ((Atom _ | Forall (_,_)), False) as p) :: fl ->
             if mem (negatef p) lits then
                 let l1, l2 = chop_list (index (negatef p) lits) lits
-                let th = imp_contr p (itlist mk_imp (List.tail l2) False)
-                itlist imp_insert (fl @ l1) th
+                let th = imp_contr p (List.foldBack mk_imp (List.tail l2) False)
+                List.foldBack imp_insert (fl @ l1) th
             else
                 imp_front (List.length fl) (lcfptab fl (p :: lits))
 
