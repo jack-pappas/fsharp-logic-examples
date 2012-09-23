@@ -249,7 +249,7 @@ let e t =
     List.head(!current_goal)
 
 let es t =
-    current_goal := (run t (hd(!current_goal))::(!current_goal))
+    current_goal := (run t (List.head(!current_goal))::(!current_goal))
     List.head(!current_goal)
 
 let b () =
