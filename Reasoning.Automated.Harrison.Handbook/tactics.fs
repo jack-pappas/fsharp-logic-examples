@@ -262,7 +262,7 @@ module tactics =
     // ------------------------------------------------------------------------- //
 
     let firstassum asl : thm =
-        let rec p = snd (hd asl)
+        let rec p = snd (List.head asl)
         and q = list_conj (List.map snd (List.tail asl))
         if List.tail asl = [] then imp_refl p else and_left p q
         
@@ -287,7 +287,7 @@ module tactics =
             [l, imp_refl p]
         | (l, p) :: lps ->
             let ths = assumps lps
-            let q = antecedent (concl (snd (hd ths)))
+            let q = antecedent (concl (snd (List.head ths)))
             let rth = and_right p q
             (l, and_left p q) :: List.map (fun (l, th) -> l, imp_trans rth th) ths
             

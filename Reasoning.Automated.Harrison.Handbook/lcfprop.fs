@@ -339,7 +339,7 @@ module lcfprop =
 
     let imp_trans_chain ths th =
         itlist (fun a b -> imp_unduplicate (imp_trans a (imp_swap b)))
-             (List.rev (List.tail ths)) (imp_trans (hd ths) th)
+             (List.rev (List.tail ths)) (imp_trans (List.head ths) th)
              
     // pg. 483
     // ------------------------------------------------------------------------- //

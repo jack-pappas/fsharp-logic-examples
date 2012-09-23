@@ -263,7 +263,7 @@ module combining =
     let arrangement part =
         itlist (union >>|> arreq) part
              (List.map (fun (v, w) -> Not (mk_eq (Var v) (Var w)))
-                  (distinctpairs (List.map hd part)))
+                  (distinctpairs (List.map List.head part)))
                   
     // pg. 443
     // ------------------------------------------------------------------------- //

@@ -145,8 +145,8 @@ module lib =
     // pg. 619
     // OCaml: val hd :   'a list -> 'a = <fun>
     // F#:    val head : 'a list -> 'a
-    let inline hd l =
-        List.head l
+//    let inline hd l =
+//        List.head l
         
     // pg. 619
     // OCaml: val tl :   'a list -> 'a list = <fun>

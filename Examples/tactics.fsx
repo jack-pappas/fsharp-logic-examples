@@ -242,19 +242,19 @@ let current_goal = ref[set_goal False]
 
 let g x =
     current_goal := [set_goal x]
-    hd(!current_goal)
+    List.head(!current_goal)
 
 let e t =
-    current_goal := (t(hd(!current_goal))::(!current_goal))
-    hd(!current_goal)
+    current_goal := (t(List.head(!current_goal))::(!current_goal))
+    List.head(!current_goal)
 
 let es t =
     current_goal := (run t (hd(!current_goal))::(!current_goal))
-    hd(!current_goal)
+    List.head(!current_goal)
 
 let b () =
     current_goal := List.tail(!current_goal)
-    hd(!current_goal)
+    List.head(!current_goal)
 
 // ------------------------------------------------------------------------- //
 // Examples.                                                                 //

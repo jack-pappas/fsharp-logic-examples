@@ -193,7 +193,7 @@ module geom =
           | [] -> (mk_eq p zero) :: degens
           | (Fn ("+", [c; Fn ("*", [Var x; _])]) as q) :: qs ->
                 if x <> List.head vars then
-                    if mem (hd vars) (fvt p) then
+                    if mem (List.head vars) (fvt p) then
                         itlist (pprove vars triang) (coefficients vars p) degens
                     else
                         pprove (List.tail vars) triang p degens
