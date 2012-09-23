@@ -1,4 +1,9 @@
-﻿
+﻿// ========================================================================= //
+// Copyright (c) 2003-2007, John Harrison.                                   //
+// Copyright (c) 2012 Eric Taucher, Jack Pappas                              //
+// (See "LICENSE.txt" for details.)                                          //
+// ========================================================================= //
+
 #load "initialization.fsx"
 
 open Reasoning.Automated.Harrison.Handbook.lib
@@ -11,13 +16,13 @@ open Reasoning.Automated.Harrison.Handbook.propexamples
 // ------------------------------------------------------------------------- //
 // Some currently tractable examples.                                        //
 // ------------------------------------------------------------------------- //
-//
-//ramsey 3 3 4;;
-//
-//tautology(ramsey 3 3 5);;
-//
-//tautology(ramsey 3 3 6);;
-//
+
+ramsey 3 3 4;;
+
+tautology(ramsey 3 3 5);;
+
+tautology(ramsey 3 3 6);;
+
 
 // pg. 67
 // ------------------------------------------------------------------------- //
