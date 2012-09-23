@@ -282,8 +282,8 @@ module lib =
     // pg. 619
     // OCaml: val el : int -> 'a list -> 'a = <fun>
     // F#:    val el : int -> 'a list -> 'a
-    let inline el n l =
-        List.nth l n
+//    let inline el n l =
+//        List.nth l n
 
     // pg. 619
     // OCaml: val map : ('a -> 'b) -> 'a list -> 'b list = <fun>

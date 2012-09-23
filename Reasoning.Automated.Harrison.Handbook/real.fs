@@ -142,7 +142,7 @@ module real =
 
     let inferpsign (pd, qd) =
         try let i = index Zero pd
-            el i qd :: pd
+            List.nth qd i :: pd
         with Failure _ ->
             Nonzero :: pd
             
@@ -194,7 +194,7 @@ module real =
     let dedmatrix cont mat =
         let l = List.length (List.head mat) / 2
         let mat1 = condense (List.map (inferpsign >>|> chop_list l) mat)
-        let mat2 = [swap true (el 1 (List.head mat1))] :: mat1 @ [[el 1 (last mat1)]]
+        let mat2 = [swap true (List.nth (List.head mat1) 1)] :: mat1 @ [[List.nth (last mat1) 1]]
         let mat3 = butlast (List.tail (inferisign mat2))
         cont (condense (List.map (fun l -> List.head l :: List.tail (List.tail l)) mat3))
         

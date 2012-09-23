@@ -171,7 +171,7 @@ and monicize vars pols cont sgns =
     let mols,swaps = List.unzip(List.map monic pols)
     let sols = setify mols
     let indices = List.map (fun p -> index p sols) mols
-    let transform m = List.map2 (fun sw i -> swap sw (el i m)) swaps indices
+    let transform m = List.map2 (fun sw i -> swap sw (List.nth m i)) swaps indices
     let cont' mat = cont(List.map transform mat)
     matrix vars sols cont' sgns;;
 

@@ -249,7 +249,7 @@ module folMod =
 
     let print_atom prec (R(p,args)) : unit =
         if mem p ["="; "<"; "<="; ">"; ">="] && List.length args = 2
-        then print_infix_term false 12 12 (" " + p) (el 0 args) (el 1 args)
+        then print_infix_term false 12 12 (" " + p) (List.nth args 0) (List.nth args 1)
         else print_fargs p args
 
     let print_fol_formula =
