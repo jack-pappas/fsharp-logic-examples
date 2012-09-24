@@ -1,62 +1,8 @@
-﻿// IMPORTANT:  READ BEFORE DOWNLOADING, COPYING, INSTALLING OR USING.
-// By downloading, copying, installing or using the software you agree
-// to this license.  If you do not agree to this license, do not
-// download, install, copy or use the software.
-// 
-// Copyright (c) 2003-2007, John Harrison
-// All rights reserved.
-// 
-// Redistribution and use in source and binary forms, with or without
-// modification, are permitted provided that the following conditions
-// are met:
-// 
-// * Redistributions of source code must retain the above copyright
-// notice, this list of conditions and the following disclaimer.
-// 
-// * Redistributions in binary form must reproduce the above copyright
-// notice, this list of conditions and the following disclaimer in the
-// documentation and/or other materials provided with the distribution.
-// 
-// * The name of John Harrison may not be used to endorse or promote
-// products derived from this software without specific prior written
-// permission.
-// 
-// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-// "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-// LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
-// FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-// CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-// SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-// LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF
-// USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-// ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-// OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
-// OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
-// SUCH DAMAGE.
-//
-// ===================================================================
-//
-// Converted to F# 2.0
-//
-// Copyright (c) 2012, Eric Taucher
-// All rights reserved.
-//
-// Redistribution and use in source and binary forms, with or without
-// modification, are permitted provided that the following conditions
-// are met:
-// 
-// * Redistributions of source code must retain the above copyright
-// notice, this list of conditions and the previous disclaimer.
-// 
-// * Redistributions in binary form must reproduce the above copyright
-// notice, this list of conditions and the previous disclaimer in the
-// documentation and/or other materials provided with the distribution.
-// 
-// * The name of Eric Taucher may not be used to endorse or promote
-// products derived from this software without specific prior written
-// permission.
-//
-// ===================================================================
+﻿// ========================================================================= //
+// Copyright (c) 2003-2007, John Harrison.                                   //
+// Copyright (c) 2012 Eric Taucher, Jack Pappas                              //
+// (See "LICENSE.txt" for details.)                                          //
+// ========================================================================= //
 
 namespace Reasoning.Automated.Harrison.Handbook
 
@@ -85,8 +31,6 @@ module eqelim =
 
 // ========================================================================= //
 // Equality elimination including Brand transformation and relatives.        //
-//                                                                           //
-// Copyright (c) 2003-2007, John Harrison. (See "LICENSE.txt" for details.)  //
 // ========================================================================= //
 
 // pg.291
@@ -125,7 +69,7 @@ module eqelim =
         | [] -> []
         | (Atom (R ("=", [s; t])) as eq) :: ps ->
             let ps' = modify_T ps
-            let w = Var (variant "w" (itlist (union >>|> fv) ps' (fv eq)))
+            let w = Var (variant "w" (List.foldBack (union >>|> fv) ps' (fv eq)))
             Not (mk_eq t w) :: (mk_eq s w) :: ps'
         | p :: ps ->
             p :: (modify_T ps)
@@ -188,7 +132,7 @@ module eqelim =
         with Failure _ ->
             cls
 
-    let modify_E cls = emodify (itlist (union >>|> fv) cls []) cls
+    let modify_E cls = emodify (List.foldBack (union >>|> fv) cls []) cls
 
 // pg. 296
 // ------------------------------------------------------------------------- //
@@ -197,7 +141,7 @@ module eqelim =
 
     let brand cls =
         let cls1 = List.map modify_E cls
-        let cls2 = itlist (union >>|> modify_S) cls1 []
+        let cls2 = List.foldBack (union >>|> modify_S) cls1 []
         [mk_eq (Var "x") (Var "x")] :: (List.map modify_T cls2)
 
 // pg. 296
@@ -207,7 +151,7 @@ module eqelim =
 
     let bpuremeson fm =
         let cls = brand (simpcnf (specialize (pnf fm)))
-        let rules = itlist ((@) >>|> contrapositives) cls []
+        let rules = List.foldBack ((@) >>|> contrapositives) cls []
         deepen (fun n ->
             mexpand002 rules [] False id (undefined, n, 0)
             |> ignore

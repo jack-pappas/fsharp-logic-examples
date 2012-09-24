@@ -69,7 +69,7 @@ module limitations =
     // ------------------------------------------------------------------------- //
 
     let number (s : string) =
-        itlist (fun i g ->
+        List.foldBack (fun i g ->
             Int (1 + int (char s.[i])) + (Int 256) * g) (0 -- (String.length s - 1)) (Int 0)
             
     // pg. 532
@@ -141,7 +141,7 @@ module limitations =
     // Intuition for the self-referential sentence.                              //
     // ------------------------------------------------------------------------- //
 
-    let diag s =
+    let diag001 s =
         let rec replacex n l =
             match l with
             | [] ->
@@ -157,15 +157,15 @@ module limitations =
                 h + replacex n t
         replacex 0 (explode s)
 
-    let phi = diag "P(diag(x))"
+    let phi001 = diag001 "P(diag(x))"
     
     // pg. 538
     // ------------------------------------------------------------------------- //
     // Pseudo-substitution variant.                                              //
     // ------------------------------------------------------------------------- //
 
-    let qdiag s = sprintf "let `x' be `%s' in %s"
-    let phi = qdiag "P(qdiag(x))"
+    let qdiag001 s = sprintf "let `x' be `%s' in %s"
+    let phi002 = qdiag001 "P(qdiag(x))"
     
     // pg. ???
     // ------------------------------------------------------------------------- //
@@ -179,10 +179,10 @@ module limitations =
     // Diagonalization and quasi-diagonalization of formulas.                    //
     // ------------------------------------------------------------------------- //
 
-    let diag x p =
+    let diag002 x p =
         subst (x |=> numeral (gform p)) p
 
-    let qdiag x p =
+    let qdiag002 x p =
         Exists (x, And (mk_eq (Var x) (numeral (gform p)), p))
         
     // pg. 548
@@ -323,7 +323,8 @@ module limitations =
             verefboundquant m v x y a t sign p
 
     and verefboundquant m v x y a t sign p =
-        if x <> y || mem x (fvt t) then failwith "veref"
+        if x <> y || mem x (fvt t) then
+            failwith "veref"
         else
             let m =
                 if a = "<" then dtermval v t - Int 1
@@ -412,7 +413,7 @@ module limitations =
         let writen n =
             funpow n (move Left >>|> write One) >>|> move Left >>|> write Blank
         fun args ->
-            itlist writen args (Tape (0, undefined))
+            List.foldBack writen args (Tape (0, undefined))
             
     // pg. 560
     // ------------------------------------------------------------------------- //
@@ -485,7 +486,7 @@ module limitations =
                 let th1 =
                     if op = "+" then add_suc
                     else mul_suc
-                itlist right_spec [t;u] th1
+                List.foldBack right_spec [t;u] th1
             right_trans th2 (robeval (rhs (consequent (concl th2))))
 
     and robeval tm =
@@ -513,37 +514,37 @@ module limitations =
 
     let robinson_thm =
       prove (Imp (robinson, robinson_consequences)) [
-        note("eq_refl",(parse "forall x. x = x")) using [axiom_eqrefl (Var "x")];
-        note("eq_trans",(parse "forall x y z. x = y ==> y = z ==> x = z"))
+        note ("eq_refl", parse "forall x. x = x") using [axiom_eqrefl (Var "x")];
+        note ("eq_trans", parse "forall x y z. x = y ==> y = z ==> x = z")
           using [eq_trans (Var "x") (Var "y") (Var "z")];
-        note("eq_sym",(parse "forall x y. x = y ==> y = x"))
+        note ("eq_sym", parse "forall x y. x = y ==> y = x")
           using [eq_sym (Var "x") (Var "y")];
-        note("suc_cong",(parse "forall a b. a = b ==> S(a) = S(b)"))
+        note ("suc_cong", parse "forall a b. a = b ==> S(a) = S(b)")
           using [axiom_funcong "S" [Var "a"] [Var "b"]];
-        note("add_cong",
-            (parse "forall a b c d. a = b /\ c = d ==> a + c = b + d"))
+        note ("add_cong",
+            parse "forall a b c d. a = b /\ c = d ==> a + c = b + d")
           using [axiom_funcong "+" [Var "a"; Var "c"] [Var "b"; Var "d"]];
-        note("le_cong",
-            (parse "forall a b c d. a = b /\ c = d ==> a <= c ==> b <= d"))
+        note ("le_cong",
+            parse "forall a b c d. a = b /\ c = d ==> a <= c ==> b <= d")
           using [axiom_predcong "<=" [Var "a"; Var "c"] [Var "b"; Var "d"]];
-        note("lt_cong",
-            (parse "forall a b c d. a = b /\ c = d ==> a < c ==> b < d"))
+        note ("lt_cong",
+            parse "forall a b c d. a = b /\ c = d ==> a < c ==> b < d")
           using [axiom_predcong "<" [Var "a"; Var "c"] [Var "b"; Var "d"]];
 
-        assume ["suc_inj",(parse "forall m n. S(m) = S(n) ==> m = n");
-               "num_nz",(parse "forall n. ~(n = 0) <=> exists m. n = S(m)");
-               "add_0",(parse "forall n. 0 + n = n");
-               "add_suc",(parse "forall m n. S(m) + n = S(m + n)");
-               "mul_0",(parse "forall n. 0 * n = 0");
-               "mul_suc",(parse "forall m n. S(m) * n = n + m * n");
-               "le_def",(parse "forall m n. m <= n <=> exists d. m + d = n");
-               "lt_def",(parse "forall m n. m < n <=> S(m) <= n")];
-        note("not_suc_0",(parse "forall n. ~(S(n) = 0)")) by ["num_nz"; "eq_refl"];
+        assume ["suc_inj", parse "forall m n. S(m) = S(n) ==> m = n";
+               "num_nz", parse "forall n. ~(n = 0) <=> exists m. n = S(m)";
+               "add_0", parse "forall n. 0 + n = n";
+               "add_suc", parse "forall m n. S(m) + n = S(m + n)";
+               "mul_0", parse "forall n. 0 * n = 0";
+               "mul_suc", parse "forall m n. S(m) * n = n + m * n";
+               "le_def", parse "forall m n. m <= n <=> exists d. m + d = n";
+               "lt_def", parse "forall m n. m < n <=> S(m) <= n"];
+        note ("not_suc_0", parse "forall n. ~(S(n) = 0)") by ["num_nz"; "eq_refl"];
         so conclude (parse "forall n. S(n) = 0 ==> false") at once;
         so conclude (parse "forall n. 0 = S(n) ==> false") by ["eq_sym"];
-        note("num_cases",(parse "forall n. (n = 0) \/ exists m. n = S(m)"))
+        note ("num_cases", parse "forall n. (n = 0) \/ exists m. n = S(m)")
              by ["num_nz"];
-        note("suc_inj_eq",(parse "forall m n. S(m) = S(n) <=> m = n"))
+        note ("suc_inj_eq", parse "forall m n. S(m) = S(n) <=> m = n")
          by ["suc_inj"; "suc_cong"];
         so conclude
             (parse "forall m n. (m = n ==> false) ==> (S(m) = S(n) ==> false)")
@@ -562,13 +563,13 @@ module limitations =
             by ["num_nz"; "eq_sym"];
         note ("add_eq_0", parse "forall m n. m + n = 0 ==> m = 0 /\ n = 0") proof [
             fix "m"; fix "n";
-             assume ["A",(parse "m + n = 0")];
+             assume ["A", parse "m + n = 0"];
              cases (parse "m = 0 \/ exists p. m = S(p)") by ["num_cases"];
                so conclude (parse "m = 0") at once;
                so have (parse "m + n = 0 + n") by ["add_cong"; "eq_refl"];
                so our thesis by ["A"; "add_0"; "eq_sym"; "eq_trans"];
              qed;
-               so consider ("p",(parse "m = S(p)")) at once;
+               so consider ("p", parse "m = S(p)") at once;
                so have (parse "m + n = S(p) + n") by ["add_cong"; "eq_refl"];
                so have (parse "m + n = S(p + n)") by ["eq_trans"; "add_suc"];
                so have (parse "S(p + n) = 0") by ["A"; "eq_sym"; "eq_trans"];
@@ -577,7 +578,7 @@ module limitations =
        so conclude (parse "forall n. n <= 0 ==> n = 0") by ["le_def"];
        have (parse "forall m n. S(m) <= S(n) ==> m <= n") proof
         [fix "m"; fix "n";
-         assume ["lesuc",(parse "S(m) <= S(n)")];
+         assume ["lesuc", parse "S(m) <= S(n)"];
          so consider ("d", parse "S(m) + d = S(n)") by ["le_def"];
          so have (parse "S(m + d) = S(n)") by ["add_suc"; "eq_sym"; "eq_trans"];
          so have (parse "m + d = n") by ["suc_inj"];
@@ -586,7 +587,7 @@ module limitations =
        so conclude (parse "forall m n. S(m) <= S(n) ==> m <= n") at once;
        so conclude (parse "forall m n. m < S(n) ==> m <= n") by ["lt_def"];
        fix "n";
-       assume ["hyp",(parse "n < 0")];
+       assume ["hyp", parse "n < 0"];
        so have (parse "S(n) <= 0") by ["lt_def"];
        so consider ("d", parse "S(n) + d = 0") by ["le_def"];
        so have (parse "S(n + d) = 0") by ["add_suc"; "eq_trans"; "eq_sym"];
@@ -610,12 +611,12 @@ module limitations =
 
     let rec rob_nen (s, t) =
         match s, t with
-        | Fn("S", [s']), Fn("0", []) ->
+        | Fn ("S", [s']), Fn ("0", []) ->
             right_spec s' suc_0_l
-        | Fn("0", []), Fn("S", [t']) ->
+        | Fn ("0", []), Fn ("S", [t']) ->
             right_spec t' suc_0_r
-        | Fn("S", [u]), Fn("S", [v]) ->
-            right_mp (itlist right_spec [v; u] suc_inj_false) (rob_nen (u, v))
+        | Fn("S", [u]), Fn ("S", [v]) ->
+             right_mp (List.foldBack right_spec [v; u] suc_inj_false) (rob_nen (u, v))
         | _ ->
             failwith "rob_ne: true equation or unexpected term"
 
@@ -666,13 +667,13 @@ module limitations =
     let sigma_elim fm =
         match fm with
         | Atom (R ("<=", [s;t])) ->
-            itlist right_spec [t;s] expand_le
+            List.foldBack right_spec [t;s] expand_le
         | Atom (R ("<" ,[s;t])) ->
-            itlist right_spec [t;s] expand_lt
+            List.foldBack right_spec [t;s] expand_lt
         | Imp (Atom (R ("<=", [s;t])), False) ->
-            itlist right_spec [t;s] expand_nle
+            List.foldBack right_spec [t;s] expand_nle
         | Imp (Atom (R ("<", [s;t])), False) ->
-            itlist right_spec [t;s] expand_nlt
+            List.foldBack right_spec [t;s] expand_nlt
         | Imp (Exists (x, And (p, q)), False) ->
             add_assum robinson (elim_bex fm)
         | _ ->
@@ -689,7 +690,7 @@ module limitations =
         match concl th0,concl th1 with
         | Imp (_, Forall (x, Imp (_, p))),
               Imp (_, Forall (_, Imp (Atom (R ("<=", [_;t])) ,_))) ->
-          let th2 = itlist right_spec [t; Var x] le_suc
+          let th2 = List.foldBack right_spec [t; Var x] le_suc
           let th3 = right_imp_trans th2 (right_spec (Var x) th1)
           let y = variant "y" (var (concl th1))
           let q = Imp (Atom (R ("<=", [Var x; Fn ("S", [t])])), p)
@@ -770,7 +771,7 @@ module limitations =
         | "<", Fn ("0", []) ->
             gen_right x (imp_trans2 (right_spec (Var x) lt_0) (ex_falso q))
         | "<", Fn ("S", [u]) ->
-            let th1 = itlist right_spec [u; Var x] lt_suc
+            let th1 = List.foldBack right_spec [u; Var x] lt_suc
             let th2 = boundednum_prove ("<=", x, u, q)
             let th3 = imp_trans2 th1 (imp_swap (right_spec (Var x) th2))
             gen_right x (imp_unduplicate (imp_front 2 th3))

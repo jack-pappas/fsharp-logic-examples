@@ -1,82 +1,14 @@
-﻿//  Copyright (c) 2003-2007, John Harrison
-//  All rights reserved.
-//  
-//  Redistribution and use in source and binary forms, with or without
-//  modification, are permitted provided that the following conditions
-//  are met:
-//  
-//  * Redistributions of source code must retain the above copyright
-//  notice, this list of conditions and the following disclaimer.
-//  
-//  * Redistributions in binary form must reproduce the above copyright
-//  notice, this list of conditions and the following disclaimer in the
-//  IMPORTANT:  READ BEFORE DOWNLOADING, COPYING, INSTALLING OR USING.
-//  By downloading, copying, installing or using the software you agree
-//  to this license.  If you do not agree to this license, do not
-//  download, install, copy or use the software.
-//  
-//  Copyright (c) 2003-2007, John Harrison
-//  All rights reserved.
-//  
-//  Redistribution and use in source and binary forms, with or without
-//  modification, are permitted provided that the following conditions
-//  are met:
-//  
-//  * Redistributions of source code must retain the above copyright
-//  notice, this list of conditions and the following disclaimer.
-//  
-//  * Redistributions in binary form must reproduce the above copyright
-//  notice, this list of conditions and the following disclaimer in the
-//  documentation and/or other materials provided with the distribution.
-//  
-//  * The name of John Harrison may not be used to endorse or promote
-//  products derived from this software without specific prior written
-//  permission.
-//  
-//  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-//  "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-//  LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
-//  FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-//  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-//  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-//  LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF
-//  USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-//  ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-//  OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
-//  OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
-//  SUCH DAMAGE.
-// 
-//  ===================================================================
-// 
-//  Converted to F# 2.0
-// 
-//  Copyright (c) 2012, Eric Taucher
-//  All rights reserved.
-// 
-//  Redistribution and use in source and binary forms, with or without
-//  modification, are permitted provided that the following conditions
-//  are met:
-//  
-//  * Redistributions of source code must retain the above copyright
-//  notice, this list of conditions and the previous disclaimer.
-//  
-//  * Redistributions in binary form must reproduce the above copyright
-//  notice, this list of conditions and the previous disclaimer in the
-//  documentation and/or other materials provided with the distribution.
-//  
-//  * The name of Eric Taucher may not be used to endorse or promote
-//  products derived from this software without specific prior written
-//  permission.
-// 
-//  ===================================================================
+﻿// ========================================================================= //
+// Copyright (c) 2003-2007, John Harrison.                                   //
+// Copyright (c) 2012 Jack Pappas, Eric Taucher                              //
+// (See "LICENSE.txt" for details.)                                          //
+// ========================================================================= //
 
 // ========================================================================= //
 // Implementation/proof of the Craig-Robinson interpolation theorem.         //
 //                                                                           //
 // This is based on the proof in Kreisel & Krivine, which works very nicely  //
 // in our context.                                                           //
-//                                                                           //
-// Copyright (c) 2003-2007, John Harrison. (See "LICENSE.txt" for details.)  //
 // ========================================================================= //
 
 namespace Reasoning.Automated.Harrison.Handbook
@@ -123,7 +55,7 @@ module interpolation =
 
     let pinterpolate p q =
         let orify a r = Or (psubst (a |=> False) r, psubst (a |=> True) r)
-        psimplify (itlist orify (subtract (atoms p) (atoms q)) p)
+        psimplify (List.foldBack orify (subtract (atoms p) (atoms q)) p)
         
     // pg. 429
     // ------------------------------------------------------------------------- //
@@ -150,10 +82,10 @@ module interpolation =
         | Var x -> []
         | Fn (f, args) ->
             if mem (f, List.length args) fns then [tm]
-            else itlist (union >>|> toptermt fns) args []
+            else List.foldBack (union >>|> toptermt fns) args []
 
     let topterms fns =
-        atom_union (fun (R (p, args)) -> itlist (union >>|> toptermt fns) args [])
+        atom_union (fun (R (p, args)) -> List.foldBack (union >>|> toptermt fns) args [])
         
     // pg. 433
     // ------------------------------------------------------------------------- //
@@ -186,7 +118,7 @@ module interpolation =
 
     let cinterpolate p q =
         let fm = nnf (And (p, q))
-        let rec efm = itlist mk_exists (fv fm) fm
+        let rec efm = List.foldBack mk_exists (fv fm) fm
         and fns = List.map fst (functions fm)
         let And (p', q'), _ = skolem efm fns
         uinterpolate p' q'
@@ -199,7 +131,7 @@ module interpolation =
     let interpolate p q =
         let rec vs = List.map (fun v -> Var v) (intersect (fv p) (fv q))
         and fns = functions (And (p, q))
-        let n = itlist (max_varindex "c_" >>|> fst) fns (Int 0) + (Int 1)
+        let n = List.foldBack (max_varindex "c_" >>|> fst) fns (Int 0) + (Int 1)
         let cs = List.map (fun i -> Fn ("c_" + i.ToString(), [])) (n --- (n + Int (List.length vs - 1)))
         let rec fn_vc = fpf vs cs
         and fn_cv = fpf cs vs

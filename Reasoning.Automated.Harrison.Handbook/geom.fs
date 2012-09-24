@@ -1,67 +1,11 @@
-﻿// IMPORTANT:  READ BEFORE DOWNLOADING, COPYING, INSTALLING OR USING.
-// By downloading, copying, installing or using the software you agree
-// to this license.  If you do not agree to this license, do not
-// download, install, copy or use the software.
-// 
-// Copyright (c) 2003-2007, John Harrison
-// All rights reserved.
-// 
-// Redistribution and use in source and binary forms, with or without
-// modification, are permitted provided that the following conditions
-// are met:
-// 
-// * Redistributions of source code must retain the above copyright
-// notice, this list of conditions and the following disclaimer.
-// 
-// * Redistributions in binary form must reproduce the above copyright
-// notice, this list of conditions and the following disclaimer in the
-// documentation and/or other materials provided with the distribution.
-// 
-// * The name of John Harrison may not be used to endorse or promote
-// products derived from this software without specific prior written
-// permission.
-// 
-// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-// "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-// LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
-// FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-// CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-// SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-// LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF
-// USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-// ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-// OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
-// OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
-// SUCH DAMAGE.
-//
-// ===================================================================
-//
-// Converted to F# 2.0
-//
-// Copyright (c) 2012, Jack Pappas, Eric Taucher
-// All rights reserved.
-//
-// Redistribution and use in source and binary forms, with or without
-// modification, are permitted provided that the following conditions
-// are met:
-// 
-// * Redistributions of source code must retain the above copyright
-// notice, this list of conditions and the previous disclaimer.
-// 
-// * Redistributions in binary form must reproduce the above copyright
-// notice, this list of conditions and the previous disclaimer in the
-// documentation and/or other materials provided with the distribution.
-// 
-// * The name of Eric Taucher may not be used to endorse or promote
-// products derived from this software without specific prior written
-// permission.
-//
-// ===================================================================
+﻿// ========================================================================= //
+// Copyright (c) 2003-2007, John Harrison.                                   //
+// Copyright (c) 2012 Jack Pappas, Eric Taucher                              //
+// (See "LICENSE.txt" for details.)                                          //
+// ========================================================================= //
 
 //  ========================================================================= // 
 //  Geometry theorem proving.                                                 // 
-//                                                                            // 
-//  Copyright (c) 2003-2007, John Harrison. (See "LICENSE.txt" for details.)  // 
 //  ========================================================================= // 
 
 namespace Reasoning.Automated.Harrison.Handbook
@@ -144,7 +88,7 @@ module geom =
             and y = string n + "_y"
             let i = fpf ["x";"y"] [Var x;Var y]
             (x |-> tsubst i x') ((y |-> tsubst i y') f)
-        Iff (z,subst (itlist m (1 -- 5) undefined) z)
+        Iff (z,subst (List.foldBack m (1 -- 5) undefined) z)
 
     // OCaml: val invariant_under_translation : string * fol formula -> fol formula = <fun>
     // F#:    val invariant_under_translation : (string * formula<fol> -> formula<fol>)
@@ -193,8 +137,8 @@ module geom =
           | [] -> (mk_eq p zero) :: degens
           | (Fn ("+", [c; Fn ("*", [Var x; _])]) as q) :: qs ->
                 if x <> List.head vars then
-                    if mem (hd vars) (fvt p) then
-                        itlist (pprove vars triang) (coefficients vars p) degens
+                    if mem (List.head vars) (fvt p) then
+                        List.foldBack (pprove vars triang) (coefficients vars p) degens
                     else
                         pprove (List.tail vars) triang p degens
                 else
@@ -202,7 +146,7 @@ module geom =
                     if k = 0 then pprove vars qs p' degens
                     else
                         let degens' = Not (mk_eq (head vars q) zero) :: degens
-                        itlist (pprove vars qs) (coefficients vars p') degens'
+                        List.foldBack (pprove vars qs) (coefficients vars p') degens'
                         
     // pg. 421
     //  ------------------------------------------------------------------------- // 
@@ -230,10 +174,10 @@ module geom =
     // F#:    val wu : formula<fol> -> string list -> string list -> formula<fol> list
     let wu fm vars zeros =
         let gfm0 = coordinate fm
-        let gfm = subst(itlist (fun v -> v |-> zero) zeros undefined) gfm0
+        let gfm = subst(List.foldBack (fun v -> v |-> zero) zeros undefined) gfm0
         if not (set_eq vars (fv gfm)) then failwith "wu: bad parameters" else
         let ant, con = dest_imp gfm
         let pols = List.map (lhs >>|> polyatom vars) (conjuncts ant)
         let ps = List.map (lhs >>|> polyatom vars) (conjuncts con)
         let tri = triangulate vars [] pols
-        itlist (fun p -> union (pprove vars tri p [])) ps []
+        List.foldBack (fun p -> union (pprove vars tri p [])) ps []

@@ -1,79 +1,11 @@
-﻿//  Copyright (c) 2003-2007, John Harrison
-//  All rights reserved.
-//  
-//  Redistribution and use in source and binary forms, with or without
-//  modification, are permitted provided that the following conditions
-//  are met:
-//  
-//  * Redistributions of source code must retain the above copyright
-//  notice, this list of conditions and the following disclaimer.
-//  
-//  * Redistributions in binary form must reproduce the above copyright
-//  notice, this list of conditions and the following disclaimer in the
-//  IMPORTANT:  READ BEFORE DOWNLOADING, COPYING, INSTALLING OR USING.
-//  By downloading, copying, installing or using the software you agree
-//  to this license.  If you do not agree to this license, do not
-//  download, install, copy or use the software.
-//  
-//  Copyright (c) 2003-2007, John Harrison
-//  All rights reserved.
-//  
-//  Redistribution and use in source and binary forms, with or without
-//  modification, are permitted provided that the following conditions
-//  are met:
-//  
-//  * Redistributions of source code must retain the above copyright
-//  notice, this list of conditions and the following disclaimer.
-//  
-//  * Redistributions in binary form must reproduce the above copyright
-//  notice, this list of conditions and the following disclaimer in the
-//  documentation and/or other materials provided with the distribution.
-//  
-//  * The name of John Harrison may not be used to endorse or promote
-//  products derived from this software without specific prior written
-//  permission.
-//  
-//  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-//  "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-//  LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
-//  FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-//  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-//  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-//  LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF
-//  USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-//  ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-//  OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
-//  OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
-//  SUCH DAMAGE.
-// 
-//  ===================================================================
-// 
-//  Converted to F# 2.0
-// 
-//  Copyright (c) 2012, Jack Pappas, Eric Taucher
-//  All rights reserved.
-// 
-//  Redistribution and use in source and binary forms, with or without
-//  modification, are permitted provided that the following conditions
-//  are met:
-//  
-//  * Redistributions of source code must retain the above copyright
-//  notice, this list of conditions and the previous disclaimer.
-//  
-//  * Redistributions in binary form must reproduce the above copyright
-//  notice, this list of conditions and the previous disclaimer in the
-//  documentation and/or other materials provided with the distribution.
-//  
-//  * The name of Eric Taucher may not be used to endorse or promote
-//  products derived from this software without specific prior written
-//  permission.
-// 
-//  ===================================================================
+﻿// ========================================================================= //
+// Copyright (c) 2003-2007, John Harrison.                                   //
+// Copyright (c) 2012 Jack Pappas, Eric Taucher                              //
+// (See "LICENSE.txt" for details.)                                          //
+// ========================================================================= //
 
 // ========================================================================= //
 // Goals, LCF-like tactics and Mizar-like proofs.                            //
-//                                                                           //
-// Copyright (c) 2003-2007, John Harrison. (See "LICENSE.txt" for details.)  //
 // ========================================================================= //
 
 namespace Reasoning.Automated.Harrison.Handbook
@@ -145,7 +77,7 @@ module tactics =
                     printf "%i subgoals starting with" (List.length gls)
 
                 printfn ""
-                do_list print_hyp (List.rev asl)
+                List.iter print_hyp (List.rev asl)
                 printf "---> "
                 //open_hvbox 0
                 print_formula print_atom w
@@ -171,7 +103,7 @@ module tactics =
             failwith "extract_thm: unsolved goals"
 
     let tac_proof g prf : thm =
-        extract_thm (itlist id (List.rev prf) g)
+        extract_thm (List.foldBack id (List.rev prf) g)
 
     let prove p prf : thm =
         tac_proof (set_goal p) prf
@@ -262,7 +194,7 @@ module tactics =
     // ------------------------------------------------------------------------- //
 
     let firstassum asl : thm =
-        let rec p = snd (hd asl)
+        let rec p = snd (List.head asl)
         and q = list_conj (List.map snd (List.tail asl))
         if List.tail asl = [] then imp_refl p else and_left p q
         
@@ -272,7 +204,7 @@ module tactics =
     // ------------------------------------------------------------------------- //
 
     let using ths p g =
-        let ths' = List.map (fun th -> itlist gen (fv (concl th)) th) ths
+        let ths' = List.map (fun th -> List.foldBack gen (fv (concl th)) th) ths
         List.map (assumptate g) ths'
         
     // pg. 511
@@ -287,7 +219,7 @@ module tactics =
             [l, imp_refl p]
         | (l, p) :: lps ->
             let ths = assumps lps
-            let q = antecedent (concl (snd (hd ths)))
+            let q = antecedent (concl (snd (List.head ths)))
             let rth = and_right p q
             (l, and_left p q) :: List.map (fun (l, th) -> l, imp_trans rth th) ths
             
@@ -309,7 +241,7 @@ module tactics =
         match byfn hyps p g with
         | [th] when consequent (concl th) = p -> th
         | ths ->
-            let th = lcffol (itlist (mk_imp >>|> consequent >>|> concl) ths p)
+            let th = lcffol (List.foldBack (mk_imp >>|> consequent >>|> concl) ths p)
             if ths = [] then assumptate g th else imp_trans_chain ths th
             
     // pg. 512

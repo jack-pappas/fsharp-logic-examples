@@ -1,79 +1,11 @@
-﻿//  Copyright (c) 2003-2007, John Harrison
-//  All rights reserved.
-//  
-//  Redistribution and use in source and binary forms, with or without
-//  modification, are permitted provided that the following conditions
-//  are met:
-//  
-//  * Redistributions of source code must retain the above copyright
-//  notice, this list of conditions and the following disclaimer.
-//  
-//  * Redistributions in binary form must reproduce the above copyright
-//  notice, this list of conditions and the following disclaimer in the
-//  IMPORTANT:  READ BEFORE DOWNLOADING, COPYING, INSTALLING OR USING.
-//  By downloading, copying, installing or using the software you agree
-//  to this license.  If you do not agree to this license, do not
-//  download, install, copy or use the software.
-//  
-//  Copyright (c) 2003-2007, John Harrison
-//  All rights reserved.
-//  
-//  Redistribution and use in source and binary forms, with or without
-//  modification, are permitted provided that the following conditions
-//  are met:
-//  
-//  * Redistributions of source code must retain the above copyright
-//  notice, this list of conditions and the following disclaimer.
-//  
-//  * Redistributions in binary form must reproduce the above copyright
-//  notice, this list of conditions and the following disclaimer in the
-//  documentation and/or other materials provided with the distribution.
-//  
-//  * The name of John Harrison may not be used to endorse or promote
-//  products derived from this software without specific prior written
-//  permission.
-//  
-//  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-//  "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-//  LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
-//  FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-//  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-//  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-//  LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF
-//  USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-//  ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-//  OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
-//  OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
-//  SUCH DAMAGE.
-// 
-//  ===================================================================
-// 
-//  Converted to F# 2.0
-// 
-//  Copyright (c) 2012, Jack Pappas, Eric Taucher
-//  All rights reserved.
-// 
-//  Redistribution and use in source and binary forms, with or without
-//  modification, are permitted provided that the following conditions
-//  are met:
-//  
-//  * Redistributions of source code must retain the above copyright
-//  notice, this list of conditions and the previous disclaimer.
-//  
-//  * Redistributions in binary form must reproduce the above copyright
-//  notice, this list of conditions and the previous disclaimer in the
-//  documentation and/or other materials provided with the distribution.
-//  
-//  * The name of Eric Taucher may not be used to endorse or promote
-//  products derived from this software without specific prior written
-//  permission.
-// 
-//  ===================================================================
+﻿// ========================================================================= //
+// Copyright (c) 2003-2007, John Harrison.                                   //
+// Copyright (c) 2012 Jack Pappas, Eric Taucher                              //
+// (See "LICENSE.txt" for details.)                                          //
+// ========================================================================= //
 
 // ========================================================================= //
 // Nelson-Oppen combined decision procedure.                                 //
-//                                                                           //
-// Copyright (c) 2003-2007, John Harrison. (See "LICENSE.txt" for details.)  //
 // ========================================================================= //
 
 namespace Reasoning.Automated.Harrison.Handbook
@@ -220,7 +152,7 @@ module combining =
 
     let homogenize langs fms =
         let fvs = unions (List.map fv fms)
-        let n = (Int 1) + itlist (max_varindex "v_") fvs (Int 0)
+        let n = (Int 1) + List.foldBack (max_varindex "v_") fvs (Int 0)
         homo langs fms (fun res n defs -> res) n []
 
     // pg. 439
@@ -261,9 +193,9 @@ module combining =
         | _ -> []
 
     let arrangement part =
-        itlist (union >>|> arreq) part
+        List.foldBack (union >>|> arreq) part
              (List.map (fun (v, w) -> Not (mk_eq (Var v) (Var w)))
-                  (distinctpairs (List.map hd part)))
+                  (distinctpairs (List.map List.head part)))
                   
     // pg. 443
     // ------------------------------------------------------------------------- //
@@ -299,8 +231,8 @@ module combining =
 
     let allpartitions =
         let allinsertions x l acc =
-            itlist (fun p acc -> ((x :: p) :: (subtract l [p])) :: acc) l (([x] :: l) :: acc)
-        fun l -> itlist (fun h y -> itlist (allinsertions h) y []) l [[]]
+            List.foldBack (fun p acc -> ((x :: p) :: (subtract l [p])) :: acc) l (([x] :: l) :: acc)
+        fun l -> List.foldBack (fun h y -> List.foldBack (allinsertions h) y []) l [[]]
 
     let nelop_refute001 vars ldseps =
         List.forall (trydps ldseps >>|> arrangement) (allpartitions vars)

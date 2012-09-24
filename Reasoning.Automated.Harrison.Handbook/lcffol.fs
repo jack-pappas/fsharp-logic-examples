@@ -1,79 +1,11 @@
-﻿//  Copyright (c) 2003-2007, John Harrison
-//  All rights reserved.
-//  
-//  Redistribution and use in source and binary forms, with or without
-//  modification, are permitted provided that the following conditions
-//  are met:
-//  
-//  * Redistributions of source code must retain the above copyright
-//  notice, this list of conditions and the following disclaimer.
-//  
-//  * Redistributions in binary form must reproduce the above copyright
-//  notice, this list of conditions and the following disclaimer in the
-//  IMPORTANT:  READ BEFORE DOWNLOADING, COPYING, INSTALLING OR USING.
-//  By downloading, copying, installing or using the software you agree
-//  to this license.  If you do not agree to this license, do not
-//  download, install, copy or use the software.
-//  
-//  Copyright (c) 2003-2007, John Harrison
-//  All rights reserved.
-//  
-//  Redistribution and use in source and binary forms, with or without
-//  modification, are permitted provided that the following conditions
-//  are met:
-//  
-//  * Redistributions of source code must retain the above copyright
-//  notice, this list of conditions and the following disclaimer.
-//  
-//  * Redistributions in binary form must reproduce the above copyright
-//  notice, this list of conditions and the following disclaimer in the
-//  documentation and/or other materials provided with the distribution.
-//  
-//  * The name of John Harrison may not be used to endorse or promote
-//  products derived from this software without specific prior written
-//  permission.
-//  
-//  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-//  "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-//  LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
-//  FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-//  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-//  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-//  LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF
-//  USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-//  ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-//  OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
-//  OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
-//  SUCH DAMAGE.
-// 
-//  ===================================================================
-// 
-//  Converted to F# 2.0
-// 
-//  Copyright (c) 2012, Jack Pappas, Eric Taucher
-//  All rights reserved.
-// 
-//  Redistribution and use in source and binary forms, with or without
-//  modification, are permitted provided that the following conditions
-//  are met:
-//  
-//  * Redistributions of source code must retain the above copyright
-//  notice, this list of conditions and the previous disclaimer.
-//  
-//  * Redistributions in binary form must reproduce the above copyright
-//  notice, this list of conditions and the previous disclaimer in the
-//  documentation and/or other materials provided with the distribution.
-//  
-//  * The name of Eric Taucher may not be used to endorse or promote
-//  products derived from this software without specific prior written
-//  permission.
-// 
-//  ===================================================================
+﻿// ========================================================================= //
+// Copyright (c) 2003-2007, John Harrison.                                   //
+// Copyright (c) 2012 Jack Pappas, Eric Taucher                              //
+// (See "LICENSE.txt" for details.)                                          //
+// ========================================================================= //
 
 //  ========================================================================= // 
 //  First order tableau procedure using LCF setup.                            // 
-//                                                                            // 
-//  Copyright (c) 2003-2007, John Harrison. (See "LICENSE.txt" for details.)  // 
 //  ========================================================================= // 
 
 namespace Reasoning.Automated.Harrison.Handbook
@@ -170,13 +102,13 @@ module lcffol =
         imp_unduplicate (imp_trans (ispec (e y) (onformula e fm)) th)
 
     let ex_falso' fms (e, s) =
-        ex_falso (itlist (mk_imp >>|> onformula e) fms s)
+        ex_falso (List.foldBack (mk_imp >>|> onformula e) fms s)
 
     let complits' (p :: fl, lits) i (e, s) =
         let l1, p' :: l2 = chop_list i lits
-        itlist (imp_insert >>|> onformula e) (fl @ l1)
+        List.foldBack (imp_insert >>|> onformula e) (fl @ l1)
              (imp_contr (onformula e p)
-                        (itlist (mk_imp >>|> onformula e) l2 s))
+                        (List.foldBack (mk_imp >>|> onformula e) l2 s))
 
     let deskol' (skh : fol formula) thp (e, s) =
         let th = thp (e, s)
@@ -316,7 +248,7 @@ module lcffol =
 
     let simpcont thp (env, sks, k) =
       let ifn = tsubst (solve env)
-      thp (ifn, onformula ifn (itlist mk_skol sks False))
+      thp (ifn, onformula ifn (List.foldBack mk_skol sks False))
       
     // pg. 502
     //  ------------------------------------------------------------------------- // 
@@ -350,8 +282,8 @@ module lcffol =
         let ssk = sort (decreasing (termsize >>|> snd)) isk
         let vs = List.map (fun i -> Var ("Y_" + string i)) (1 -- List.length ssk)
         let vfn =
-            replacet (itlist2 (fun (p, t) v -> t |-> v) ssk vs undefined)
-        let th = thp (vfn >>|> ifn, onformula vfn (itlist mk_skol ssk False))
+            replacet (List.foldBack2 (fun (p, t) v -> t |-> v) ssk vs undefined)
+        let th = thp (vfn >>|> ifn, onformula vfn (List.foldBack mk_skol ssk False))
         repeat (elim_skolemvar >>|> imp_swap) th
         
     // pg. 504
@@ -361,7 +293,7 @@ module lcffol =
 
     let lcffol fm =
         let fvs = fv fm
-        let fm' = Imp(itlist mk_forall fvs fm,False)
+        let fm' = Imp(List.foldBack mk_forall fvs fm,False)
         let th1 = deepen (fun n -> lcfrefute fm' n deskolcont) 0
         let th2 = modusponens (axiom_doubleneg (negatef fm')) th1
-        itlist (fun v -> spec (Var v)) (List.rev fvs) th2
+        List.foldBack (fun v -> spec (Var v)) (List.rev fvs) th2
