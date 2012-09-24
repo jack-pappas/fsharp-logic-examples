@@ -75,6 +75,7 @@
     <Compile Include="lcffol.fs" />
     <Compile Include="tactics.fs" />
     <Compile Include="limitations.fs" />
+    <Content Include="LICENSE.txt" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="FSharp.PowerPack">
@@ -85,8 +86,6 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Numerics" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\FSharpx.Compatibility.OCaml\FSharpx.Compatibility.OCaml.fsproj">
       <Name>FSharpx.Compatibility.OCaml</Name>
       <Project>{dfe5f3b6-2bfb-46fc-a315-b3a841b3e566}</Project>

@@ -17,14 +17,13 @@ module unif =
 
     let rec istriv env x t =
         match t with
-        | Var y ->
+        | Var y -> 
             y = x
             || defined env y
             && istriv env x (apply env y)
-        | Fn (f, args) ->
-            if List.exists (istriv env x) args then true
-            else
-                failwith "cyclic"
+        | Fn(f,args) ->
+            List.exists (istriv env x) args 
+            && failwith "cyclic"
         
 // ------------------------------------------------------------------------- //
 // Main unification procedure                                                //
@@ -72,8 +71,3 @@ module unif =
         let apply (t1, t2) =
             tsubst i t1, tsubst i t2
         List.map apply eqs
-
-
-
-    
-
