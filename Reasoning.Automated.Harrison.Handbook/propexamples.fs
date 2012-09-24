@@ -26,9 +26,9 @@ module propexamples =
         let vertices = 1 -- n
         let yesgrps = List.map (allsets 2) (allsets s vertices)
         let nogrps = List.map (allsets 2) (allsets t vertices)
-        let e[m;n] = Atom(P("p_" + (string m) + "_" + (string n)))
+        let e [m;n] = Atom(P("p_" + (string m) + "_" + (string n)))
         Or (list_disj (List.map (list_conj >>|> List.map e) yesgrps),
-            list_disj (List.map (list_conj >>|> List.map (fun p -> Not(e p))) nogrps))
+            list_disj (List.map (list_conj >>|> List.map (fun p -> Not (e p))) nogrps))
 
 // pg. 66
 // ------------------------------------------------------------------------- //
