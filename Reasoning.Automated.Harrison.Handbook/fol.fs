@@ -141,40 +141,29 @@ module folMod =
         printf "%s" f
         if args = [] then () else
         (printf "(";
-//        open_box 0;
         print_term 0 (List.head args); 
-//        print_break 0 0;
         List.iter (
                   fun t -> 
                     printf ","
-    //                print_break 0 0;
                     print_term 0 t)
             (List.tail args);
-//        close_box();
         printf ")")
 
     and print_infix_term isleft oldprec newprec sym p q =
         if oldprec > newprec then 
             printf "(";
-//             open_box 0
         else ();
         print_term (if isleft then newprec else newprec+1) p;
         printf "%s" sym;
-//        print_break (if String.sub sym 0 1 = " " then 1 else 0) 0;
         print_term (if isleft then newprec+1 else newprec) q;
         if oldprec > newprec then 
-//            close_box()
             printf ")"
         else ()
 
     let printert tm =
-//        open_box 0; 
         printf "<<|";
-//        open_box 0; 
         print_term 0 tm; 
-//        close_box();
         printf "|>>"; 
-//        close_box()
 
     // Added by EGT
     let rec print_term_list x =
@@ -184,8 +173,6 @@ module folMod =
             print_term 0 h
             print_term_list t
 
-//#install_printer printert
-//
 // pg. 630
 // ------------------------------------------------------------------------- //
 // Printing of formulas.                                                     //
@@ -385,4 +372,3 @@ module folMod =
                 then variant x (fv (subst (undefine x subfn) p)) 
                 else x
         quant x' (subst ((x |-> Var x') subfn) p)
-
