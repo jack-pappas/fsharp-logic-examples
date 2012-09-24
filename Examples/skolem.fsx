@@ -25,7 +25,7 @@ open Reasoning.Automated.Harrison.Handbook.skolem
 
 // val it : fol formula =
 //   Imp (Forall ("x",Atom (R ("P",[Var "x"]))),Atom (R ("Q",[])))
-simplify (parse "(forall x y. P(x) \/ (P(y) /\ false)) ==> exists z. Q");;
+simplify004 (parse "(forall x y. P(x) \/ (P(y) /\ false)) ==> exists z. Q");;
 
 // pg. 141
 // ------------------------------------------------------------------------- //

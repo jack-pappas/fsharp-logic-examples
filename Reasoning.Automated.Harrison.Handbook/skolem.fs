@@ -21,9 +21,9 @@ module skolem =
 // Routine simplification. Like "psimplify" but with quantifier clauses.     //
 // ------------------------------------------------------------------------- //
 
-    // OCaml:  val simplify1 : expression  -> expression = <fun>
-    // F#:     val simplify1 : fol formula -> fol formula
-    let simplify1 fm =
+    // OCaml:  val simplify003 : expression  -> expression = <fun>
+    // F#:     val simplify003 : fol formula -> fol formula
+    let simplify003 fm =
         match fm with
         | Forall (x, p) ->
             if mem x (fv p) then fm else p
@@ -32,24 +32,24 @@ module skolem =
         | _ ->
             psimplify1 fm
 
-    // OCaml: val simplify : expression  -> expression = <fun>
-    // F#:    val simplify : fol formula -> fol formula
-    let rec simplify fm =
+    // OCaml: val simplify004 : expression  -> expression = <fun>
+    // F#:    val simplify004 : fol formula -> fol formula
+    let rec simplify004 fm =
         match fm with
         | Not p ->
-            simplify1 (Not (simplify p))
+            simplify003 (Not (simplify004 p))
         | And (p, q) ->
-            simplify1 (And (simplify p, simplify q))
+            simplify003 (And (simplify004 p, simplify004 q))
         | Or (p, q) ->
-            simplify1 (Or (simplify p, simplify q))
+            simplify003 (Or (simplify004 p, simplify004 q))
         | Imp (p, q) ->
-            simplify1 (Imp (simplify p, simplify q))
+            simplify003 (Imp (simplify004 p, simplify004 q))
         | Iff (p, q) ->
-            simplify1 (Iff (simplify p, simplify q))
+            simplify003 (Iff (simplify004 p, simplify004 q))
         | Forall (x, p) ->
-            simplify1 (Forall (x, simplify p))
+            simplify003 (Forall (x, simplify004 p))
         | Exists (x, p) ->
-            simplify1 (Exists (x, simplify p))
+            simplify003 (Exists (x, simplify004 p))
         | _ -> fm
 
 // pg. 141
@@ -135,7 +135,7 @@ module skolem =
         | _ -> fm
 
     let pnf fm =
-        prenex (nnf (simplify fm))
+        prenex (nnf (simplify004 fm))
 
 // pg. 146
 // ------------------------------------------------------------------------- //
@@ -181,7 +181,7 @@ module skolem =
 // ------------------------------------------------------------------------- //
 
     let askolemize fm =
-        fst (skolem (nnf (simplify fm)) (List.map fst (functions fm)))
+        fst (skolem (nnf (simplify004 fm)) (List.map fst (functions fm)))
 
     let rec specialize fm =
         match fm with
@@ -191,6 +191,3 @@ module skolem =
 
     let skolemize fm =
         specialize (pnf (askolemize fm))
-
-
-

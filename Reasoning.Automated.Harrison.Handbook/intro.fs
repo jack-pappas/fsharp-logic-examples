@@ -23,9 +23,9 @@ module intro =
 // Simplification example.                                                   //
 // ------------------------------------------------------------------------- //
 
-    // OCaml: val simplify1 : expression -> expression
-    // F#:    val simplify1 : expression -> expression
-    let private simplify1 expr =
+    // OCaml: val simplify001 : expression -> expression
+    // F#:    val simplify001 : expression -> expression
+    let simplify001 expr =
         match expr with
         | Mul (Const 0, x)
         | Mul (x, Const 0) ->
@@ -41,19 +41,19 @@ module intro =
             Const (m * n)
         | _ -> expr
 
-    // OCaml: val simplify : expression -> expression = <fun>
-    // F#:    val simplify : expression -> expression
+    // OCaml: val simplify002 : expression -> expression = <fun>
+    // F#:    val simplify002 : expression -> expression
     // TODO : Optimize using continuation-passing style.
-    let rec simplify expr =
+    let rec simplify002 expr =
         match expr with
         | Add (e1, e2) ->
-            Add (simplify e1, simplify e2)
-            |> simplify1
+            Add (simplify002 e1, simplify002 e2)
+            |> simplify001
         | Mul (e1, e2) ->
-            Mul (simplify e1, simplify e2)
-            |> simplify1
+            Mul (simplify002 e1, simplify002 e2)
+            |> simplify001
         | _ ->
-            simplify1 expr
+            simplify001 expr
 
 // pg. 17
 // ------------------------------------------------------------------------- //

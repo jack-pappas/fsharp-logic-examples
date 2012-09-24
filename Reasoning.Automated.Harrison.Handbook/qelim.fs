@@ -69,7 +69,7 @@ module qelim =
 //              let djs = disjuncts(nfn(qelift (x::vars) p))
 //              list_disj(List.map (qelim (qfn vars) x) djs)
 //        | _ -> fm
-//      fun fm -> simplify(qelift (fv fm) (miniscope fm))
+//      fun fm -> simplify004(qelift (fv fm) (miniscope fm))
 
     // OCaml : val lift_qelim : (string list -> fol formula -> fol formula) -> (fol formula -> fol formula) -> (string list -> fol formula -> fol formula) -> fol formula -> fol formula = <fun>
     // F# :    val lift_qelim : (string list -> fol formula -> fol formula) -> (fol formula -> fol formula) -> (string list -> fol formula -> fol formula) -> (fol formula -> fol formula)
@@ -97,7 +97,7 @@ module qelim =
             | _ -> fm
 
         fun fm ->
-            simplify (qelift (fv fm) (miniscope fm))
+            simplify004 (qelift (fv fm) (miniscope fm))
   
 // pg. 333
 //  ------------------------------------------------------------------------- // 
@@ -130,7 +130,7 @@ module qelim =
             | Not (Iff (p, q)) ->
                 Or (And (cnnf p, cnnf (Not q)), And (cnnf (Not p), cnnf q))
             | _ -> lfn fm
-        simplify >>|> cnnf >>|> simplify
+        simplify004 >>|> cnnf >>|> simplify004
   
 // pg. 334
 //  ------------------------------------------------------------------------- // 
