@@ -23,7 +23,7 @@ Add (Mul (Const 2, Var "x"), Var "y");;
 
 let e = Add (Mul (Add (Mul (Const 0, Var "x"), Const 1), Const 3), Const 12);;
 
-simplify e;;
+simplify002 e;;
 
 lex (explode "2*((var_1 + x') + 11)");;
 

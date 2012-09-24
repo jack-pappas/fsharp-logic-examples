@@ -362,7 +362,7 @@ module cooper =
         | Exists (x0, p0) ->
             let x = Var x0
             let p = unitycoeff x p0
-            let p_inf = simplify (minusinf x p)
+            let p_inf = simplify004 (minusinf x p)
             let bs = bset x p
             let js = GenericOne --- divlcm x p
             let p_element j b = linrep vars x (linear_add vars b (mk_numeral j)) p
@@ -424,7 +424,7 @@ module cooper =
     // OCaml: val integer_qelim : fol formula -> fol formula = <fun>
     // F#:    val integer_qelim : (fol formula -> fol formula)
     let integer_qelim = 
-        simplify >>|> evalc >>|>
+        simplify004 >>|> evalc >>|>
         lift_qelim linform (cnnf posineq >>|> evalc) cooper
 
 // pg.350

@@ -224,9 +224,9 @@ module real =
         casesplit (x :: vars) [] pols cont init_sgns
 
     let real_qelim =
-        simplify
+        simplify004
         >>|> evalc
-        >>|> lift_qelim polyatom (simplify >>|> evalc) basic_real_qelim
+        >>|> lift_qelim polyatom (simplify004 >>|> evalc) basic_real_qelim
            
     // pg. 377
     let rec grpterm tm =
@@ -250,5 +250,5 @@ module real =
     // ------------------------------------------------------------------------- //
 
     let real_qelim' =
-        simplify >>|> evalc >>|>
+        simplify004 >>|> evalc >>|>
         lift_qelim polyatom (dnf >>|> cnnf (fun x -> x) >>|> evalc) basic_real_qelim

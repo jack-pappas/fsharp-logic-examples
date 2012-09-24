@@ -116,6 +116,6 @@ let basic_real_qelim vars (Exists(x,p)) =
     casesplit (x::vars) [] pols cont init_sgns;;
 
 // TODO: Fix so they compile
-//let real_qelim = simplify >>|> evalc >>|> lift_qelim polyatom (simplify >>|> evalc) basic_real_qelim;;
+//let real_qelim = simplify004 >>|> evalc >>|> lift_qelim polyatom (simplify004 >>|> evalc) basic_real_qelim;;
 //
-//let real_qelim' = simplify >>|> evalc >>|> lift_qelim polyatom (dnf >>|> cnnf (fun x -> x) >>|> evalc) basic_real_qelim
+//let real_qelim' = simplify004 >>|> evalc >>|> lift_qelim polyatom (dnf >>|> cnnf (fun x -> x) >>|> evalc) basic_real_qelim
