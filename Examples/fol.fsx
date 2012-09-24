@@ -24,7 +24,7 @@ open Reasoning.Automated.Harrison.Handbook.folMod
 
 Fn("sqrt",[Fn("-",[Fn("1",[]);
                    Fn("cos",[Fn("power",[Fn("+",[Var "x"; Var "y"]);
-                                        Fn("2",[])])])])]);
+                                        Fn("2",[])])])])]);;
 
 // pg. 119
 // ------------------------------------------------------------------------- //
