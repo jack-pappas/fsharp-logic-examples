@@ -21,9 +21,9 @@ module skolem =
 // Routine simplification. Like "psimplify" but with quantifier clauses.     //
 // ------------------------------------------------------------------------- //
 
-    // OCaml:  val simplify1 : expression  -> expression = <fun>
-    // F#:     val simplify1 : fol formula -> fol formula
-    let simplify1 fm =
+    // OCaml:  val simplify003 : expression  -> expression = <fun>
+    // F#:     val simplify003 : fol formula -> fol formula
+    let simplify003 fm =
         match fm with
         | Forall (x, p) ->
             if mem x (fv p) then fm else p
@@ -222,7 +222,7 @@ module skolem =
         prenexImpl fm id
 
     let pnf fm =
-        prenex (nnf (simplify fm))
+        prenex (nnf (simplify004 fm))
 
 // pg. 146
 // ------------------------------------------------------------------------- //
@@ -277,7 +277,7 @@ module skolem =
 // ------------------------------------------------------------------------- //
 
     let askolemize fm =
-        fst (skolem (nnf (simplify fm)) (List.map fst (functions fm)))
+        fst (skolem (nnf (simplify004 fm)) (List.map fst (functions fm)))
 
     let rec specialize fm =
         match fm with
@@ -287,6 +287,3 @@ module skolem =
 
     let skolemize fm =
         specialize (pnf (askolemize fm))
-
-
-

@@ -29,13 +29,8 @@ module bdd =
 
     type bdd = Bdd of (func<bddnode, int> * func<int, bddnode> * int) * (prop -> prop -> bool)
 
-    // Note: changed printf to sprintf for use with fsi.AddPrinter
     let print_bdd (Bdd ((unique, uback, n), ord)) =
-        sprintf "<BDD with %i nodes>" n
-
-    #if INTERACTIVE
-    fsi.AddPrinter print_bdd;;
-    #endif
+        printf "<BDD with %i nodes>" n
       
 // pg. 102
 // ------------------------------------------------------------------------- //
@@ -171,7 +166,6 @@ module bdd =
 // ------------------------------------------------------------------------- //
 
     let bddtaut fm = 
-        // Note this is a comparison to 1 not an assignment
         snd (mkbdd (mk_bdd (<), undefined) fm) = 1
 
 // pg. 105
@@ -201,7 +195,6 @@ module bdd =
             mem x' fvs)
         |> not
 
-    // TODO: Verify use of List.partition works
     let rec sort_defs acc defs fm =
         try 
             let x, e =
@@ -249,15 +242,6 @@ module bdd =
             let bdd', b = mkbdde sfn bdd e
             mkbdds ((p |-> b) sfn) bdd' odefs fm
 
-    // TODO : Make this work
-//    let ebddtaut fm =
-//        let l,r = 
-//            try dest_nimp fm with
-//            | Failure _ -> True,fm
-//        let eqs,noneqs = List.partition (can dest_iffdef) (conjuncts l)
-//        let defs,fm' = sort_defs [] (List.map dest_iffdef eqs) (List.foldBack mk_imp noneqs r)
-//        snd(mkbdds undefined (mk_bdd (<),undefined) defs fm') = 1
-
     let ebddtaut fm =
         let l, r =
             try dest_nimp fm
@@ -271,4 +255,3 @@ module bdd =
             List.partition parFun (conjuncts l)
         let defs, fm' = sort_defs [] (List.map dest_iffdef eqs) (List.foldBack mk_imp noneqs r)
         snd (mkbdds undefined (mk_bdd (<), undefined) defs fm') = 1
-

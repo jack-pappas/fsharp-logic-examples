@@ -6,7 +6,8 @@
 
 namespace Reasoning.Automated.Harrison.Handbook
 
-module folMod =
+[<CompilationRepresentation(CompilationRepresentationFlags.ModuleSuffix)>]
+module folMod = // TODO : Change this back to 'fol'?
     open intro
     open formulas
 
@@ -70,8 +71,8 @@ module folMod =
                 (parse_left_infix "-" (fun (e1,e2) -> Fn ("-",[e1;e2]))
                     (parse_right_infix "*" (fun (e1,e2) -> Fn ("*",[e1;e2]))
                         (parse_left_infix "/" (fun (e1,e2) -> Fn ("/",[e1;e2]))
-                        (parse_left_infix "^" (fun (e1,e2) -> Fn ("^",[e1;e2]))
-                            (parse_atomic_term vs)))))) inp
+                            (parse_left_infix "^" (fun (e1,e2) -> Fn ("^",[e1;e2]))
+                                (parse_atomic_term vs)))))) inp
 
     let parset = make_parser (parse_term [])
 
@@ -96,7 +97,7 @@ module folMod =
         | p :: "(" :: rest ->
             parse_bracketed (parse_list "," (parse_term vs)) ")" rest
             |> papply (fun args -> Atom (R (p, args)))
-        | p::rest when p <> "(" ->
+        | p :: rest when p <> "(" ->
             Atom (R (p, [])), rest
         | _ -> failwith "parse_atom"
 
@@ -139,62 +140,47 @@ module folMod =
 
     and print_fargs f args =
         printf "%s" f
-        if args = [] then () else
-        (printf "(";
-//        open_box 0;
-        print_term 0 (List.head args); 
-//        print_break 0 0;
-        List.iter (
-                  fun t -> 
-                    printf ","
-    //                print_break 0 0;
-                    print_term 0 t)
-            (List.tail args);
-//        close_box();
-        printf ")")
+        if args <> [] then
+            printf "("
+            print_term 0 (List.head args)
+            List.iter (
+                      fun t -> 
+                        printf ","
+                        print_term 0 t)
+                (List.tail args)
+            printf ")"
 
     and print_infix_term isleft oldprec newprec sym p q =
         if oldprec > newprec then 
-            printf "(";
-//             open_box 0
-        else ();
-        print_term (if isleft then newprec else newprec+1) p;
-        printf "%s" sym;
-//        print_break (if String.sub sym 0 1 = " " then 1 else 0) 0;
-        print_term (if isleft then newprec+1 else newprec) q;
-        if oldprec > newprec then 
-//            close_box()
+            printf "("
+        print_term (if isleft then newprec else newprec + 1) p
+        printf "%s" sym
+        print_term (if isleft then newprec + 1 else newprec) q
+        if oldprec > newprec then
             printf ")"
-        else ()
 
     let printert tm =
-//        open_box 0; 
-        printf "<<|";
-//        open_box 0; 
-        print_term 0 tm; 
-//        close_box();
-        printf "|>>"; 
-//        close_box()
+        printf "<<|"
+        print_term 0 tm
+        printf "|>>"
 
     // Added by EGT
-    let rec print_term_list x =
-        match x with
-        | []   -> ()
-        | h::t -> 
+    let rec print_term_list = function
+        | [] -> ()
+        | h :: t ->
             print_term 0 h
             print_term_list t
 
-//#install_printer printert
-//
 // pg. 630
 // ------------------------------------------------------------------------- //
 // Printing of formulas.                                                     //
 // ------------------------------------------------------------------------- //
 
-    let print_atom prec (R(p,args)) : unit =
-        if mem p ["="; "<"; "<="; ">"; ">="] && List.length args = 2
-        then print_infix_term false 12 12 (" " + p) (List.nth args 0) (List.nth args 1)
-        else print_fargs p args
+    let print_atom prec (R (p, args)) : unit =
+        if mem p ["="; "<"; "<="; ">"; ">="] && List.length args = 2 then
+            print_infix_term false 12 12 (" " + p) (List.nth args 0) (List.nth args 1)
+        else
+            print_fargs p args
 
     let print_fol_formula =
         print_qformula print_atom
@@ -212,14 +198,14 @@ module folMod =
 // Semantics, implemented of course for finite domains only.                 //
 // ------------------------------------------------------------------------- //
 
-    let rec termval (domain,func,pred as m) v tm =
+    let rec termval (domain, func, pred as m) v tm =
         match tm with
         | Var x ->
             apply v x
         | Fn (f, args) ->
             func f (List.map (termval m v) args)
 
-    let rec holds (domain,func,pred as m) v fm =
+    let rec holds (domain, func, pred as m) v fm =
         match fm with
         | False -> false
         | True -> true
@@ -275,7 +261,7 @@ module folMod =
             | "=", [x; y] -> x = y
             | _ -> failwith "uninterpreted predicate"
 
-        0 -- (n-1), func, pred
+        0 -- (n - 1), func, pred
 
 // pg. 127
 // ------------------------------------------------------------------------- //
@@ -301,8 +287,8 @@ module folMod =
         | Imp (p, q)
         | Iff (p, q) ->
             union (var p) (var q)
-        | Forall(x, p)
-        | Exists(x, p) ->
+        | Forall (x, p)
+        | Exists (x, p) ->
             insert x (var p)
 
     let rec fv fm =
@@ -380,9 +366,8 @@ module folMod =
             substq subfn mk_exists x p
 
     and substq subfn quant x p =
-        let x' = 
-            if List.exists (fun y -> mem x (fvt (tryapplyd subfn y (Var y)))) (subtract (fv p) [x])
-                then variant x (fv (subst (undefine x subfn) p)) 
-                else x
+        let x' =
+            if List.exists (fun y -> mem x (fvt (tryapplyd subfn y (Var y)))) (subtract (fv p) [x]) then
+                variant x (fv (subst (undefine x subfn) p)) 
+            else x
         quant x' (subst ((x |-> Var x') subfn) p)
-

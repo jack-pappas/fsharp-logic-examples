@@ -127,8 +127,6 @@ module formulas =
     // OCaml: val parse_formula : (string list -> string list -> 'a formula * string list) * (string list -> string list -> 'a formula * string list) -> string list -> string list -> 'a formula * string list = <fun>
     // F#:    val parse_formula : (string list -> string list -> 'a formula * string list) * (string list -> string list -> 'a formula * string list) -> string list -> string list -> 'a formula * string list
     and parse_formula (ifn, afn) vs inp =
-        // TODO : For clarity, reformat this code using the F# pipeline operator (|>)
-        // instead of using nested parenthesis.
         parse_right_infix "<=>" Iff
             (parse_right_infix "==>" Imp
                 (parse_right_infix "\\/" Or
@@ -152,9 +150,9 @@ module formulas =
     // F#:    val bracket : bool -> 'a -> ('b -> 'c -> unit) -> 'b -> 'c -> unit
     // Note: No use of OCaml format module. i.e. print_box removed during conversion
     let bracket p n f x y =
-        (if p then printf "(" else ())
+        if p then printf "("
         f x y
-        (if p then printf ")" else ())
+        if p then printf ")"
 
     // OCaml: val strip_quant : 'a formula -> string list * 'a formula = <fun>
     // F#:    val strip_quant : 'a formula -> string list * 'a formula
@@ -224,28 +222,42 @@ module formulas =
     let print_formula pfn =
         let rec print_formula pr fm =
             match fm with
-            | False -> printf "%s" "false"
-            | True -> printf "%s" "true"
-            | Atom(pargs) -> pfn pr pargs
-            | Not(p) -> bracket (pr > 10) 1 (print_prefix 10) "~" p
-            | And(p,q) -> bracket (pr > 8) 0 (print_infix 8 "/\\") p q
-            | Or(p,q) ->  bracket (pr > 6) 0 (print_infix  6 "\\/") p q
-            | Imp(p,q) ->  bracket (pr > 4) 0 (print_infix 4 "==>") p q
-            | Iff(p,q) ->  bracket (pr > 2) 0 (print_infix 2 "<=>") p q
-            | Forall(x,p) -> bracket (pr > 0) 2 print_qnt "forall" (strip_quant fm)
-            | Exists(x,p) -> bracket (pr > 0) 2 print_qnt "exists" (strip_quant fm)
-        and print_qnt qname (bvs,bod) =
+            | False ->
+                printf "false"
+            | True ->
+                printf "true"
+            | Atom pargs ->
+                pfn pr pargs
+            | Not p ->
+                bracket (pr > 10) 1 (print_prefix 10) "~" p
+            | And (p, q) ->
+                bracket (pr > 8) 0 (print_infix 8 "/\\") p q
+            | Or (p, q) ->
+                bracket (pr > 6) 0 (print_infix  6 "\\/") p q
+            | Imp (p, q) ->
+                bracket (pr > 4) 0 (print_infix 4 "==>") p q
+            | Iff (p, q) ->
+                bracket (pr > 2) 0 (print_infix 2 "<=>") p q
+            | Forall (x, p) ->
+                bracket (pr > 0) 2 print_qnt "forall" (strip_quant fm)
+            | Exists (x, p) ->
+                bracket (pr > 0) 2 print_qnt "exists" (strip_quant fm)
+
+        and print_qnt qname (bvs, bod) =
             printf "%s" qname
-            List.iter (fun v -> printf " "; printf "%s" v) bvs
-            printf "%s" ". "
+            List.iter (printf " %s") bvs
+            printf ". "
             print_formula 0 bod
+
         and print_prefix newpr sym p =
             printf "%s" sym
-            print_formula (newpr+1) p
+            print_formula (newpr + 1) p
+
         and print_infix newpr sym p q =
-            print_formula (newpr+1) p
-            printf "%s" (" " + sym + " ")
+            print_formula (newpr + 1) p
+            printf " %s " sym
             print_formula newpr q
+
         print_formula 0
 
     // Original version with open_box and close_box

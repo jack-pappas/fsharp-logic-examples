@@ -7,6 +7,8 @@
 namespace Reasoning.Automated.Harrison.Handbook
 
 module intro =
+    open System
+
 // pg.14
 // ========================================================================= //
 // Simple algebraic expression example from the introductory chapter.        //
@@ -95,26 +97,6 @@ module intro =
             idx <- idx + 1
 
         foundMatch
-
-    (*
-    // Optimized version of 'matches'. Enable this once the unit tests are in place
-    // so we can ensure everything else functions as expected.
-    let matches' (str : string) =
-        // Fold over the characters in the string, creating an F# set from them.
-        let charSet =
-            (Set.empty, str)
-            ||> Seq.fold (fun charSet c ->
-                Set.add c charSet)
-
-        // Return a function which checks to see if a certain character
-        // is contained within the character set.
-        fun (c : string) ->
-            // Preconditions
-            if String.length c > 1 then
-                invalidArg "c" "The character string contains more than one (1) character."
-
-            Set.contains (char c) charSet
-    *)
         
     // OCaml: val space : string -> bool = <fun>
     // F#:    val space : (string -> bool)
@@ -228,9 +210,12 @@ module intro =
 
     // OCaml: val make_parser : (string list -> 'a * 'b list) -> string -> 'a = <fun>
     // F#:    val make_parser : (string list -> 'a * 'b list) -> string -> 'a
-    let make_parser pfn s =
+    let make_parser pfn (s : string) =
         let expr, rest =
-            explode s |> lex |> pfn
+            // Replace "\r\n" with "\n" so the lexer works correctly
+            // on multi-line strings, no matter what OS we're using.
+            s.Replace ("\r\n", "\n")
+            |> explode |> lex |> pfn
 
         match rest with
         | [] -> expr

@@ -93,7 +93,7 @@ module decidable =
 // Stronger version of "aedecide" similar to Wang's classic procedure.       //
 // ------------------------------------------------------------------------- //
 
-    let wang fm = aedecide (miniscope (nnf (simplify fm)))
+    let wang fm = aedecide (miniscope (nnf (simplify004 fm)))
 
 // pg. 318
 // ------------------------------------------------------------------------- //

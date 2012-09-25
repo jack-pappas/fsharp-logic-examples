@@ -74,55 +74,6 @@ module lcf =
 //  |- p \/ q <=> ~(~p /\ ~q)                                                //
 //  |- (exists x. p) <=> ~(forall x. ~p)                                     //
 // ------------------------------------------------------------------------- //
-
-// module type Proofsystem =
-//    sig type thm
-//        val modusponens : thm -> thm -> thm
-//        val gen : string -> thm -> thm
-//        val axiom_addimp : fol formula -> fol formula -> thm
-//        val axiom_distribimp :
-//             fol formula -> fol formula -> fol formula -> thm
-//        val axiom_doubleneg : fol formula -> thm
-//        val axiom_allimp : string -> fol formula -> fol formula -> thm
-//        val axiom_impall : string -> fol formula -> thm
-//        val axiom_existseq : string -> term -> thm
-//        val axiom_eqrefl : term -> thm
-//        val axiom_funcong : string -> term list -> term list -> thm
-//        val axiom_predcong : string -> term list -> term list -> thm
-//        val axiom_iffimp1 : fol formula -> fol formula -> thm
-//        val axiom_iffimp2 : fol formula -> fol formula -> thm
-//        val axiom_impiff : fol formula -> fol formula -> thm
-//        val axiom_true : thm6
-//        val axiom_not : fol formula -> thm
-//        val axiom_and : fol formula -> fol formula -> thm
-//        val axiom_or : fol formula -> fol formula -> thm
-//        val axiom_exists : string -> fol formula -> thm
-//        val concl : thm -> fol formula
-//    end;;
-
-    // TODO : Change this to an interface (IProofSystem)
-//    type IProofSystem<'thm> = interface
-//        abstract member modusponens : 'thm -> 'thm -> 'thm
-//        abstract member gen : string -> 'thm -> 'thm
-//        abstract member axiom_addimp : formula<fol> -> formula<fol> -> 'thm
-//        abstract member axiom_distribimp : formula<fol> -> formula<fol> -> formula<fol> -> 'thm
-//        abstract member axiom_doubleneg : formula<fol> -> 'thm
-//        abstract member axiom_allimp : string -> formula<fol> -> formula<fol> -> 'thm
-//        abstract member axiom_impall : string -> formula<fol> -> 'thm
-//        abstract member axiom_existseq : string -> term -> 'thm
-//        abstract member axiom_eqrefl : term -> 'thm
-//        abstract member axiom_funcong : string -> term list -> term list -> 'thm
-//        abstract member axiom_predcong : string -> term list -> term list -> 'thm
-//        abstract member axiom_iffimp1 : formula<fol> -> formula<fol> -> 'thm
-//        abstract member axiom_iffimp2 : formula<fol> -> formula<fol> -> 'thm
-//        abstract member axiom_impiff : formula<fol> -> formula<fol> -> 'thm
-//        abstract member axiom_true : 'thm
-//        abstract member axiom_not : formula<fol> -> 'thm
-//        abstract member axiom_and : formula<fol> -> formula<fol> -> 'thm
-//        abstract member axiom_or : formula<fol> -> formula<fol> -> 'thm
-//        abstract member axiom_exists : string -> formula<fol> -> 'thm
-//        abstract member concl : 'thm -> formula<fol>
-//    end
     
     // ------------------------------------------------------------------------- //
     // Auxiliary functions.                                                      //
@@ -155,81 +106,36 @@ module lcf =
         | Atom (R (p, args)) ->
             List.exists (occurs_in t) args
 
-    /// Implementation of the abstract data type of theorems.
-//    type Proven = class
-//        interface IProofSystem<formula<fol>> with
-//            member __.modusponens pq p =
-//                match pq with
-//                | Imp (p', q) when p = p' -> q
-//                | _ -> failwith "modusponens"
-//
-//            member __.gen x p =
-//                Forall (x, p)
-//
-//            member __.axiom_addimp p q =
-//                Imp (p,Imp (q, p))
-//
-//            member __.axiom_distribimp p q r =
-//                Imp (Imp (p, Imp (q, r)), Imp (Imp (p, q), Imp (p, r)))
-//
-//            member __.axiom_doubleneg p =
-//                Imp (Imp (Imp (p, False), False), p)
-//
-//            member __.axiom_allimp x p q =
-//                Imp (Forall (x, Imp (p, q)), Imp (Forall (x, p), Forall (x, q)))
-//
-//            member __.axiom_impall x p =
-//                if free_in (Var x) p then
-//                    failwith "axiom_impall: variable free in formula"
-//                else
-//                    Imp (p, Forall (x, p))
-//
-//            member __.axiom_existseq x t =
-//                if occurs_in (Var x) t then
-//                    failwith "axiom_existseq: variable free in term"
-//                else
-//                    Exists (x, mk_eq (Var x) t)
-//                
-//            member __.axiom_eqrefl t =
-//                mk_eq t t
-//
-//            member __.axiom_funcong f lefts rights =
-//                List.foldBack2 (fun s t p -> Imp (mk_eq s t, p)) lefts rights
-//                    (mk_eq (Fn (f, lefts)) (Fn (f, rights)))
-//
-//            member __.axiom_predcong p lefts rights =
-//                List.foldBack2 (fun s t p -> Imp (mk_eq s t, p)) lefts rights
-//                    (Imp (Atom (R (p, lefts)), Atom (R (p, rights))))
-//
-//            member __.axiom_iffimp1 p q =
-//                Imp (Iff (p, q), Imp (p, q))
-//
-//            member __.axiom_iffimp2 p q =
-//                Imp (Iff (p, q), Imp (q, p))
-//
-//            member __.axiom_impiff p q =
-//                Imp (Imp (p, q), Imp (Imp (q, p), Iff (p, q)))
-//
-//            member __.axiom_true =
-//                Iff (True, Imp (False, False))
-//
-//            member __.axiom_not p =
-//                Iff (Not p, Imp (p, False))
-//
-//            member __.axiom_and p q =
-//                Iff (And (p, q), Imp (Imp (p, Imp (q, False)), False))
-//
-//            member __.axiom_or p q =
-//                Iff (Or (p, q), Not (And (Not p, Not q)))
-//
-//            member __.axiom_exists x p =
-//                Iff (Exists (x, p), Not (Forall (x, Not p)))
-//
-//            member __.concl c = c
-//      end
 
-    // TEMP : Until we modify the consuming code to use functions which are parameterized
-    // by an instance of IProofSystem (so they don't just rely on the functions being in scope).
+(*
+module type Proofsystem =
+    sig type thm
+        val modusponens : thm -> thm -> thm
+        val gen : string -> thm -> thm
+        val axiom_addimp : fol formula -> fol formula -> thm
+        val axiom_distribimp :
+             fol formula -> fol formula -> fol formula -> thm
+        val axiom_doubleneg : fol formula -> thm
+        val axiom_allimp : string -> fol formula -> fol formula -> thm
+        val axiom_impall : string -> fol formula -> thm
+        val axiom_existseq : string -> term -> thm
+        val axiom_eqrefl : term -> thm
+        val axiom_funcong : string -> term list -> term list -> thm
+        val axiom_predcong : string -> term list -> term list -> thm
+        val axiom_iffimp1 : fol formula -> fol formula -> thm
+        val axiom_iffimp2 : fol formula -> fol formula -> thm
+        val axiom_impiff : fol formula -> fol formula -> thm
+        val axiom_true : thm6
+        val axiom_not : fol formula -> thm
+        val axiom_and : fol formula -> fol formula -> thm
+        val axiom_or : fol formula -> fol formula -> thm
+        val axiom_exists : string -> fol formula -> thm
+        val concl : thm -> fol formula
+    end;;
+*)
+
+    // Implementation of the Proofsystem signature; this is done "manually"
+    // because F# doesn't allow for type-parameterized modules.
     [<AutoOpen>]
     module ProverOperators =
         type thm = formula<fol>
