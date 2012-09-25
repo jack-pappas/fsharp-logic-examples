@@ -28,7 +28,9 @@ open Reasoning.Automated.Harrison.Handbook.prolog
 // A Horn example.                                                           //
 // ------------------------------------------------------------------------- //
 
-let p32 = hornprove (parse "(forall x. P(x) /\ (G(x) \/ H(x)) ==> Q(x)) /\ (forall x. Q(x) /\ H(x) ==> J(x)) /\ (forall x. R(x) ==> H(x)) ==> (forall x. P(x) /\ R(x) ==> J(x))");;
+let p32 =
+    hornprove (parse
+        "(forall x. P(x) /\ (G(x) \/ H(x)) ==> Q(x)) /\ (forall x. Q(x) /\ H(x) ==> J(x)) /\ (forall x. R(x) ==> H(x)) ==> (forall x. P(x) /\ R(x) ==> J(x))");;
 
 // pg. 208
 // ------------------------------------------------------------------------- //
@@ -67,7 +69,9 @@ prolog lerules "S(S(0)) <= X";;
 // Append example, showing symmetry between inputs and outputs.              //
 // ------------------------------------------------------------------------- //
 
-let appendrules = ["append(nil,L,L)"; "append(H::T,L,H::A) :- append(T,L,A)"];;
+let appendrules = [
+    "append(nil,L,L)";
+    "append(H::T,L,H::A) :- append(T,L,A)";];;
 
 prolog appendrules "append(1::2::nil,3::4::nil,Z)";;
 
@@ -89,17 +93,17 @@ prolog appendrules "append(X,Y,1::2::3::4::nil)";;
 // A sorting example (from Lloyd's "Foundations of Logic Programming").      //
 // ------------------------------------------------------------------------- //
 
-let sortrules =
- ["sort(X,Y) :- perm(X,Y),sorted(Y)";
-  "sorted(nil)";
-  "sorted(X::nil)";
-  "sorted(X::Y::Z) :- X <= Y, sorted(Y::Z)";
-  "perm(nil,nil)";
-  "perm(X::Y,U::V) :- delete(U,X::Y,Z), perm(Z,V)";
-  "delete(X,X::Y,Y)";
-  "delete(X,Y::Z,Y::W) :- delete(X,Z,W)";
-  "0 <= X";
-  "S(X) <= S(Y) :- X <= Y"];;
+let sortrules = [
+    "sort(X,Y) :- perm(X,Y),sorted(Y)";
+    "sorted(nil)";
+    "sorted(X::nil)";
+    "sorted(X::Y::Z) :- X <= Y, sorted(Y::Z)";
+    "perm(nil,nil)";
+    "perm(X::Y,U::V) :- delete(U,X::Y,Z), perm(Z,V)";
+    "delete(X,X::Y,Y)";
+    "delete(X,Y::Z,Y::W) :- delete(X,Z,W)";
+    "0 <= X";
+    "S(X) <= S(Y) :- X <= Y"; ];;
 
 prolog sortrules
   "sort(S(S(S(S(0))))::S(0)::0::S(S(0))::S(0)::nil,X)";;
@@ -108,17 +112,17 @@ prolog sortrules
 // Yet with a simple swap of the first two predicates...                     //
 // ------------------------------------------------------------------------- //
 
-let badrules =
- ["sort(X,Y) :- sorted(Y), perm(X,Y)";
-  "sorted(nil)";
-  "sorted(X::nil)";
-  "sorted(X::Y::Z) :- X <= Y, sorted(Y::Z)";
-  "perm(nil,nil)";
-  "perm(X::Y,U::V) :- delete(U,X::Y,Z), perm(Z,V)";
-  "delete(X,X::Y,Y)";
-  "delete(X,Y::Z,Y::W) :- delete(X,Z,W)";
-  "0 <= X";
-  "S(X) <= S(Y) :- X <= Y"];;
+let badrules = [
+    "sort(X,Y) :- sorted(Y), perm(X,Y)";
+    "sorted(nil)";
+    "sorted(X::nil)";
+    "sorted(X::Y::Z) :- X <= Y, sorted(Y::Z)";
+    "perm(nil,nil)";
+    "perm(X::Y,U::V) :- delete(U,X::Y,Z), perm(Z,V)";
+    "delete(X,X::Y,Y)";
+    "delete(X,Y::Z,Y::W) :- delete(X,Z,W)";
+    "0 <= X";
+    "S(X) <= S(Y) :- X <= Y"; ];;
 
 //** This no longer works
 

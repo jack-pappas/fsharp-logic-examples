@@ -35,8 +35,10 @@ open Reasoning.Automated.Harrison.Handbook.rewrite
 // ------------------------------------------------------------------------- //
 
 // <<|S(S(S(S(S(S(S(S(S(S(0))))))))))|>>val it : unit = ()
-printert (rewrite [(parse "0 + x = x"); (parse "S(x) + y = S(x + y)");
-                   (parse "0 * x = 0"); (parse "S(x) * y = y + x * y")]
+printert (rewrite [parse "0 + x = x";
+                    parse "S(x) + y = S(x + y)";
+                    parse "0 * x = 0";
+                    parse "S(x) * y = y + x * y"; ]
                    (parset "S(S(S(0))) * S(S(0)) + S(S(S(S(0))))"));;
 
 

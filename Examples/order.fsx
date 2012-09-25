@@ -45,7 +45,7 @@ termsize s > termsize t;;
 
 // val i : func<string,term> =
 //   Leaf (-842352681,[("y", Fn ("f",[Var "x"; Var "x"; Var "x"]))])
-let i = ("y" |=> parset "f(x,x,x)");;
+let i = "y" |=> parset "f(x,x,x)";;
 
 // val it : bool = false
 termsize (tsubst i s) > termsize (tsubst i t);;
