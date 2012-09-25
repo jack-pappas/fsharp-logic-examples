@@ -75,7 +75,6 @@
     <Compile Include="lcffol.fs" />
     <Compile Include="tactics.fs" />
     <Compile Include="limitations.fs" />
-    <Content Include="LICENSE.txt" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="FSharp.PowerPack">
