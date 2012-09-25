@@ -1,0 +1,65 @@
+# Specific files to ignore
+/Core/BuildInfo.fs
+
+#OS junk files
+[Tt]humbs.db
+*.DS_Store
+
+#Visual Studio files
+*.[Oo]bj
+*.exe
+*.pdb
+*.user
+*.aps
+*.pch
+*.vspscc
+*.vssscc
+*_i.c
+*_p.c
+*.ncb
+*.suo
+*.tlb
+*.tlh
+*.bak
+*.[Cc]ache
+*.ilk
+*.log
+*.lib
+*.sbr
+*.sdf
+*.opensdf
+*.resources
+*.res
+ipch/
+obj/
+[Bb]in
+[Dd]ebug*/
+[Rr]elease*/
+Ankh.NoLoad
+*.gpState
+
+#Tooling
+_ReSharper*/
+*.resharper
+[Tt]est[Rr]esult*
+*.nvuser
+
+#Project files
+#[Bb]uild/
+
+#Subversion files
+.svn
+
+#NuGet packages
+[Pp]ackages
+
+# Office Temp Files
+~$*
+
+# Assemblies built for deployment
+[Dd]eploy*/
+
+# Installer cache files
+Installers/*-cache/
+
+/Build/BuildInfo.fs

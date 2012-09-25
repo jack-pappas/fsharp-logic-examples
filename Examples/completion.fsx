@@ -39,7 +39,8 @@ open Reasoning.Automated.Harrison.Handbook.completion
 //   [Atom
 //      (R ("=",[Fn ("f",[Fn ("g",[Var "x0"])]); Fn ("g",[Fn ("f",[Var "x0"])])]));
 //    Atom (R ("=",[Fn ("g",[Var "x1"]); Fn ("g",[Var "x1"])]))]
-let eq = (parse "f(f(x)) = g(x)") in critical_pairs eq eq;;
+let eq = (parse "f(f(x)) = g(x)") in
+critical_pairs eq eq;;
   
 // pg. 280
 // ------------------------------------------------------------------------- //
@@ -53,7 +54,10 @@ let eq = (parse "f(f(x)) = g(x)") in critical_pairs eq eq;;
 //     (R ("=",
 //         [Fn ("*",[Fn ("*",[Var "x"; Var "y"]); Var "z"]);
 //          Fn ("*",[Var "x"; Fn ("*",[Var "y"; Var "z"])])]))]
-let eqs = [(parse "1 * x = x"); (parse "i(x) * x = 1"); (parse "(x * y) * z = x * y * z")];;
+let eqs = [
+    parse "1 * x = x";
+    parse "i(x) * x = 1";
+    parse "(x * y) * z = x * y * z"; ];;
 
 // <<1 *x =x>>
 // <<i(x) *x =1>>
@@ -300,7 +304,7 @@ let ord = lpo_ge (weight ["1"; "*"; "i"]);;
 //      (R ("=",
 //          [Fn ("*",[Fn ("*",[Var "x"; Var "y"]); Var "z"]);
 //          Fn ("*",[Var "x"; Fn ("*",[Var "y"; Var "z"])])]))]
-let eqs' = complete ord (eqs,[],unions(allpairs critical_pairs eqs eqs));;
+let eqs' = complete ord (eqs, [], unions (allpairs critical_pairs eqs eqs));;
 
 // <<i(x4 *x5) =i(x5) *i(x4)>>
 // <<x1 *i(x5 *x1) =i(x5)>>
@@ -405,7 +409,7 @@ print_fol_formula_list (interreduce [] eqs');;
 //    Atom
 //      (R ("=",
 //          [Fn ("*",[Fn ("i",[Var "a"]); Fn ("*",[Var "a"; Var "b"])]); Var "b"]))]
-complete_and_simplify ["1"; "*"; "i"] [(parse "i(a) * (a * b) = b")];;
+complete_and_simplify ["1"; "*"; "i"] [parse "i(a) * (a * b) = b"];;
   
 // pg. 284
 // ------------------------------------------------------------------------- //
@@ -424,24 +428,27 @@ complete_and_simplify ["1"; "*"; "i"] [(parse "i(a) * (a * b) = b")];;
 // Searching with depth limit 3
 // Searching with depth limit 4
 // val it : int list = [5; 4]
-(meson002 >>|> equalitize) (parse "(forall x y z. x * y = x * z ==> y = z) <=> (forall x z. exists w. forall y. z = x * y ==> w = y)");;
+(meson002 >>|> equalitize) (parse
+    "(forall x y z. x * y = x * z ==> y = z) <=> (forall x z. exists w. forall y. z = x * y ==> w = y)");;
 
 // val it : fol Reasoning.Automated.Harrison.Handbook.formulas.formula =
 //   Or
 //     (Not (Atom (R ("=",[Var "z"; Fn ("*",[Var "x"; Var "y"])]))),
 //      Atom (R ("=",[Fn ("f_w",[Var "x"; Var "z"]); Var "y"])))
-skolemize (parse "forall x z. exists w. forall y. z = x * y ==> w = y");;
+skolemize (parse
+    "forall x z. exists w. forall y. z = x * y ==> w = y");;
 
 // <<~z =x *y \/ f_w(x,z) =y>>
 // val it : unit = ()
-print_fol_formula (skolemize (parse "forall x z. exists w. forall y. z = x * y ==> w = y"));;
+print_fol_formula (skolemize (parse
+    "forall x z. exists w. forall y. z = x * y ==> w = y"));;
 
 // pg.286
 // ------------------------------------------------------------------------- //
 // Central groupoids (K&B example 6).                                        //
 // ------------------------------------------------------------------------- //
 
-let eqs001 =  [(parse "(a * b) * (b * c) = b")];;
+let eqs001 =  [parse "(a * b) * (b * c) = b"];;
 complete_and_simplify ["*"] eqs001;;
 
 // 2 equations and 8 pending critical pairs + 0 deferred
@@ -678,20 +685,26 @@ complete_and_simplify ["1"; "*"; "i"] eqs002;;
 // Searching with depth limit 3
 // Searching with depth limit 4
 // val it : int list = [5; 4]
-(meson002 >>|> equalitize) (parse "(forall x y z. x * y = x * z ==> y = z) <=> (forall x z. exists w. forall y. z = x * y ==> w = y)");;
+(meson002 >>|> equalitize) (parse
+    "(forall x y z. x * y = x * z ==> y = z) <=> (forall x z. exists w. forall y. z = x * y ==> w = y)");;
 
 // val it : fol Reasoning.Automated.Harrison.Handbook.formulas.formula =
 //   Or
 //     (Not (Atom (R ("=",[Var "z"; Fn ("*",[Var "x"; Var "y"])]))),
 //      Atom (R ("=",[Fn ("f_w",[Var "x"; Var "z"]); Var "y"])))
-skolemize (parse "forall x z. exists w. forall y. z = x * y ==> w = y");;
+skolemize (parse
+    "forall x z. exists w. forall y. z = x * y ==> w = y");;
 
 // val eqs003 : fol Reasoning.Automated.Harrison.Handbook.formulas.formula list =
 //   [Atom (R ("=",[Fn ("f",[Var "a"; Fn ("*",[Var "a"; Var "b"])]); Var "b"]));
 //    Atom (R ("=",[Fn ("g",[Fn ("*",[Var "a"; Var "b"]); Var "b"]); Var "a"]));
 //    Atom (R ("=",[Fn ("*",[Fn ("1",[]); Var "a"]); Var "a"]));
 //    Atom (R ("=",[Fn ("*",[Var "a"; Fn ("1",[])]); Var "a"]))]
-let eqs003 = [(parse "f(a,a*b) = b"); (parse "g(a*b,b) = a"); (parse "1 * a = a"); (parse "a * 1 = a")];;
+let eqs003 = [
+    parse "f(a,a*b) = b";
+    parse "g(a*b,b) = a";
+    parse "1 * a = a";
+    parse "a * 1 = a"; ];;
 
 // 5 equations and 8 pending critical pairs + 0 deferred
 // 6 equations and 10 pending critical pairs + 0 deferred
@@ -735,7 +748,10 @@ complete_and_simplify ["f"] eqs004;;
 //      (R ("=",
 //          [Fn ("f",[Var "a"; Var "b"; Var "c"]); Fn ("g",[Var "a"; Var "b"])]));
 //    Atom (R ("=",[Fn ("g",[Var "a"; Var "b"]); Fn ("h",[Var "b"])]))]
-let eqs005 =  [(parse "f(a,f(b,c,a),d) = c"); (parse "f(a,b,c) = g(a,b)"); (parse "g(a,b) = h(b)")];;
+let eqs005 = [
+    parse "f(a,f(b,c,a),d) = c";
+    parse "f(a,b,c) = g(a,b)";
+    parse "g(a,b) = h(b)"; ];;
 
 // 4 equations and 11 pending critical pairs + 0 deferred
 // 4 equations and 0 pending critical pairs + 0 deferred
@@ -760,7 +776,10 @@ complete_and_simplify ["h"; "g"; "f"] eqs005;;
 //      (R ("=",
 //          [Fn ("*",[Fn ("*",[Var "x"; Var "y"]); Var "z"]);
 //           Fn ("*",[Var "x"; Fn ("*",[Var "y"; Var "z"])])]))]
-let eqs006 = [(parse "1 * x = x"); (parse "i(x) * x = 1"); (parse "(x * y) * z = x * y * z")];;
+let eqs006 = [
+    parse "1 * x = x";
+    parse "i(x) * x = 1";
+    parse "(x * y) * z = x * y * z"; ];;
 
 // 4 equations and 8 pending critical pairs + 0 deferred
 // 5 equations and 12 pending critical pairs + 0 deferred
@@ -831,7 +850,10 @@ complete_and_simplify ["1"; "*"; "i"] eqs006;;
 //           Fn ("*",[Var "x"; Fn ("*",[Var "y"; Var "z"])])]));
 //    Atom (R ("=",[Fn ("*",[Fn ("1",[]); Var "x"]); Var "x"]));
 //    Atom (R ("=",[Fn ("*",[Fn ("i",[Var "x"]); Var "x"]); Fn ("1",[])]))]
-let eqs007 = [(parse "(x * y) * z = x * y * z"); (parse "1 * x = x"); (parse "i(x) * x = 1")];;
+let eqs007 = [
+    parse "(x * y) * z = x * y * z";
+    parse "1 * x = x";
+    parse "i(x) * x = 1"; ];;
 
 // 4 equations and 8 pending critical pairs + 0 deferred
 // 5 equations and 12 pending critical pairs + 0 deferred
@@ -1069,31 +1091,39 @@ complete_and_simplify ["1"; "i"; "*"] eqs008;;
 // Group theory III, with right inverse and identity (K&B example 3).        //
 // ------------------------------------------------------------------------- //
 
-let eqs009 = [(parse "(x * y) * z = x * y * z"); (parse "x * 1 = x"); (parse "x * i(x) = 1")];;
+let eqs009 = [
+    parse "(x * y) * z = x * y * z";
+    parse "x * 1 = x";
+    parse "x * i(x) = 1"; ];;
 complete_and_simplify ["1"; "*"; "i"] eqs009;;
 
 // ------------------------------------------------------------------------- //
 // Inverse property (K&B example 4).                                         //
 // ------------------------------------------------------------------------- //
 
-let eqs010 =  [(parse "i(a) * (a * b) = b")];;
+let eqs010 =  [parse "i(a) * (a * b) = b"];;
 complete_and_simplify ["1"; "*"; "i"] eqs010;;
 
-let eqs011 =  [(parse "a * (i(a) * b) = b")];;
+let eqs011 =  [parse "a * (i(a) * b) = b"];;
 complete_and_simplify ["1"; "*"; "i"] eqs011;;
 
 // ------------------------------------------------------------------------- //
 // Group theory IV (K&B example 5).                                          //
 // ------------------------------------------------------------------------- //
 
-let eqs012 = [(parse "(x * y) * z = x * y * z"); (parse "1 * x = x"); (parse "11 * x = x"); (parse "i(x) * x = 1"); (parse "j(x) * x = 11")];;
+let eqs012 = [
+    parse "(x * y) * z = x * y * z";
+    parse "1 * x = x";
+    parse "11 * x = x";
+    parse "i(x) * x = 1";
+    parse "j(x) * x = 11"; ];;
 complete_and_simplify ["1"; "11"; "*"; "i"; "j"] eqs012;;
 
 // ------------------------------------------------------------------------- //
 // Central groupoids (K&B example 6).                                        //
 // ------------------------------------------------------------------------- //
 
-let eqs013 =  [(parse "(a * b) * (b * c) = b")];;
+let eqs013 =  [parse "(a * b) * (b * c) = b"];;
 complete_and_simplify ["*"] eqs013;;
 
 // ------------------------------------------------------------------------- //
@@ -1105,7 +1135,10 @@ let eqs014 =  [(parse "f(a,f(b,c,a),d) = c")];;
 complete_and_simplify ["f"] eqs014;;
 ************)
 
-let eqs015 =  [(parse "f(a,f(b,c,a),d) = c"); (parse "f(a,b,c) = g(a,b)"); (parse "g(a,b) = h(b)")];;
+let eqs015 =  [
+    parse "f(a,f(b,c,a),d) = c";
+    parse "f(a,b,c) = g(a,b)";
+    parse "g(a,b) = h(b)"; ];;
 complete_and_simplify ["h"; "g"; "f"] eqs015;;
 
 // ------------------------------------------------------------------------- //
@@ -1121,10 +1154,16 @@ complete_and_simplify ["*"] eqs016;;
 // The cancellation law (K&B example 9).                                     //
 // ------------------------------------------------------------------------- //
 
-let eqs017 =  [(parse "f(a,a*b) = b"); (parse "g(a*b,b) = a")];;
+let eqs017 = [
+    parse "f(a,a*b) = b";
+    parse "g(a*b,b) = a"; ];;
 complete_and_simplify ["*"; "f"; "g"] eqs017;;
 
-let eqs018 = [(parse "f(a,a*b) = b"); (parse "g(a*b,b) = a"); (parse "1 * a = a"); (parse "a * 1 = a")];;
+let eqs018 = [
+    parse "f(a,a*b) = b";
+    parse "g(a*b,b) = a";
+    parse "1 * a = a";
+    parse "a * 1 = a"; ];;
 complete_and_simplify ["1"; "*"; "f"; "g"] eqs018;;
 
 (*** Just for fun; these aren't tried by Knuth and Bendix
@@ -1142,10 +1181,20 @@ complete_and_simplify ["f"; "g"; "*"] eqs020;;
 // Loops (K&B example 10).                                                   //
 // ------------------------------------------------------------------------- //
 
-let eqs021 = [(parse "a * \(a,b) = b"); (parse "/(a,b) * b = a"); (parse "1 * a = a"); (parse "a * 1 = a")];;
+let eqs021 = [
+    parse "a * \(a,b) = b";
+    parse "/(a,b) * b = a";
+    parse "1 * a = a";
+    parse "a * 1 = a"; ];;
 complete_and_simplify ["1"; "*"; "\\"; "/"] eqs021;;
 
-let eqs022 = [(parse "a * \(a,b) = b"); (parse "/(a,b) * b = a"); (parse "1 * a = a"); (parse "a * 1 = a"); (parse "f(a,a*b) = b"); (parse "g(a*b,b) = a")];;
+let eqs022 = [
+    parse "a * \(a,b) = b";
+    parse "/(a,b) * b = a";
+    parse "1 * a = a";
+    parse "a * 1 = a";
+    parse "f(a,a*b) = b";
+    parse "g(a*b,b) = a"; ];;
 complete_and_simplify ["1"; "*"; "\\"; "/"; "f"; "g"] eqs022;;
 
 // ------------------------------------------------------------------------- //
@@ -1180,7 +1229,10 @@ complete_and_simplify ["1"; "*"; "i"] eqs024;;
  **** some additional hacks.
  ****)
 
-let eqs025 = [(parse "(x * y) * z = x * y * z"); (parse "x * 1 = x"); (parse "i(x) * x = 1")];;
+let eqs025 = [
+    parse "(x * y) * z = x * y * z";
+    parse "x * 1 = x";
+    parse "i(x) * x = 1"; ];;
 complete_and_simplify ["1"; "*"; "i"] eqs025;;
 
 // ------------------------------------------------------------------------- //
@@ -1213,11 +1265,11 @@ complete_and_simplify ["1"; "star"; "*"; "hash"; "dollar"] eqs029;;
 // Central groupoids II. (K&B example 16).                                   //
 // ------------------------------------------------------------------------- //
 
-let eqs030 =
- [(parse "(a * a) * a = one(a)");
-  (parse "a * (a * a) = two(a)");
-  (parse "(a * b) * (b * c) = b");
-  (parse "two(a) * b = a * b")];;
+let eqs030 = [
+    parse "(a * a) * a = one(a)";
+    parse "a * (a * a) = two(a)";
+    parse "(a * b) * (b * c) = b";
+    parse "two(a) * b = a * b"; ];;
 
 complete_and_simplify ["one"; "two"; "*"] eqs030;;
 
@@ -1240,7 +1292,9 @@ complete_and_simplify ["*"; "one"; "two"] eqs031;;
 // Simply congruence closure.                                                //
 // ------------------------------------------------------------------------- //
 
-let eqs032 =  [(parse "f(f(f(f(f(1))))) = 1"); (parse "f(f(f(1))) = 1")];;
+let eqs032 = [
+    parse "f(f(f(f(f(1))))) = 1";
+    parse "f(f(f(1))) = 1"; ];;
 
 complete_and_simplify ["1"; "f"] eqs032;;
 
@@ -1271,7 +1325,7 @@ complete_and_simplify ["*"; "i"] eqs035;;
 // A rather simple example from Baader & Nipkow, p. 141.                     //
 // ------------------------------------------------------------------------- //
 
-let eqs036 =  [(parse "f(f(x)) = g(x)")];;
+let eqs036 =  [parse "f(f(x)) = g(x)"];;
 complete_and_simplify ["g"; "f"] eqs036;;
 
 let eqs1,def1,crits1 = funpow 122 (complete1 ord) (eqs036,def,crits);;
@@ -1281,29 +1335,29 @@ let eqs2,def2,crits2 = funpow 123 (complete1 ord) (eqs036,def,crits);;
 // Some of the exercises (these are taken from Baader & Nipkow).             //
 // ------------------------------------------------------------------------- //
 
-let eqs037 =
- [(parse "f(f(x)) = f(x)");
-  (parse "g(g(x)) = f(x)");
-  (parse "f(g(x)) = g(x)");
-  (parse "g(f(x)) = f(x)")];;
+let eqs037 = [
+    parse "f(f(x)) = f(x)";
+    parse "g(g(x)) = f(x)";
+    parse "f(g(x)) = g(x)";
+    parse "g(f(x)) = f(x)"; ];;
 complete_and_simplify ["f"; "g"] eqs037;;
 
-let eqs038 =  [(parse "f(g(f(x))) = g(x)")];;
+let eqs038 =  [parse "f(g(f(x))) = g(x)"];;
 complete_and_simplify ["f"; "g"] eqs038;;
 
 // ------------------------------------------------------------------------- //
 // Inductive theorem proving example.                                        //
 // ------------------------------------------------------------------------- //
 
-let eqs039 =
- [(parse "0 + y = y");
-  (parse "SUC(x) + y = SUC(x + y)");
-  (parse "append(nil,l) = l");
-  (parse "append(h::t,l) = h::append(t,l)");
-  (parse "length(nil) = 0");
-  (parse "length(h::t) = SUC(length(t))");
-  (parse "rev(nil) = nil");
-  (parse "rev(h::t) = append(rev(t),h::nil)")];;
+let eqs039 = [
+    parse "0 + y = y";
+    parse "SUC(x) + y = SUC(x + y)";
+    parse "append(nil,l) = l";
+    parse "append(h::t,l) = h::append(t,l)";
+    parse "length(nil) = 0";
+    parse "length(h::t) = SUC(length(t))";
+    parse "rev(nil) = nil";
+    parse "rev(h::t) = append(rev(t),h::nil)"; ];;
 complete_and_simplify
    ["0"; "nil"; "SUC"; "::"; "+"; "length"; "append"; "rev"] eqs039;;
 
@@ -1324,14 +1378,16 @@ iprove [] (parse "append(append(x,y),z) = append(x,append(y,z))");;
 
 iprove [] (parse "append(x,nil) = x");;
 
-iprove [(parse "append(append(x,y),z) = append(x,append(y,z))");
-        (parse "append(x,nil) = x")]
-        (parse "rev(append(x,y)) = append(rev(y),rev(x))");;
+iprove [
+    parse "append(append(x,y),z) = append(x,append(y,z))";
+    parse "append(x,nil) = x"; ]
+    (parse "rev(append(x,y)) = append(rev(y),rev(x))");;
 
-iprove [(parse "rev(append(x,y)) = append(rev(y),rev(x))");
-        (parse "append(x,nil) = x");
-        (parse "append(append(x,y),z) = append(x,append(y,z))")]
-        (parse "rev(rev(x)) = x");;
+iprove [
+    parse "rev(append(x,y)) = append(rev(y),rev(x))";
+    parse "append(x,nil) = x";
+    parse "append(append(x,y),z) = append(x,append(y,z))"; ]
+    (parse "rev(rev(x)) = x");;
 
 // ------------------------------------------------------------------------- //
 // Here it's not immediately so obvious since we get extra equs.             //

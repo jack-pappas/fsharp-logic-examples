@@ -65,7 +65,7 @@ let ewd1062_1 = lcffol (parse "(forall x. x <= x) /\ (forall x y z. x <= y /\ y 
 //  More exhaustive set of tests not in the main text.                        // 
 //  ------------------------------------------------------------------------- // 
 
-let start_time = System.DateTime.Now;;;
+let timer = System.Diagnostics.Stopwatch.StartNew ();;
 
 let p001 = time lcftaut (parse "p ==> q <=> ~q ==> ~p");;
 
@@ -225,7 +225,7 @@ let ewd1062_1_t = time lcffol (parse "(forall x. x <= x) /\ (forall x y z. x <= 
 
 let ewd1062_2 = time lcffol (parse "(forall x. x <= x) /\ (forall x y z. x <= y /\ y <= z ==> x <= z) /\ (forall x y. f(x) <= y <=> x <= g(y)) ==> (forall x y. x <= y ==> g(x) <= g(y))");;
 
-let finish_time = System.DateTime.Now;
-let length_time = finish_time.Subtract(start_time);;
-printfn "Complete CPU time (user): %O" length_time;;
+do
+    timer.Stop ()
+    printfn "Complete CPU time (user): %O" timer.Elapsed;;
 

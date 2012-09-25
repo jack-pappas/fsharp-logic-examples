@@ -34,11 +34,11 @@ open Reasoning.Automated.Harrison.Handbook.equal
 
 // (parse "forall x1 x2 x3 y1 y2 y3. x1 =y1 /\ x2 =y2 /\ x3 =y3 ==> f(x1,x2,x3) =f(y1,y2,y3)")
 // val it : unit = ()
-print_fol_formula_list (function_congruence ("f",3));;
+print_fol_formula_list (function_congruence ("f", 3));;
 
 // (parse "forall x1 x2 y1 y2. x1 =y1 /\ x2 =y2 ==> x1 +x2 =y1 +y2")
 // val it : unit = ()
-print_fol_formula_list (function_congruence ("+",2));;
+print_fol_formula_list (function_congruence ("+", 2));;
 
 // pg. 241
 // ------------------------------------------------------------------------- //
@@ -161,7 +161,9 @@ meson002 ewd;;
 //                  Imp
 //                    (Atom (R ("=",[Var "y'"; Fn ("g",[Fn ("f",[Var "y'"])])])),
 //                     Atom (R ("=",[Var "y"; Var "y'"]))))))))
-let wishnu = equalitize (parse "(exists x. x = f(g(x)) /\ forall x'. x' = f(g(x')) ==> x = x') <=> (exists y. y = g(f(y)) /\ forall y'. y' = g(f(y')) ==> y = y')");;
+let wishnu =
+    equalitize (parse
+        "(exists x. x = f(g(x)) /\ forall x'. x' = f(g(x')) ==> x = x') <=> (exists y. y = g(f(y)) /\ forall y'. y' = g(f(y')) ==> y = y')");;
 
 // Searching with depth limit 0
 // Searching with depth limit 1
@@ -208,7 +210,8 @@ time meson002 wishnu;;
 
 //********
 
-(meson002 >>|> equalitize) (parse "(forall x y z. x * (y * z) = (x * y) * z) /\ (forall x. 1 * x = x) /\ (forall x. i(x) * x = 1) ==> forall x. x * i(x) = 1");;
+(meson002 >>|> equalitize) (parse
+    "(forall x y z. x * (y * z) = (x * y) * z) /\ (forall x. 1 * x = x) /\ (forall x. i(x) * x = 1) ==> forall x. x * i(x) = 1");;
 
 // *******//
 

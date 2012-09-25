@@ -33,5 +33,6 @@ open Reasoning.Automated.Harrison.Handbook.skolems
 //       Atom
 //         (R ("=",
 //             [Fn ("old_+",[Var "x"; Fn ("old_1",[])]); Fn ("f_y",[Var "x"])])))]
-skolemizes [(parse "exists x y. x + y = 2");
-            (parse "forall x. exists y. x + 1 = y")];;
+skolemizes [
+    parse "exists x y. x + y = 2";
+    parse "forall x. exists y. x + 1 = y"; ];;

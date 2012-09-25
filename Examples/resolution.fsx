@@ -36,21 +36,27 @@ simpcnf(skolemize(Not barb));;
 // Simple example that works well.                                           //
 // ------------------------------------------------------------------------- //
 
-let davis_putnam_example001 = resolution001 (parse "exists x. exists y. forall z. (F(x,y) ==> (F(y,z) /\ F(z,z))) /\ ((F(x,y) /\ G(x,y)) ==> (G(x,z) /\ G(z,z)))");;
+let davis_putnam_example001 =
+    resolution001 (parse
+        "exists x. exists y. forall z. (F(x,y) ==> (F(y,z) /\ F(z,z))) /\ ((F(x,y) /\ G(x,y)) ==> (G(x,z) /\ G(z,z)))");;
 
 // pg. 192
 // ------------------------------------------------------------------------- //
 // This is now a lot quicker.                                                //
 // ------------------------------------------------------------------------- //
 
-let davis_putnam_example002 = resolution002 (parse "exists x. exists y. forall z. (F(x,y) ==> (F(y,z) /\ F(z,z))) /\((F(x,y) /\ G(x,y)) ==> (G(x,z) /\ G(z,z)))");;
+let davis_putnam_example002 =
+    resolution002 (parse
+        "exists x. exists y. forall z. (F(x,y) ==> (F(y,z) /\ F(z,z))) /\((F(x,y) /\ G(x,y)) ==> (G(x,z) /\ G(z,z)))");;
 
 // pg. 198
 // ------------------------------------------------------------------------- //
 // Example: the (in)famous Los problem.                                      //
 // ------------------------------------------------------------------------- //
 
-let los = time presolution (parse "(forall x y z. P(x,y) ==> P(y,z) ==> P(x,z)) /\ (forall x y z. Q(x,y) ==> Q(y,z) ==> Q(x,z)) /\ (forall x y. Q(x,y) ==> Q(y,x)) /\ (forall x y. P(x,y) \/ Q(x,y)) ==> (forall x y. P(x,y)) \/ (forall x y. Q(x,y))");;
+let los =
+    time presolution (parse
+        "(forall x y z. P(x,y) ==> P(y,z) ==> P(x,z)) /\ (forall x y z. Q(x,y) ==> Q(y,z) ==> Q(x,z)) /\ (forall x y. Q(x,y) ==> Q(y,x)) /\ (forall x y. P(x,y) \/ Q(x,y)) ==> (forall x y. P(x,y)) \/ (forall x y. Q(x,y))");;
 
 // ------------------------------------------------------------------------- //
 // The Pelletier examples again.                                             //

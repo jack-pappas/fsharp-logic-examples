@@ -20,9 +20,9 @@ let fm001 = parse_prop_formula "p ==> q <=> r /\ s \/ (t <=> ~ ~u /\ v)";;
 print_prop_formula fm001;;
 
 // pg. 30
-print_prop_formula (And(fm001,fm001));;
+print_prop_formula (And (fm001, fm001));;
 
-print_prop_formula (And(Or(fm001,fm001),fm001));;
+print_prop_formula (And (Or (fm001, fm001), fm001));;
 
 // pg. 33
 false && false;;
@@ -38,9 +38,17 @@ true && true;;
 // Example of use.                                                           //
 // ------------------------------------------------------------------------- //
 
-eval (parse_prop_formula "p /\ q ==> q /\ r") (function | P"p" -> true | P"q" -> false | P"r" -> true | _ -> failwith "Invalid property name");;
+eval (parse_prop_formula "p /\ q ==> q /\ r") <| function
+    | P "p" -> true
+    | P "q" -> false
+    | P "r" -> true
+    | _ -> failwith "Invalid property name";;
 
-eval (parse_prop_formula "p /\ q ==> q /\ r") (function | P"p" -> true | P"q" -> true | P"r" -> false | _ -> failwith "Invalid property name");;
+eval (parse_prop_formula "p /\ q ==> q /\ r") <| function
+    | P "p" -> true
+    | P "q" -> true
+    | P "r" -> false
+    | _ -> failwith "Invalid property name";;
 
 // pg. 35
 // ------------------------------------------------------------------------- //
@@ -112,28 +120,28 @@ tautology (parse_prop_formula "(p ==> q) <=> (q ==> p)");;
 // Some logical equivalences allowing elimination of connectives.            //
 // ------------------------------------------------------------------------- //
 
-List.forall tautology
-    [(parse_prop_formula "true <=> false ==> false");
-    (parse_prop_formula "~p <=> p ==> false");
-    (parse_prop_formula "p /\ q <=> (p ==> q ==> false) ==> false");
-    (parse_prop_formula "p \/ q <=> (p ==> false) ==> q");
-    (parse_prop_formula "(p <=> q) <=> ((p ==> q) ==> (q ==> p) ==> false) ==> false")];;
+List.forall tautology [
+    parse_prop_formula "true <=> false ==> false";
+    parse_prop_formula "~p <=> p ==> false";
+    parse_prop_formula "p /\ q <=> (p ==> q ==> false) ==> false";
+    parse_prop_formula "p \/ q <=> (p ==> false) ==> q";
+    parse_prop_formula "(p <=> q) <=> ((p ==> q) ==> (q ==> p) ==> false) ==> false"; ];;
 
 // pg. 49.
 // ------------------------------------------------------------------------- //
 // Example.                                                                  //
 // ------------------------------------------------------------------------- //
 
-print_prop_formula (dual (parse_prop_formula ("p \/ ~p")));;
+print_prop_formula (dual (parse_prop_formula "p \/ ~p"));;
 
 // pg. 51
 // ------------------------------------------------------------------------- //
 // Example.                                                                  //
 // ------------------------------------------------------------------------- //
 
-print_prop_formula (psimplify (parse_prop_formula ("(true ==> (x <=> false)) ==> ~(y \/ false /\ z)")));;
+print_prop_formula (psimplify (parse_prop_formula "(true ==> (x <=> false)) ==> ~(y \/ false /\ z)"));;
 
-print_prop_formula (psimplify (parse_prop_formula ("((x ==> y) ==> true) \/ ~false")));;
+print_prop_formula (psimplify (parse_prop_formula "((x ==> y) ==> true) \/ ~false"));;
 
 // pg. 53
 // ------------------------------------------------------------------------- //
