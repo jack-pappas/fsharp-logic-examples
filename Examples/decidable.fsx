@@ -321,8 +321,8 @@ print_fol_formula_list all_valid_syllogisms'
 // val it : int = 24
 List.length all_valid_syllogisms'
 
-// Error: Expecting a type supporting the operator 'Pow' but given a function type. You may be missing an argument to a function.
-//List.map (anglicize_syllogism ** consequent) all_valid_syllogisms'
+//
+List.map (anglicize_syllogism >>|> consequent) all_valid_syllogisms'
 
 // pg. 323
 // ------------------------------------------------------------------------- //

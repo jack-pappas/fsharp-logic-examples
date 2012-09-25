@@ -148,7 +148,7 @@ prove
 let lemma (s,p) (Goals((asl,w)::gls,jfn) as gl) =
     Goals((asl,p)::((s,p)::asl,w)::gls,
         fun (thp::thw::oths) ->
-            jfn(imp_unduplicate(imp_trans thp (shunt thw)) :: oths)) in
+            jfn(imp_unduplicate(imp_trans thp (shunt thw)) :: oths))
 prove
     (parse "(exists x. p(x)) ==> (forall x. p(x) ==> p(f(x))) ==> exists y. p(f(f(f(f(y)))))")
     [assume ["A",(parse "exists x. p(x)")];
