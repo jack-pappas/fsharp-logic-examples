@@ -15,9 +15,12 @@ module resolution =
     open unif
     open tableaux
 
+// pg. 180
 // ========================================================================= //
 // Resolution.                                                               //
 // ========================================================================= //
+
+    let barb = parse "~(exists b. forall x. shaves(b,x) <=> ~shaves(x,x))"
 
 // pg. 183
 // ------------------------------------------------------------------------- //
@@ -98,17 +101,6 @@ module resolution =
 // ------------------------------------------------------------------------- //
 // Matching of terms and literals.                                           //
 // ------------------------------------------------------------------------- //
-
-//let rec term_match env eqs =
-//  match eqs with
-//    [] -> env
-//  | (Fn(f,fa),Fn(g,ga))::oth when f = g & length fa = length ga ->
-//        term_match env (zip fa ga @ oth)
-//  | (Var x,t)::oth ->
-//        if not (defined env x) then term_match ((x |-> t) env) oth
-//        else if apply env x = t then term_match env oth
-//        else failwith "term_match"
-//  | _ -> failwith "term_match";;
 
     let rec term_match env eqs =
         match eqs with
@@ -228,6 +220,6 @@ module resolution =
     let pure_resolution fm =
         resloop002 (List.partition (List.exists positive) (simpcnf (specialize (pnf fm))))
 
-    let resolution fm =
+    let resolution003 fm =
         let fm1 = askolemize (Not (generalize fm))
         List.map (pure_resolution >>|> list_conj) (simpdnf fm1)
