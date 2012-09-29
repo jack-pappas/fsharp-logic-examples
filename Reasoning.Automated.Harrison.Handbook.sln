@@ -47,7 +47,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Examples", "Examples", "{F3
 		Examples\unif.fsx = Examples\unif.fsx
 	EndProjectSection
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "FSharpx.Compatibility.OCaml", "FSharpx.Compatibility.OCaml\FSharpx.Compatibility.OCaml.fsproj", "{DFE5F3B6-2BFB-46FC-A315-B3A841B3E566}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{2D15CC03-9404-4759-BF38-39159F3D85CD}"
+	ProjectSection(SolutionItems) = preProject
+		.nuget\NuGet.Config = .nuget\NuGet.Config
+		.nuget\NuGet.exe = .nuget\NuGet.exe
+		.nuget\NuGet.targets = .nuget\NuGet.targets
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -69,16 +74,6 @@ Global
 		{CF42D6D9-75FD-4B6F-81CA-6DB9CB2231A3}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{CF42D6D9-75FD-4B6F-81CA-6DB9CB2231A3}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{CF42D6D9-75FD-4B6F-81CA-6DB9CB2231A3}.Release|x86.ActiveCfg = Release|Any CPU
-		{DFE5F3B6-2BFB-46FC-A315-B3A841B3E566}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{DFE5F3B6-2BFB-46FC-A315-B3A841B3E566}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{DFE5F3B6-2BFB-46FC-A315-B3A841B3E566}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{DFE5F3B6-2BFB-46FC-A315-B3A841B3E566}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{DFE5F3B6-2BFB-46FC-A315-B3A841B3E566}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{DFE5F3B6-2BFB-46FC-A315-B3A841B3E566}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{DFE5F3B6-2BFB-46FC-A315-B3A841B3E566}.Release|Any CPU.Build.0 = Release|Any CPU
-		{DFE5F3B6-2BFB-46FC-A315-B3A841B3E566}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{DFE5F3B6-2BFB-46FC-A315-B3A841B3E566}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{DFE5F3B6-2BFB-46FC-A315-B3A841B3E566}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
