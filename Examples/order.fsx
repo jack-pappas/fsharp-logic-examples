@@ -33,19 +33,14 @@ open Reasoning.Automated.Harrison.Handbook.order
 // This fails the rewrite properties.                                        //
 // ------------------------------------------------------------------------- //
 
-// val s : Reasoning.Automated.Harrison.Handbook.folMod.term =
-//   Fn ("f",[Var "x"; Var "x"; Var "x"])
 let s = parset "f(x,x,x)";;
+print_term 0 s;;
 
-// val t : term = Fn ("g",[Var "x"; Var "y"])
 let t = parset "g(x,y)";;
+print_term 0 t;;
 
-// val it : bool = true
 termsize s > termsize t;;
 
-// val i : func<string,term> =
-//   Leaf (-842352681,[("y", Fn ("f",[Var "x"; Var "x"; Var "x"]))])
 let i = "y" |=> parset "f(x,x,x)";;
 
-// val it : bool = false
 termsize (tsubst i s) > termsize (tsubst i t);;
