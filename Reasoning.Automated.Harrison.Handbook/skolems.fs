@@ -14,7 +14,6 @@ module skolems =
 // Illustration of Skolemizing a set of formulas                             //
 // ========================================================================= //
 
-    // TODO : Optimize using continuation-passing style.
     let rec rename_term tm =
         match tm with
         | Fn (f, args) ->
@@ -34,6 +33,3 @@ module skolems =
 
     let skolemizes fms =
         fst <| skolems fms []
-
-
-
