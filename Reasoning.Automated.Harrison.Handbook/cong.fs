@@ -12,7 +12,7 @@ module cong =
     open folMod
     open skolem
     open equal
-//
+
 // pg. 249
 // ========================================================================= //
 // Simple congruence closure.                                                //
