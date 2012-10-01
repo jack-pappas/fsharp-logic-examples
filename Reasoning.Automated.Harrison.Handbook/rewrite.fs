@@ -15,7 +15,7 @@ module rewrite =
 // ========================================================================= //
 // Rewriting.                                                                //
 // ========================================================================= //
-//
+
 // pg. 262
 // ------------------------------------------------------------------------- //
 // Rewriting at the top level with first of list of equations.               //
@@ -35,7 +35,6 @@ module rewrite =
 // Rewriting repeatedly and at depth (top-down).                             //
 // ------------------------------------------------------------------------- //
 
-    // TODO : Optimize using continuation-passing style.
     let rec rewrite eqs tm =
         try rewrite eqs (rewrite1 eqs tm)
         with _ ->
@@ -50,10 +49,10 @@ module rewrite =
 // Note that ML doesn't accept nonlinear patterns.                           //
 // ------------------------------------------------------------------------- //
 //
-//********** Point being that CAML doesn't accept nonlinear patterns
+// ********** Point being that CAML doesn't accept nonlinear patterns
 //
 //function (x,x) -> 0
 //
 // *********** Actually fun x x -> 0 works, but the xs seem to be
 // *********** considered distinct
-// *********//
+
