@@ -370,27 +370,17 @@ module lib =
 // Find list member that maximizes or minimizes a function.                  //
 // ------------------------------------------------------------------------- //
 
-    // pg. ???
-    // OCaml: val optimize : ('a -> 'a -> bool) -> ('b -> 'a) -> 'b list -> 'b =  <fun>
-    // F#:    val optimize : ('a -> 'a -> bool) -> ('b -> 'a) -> 'b list -> 'b
-    let optimize ord f lst =
-        lst
-        |> List.map (fun x -> x, f x)
-        |> end_itlist (fun (_, y1 as p1) (_, y2 as p2) ->
-            if ord y1 y2 then p1 else p2)
-        |> fst
-                        
     // pg. 620
     // OCaml: val maximize : ('a -> 'b) -> 'a list -> 'a = <fun>
     // F#:    val maximize : ('a -> 'b) -> 'a list -> 'a when 'b : comparison
-    let maximize f l =
-        optimize (>) f l
+    let inline maximize f l =
+        List.maxBy f l
     
     // pg. 620
     // OCaml: val minimize : ('a -> 'b) -> 'a list -> 'a = <fun>
     // F#:    val minimize : ('a -> 'b) -> 'a list -> 'a when 'b : comparison
-    let minimize f l =
-        optimize (<) f l
+    let inline minimize f l =
+        List.minBy f l
 
 // ------------------------------------------------------------------------- //
 // Set operations on ordered lists.                                          //
@@ -419,21 +409,24 @@ module lib =
     // TODO: Use Set.union
     // F#:    val union : Set<'T> -> Set<'T> -> Set<'T> (requires comparison)
     let union =
-        let rec union l1 l2 =
+        let rec union l1 l2 cont =
             match l1, l2 with
-            | [], l2 -> l2
-            | l1, [] -> l1
+            | [], l2 ->
+                cont l2
+            | l1, [] ->
+                cont l1
             | (h1 :: t1 as l1), (h2 :: t2 as l2) ->
-                // TODO : The first two cases here can be simplified
-                // by using the (<=) to test both cases at once.
                 if h1 = h2 then
-                    h1 :: (union t1 t2)
+                    union t1 t2 <| fun lst ->
+                        cont (h1 :: lst)
                 elif h1 < h2 then
-                    h1 :: (union t1 l2)
+                    union t1 l2 <| fun lst ->
+                        cont (h1 :: lst)
                 else
-                    h2 :: (union l1 t2)
+                    union l1 t2 <| fun lst ->
+                        cont (h2 :: lst)
         fun s1 s2 ->
-            union (setify s1) (setify s2)
+            union (setify s1) (setify s2) id
         
     // pg. 620
     // OCaml: val intersect : 'a list -> 'a list -> 'a list = <fun>
@@ -441,19 +434,21 @@ module lib =
     // TODO: Use Set.intersect
     // F#:    val intersect : Set<'T> -> Set<'T> -> Set<'T> (requires comparison)
     let intersect =
-        let rec intersect l1 l2 =
+        let rec intersect l1 l2 cont =
             match l1, l2 with
-            | [], l2 -> []
-            | l1, [] -> []
+            | [], _
+            | _, [] ->
+                cont []
             | (h1 :: t1 as l1), (h2 :: t2 as l2) ->
                 if h1 = h2 then
-                    h1 :: (intersect t1 t2)
+                    intersect t1 t2 <| fun lst ->
+                        cont (h1 :: lst)
                 elif h1 < h2 then
-                    intersect t1 l2
+                    intersect t1 l2 cont
                 else
-                    intersect l1 t2
+                    intersect l1 t2 cont
         fun s1 s2 ->
-            intersect (setify s1) (setify s2)
+            intersect (setify s1) (setify s2) id
         
     // pg. 620
     // OCaml: val subtract : 'a list -> 'a list -> 'a list = <fun>
@@ -461,44 +456,51 @@ module lib =
     // TODO: Use Set.Difference or (l1 - l2)
     // F#:    val difference : Set<'T> -> Set<'T> -> Set<'T> (requires comparison)
     let subtract =
-        let rec subtract l1 l2 =
+        let rec subtract l1 l2 cont =
             match l1, l2 with
-            | [], l2 -> []
-            | l1, [] -> l1
+            | [], _ ->
+                cont []
+            | l1, [] ->
+                cont l1
             | (h1 :: t1 as l1), (h2 :: t2 as l2) ->
                 if h1 = h2 then
-                    subtract t1 t2
+                    subtract t1 t2 cont
                 elif h1 < h2 then
-                    h1 :: (subtract t1 l2)
+                    subtract t1 l2 <| fun lst ->
+                        cont (h1 :: lst)
                 else
-                    subtract l1 t2
+                    subtract l1 t2 cont
         fun s1 s2 ->
-            subtract (setify s1) (setify s2)
+            subtract (setify s1) (setify s2) id
+
+    let rec private subsetImpl l1 l2 =
+        match l1, l2 with
+        | [], l2 -> true
+        | l1, [] -> false
+        | h1 :: t1, h2 :: t2 ->
+            if h1 = h2 then subsetImpl t1 t2
+            elif h1 < h2 then false
+            else subsetImpl l1 t2
+
+    let rec private psubsetImpl l1 l2 =
+        match l1, l2 with
+        | l1, [] -> false
+        | [], l2 -> true
+        | h1 :: t1, h2 :: t2 ->
+            if h1 = h2 then psubsetImpl t1 t2
+            elif h1 < h2 then false
+            else subsetImpl l1 t2
         
     // pg. 620
     // OCaml: val subset : 'a list -> 'a list -> bool = <fun>
     // F#:    val subset : 'a list -> 'a list -> bool when 'a : comparison
+    let subset s1 s2 =
+        subsetImpl (setify s1) (setify s2)
+
     // OCaml: val psubset : 'a list -> 'a list -> bool = <fun>
     // F#:    val psubset : ('b list -> 'b list -> bool) when 'b : comparison
-    let subset,psubset =
-        let rec subset l1 l2 =
-            match l1, l2 with
-            | [], l2 -> true
-            | l1, [] -> false
-            | h1 :: t1, h2 :: t2 ->
-                if h1 = h2 then subset t1 t2
-                elif h1 < h2 then false
-                else subset l1 t2
-        and psubset l1 l2 =
-            match l1, l2 with
-            | l1, [] -> false
-            | [], l2 -> true
-            | h1 :: t1, h2 :: t2 ->
-                if h1 = h2 then psubset t1 t2
-                elif h1 < h2 then false
-                else subset l1 t2
-        (fun s1 s2 -> subset (setify s1) (setify s2)),
-        (fun s1 s2 -> psubset (setify s1) (setify s2))
+    let psubset s1 s2 =
+        psubsetImpl (setify s1) (setify s2)
 
     // pg. 620
     // OCaml: val set_eq : 'a list -> 'a list -> bool = <fun>
@@ -956,23 +958,27 @@ module lib =
     // F#:    val ( |-> ) : ('a -> 'b -> func<'a,'b>   -> func<'a,'b>) when 'a : comparison
     let (|->) x y =
         let k = hash x
-        let rec upd t =
+        let rec upd t cont =
             match t with
             | Empty ->
-                Leaf (k, [x, y])
+                cont (Leaf (k, [x, y]))
             | Leaf (h, l) ->
                 if h = k then
-                    Leaf (h, define_list (x, y) l)
+                    cont (Leaf (h, define_list (x, y) l))
                 else
-                    newbranch h t k (Leaf (k, [x, y]))
+                    cont (newbranch h t k (Leaf (k, [x, y])))
             | Branch (p, b, l, r) ->
                 if k &&& (b - 1) <> p then
-                    newbranch p t k (Leaf (k, [x, y]))
+                    cont (newbranch p t k (Leaf (k, [x, y])))
                 elif k &&& b = 0 then
-                    Branch (p, b, upd l, r)
+                    upd l <| fun upd_l ->
+                        cont (Branch (p, b, upd_l, r))
                 else
-                    Branch (p, b, l, upd r)
-        upd
+                    upd r <| fun upd_r ->
+                        cont (Branch (p, b, l, upd_r))
+
+        fun t ->
+            upd t id
 
     //
     let rec private combineImpl op z t1 t2 cont =
