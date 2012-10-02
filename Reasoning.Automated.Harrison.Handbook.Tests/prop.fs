@@ -49,7 +49,7 @@ module prop =
     [<TestCase("p \/ q ==> p", Result=false)>]
     [<TestCase("p \/ q ==> q \/ (p <=> q)", Result=false)>]
     [<TestCase("(p \/ q) /\ ~(p /\ q) ==> (~p <=> q)", Result=true)>]
-    let ``test tautologies`` formula  =
+    let ``test tautology`` formula  =
         tautology (parse_prop_formula formula)
 
     // pg. 43
@@ -63,7 +63,7 @@ module prop =
     [<TestCase("(p ==> q) <=> (~q ==> ~p)", Result=true)>]
     [<TestCase("(p ==> ~q) <=> (q ==> ~p)", Result=true)>]
     [<TestCase("(p ==> q) <=> (q ==> p)", Result=false)>]
-    let ``test surprising tautologies`` formula =
+    let ``test surprising tautology`` formula =
         tautology (parse_prop_formula formula)
 
     // pg. 47
@@ -100,7 +100,7 @@ module prop =
 
     [<TestCase("(p ==> p') /\ (q ==> q') ==> (p /\ q ==> p' /\ q')", Result=true)>]
     [<TestCase("(p ==> p') /\ (q ==> q') ==> (p \/ q ==> p' \/ q')", Result=true)>]
-    let ``test remarked tautologies`` formula  =
+    let ``test remarked tautology`` formula  =
         tautology (parse_prop_formula formula)
 
     // pg. 58
