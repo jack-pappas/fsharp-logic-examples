@@ -17,6 +17,13 @@ open Reasoning.Automated.Harrison.Handbook.prop
 //open Reasoning.Automated.Harrison.Handbook.bdd
 open Reasoning.Automated.Harrison.Handbook.folMod
 open Reasoning.Automated.Harrison.Handbook.skolem
+//open Reasoning.Automated.Harrison.Handbook.herbrand
+//open Reasoning.Automated.Harrison.Handbook.unif
+open Reasoning.Automated.Harrison.Handbook.tableaux
+//open Reasoning.Automated.Harrison.Handbook.resolution
+open Reasoning.Automated.Harrison.Handbook.prolog
+open Reasoning.Automated.Harrison.Handbook.meson
+open Reasoning.Automated.Harrison.Handbook.skolem
 
 // pg. 140
 // ------------------------------------------------------------------------- //
