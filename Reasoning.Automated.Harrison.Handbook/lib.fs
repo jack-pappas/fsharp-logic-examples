@@ -98,80 +98,12 @@ module lib =
     // pg. 618
     // OCaml: val ( -- ) : int -> int -> int list = <fun>
     // F#:    val ( -- ) : int -> int -> int list
-//    let (--) m n =
-//        // For compatibility with the original OCaml function,
-//        // return an empty list for invalid inputs.
-//        if m >= n then []
-//        else
-//            [m .. n]    
-
-    let rec (--) = 
-        fun m n -> 
-            if m > n then [] 
-            else m::((m + 1) -- n)
-
+    let inline (--) m n = [m .. n]
 
     // pg.618
     // OCaml: val ( --- ) : num -> num -> num list = <fun>
     // F#:    val ( --- ) : num -> num -> num list
-    let (---) (m : num) (n : num) =
-        // For compatibility with the original OCaml function,
-        // return an empty list for invalid inputs.
-        if m >= n then []
-        else
-            [m .. n]
-
-//    let rec (---) (m : num) (n : num) =
-//        minusMinusMinusImpl (m, n) id
-//    
-//    and private minusMinusMinusImpl (m, n) cont =
-//        if m > n then
-//            cont []
-//        else
-//            minusMinusMinusImpl (m + Int 1, n) <| fun lst ->
-//                cont (m :: lst)
-
-
-    // pg. 619
-    // OCaml: val map2 : ('a -> 'b -> 'c) -> 'a list -> 'b list -> 'c list = <fun>
-    // F#:    val map2 : ('a -> 'b -> 'c) -> 'a list -> 'b list -> 'c list
-    // use List.map2
-//    let rec map2 f l1 l2 =
-//        match (l1,l2) with
-//        | [],[] -> []
-//        | (h1::t1),(h2::t2) -> let h = f h1 h2 in h::(map2 f t1 t2)
-//        | _ -> failwith "map2: length mismatch"
-
-    // pg. 619
-    // OCaml: val rev : 'a list -> 'a list = <fun>
-    // F#:    val rev : 'a list -> 'a list
-    // use List.rev
-//    let rev =
-//        let rec rev_append acc l =
-//            match l with
-//            | [] -> acc
-//            | h::t -> rev_append (h::acc) t
-//        fun l -> rev_append [] l
-
-    // pg. 619
-    // OCaml: val hd :   'a list -> 'a = <fun>
-    // F#:    val head : 'a list -> 'a
-//    let inline hd l =
-//        List.head l
-        
-    // pg. 619
-    // OCaml: val tl :   'a list -> 'a list = <fun>
-    // F#:    val tail : 'a list -> 'a list
-//    let inline tl l =
-//        match l with
-//        | h::t -> t
-//        | _ -> failwith "tl"
-
-    // pg. 619 - list iterator
-    // OCaml: val itlist : ('a -> 'b -> 'b) -> 'a list -> 'b -> 'b = <fun>
-    // F#:    val itlist : ('a -> 'b -> 'b) -> 'a list -> 'b -> 'b
-//    let inline itlist f l b =
-//        List.foldBack f l b
+    let inline (---) (m : num) (n : num) = [m .. n]
         
     // pg. 619
     // OCaml: val end_itlist : ('a -> 'a -> 'a) -> 'a list -> 'a = <fun>
@@ -183,65 +115,6 @@ module lib =
         | [x] -> x
         | hd :: tl ->
             f hd (end_itlist f tl)
-        
-    // pg. 619
-    // OCaml: val itlist2 : ('a -> 'b -> 'c -> 'c) -> 'a list -> 'b list -> 'c -> 'c = <fun>
-    // F#:    val itlist2 : ('a -> 'b -> 'c -> 'c) -> 'a list -> 'b list -> 'c -> 'c
-    // F# : Use List.foldBack2
-//    let inline itlist2 f l1 l2 b =
-//        // TEMP : Leave this function as an alias for List.foldBack2 until
-//        // all of the usages can be replaced.
-//        List.foldBack2 f l1 l2 b
-        
-    // pg. 619
-    // OCaml: val zip : 'a list -> 'b list -> ('a * 'b) list = <fun>
-    // F#:    val zip : 'a list -> 'b list -> ('a * 'b) list
-    // use List.zip
-//    let rec zip l1 l2 =
-//        match (l1,l2) with
-//        | ([],[])         -> []
-//        | (h1::t1,h2::t2) -> (h1,h2)::(zip t1 t2)
-//        | _               -> failwith "zip"
-
-    // pg. 619
-    // OCaml: val forall : ('a -> bool) -> 'a list -> bool = <fun>
-    // F#:    val forall : ('a -> bool) -> 'a list -> bool
-    // Use List.forall
-//    let rec forall p l =
-//        match l with
-//        | []   -> true
-//        | h::t -> p(h) && forall p t
-        
-    // pg. 619
-    // OCaml: val exists : ('a -> bool) -> 'a list -> bool = <fun>
-    // F#:    val exists : ('a -> bool) -> 'a list -> bool
-    // Use List.exists
-//    let rec exists p l =
-//        match l with
-//        | [] -> false
-//        | h::t -> p(h) || exists p t
-        
-    // pg. 619
-    // OCaml: val partition : ('a -> bool) -> 'a list -> 'a list * 'a list = <fun>
-    // F#:    val partition : ('a -> bool) -> 'a list -> 'a list * 'a list
-    // Use List.partition
-//    let partition p l =
-//        itlist (fun a (yes,no) -> if p a then a::yes,no else yes,a::no) l ([],[])
-        
-    // pg. 619
-    // OCaml: val filter : ('a -> bool) -> 'a list -> 'a list = <fun>
-    // F#:    val filter : ('a -> bool) -> 'a list -> 'a list
-    // Use List.filter
-//    let filter p l = fst(partition p l)
-    
-    // pg. 619
-    // OCaml: val length : 'a list -> int = <fun>
-    // F#:    val length : 'a list -> int
-    // Use List.length
-//    let length =
-//        let rec len k l =
-//            if l = [] then k else len (k + 1) (List.tail l)
-//        fun l -> len 0 l
         
     // pg. 619
     // OCaml: val last : 'a list -> 'a = <fun>
@@ -273,39 +146,6 @@ module lib =
     // val butlast : 'a list -> 'a list
     let butlast l =
         butlastImpl l id
-        
-    // pg. 619
-    // OCaml: val find : ('a -> bool) -> 'a list -> 'a = <fun>
-    // F#:    val find : ('a -> bool) -> 'a list -> 'a
-    //
-    // Use List.tryFind
-    // F#: List.tryFind : ('a -> bool) -> 'a list -> 'a option
-    //
-    // Note: In comparing exceptions in terms of computing time, 
-    // Ocaml's exceptions are inexpensive in comparison with F# exceptions.
-    // To avoid exceptions from F# List.find, use F# List.tryFind whcih
-    // does not return an exception if an item is not found.
-//    let rec find p l =
-//        match l with
-//        | [] -> failwith "find"
-//        | (h::t) -> if p(h) then h else find p t
-        
-    // pg. 619
-    // OCaml: val el : int -> 'a list -> 'a = <fun>
-    // F#:    val el : int -> 'a list -> 'a
-//    let inline el n l =
-//        List.nth l n
-
-    // pg. 619
-    // OCaml: val map : ('a -> 'b) -> 'a list -> 'b list = <fun>
-    // F#:    val map : ('a -> 'b) -> 'a list -> 'b list
-    // Use List.map
-//    let map f =
-//        let rec mapf l =
-//            match l with
-//            | []     -> []
-//            | (x::t) -> let y = f x in y::(mapf t)
-//        mapf
         
     // pg. 620
     // OCaml: val allpairs : ('a -> 'b -> 'c) -> 'a list -> 'b list -> 'c list = <fun>
@@ -339,12 +179,6 @@ module lib =
                 (List.head l) :: m, l'
             with _ ->
                 failwith "chop_list"
-        
-    // pg. 619
-    // OCaml: val replicate : int -> 'a -> 'a list = <fun>
-    // F#:    val replicate : int -> 'a -> 'a list
-    // Use List.replicate
-//    let replicate n a = List.map (fun x -> a) (1--n)
     
     // pg. 619
     // OCaml: val insertat : int -> 'a -> 'a list -> 'a list = <fun>
@@ -359,30 +193,10 @@ module lib =
                 h :: (insertat (i - 1) x t)
         
     // pg. 619
-    // OCaml: val forall2 : ('a -> 'b -> bool) -> 'a list -> 'b list -> bool = <fun>
-    // F#:    val forall2 : ('a -> 'b -> bool) -> 'a list -> 'b list -> bool
-    // Use List.forall2
-//    let rec forall2 p l1 l2 =
-//        match (l1,l2) with
-//        | [],[] -> true
-//        | (h1::t1,h2::t2) -> p h1 h2 && forall2 p t1 t2
-//        | _ -> false
-        
-    // pg. 619
     // OCaml: val index : 'a -> 'a list -> int = <fun>
     // F#:    val index : 'a -> ('a list -> int) when 'a : comparison
     let inline index x =
         List.findIndex ((=) x)
-        
-    // pg. 619
-    // OCaml: val unzip : ('a * 'b) list -> 'a list * 'b list = <fun>
-    // F#:    val unzip : ('a * 'b) list -> 'a list * 'b list
-    // Use List.unzip
-//    let rec unzip l =
-//        match l with
-//        | [] -> [],[]
-//        | (x,y)::t ->
-//            let xs,ys = unzip t in x::xs,y::ys
 
 // ------------------------------------------------------------------------- //
 // Whether the first of two items comes earlier in the list.                 //
@@ -391,26 +205,11 @@ module lib =
     // pg. 619
     // OCaml: val earlier : 'a list -> 'a -> 'a -> bool = <fun>
     // F#:    val earlier : 'a list -> 'a -> 'a -> bool when 'a : comparison
-    // TODO : Optimize using continuation-passing style.
     let rec earlier l x y =
         match l with
         | [] -> false
         | h :: t ->
             (compare h y <> 0) && (compare h x = 0 || earlier t x y)
-        
-
-// ------------------------------------------------------------------------- //
-// Application of (presumably imperative) function over a list.              //
-// ------------------------------------------------------------------------- //
-
-    // pg. 619
-    // OCaml: val do_list : ('a -> 'b) -> 'a list -> unit = <fun>
-    // F#:    val do_list : ('a -> unit) -> 'a list -> unit
-    // F# : Use List.iter.
-//    let inline do_list f l =
-//        // TEMP : Leave this function as an alias for List.iter until
-//        // all usages can be replaced; then this function can be discarded.
-//        List.iter f l
 
 // ------------------------------------------------------------------------- //
 // Association lists.                                                        //
@@ -441,19 +240,25 @@ module lib =
 // Merging of sorted lists (maintaining repetitions).                        //
 // ------------------------------------------------------------------------- //
 
+    //
+    let rec private mergeImpl comparer l1 l2 cont =
+        match l1, l2 with
+        | [], x
+        | x, [] ->
+            cont x
+        | h1 :: t1, h2 :: t2 ->
+            if comparer h1 h2 then
+                mergeImpl comparer t1 l2 <| fun lst ->
+                    cont (h1 :: lst)
+            else
+                mergeImpl comparer l1 t2 <| fun lst ->
+                    cont (h2 :: lst)
+
     // pg. ???
     // OCaml: val merge : ('a -> 'a -> bool) -> 'a list -> 'a list -> 'a list = <fun>
     // F#:    val merge : ('a -> 'a -> bool) -> 'a list -> 'a list -> 'a list
-    // TODO : Optimize using continuation-passing style.
-    let rec merge comparer l1 l2 =
-        match l1, l2 with
-        | [], x
-        | x, [] -> x
-        | h1 :: t1, h2 :: t2 ->
-            if comparer h1 h2 then
-                h1 :: (merge comparer t1 l2)
-            else
-                h2 :: (merge comparer l1 t2)
+    let merge comparer l1 l2 =
+        mergeImpl comparer l1 l2 id
 
 // ------------------------------------------------------------------------- //
 // Bottom-up mergesort.                                                      //
@@ -462,7 +267,6 @@ module lib =
     // pg. 619
     // OCaml: val sort : ('a -> 'a -> bool) -> 'a list -> 'a list = <fun>
     // F#:    val sort : ('a -> 'a -> bool) -> ('a list -> 'a list) when 'a : equality
-    // TODO : Optimize using continuation-passing style.
     let rec mergepairs ord l1 l2 =
         match l1, l2 with
         | [s], [] -> s
@@ -499,35 +303,46 @@ module lib =
 // Eliminate repetitions of adjacent elements, with and without counting.    //
 // ------------------------------------------------------------------------- //
 
+    //
+    let rec private uniqImpl l cont =
+        match l with
+        | x :: (y :: _ as t) ->
+            uniqImpl t <| fun t' ->
+                if compare x y = 0 then t' 
+                elif t' = t then l 
+                else x :: t'
+                |> cont
+        | _ ->
+            cont l
+
     // pg. 619
     // OCaml: val uniq : 'a list -> 'a list = <fun>
     // F#:    val uniq : 'a list -> 'a list when 'a : comparison
-    let rec uniq l =
+    let uniq l =
+        uniqImpl l id
+
+    //
+    let rec private repcount n l cont =
         match l with
-        | x :: (y :: _ as t) -> 
-            let t' = uniq t
-            if compare x y = 0 then t' 
+        | [] ->
+            failwith "repcount"
+        | [x] ->
+            cont [x,n]
+        |  x :: (y :: _ as ys) -> 
+            if compare y x = 0 then
+                repcount (n + 1) ys cont
             else
-                if t' = t then l 
-                else x :: t'
-        | _ -> l
+                repcount 1 ys <| fun lst ->
+                    cont ((x, n) :: lst)
 
     // pg. ???
     // OCaml: val repetitions : 'a list -> ('a * int) list = <fun>
     // F#:    val repetitions : ('a list -> ('a * int) list) when 'a : comparison
-    let repetitions =
-        let rec repcount n l =
-            match l with
-            | [] -> failwith "repcount"
-            | [x] -> [x,n]
-            |  x :: (y :: _ as ys) -> 
-                if compare y x = 0 then
-                    repcount (n + 1) ys
-                else (x, n) :: (repcount 1 ys)
-            
-        fun l -> 
-            if l = [] then [] 
-            else repcount 1 l
+    let repetitions l =
+        match l with
+        | [] -> []
+        | l ->
+            repcount 1 l id
         
     // pg. 619
     // OCaml: val tryfind : ('a -> 'b)   -> 'a list -> 'b = <fun>
@@ -542,17 +357,14 @@ module lib =
             try f h
             with Failure _ ->
                 tryfind f t
-        
+
     // pg. 619
     // OCaml: val mapfilter : ('a -> 'b) -> 'a list -> 'b list = <fun>
     // F#:    val mapfilter : ('a -> 'b) -> 'a list -> 'b list
-    let rec mapfilter f l =
-        match l with
-        | [] -> []
-        | h :: t ->
-            let rest = mapfilter f t
-            try (f h) :: rest
-            with _ -> rest
+    let mapfilter f l =
+        l |> List.choose (fun el ->
+            try Some <| f el
+            with Failure _ -> None)
 
 // ------------------------------------------------------------------------- //
 // Find list member that maximizes or minimizes a function.                  //
@@ -722,6 +534,10 @@ module lib =
 // List membership. This does *not* assume the list is a set.                //
 // ------------------------------------------------------------------------- //
 
+//    // TODO : Replace 'mem' with the equivalent code:
+//    let inline mem x lis =
+//        List.exists ((=) x) lis
+
     // pg. 620
     // OCaml: val mem : 'a -> 'a list -> bool = <fun>
     // F#:    val mem : 'a -> 'a list -> bool when 'a : equality
@@ -736,26 +552,39 @@ module lib =
 // Finding all subsets or all subsets of a given size.                       //
 // ------------------------------------------------------------------------- //
 
+    //
+    let rec private allsetsImpl m l cont =
+        if m = 0 then
+            cont [[]]
+        else
+            match l with
+            | [] ->
+                cont []
+            | h :: t ->
+                allsetsImpl (m - 1) t <| fun result1 ->
+                allsetsImpl m t <| fun result2 ->
+                    cont (union (image (fun g -> h :: g) result1) result2)
+
     // pg. 620
     // OCaml: val allsets : int -> 'a list -> 'a list list = <fun>
     // F#:    val allsets : int -> 'a list -> 'a list list when 'a : comparison
-    let rec allsets m l =
-        if m = 0 then [[]]
-        else
-            match l with
-            | [] -> []
-            | h :: t ->
-                union (image (fun g -> h :: g) (allsets (m - 1) t)) (allsets m t)
+    let allsets m l =
+        allsetsImpl m l id
+
+    //
+    let rec private allsubsetsImpl s cont =
+        match s with
+        | [] ->
+            cont [[]]
+        | a :: t ->
+            allsubsetsImpl t <| fun res ->
+                cont (union (image (fun b -> a :: b) res) res)
         
     // pg. 620
     // OCaml: val allsubsets : 'a list -> 'a list list = <fun>
     // F#:    val allsubsets : 'a list -> 'a list list when 'a : comparison
-    let rec allsubsets s =
-        match s with
-        | [] -> [[]]
-        | a :: t ->
-            let res = allsubsets t
-            union (image (fun b -> a :: b) res) res
+    let allsubsets s =
+        allsubsetsImpl s id
                     
     // pg. 620
     // OCaml: val allnonemptysubsets : 'a list -> 'a list list = <fun>
@@ -876,41 +705,49 @@ module lib =
     // OCaml: val foldl : ('a -> 'b -> 'c -> 'a) -> 'a -> ('b, 'c) func -> 'a = <fun>
     // F#:    val foldl : (('a -> 'b -> 'c -> 'a) -> 'a -> func<'b,'c> -> 'a)
     let foldl =
-        // TODO : Optimize using continuation-passing style.
         let rec foldl_list f a l =
             match l with
             | [] -> a
             | (x, y) :: t ->
                 foldl_list f (f a x y) t
-        // TODO : Optimize using continuation-passing style.
-        let rec foldl f a t =
+
+        let rec foldl f a t cont =
             match t with
-            | Empty -> a
+            | Empty ->
+                cont a
             | Leaf (h, l) ->
-                foldl_list f a l
+                cont (foldl_list f a l)
             | Branch (p, b, l, r) ->
-                foldl f (foldl f a l) r
-        foldl
+                foldl f a l <| fun leftResult ->
+                    foldl f leftResult r cont
+
+        fun f a t ->
+            foldl f a t id
         
     // pg. ???
     // OCaml: val foldr :  ('a -> 'b -> 'c -> 'c) -> ('a, 'b) func -> 'c -> 'c = <fun>
     // F#:    val foldr : (('a -> 'b -> 'c -> 'c) -> func<'a,'b>   -> 'c -> 'c)
     let foldr =
-        // TODO : Optimize using continuation-passing style.
-        let rec foldr_list f l a =
+        let rec foldr_list f l a cont =
             match l with
-            | [] -> a
+            | [] ->
+                cont a
             | (x, y) :: t ->
-                f x y (foldr_list f t a)
-        // TODO : Optimize using continuation-passing style.
-        let rec foldr f t a =
+                foldr_list f t a <| fun result ->
+                    cont (f x y result)
+
+        let rec foldr f t a cont =
             match t with
-            | Empty -> a
+            | Empty ->
+                cont a
             | Leaf (h, l) ->
-                foldr_list f l a
+                foldr_list f l a cont
             | Branch (p, b, l, r) ->
-                foldr f l (foldr f r a)
-        foldr
+                foldr f r a <| fun rightResult ->
+                    foldr f l rightResult cont
+
+        fun f t a ->
+            foldr f t a id
 
 // ------------------------------------------------------------------------- //
 // Mapping to sorted-list representation of the graph, domain and range.     //
@@ -1002,178 +839,240 @@ module lib =
 // Undefinition.                                                             //
 // ------------------------------------------------------------------------- //
 
+    //
+    let rec private undefine_listImpl x l cont =
+        match l with
+        | [] ->
+            cont []
+        | (a, b as ab) :: t ->
+            let c = compare x a
+            if c = 0 then
+                cont t
+            elif c < 0 then
+                cont l
+            else
+                undefine_listImpl x t <| fun t' ->
+                    if t' = t then cont l
+                    else cont (ab :: t')
+
+    //
+    let private undefine_list x l =
+        undefine_listImpl x l id
+
     // pg. 621
     // OCaml: val undefine :  'a -> ('a, 'b) func -> ('a, 'b) func = <fun>
     // F#:    val undefine : ('a -> func<'a,'b>   -> func<'a,'b>) when 'a : comparison and 'b : equality
-    let undefine =
-        let rec undefine_list x l =
-            match l with
-            | [] -> []
-            | (a, b as ab) :: t ->
-                  let c = compare x a
-                  if c = 0 then t
-                  elif c < 0 then l
-                  else
-                      let t' = undefine_list x t
-                      if t' = t then l
-                      else ab :: t'
-                              
-        fun x ->
-            let k = hash x
-            let rec und t =
-                match t with
-                | Leaf (h, l) when h = k ->
-                    let l' = undefine_list x l
-                    if l' = l then t
-                    elif l' = [] then Empty
-                    else Leaf (h, l')
+    let undefine x =
+        let k = hash x
+        let rec und t cont =
+            match t with
+            | Leaf (h, l) when h = k ->
+                match undefine_list x l with
+                | l' when l' = l ->
+                    cont t
+                | [] ->
+                    cont Empty
+                | l' ->
+                    cont (Leaf (h, l'))
 
-                | Branch (p, b, l, r) when k &&& (b - 1) = p ->
-                    if k &&& b = 0 then
-                        let l' = und l
-                        if l' = l then t
-                        else
-                            match l' with
-                            | Empty -> r
-                            | _ -> Branch (p, b, l', r)
-                    else
-                        let r' = und r
-                        if r' = r then t
-                        else
-                            match r' with
-                            | Empty -> l
-                            | _ -> Branch (p, b, l, r')
-                | _ -> t
-            und
+            | Branch (p, b, l, r) when k &&& (b - 1) = p ->
+                if k &&& b = 0 then
+                    und l <| function
+                        | l' when l' = l ->
+                            cont t
+                        | Empty ->
+                            cont r
+                        | l' ->
+                            cont (Branch (p, b, l', r))
+                else
+                    und r <| function
+                        | r' when r' = r ->
+                            cont t
+                        | Empty ->
+                            cont l
+                        | r' ->
+                            cont (Branch (p, b, l, r'))
+            | _ ->
+                cont t
+
+        fun t ->
+            und t id
 
 // ------------------------------------------------------------------------- //
 // Redefinition and combination.                                             //
 // ------------------------------------------------------------------------- //
+
+    let private newbranch p1 t1 p2 t2 =
+        let zp = p1 ^^^ p2
+        let b = zp &&& -zp
+        let p = p1 &&& (b - 1)
+        if p1 &&& b = 0 then
+            Branch (p, b, t1, t2)
+        else
+            Branch (p, b, t2, t1)
+
+    let rec private define_listImpl (x, y as xy) l cont =
+        match l with
+        | [] ->
+            cont [xy]
+        | (a, b as ab) :: t ->
+            let c = compare x a
+            if c = 0 then
+                cont (xy :: t)
+            elif c < 0 then
+                cont (xy :: l)
+            else
+                define_listImpl xy t <| fun lst ->
+                    cont (ab :: lst)
+
+    and private combine_listImpl op z l1 l2 cont =
+        match l1, l2 with
+        | [], x
+        | x, [] ->
+            cont x
+        | ((x1, y1 as xy1) :: t1, (x2, y2 as xy2) :: t2) ->
+            let c = compare x1 x2
+            if c < 0 then
+                combine_listImpl op z t1 l2 <| fun lst ->
+                    cont (xy1 :: lst)
+            elif c > 0 then
+                combine_listImpl op z l1 t2 <| fun lst ->
+                    cont (xy2 :: lst)
+            else
+                let y = op y1 y2
+                combine_listImpl op z t1 t2 <| fun l ->
+                    cont (if z y then l else (x1, y) :: l)
+
+    let private define_list xy l =
+        define_listImpl xy l id
+
+    let private combine_list op z l1 l2 =
+        combine_listImpl op z l1 l2 id
 
     // Finite Partial Functions (FPF)
     // To update the FPF with a new mapping from x to y.
     // pg. 621
     // OCaml: val ( |-> ) :  'a -> 'b -> ('a, 'b) func -> ('a, 'b) func = <fun>
     // F#:    val ( |-> ) : ('a -> 'b -> func<'a,'b>   -> func<'a,'b>) when 'a : comparison
+    let (|->) x y =
+        let k = hash x
+        let rec upd t =
+            match t with
+            | Empty ->
+                Leaf (k, [x, y])
+            | Leaf (h, l) ->
+                if h = k then
+                    Leaf (h, define_list (x, y) l)
+                else
+                    newbranch h t k (Leaf (k, [x, y]))
+            | Branch (p, b, l, r) ->
+                if k &&& (b - 1) <> p then
+                    newbranch p t k (Leaf (k, [x, y]))
+                elif k &&& b = 0 then
+                    Branch (p, b, upd l, r)
+                else
+                    Branch (p, b, l, upd r)
+        upd
+
+    //
+    let rec private combineImpl op z t1 t2 cont =
+        match t1, t2 with
+        | Empty, x
+        | x, Empty ->
+            cont x
+        | Leaf (h1, l1), Leaf (h2, l2) ->
+            if h1 = h2 then
+                match combine_list op z l1 l2 with
+                | [] ->
+                    cont Empty
+                | l ->
+                    cont (Leaf (h1, l))
+            else
+                cont (newbranch h1 t1 h2 t2)
+
+        | (Leaf (k, lis) as lf), (Branch (p, b, l, r) as br) ->
+            if k &&& (b - 1) = p then
+                if k &&& b = 0 then
+                    combineImpl op z lf l <| function
+                        | Empty ->
+                            cont r
+                        | l' ->
+                            cont (Branch (p, b, l', r))
+                else
+                    combineImpl op z lf r <| function
+                        | Empty ->
+                            cont l
+                        | r' ->
+                            cont (Branch (p, b, l, r'))
+            else
+                cont (newbranch k lf p br)
+
+        | (Branch (p, b, l, r) as br), (Leaf (k, lis) as lf) ->
+            if k &&& (b - 1) = p then
+                if k &&& b = 0 then
+                    combineImpl op z l lf <| function
+                        | Empty ->
+                            cont r
+                        | l' ->
+                            cont (Branch (p, b, l', r))
+                else
+                    combineImpl op z r lf <| function
+                        | Empty ->
+                            cont l
+                        | r' ->
+                            cont (Branch (p, b, l, r'))
+            else
+                cont (newbranch p br k lf)
+
+        | Branch (p1, b1, l1, r1), Branch (p2, b2, l2, r2) ->
+            if b1 < b2 then
+                if p2 &&& (b1 - 1) <> p1 then
+                    cont (newbranch p1 t1 p2 t2)
+                elif p2 &&& b1 = 0 then
+                    combineImpl op z l1 t2 <| function
+                        | Empty ->
+                            cont r1
+                        | l ->
+                            cont (Branch (p1, b1, l, r1))
+                else
+                    combineImpl op z r1 t2 <| function
+                        | Empty ->
+                            cont l1
+                        | r ->
+                            cont (Branch (p1, b1, l1, r))
+
+            elif b2 < b1 then
+                if p1 &&& (b2 - 1) <> p2 then
+                    cont (newbranch p1 t1 p2 t2)
+                elif p1 &&& b2 = 0 then
+                    combineImpl op z t1 l2 <| function
+                        | Empty ->
+                            cont r2
+                        | l ->
+                            cont (Branch (p2, b2, l, r2))
+                else
+                    combineImpl op z t1 r2 <| function
+                        | Empty ->
+                            cont l2
+                        | r ->
+                            cont (Branch (p2, b2, l2, r))
+
+            elif p1 = p2 then
+                combineImpl op z l1 l2 <| fun result1 ->
+                combineImpl op z r1 r2 <| fun result2 ->
+                    match result1, result2 with
+                    | Empty, x
+                    | x, Empty ->
+                        cont x
+                    | l, r ->
+                        cont (Branch (p1, b1, l, r))
+            else
+                cont (newbranch p1 t1 p2 t2)
+
     // OCaml: val combine :  ('a -> 'a -> 'a) -> ('a -> bool) -> ('b, 'a) func -> ('b, 'a) func -> ('b, 'a) func = <fun>
     // F#:    val combine : (('c -> 'c -> 'c) -> ('c -> bool) -> func<'d,'c>   -> func<'d,'c>   -> func<'d,'c>) when 'c : equality and 'd : comparison
-    let (|->),combine =
-        let newbranch p1 t1 p2 t2 =
-            let zp = p1 ^^^ p2
-            let b = zp &&& -zp
-            let p = p1 &&& (b - 1)
-            if p1 &&& b = 0 then Branch (p, b, t1, t2)
-            else Branch (p, b, t2, t1)
-
-        let rec define_list (x, y as xy) l =
-            match l with
-            | [] -> [xy]
-            | (a, b as ab) :: t ->
-                let c = compare x a
-                if c = 0 then xy :: t
-                elif c < 0 then xy :: l
-                else ab :: (define_list xy t)
-
-        and combine_list op z l1 l2 =
-            match l1, l2 with
-            | [], x
-            | x, [] -> x
-            | ((x1, y1 as xy1) :: t1, (x2, y2 as xy2) :: t2) ->
-                let c = compare x1 x2
-                if c < 0 then xy1 :: (combine_list op z t1 l2)
-                elif c > 0 then xy2 :: (combine_list op z l1 t2)
-                else
-                    let y = op y1 y2
-                    let l = combine_list op z t1 t2
-                    if z y then l
-                    else (x1, y) :: l
-
-        let (|->) x y =
-            let k = hash x
-            let rec upd t =
-                match t with
-                | Empty -> Leaf (k, [x, y])
-                | Leaf (h, l) ->
-                    if h = k then Leaf (h, define_list (x, y) l)
-                    else newbranch h t k (Leaf (k, [x, y]))
-                | Branch (p, b, l, r) ->
-                    if k &&& (b - 1) <> p then newbranch p t k (Leaf (k, [x, y]))
-                    elif k &&& b = 0 then Branch (p, b, upd l, r)
-                    else Branch (p, b, l, upd r)
-            upd
-
-        let rec combine op z t1 t2 =
-            match t1, t2 with
-            | Empty, x
-            | x, Empty -> x
-            | Leaf (h1, l1), Leaf (h2, l2) ->
-                if h1 = h2 then
-                    let l = combine_list op z l1 l2
-                    if l = [] then Empty
-                    else Leaf (h1, l)
-                else newbranch h1 t1 h2 t2
-
-            | (Leaf (k, lis) as lf), (Branch (p, b, l, r) as br) ->
-                if k &&& (b - 1) = p then
-                    if k &&& b = 0 then
-                        match combine op z lf l with
-                        | Empty -> r
-                        | l' -> Branch (p, b, l', r)
-                    else
-                        match combine op z lf r with
-                        | Empty -> l
-                        | r' -> Branch (p, b, l, r')
-                else
-                    newbranch k lf p br
-
-            | (Branch (p, b, l, r) as br), (Leaf (k, lis) as lf) ->
-                if k &&& (b - 1) = p then
-                    if k &&& b = 0 then
-                        match combine op z l lf with
-                        | Empty -> r
-                        | l' -> Branch (p, b, l', r)
-                    else
-                        match combine op z r lf with
-                        | Empty -> l
-                        | r' -> Branch (p, b, l, r')
-                else
-                    newbranch p br k lf
-
-            | Branch (p1, b1, l1, r1), Branch (p2, b2, l2, r2) ->
-                if b1 < b2 then
-                    if p2 &&& (b1 - 1) <> p1 then
-                        newbranch p1 t1 p2 t2
-                    elif p2 &&& b1 = 0 then
-                        match combine op z l1 t2 with
-                        | Empty -> r1
-                        | l -> Branch (p1, b1, l, r1)
-                    else
-                        match combine op z r1 t2 with
-                        | Empty -> l1
-                        | r -> Branch (p1, b1, l1, r)
-
-                elif b2 < b1 then
-                    if p1 &&& (b2 - 1) <> p2 then
-                        newbranch p1 t1 p2 t2
-                    elif p1 &&& b2 = 0 then
-                        match combine op z t1 l2 with
-                        | Empty -> r2
-                        | l -> Branch (p2, b2, l, r2)
-                    else
-                        match combine op z t1 r2 with
-                        | Empty -> l2
-                        | r -> Branch (p2, b2, l2, r)
-
-                elif p1 = p2 then
-                    match combine op z l1 l2, combine op z r1 r2 with
-                    | Empty, x
-                    | x, Empty -> x
-                    | l, r ->
-                        Branch (p1, b1, l, r)
-                else
-                    newbranch p1 t1 p2 t2
-
-        (|->), combine
+    let combine op z t1 t2 =
+        combineImpl op z t1 t2 id
 
 // ------------------------------------------------------------------------- //
 // Special case of point function.                                           //
@@ -1184,7 +1083,7 @@ module lib =
     // pg. 621
     // OCaml: val ( |=> ) : 'a -> 'b -> ('a, 'b) func = <fun>
     // F#:    val ( |=> ) : 'a -> 'b -> func<'a,'b> when 'a : comparison
-    let (|=>) x y = 
+    let inline (|=>) x y = 
         (x |-> y) undefined
 
 // ------------------------------------------------------------------------- //
@@ -1194,7 +1093,7 @@ module lib =
     // pg. 621
     // OCaml: val fpf : 'a list -> 'b list -> ('a, 'b) func = <fun>
     // F#:    val fpf : 'a list -> 'b list -> func<'a,'b> when 'a : comparison
-    let fpf xs ys =
+    let inline fpf xs ys =
         List.foldBack2 (|->) xs ys undefined
 
 // ------------------------------------------------------------------------- //
