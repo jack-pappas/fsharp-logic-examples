@@ -6,6 +6,7 @@
 
 namespace Reasoning.Automated.Harrison.Handbook.Tests
 
+// Below tests take a few seconds to complete
 module dp =
     open NUnit.Framework
     open FsUnit
