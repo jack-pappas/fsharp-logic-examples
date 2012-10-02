@@ -42,13 +42,20 @@
   <Import Project="$(MSBuildExtensionsPath32)\..\Microsoft F#\v4.0\Microsoft.FSharp.Targets" Condition=" Exists('$(MSBuildBinPath)\Microsoft.Build.Tasks.v4.0.dll')" />
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
   <ItemGroup>
+    <None Include="app.config" />
+    <None Include="packages.config" />
     <Compile Include="lib.fs" />
     <Compile Include="intro.fs" />
     <Compile Include="prop.fs" />
-    <None Include="packages.config" />
-    <None Include="app.config" />
+    <Compile Include="propexamples.fs" />
+    <Compile Include="dp.fs" />
+    <Compile Include="stal.fs" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="FSharpx.Compatibility.OCaml">
+      <HintPath>..\packages\FSharpx.Compatibility.OCaml.0.1.0\lib\net40\FSharpx.Compatibility.OCaml.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="FsUnit.NUnit">
       <HintPath>..\packages\FsUnit.1.1.0.1\Lib\Net40\FsUnit.NUnit.dll</HintPath>
       <Private>True</Private>
