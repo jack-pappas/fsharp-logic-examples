@@ -33,41 +33,41 @@ module skolem =
             psimplify1 fm
 
     let rec private simplifyImpl fm cont =
-        match simplify1 fm with
+        match simplify003 fm with
         (* Cases which need to be recursively simplified. *)
         | Not p ->
             simplifyImpl p <| fun p' ->
-                cont (simplify1 (Not p'))
+                cont (simplify003 (Not p'))
         | And (p, q) ->
             simplifyImpl p <| fun p' ->
             simplifyImpl q <| fun q' ->
-                cont (simplify1 (And (p', q')))
+                cont (simplify003 (And (p', q')))
         | Or (p, q) ->
             simplifyImpl p <| fun p' ->
             simplifyImpl q <| fun q' ->
-                cont (simplify1 (Or (p', q')))
+                cont (simplify003 (Or (p', q')))
         | Imp (p, q) ->
             simplifyImpl p <| fun p' ->
             simplifyImpl q <| fun q' ->
-                cont (simplify1 (Imp (p', q')))
+                cont (simplify003 (Imp (p', q')))
         | Iff (p, q) ->
             simplifyImpl p <| fun p' ->
             simplifyImpl q <| fun q' ->
-                cont (simplify1 (Iff (p', q')))
+                cont (simplify003 (Iff (p', q')))
         | Forall (x, p) ->
             simplifyImpl p <| fun p' ->
-                cont (simplify1 (Forall (x, p')))
+                cont (simplify003 (Forall (x, p')))
         | Exists (x, p) ->
             simplifyImpl p <| fun p' ->
-                cont (simplify1 (Exists (x, p')))
+                cont (simplify003 (Exists (x, p')))
 
         (* This formula can't be simplified any further. *)
         | fm ->
             cont fm
 
     // OCaml: val simplify : 'a formula -> 'a formula = <fun>
-    // F#:    val simplify : 'a formula -> 'a formula
-    let simplify fm =
+    // F#:    val simplify004 : 'a formula -> 'a formula
+    let simplify004 fm =
         simplifyImpl fm id
 
 // pg. 141
