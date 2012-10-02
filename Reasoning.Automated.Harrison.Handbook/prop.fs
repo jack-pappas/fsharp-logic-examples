@@ -327,61 +327,55 @@ module prop =
 // Negation normal form.                                                     //
 // ------------------------------------------------------------------------- //
 
-//    let rec private nnfOrigImpl fm cont =
-//        match fm with
-//        | And (p, q) ->
-//            nnfOrigImpl p <| fun p' ->
-//            nnfOrigImpl q <| fun q' ->
-//                cont (And (p', q'))
-//        | Or (p, q) ->
-//            nnfOrigImpl p <| fun p' ->
-//            nnfOrigImpl q <| fun q' ->
-//                cont (Or (p', q'))
-//        | Imp (p, q) ->
-//            Or (nnfOrig (Not p), nnfOrig q)
-//        | Iff (p, q) ->
-//            Or (And (nnfOrig p, nnfOrig q),
-//                And (nnfOrig (Not p), nnfOrig (Not q)))
-//        | Not (Not p) ->
-//            nnfOrigImpl p cont
-//        | Not (And (p, q)) ->
-//            Or (nnfOrig (Not p), nnfOrig (Not q))
-//        | Not (Or (p, q)) ->
-//            And (nnfOrig (Not p), nnfOrig (Not q))
-//        | Not (Imp (p, q)) ->
-//            And (nnfOrig p, nnfOrig (Not q))
-//        | Not (Iff (p, q)) ->
-//            Or (And (nnfOrig p, nnfOrig (Not q)),
-//                And (nnfOrig (Not p), nnfOrig q))
-//        | fm -> fm
+    let rec private nnfOrigImpl fm cont =
+        match fm with
+        | And (p, q) ->
+            nnfOrigImpl p <| fun p' ->
+            nnfOrigImpl q <| fun q' ->
+                cont (And (p', q'))
+        | Or (p, q) ->
+            nnfOrigImpl p <| fun p' ->
+            nnfOrigImpl q <| fun q' ->
+                cont (Or (p', q'))
+        | Imp (p, q) ->
+            nnfOrigImpl (Not p) <| fun p' ->
+            nnfOrigImpl q <| fun q' ->
+                cont (Or (p', q'))
+        | Iff (p, q) ->
+            nnfOrigImpl p <| fun p' ->
+            nnfOrigImpl q <| fun q' ->
+            nnfOrigImpl (Not p) <| fun not_p' ->
+            nnfOrigImpl (Not q) <| fun not_q' ->
+                cont (Or (And (p', q'), And (not_p', not_q')))
+        | Not (Not p) ->
+            nnfOrigImpl p cont
+        | Not (And (p, q)) ->
+            nnfOrigImpl (Not p) <| fun not_p' ->
+            nnfOrigImpl (Not q) <| fun not_q' ->
+                cont (Or (not_p', not_q'))
+        | Not (Or (p, q)) ->
+            nnfOrigImpl (Not p) <| fun not_p' ->
+            nnfOrigImpl (Not q) <| fun not_q' ->
+                cont (And (not_p', not_q'))
+        | Not (Imp (p, q)) ->
+            nnfOrigImpl p <| fun p' ->
+            nnfOrigImpl (Not q) <| fun not_q' ->
+                cont (And (p', not_q'))
+        | Not (Iff (p, q)) ->
+            nnfOrigImpl p <| fun p' ->
+            nnfOrigImpl (Not q) <| fun not_q' ->
+            nnfOrigImpl (Not p) <| fun not_p' ->
+            nnfOrigImpl q <| fun q' ->
+                cont (Or (And (p', not_q'), And (not_p', q')))
+        | fm ->
+            cont fm
 
     // Note: Changed name from nnf to nnfOrig to avoid F# compiler error.
     // OCaml: val nnf :     'a formula -> 'a formula = <fun>
     // F#:    val nnfOrig : 'a formula -> 'a formula
-    // TODO : Optimize using continuation-passing style.
-    let rec nnfOrig fm =
-        match fm with
-        | And (p, q) ->
-            And (nnfOrig p, nnfOrig q)
-        | Or (p, q) ->
-            Or (nnfOrig p, nnfOrig q)
-        | Imp (p, q) ->
-            Or (nnfOrig (Not p), nnfOrig q)
-        | Iff (p, q) ->
-            Or (And (nnfOrig p, nnfOrig q),
-                And (nnfOrig (Not p), nnfOrig (Not q)))
-        | Not (Not p) ->
-            nnfOrig p
-        | Not (And (p, q)) ->
-            Or (nnfOrig (Not p), nnfOrig (Not q))
-        | Not (Or (p, q)) ->
-            And (nnfOrig (Not p), nnfOrig (Not q))
-        | Not (Imp (p, q)) ->
-            And (nnfOrig p, nnfOrig (Not q))
-        | Not (Iff (p, q)) ->
-            Or (And (nnfOrig p, nnfOrig (Not q)),
-                And (nnfOrig (Not p), nnfOrig q))
-        | fm -> fm
+    let nnfOrig fm =
+        nnfOrigImpl fm id
+
 
 // pg. 52
 // ------------------------------------------------------------------------- //
@@ -398,31 +392,51 @@ module prop =
 // Simple negation-pushing when we don't care to distinguish occurrences.    //
 // ------------------------------------------------------------------------- //
 
+    //
+    let rec private nenfOrigImpl fm cont =
+        match fm with
+        | Not (Not p) ->
+            nenfOrigImpl p cont
+        | Not (And (p, q)) ->
+            nenfOrigImpl (Not p) <| fun not_p' ->
+            nenfOrigImpl (Not q) <| fun not_q' ->
+                cont (Or (not_p', not_q'))
+        | Not (Or (p, q)) ->
+            nenfOrigImpl (Not p) <| fun not_p' ->
+            nenfOrigImpl (Not q) <| fun not_q' ->
+                cont (And (not_p', not_q'))
+        | Not (Imp (p, q)) ->
+            nenfOrigImpl p <| fun p' ->
+            nenfOrigImpl (Not q) <| fun not_q' ->
+                cont (And (p', not_q'))
+        | Not (Iff (p, q)) ->
+            nenfOrigImpl p <| fun p' ->
+            nenfOrigImpl (Not q) <| fun not_q' ->
+                cont (Iff (p', not_q'))
+        | And (p, q) ->
+            nenfOrigImpl p <| fun p' ->
+            nenfOrigImpl q <| fun q' ->
+                cont (And (p', q'))
+        | Or (p, q) ->
+            nenfOrigImpl p <| fun p' ->
+            nenfOrigImpl q <| fun q' ->
+                cont (Or (p', q'))
+        | Imp (p, q) ->
+            nenfOrigImpl q <| fun q' ->
+            nenfOrigImpl (Not p) <| fun not_p' ->
+                cont (Or (not_p', q'))
+        | Iff (p, q) ->
+            nenfOrigImpl p <| fun p' ->
+            nenfOrigImpl q <| fun q' ->
+                cont (Iff (p', q'))
+        | fm ->
+            cont fm
+
     // Note: Changed name from nenf to nenfOrig to avoid F# compiler error.
     // OCaml: val nenf :     'a formula -> 'a formula = <fun>
     // F#:    val nenfOrig : 'a formula -> 'a formula
-    // TODO : Optimize using continuation-passing style.
-    let rec nenfOrig fm =
-        match fm with
-        | Not (Not p) ->
-            nenfOrig p
-        | Not (And (p, q)) ->
-            Or (nenfOrig (Not p), nenfOrig (Not q))
-        | Not (Or (p, q)) ->
-            And (nenfOrig (Not p), nenfOrig (Not q))
-        | Not (Imp (p, q)) ->
-            And (nenfOrig p, nenfOrig (Not q))
-        | Not (Iff (p, q)) ->
-            Iff (nenfOrig p, nenfOrig (Not q))
-        | And (p, q) ->
-            And (nenfOrig p, nenfOrig q)
-        | Or (p, q) ->
-            Or (nenfOrig p, nenfOrig q)
-        | Imp (p, q) ->
-            Or (nenfOrig (Not p), nenfOrig q)
-        | Iff (p, q) ->
-            Iff (nenfOrig p, nenfOrig q)
-        | fm -> fm
+    let nenfOrig fm =
+        nenfOrigImpl fm id
         
     // OCaml: val nenf : 'a formula -> 'a formula = <fun>
     // F#:    val nenf : 'a formula -> 'a formula

@@ -31,7 +31,7 @@ module intro =
                 traversal rules. *)
 
     //
-    let rec private simplifyImpl expr cont =
+    let rec private simplify002Impl expr cont =
         match expr with
         | Mul (Const 0, x)
         | Mul (x, Const 0) ->
@@ -49,20 +49,20 @@ module intro =
         (* Cases which need to be simplified recursively. *)
         | Add (e1, e2) ->
             // Try to simplify each of the sub-expressions.
-            simplifyImpl e1 <| fun e1' ->
-            simplifyImpl e2 <| fun e2' ->
+            simplify002Impl e1 <| fun e1' ->
+            simplify002Impl e2 <| fun e2' ->
             // Create a new Add using the (possibly) simplified sub-expressions,
             // then try to simplify it as well.
-            simplifyImpl (Add (e1', e2')) <| fun expr' ->
+            simplify002Impl (Add (e1', e2')) <| fun expr' ->
                 // Apply the now-simplified expression to the continuation to
                 // continue simplifying any remaining parts of the complete expression
                 // (i.e., the expression originally passed to 'simplify').
                 cont expr'
 
         | Mul (e1, e2) ->
-            simplifyImpl e1 <| fun e1' ->
-            simplifyImpl e2 <| fun e2' ->
-            simplifyImpl (Mul (e1', e2')) <| fun expr' ->
+            simplify002Impl e1 <| fun e1' ->
+            simplify002Impl e2 <| fun e2' ->
+            simplify002Impl (Mul (e1', e2')) <| fun expr' ->
                 cont expr'
 
         (* None of the remaining cases can be simplified. *)
@@ -70,9 +70,9 @@ module intro =
             cont expr
 
     // OCaml: val simplify : expression -> expression = <fun>
-    // F#:    val simplify : expression -> expression
-    let simplify expr =
-        simplifyImpl expr id
+    // F#:    val simplify002 : expression -> expression
+    let simplify002 expr =
+        simplify002Impl expr id
 
 // pg. 17
 // ------------------------------------------------------------------------- //
@@ -237,11 +237,11 @@ module intro =
         | Add (e1, e2) ->
             stringOfExpImpl e1 <| fun e1' ->
             stringOfExpImpl e2 <| fun e2' ->
-                sprintf "(%s + %s)" e1' e2'
+                cont (sprintf "(%s + %s)" e1' e2')
         | Mul (e1, e2) ->
             stringOfExpImpl e1 <| fun e1' ->
             stringOfExpImpl e2 <| fun e2' ->
-                sprintf "(%s * %s)" e1' e2'
+                cont (sprintf "(%s * %s)" e1' e2')
 
     // OCaml: val string_of_exp : expression -> string = <fun>
     // F#:    val string_of_exp : expression -> string
