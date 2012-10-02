@@ -77,5 +77,3 @@ module order =
             n > m
         else
             earlier lis g f
-
-

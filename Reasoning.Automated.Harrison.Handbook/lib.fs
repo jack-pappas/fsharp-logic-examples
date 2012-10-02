@@ -98,28 +98,39 @@ module lib =
     // pg. 618
     // OCaml: val ( -- ) : int -> int -> int list = <fun>
     // F#:    val ( -- ) : int -> int -> int list
-    let rec (--) m n =
-        minusMinusImpl (m, n) id
+//    let (--) m n =
+//        // For compatibility with the original OCaml function,
+//        // return an empty list for invalid inputs.
+//        if m >= n then []
+//        else
+//            [m .. n]    
 
-    and private minusMinusImpl (m, n) cont =
-        if m > n then
-            cont []
-        else
-            minusMinusImpl (m + 1, n) <| fun lst ->
-                cont (m :: lst)
+    let rec (--) = 
+        fun m n -> 
+            if m > n then [] 
+            else m::((m + 1) -- n)
+
 
     // pg.618
     // OCaml: val ( --- ) : num -> num -> num list = <fun>
     // F#:    val ( --- ) : num -> num -> num list
-    let rec (---) (m : num) (n : num) =
-        minusMinusMinusImpl (m, n) id
-    
-    and private minusMinusMinusImpl (m, n) cont =
-        if m > n then
-            cont []
+    let (---) (m : num) (n : num) =
+        // For compatibility with the original OCaml function,
+        // return an empty list for invalid inputs.
+        if m >= n then []
         else
-            minusMinusMinusImpl (m + Int 1, n) <| fun lst ->
-                cont (m :: lst)
+            [m .. n]
+
+//    let rec (---) (m : num) (n : num) =
+//        minusMinusMinusImpl (m, n) id
+//    
+//    and private minusMinusMinusImpl (m, n) cont =
+//        if m > n then
+//            cont []
+//        else
+//            minusMinusMinusImpl (m + Int 1, n) <| fun lst ->
+//                cont (m :: lst)
+
 
     // pg. 619
     // OCaml: val map2 : ('a -> 'b -> 'c) -> 'a list -> 'b list -> 'c list = <fun>
