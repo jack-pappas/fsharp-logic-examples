@@ -573,8 +573,9 @@ module lib =
     // pg. 620
     // OCaml: val allsets : int -> 'a list -> 'a list list = <fun>
     // F#:    val allsets : int -> 'a list -> 'a list list when 'a : comparison
-    let allsets m l =
-        allsetsImpl m l id
+    /// Produces all n-element subsets of l.
+    let allsets n l =
+        allsetsImpl n l id
 
     //
     let rec private allsubsetsImpl s cont =
@@ -584,23 +585,42 @@ module lib =
         | a :: t ->
             allsubsetsImpl t <| fun res ->
                 cont (union (image (fun b -> a :: b) res) res)
+
+    (* TODO :   Perhaps switch to this more-efficient and succint
+                implementation of the powerset function. It just
+                needs to be modified to use CPS for efficiency. *)
+    (*
+    let rec allsubsets = function
+        | [] -> [[]]
+        | h::t ->
+            [ for x in allsubsets t do
+                for t in [x;h::x] -> t ]
+    *)
         
     // pg. 620
     // OCaml: val allsubsets : 'a list -> 'a list list = <fun>
     // F#:    val allsubsets : 'a list -> 'a list list when 'a : comparison
+    /// Produces all subsets of l.
+    // NOTE : This is simply the powerset function.
     let allsubsets s =
         allsubsetsImpl s id
                     
     // pg. 620
     // OCaml: val allnonemptysubsets : 'a list -> 'a list list = <fun>
     // F#:    val allnonemptysubsets : 'a list -> 'a list list when 'a : comparison
-    let allnonemptysubsets s =
-        subtract (allsubsets s) [[]]
+    /// Produces all non-empty subsets of l.
+    let allnonemptysubsets l =
+        subtract (allsubsets l) [[]]
 
 // pg. 619
 // ------------------------------------------------------------------------- //
 // Explosion and implosion of strings.                                       //
 // ------------------------------------------------------------------------- //
+
+    (* OPTIMIZE :   'explode' should return a 'char list' instead of a 'string list'
+                    for efficiency. Ideally, we should optimize consuming code
+                    to use a char[], at which point 'explode' could simply become
+                    an alias for the String.ToCharArray(...) function. *)
 
     // pg. 619
     // OCaml: val explode : string -> string list = <fun>
@@ -644,7 +664,11 @@ module lib =
 //                                                                           //
 // Idea due to Diego Olivier Fernandez Pons (OCaml list, 2003/11/10).        //
 // ------------------------------------------------------------------------- //
-//
+
+(*  OPTIMIZE :  Can the 'func' type be replaced by the F# Map type? It seems
+                to work in the same way, and it'd be simpler to use -- we could
+                just redefine the functions below to work on Map instead. *)
+
 
     // pg. 621
     // OCaml: 
@@ -1154,6 +1178,10 @@ module lib =
 // ------------------------------------------------------------------------- //
 // Union-find algorithm.                                                     //
 // ------------------------------------------------------------------------- //
+
+(*  TODO :  Replace with our much-more-efficient F# version of union-find,
+            then modify the functions below to work with it. *)
+
 
     // pg. ???
     // OCaml: type 'a pnode = Nonterminal of 'a | Terminal of 'a * int

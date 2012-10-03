@@ -144,7 +144,9 @@ module prop =
         // [P "p"; P "q"; P "r"]
         let ats = atoms fm
         // 5 + 1 = length of false + length of space
+        // OPTIMIZE : Use List.maxBy instead of List.foldBack here.
         let width = List.foldBack (max << String.length << pname) ats 5 + 1
+        // OPTIMIZE : Use String.PadRight instead of String.replicate
         let fixw s = s + String.replicate (width - String.length s) " "
         let truthstring p = fixw (if p then "true" else "false")
         let mk_row v =
@@ -168,7 +170,7 @@ module prop =
     // OCaml: val tautology : 'a formula -> bool = <fun>
     // F#:    val tautology : 'a formula -> bool when 'a : comparison
     let tautology fm =
-        onallvaluations (eval fm) (fun s -> false) (atoms fm)
+        onallvaluations (eval fm) (fun _ -> false) (atoms fm)
 
 // pg. 41
 // ------------------------------------------------------------------------- //
@@ -177,12 +179,12 @@ module prop =
 
     // OCaml: val unsatisfiable : 'a formula -> bool = <fun>
     // F#:    val unsatisfiable : 'a formula -> bool when 'a : comparison
-    let unsatisfiable fm =
+    let inline unsatisfiable fm =
         tautology <| Not fm
         
     // OCaml: val satisfiable : 'a formula -> bool = <fun>
     // F#:    val satisfiable : 'a formula -> bool when 'a : comparison
-    let satisfiable fm =
+    let inline satisfiable fm =
         not <| unsatisfiable fm
 
 // pg. 41
@@ -441,7 +443,8 @@ module prop =
     // OCaml: val nenf : 'a formula -> 'a formula = <fun>
     // F#:    val nenf : 'a formula -> 'a formula
     let nenf fm =
-        nenfOrig <| psimplify fm
+        psimplify fm
+        |> nenfOrig
 
 // pg. 55
 // ------------------------------------------------------------------------- //
@@ -487,8 +490,9 @@ module prop =
     // F#:    val dnfOrig : 'a formula -> 'a formula when 'a : comparison
     let dnfOrig fm =
         let pvs = atoms fm
-        let satvals = allsatvaluations (eval fm) (fun _ -> false) pvs
-        list_disj (List.map (mk_lits (List.map Atom pvs)) satvals)
+        allsatvaluations (eval fm) (fun _ -> false) pvs
+        |> List.map (mk_lits (List.map Atom pvs))
+        |> list_disj
 
 // pg. 57
 // ------------------------------------------------------------------------- //
@@ -541,7 +545,8 @@ module prop =
     // OCaml: val distrib : 'a list list -> 'a list list -> 'a list list = <fun>
     // F#:    val distrib : 'a list list -> 'a list list -> 'a list list when 'a : comparison
     let distrib s1 s2 =
-        setify <| allpairs union s1 s2
+        allpairs union s1 s2
+        |> setify
 
     //
     let rec private purednfImpl fm cont =
@@ -584,7 +589,10 @@ module prop =
         if fm = False then [] 
         elif fm = True then [[]] 
         else
-            let djs = List.filter (non trivial) (purednf (nnf fm))
+            let djs =
+                nnf fm
+                |> purednf
+                |> List.filter (non trivial)
             List.filter (fun d -> not (List.exists (fun d' -> psubset d' d) djs)) djs
 
 // pg. 59
@@ -595,7 +603,8 @@ module prop =
     // OCaml: val dnf : 'a formula -> 'a formula = <fun>
     // F:     val dnf : 'a formula -> 'a formula when 'a : comparison
     let dnf fm =
-        List.map list_conj (simpdnf fm)
+        simpdnf fm
+        |> List.map list_conj
         |> list_disj
 
 // pg. 60
@@ -605,7 +614,10 @@ module prop =
 
     // OCaml: val purecnf : 'a formula -> 'a formula list list = <fun>
     // F#:    val purecnf : 'a formula -> 'a formula list list when 'a : comparison
-    let purecnf fm = image (image negate) (purednf (nnf (Not fm)))
+    let purecnf fm =
+        nnf (Not fm)
+        |> purednf
+        |> image (image negate)
     
     // OCaml: val simpcnf : 'a formula -> 'a formula list list = <fun>
     // F#:    val simpcnf : 'a formula -> 'a formula list list when 'a : comparison
@@ -613,12 +625,15 @@ module prop =
         if fm = False then [[]]
         elif fm = True then []
         else
-            let cjs = List.filter (non trivial) (purecnf fm)
+            let cjs =
+                purecnf fm
+                |> List.filter (non trivial)
             List.filter (fun c -> not (List.exists (fun c' -> psubset c' c) cjs)) cjs
             
     // OCaml: val cnf : 'a formula -> 'a formula = <fun>
     // F#:    val cnf : 'a formula -> 'a formula when 'a : comparison
     let cnf fm =
-        List.map list_disj (simpcnf fm)
+        simpcnf fm
+        |> List.map list_disj
         |> list_conj
 
