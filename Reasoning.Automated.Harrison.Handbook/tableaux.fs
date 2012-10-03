@@ -144,8 +144,10 @@ module tableaux =
             n) 0
 
     let tab fm =
-        let sfm = askolemize (Not (generalize fm))
-        if sfm = False then 0 else tabrefute [sfm]
+        match askolemize (Not (generalize fm)) with
+        | False -> 0
+        | sfm ->
+            tabrefute [sfm]
 
 // pg. 178
 // ------------------------------------------------------------------------- //

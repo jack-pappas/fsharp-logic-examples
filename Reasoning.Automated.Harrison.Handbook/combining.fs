@@ -88,9 +88,9 @@ module combining =
         match fm with
         | Atom (R ("=", [Fn (f, args); _]))
         | Atom (R ("=", [_; Fn (f, args)])) ->
-            List.find (fun (fn, pr, dp) -> fn (f, List.length args)) langs
+            List.find (fun (fn, _, _) -> fn (f, List.length args)) langs
         | Atom (R (p, args)) ->
-            List.find (fun (fn, pr, dp) -> pr (p, List.length args)) langs
+            List.find (fun (_, pr, _) -> pr (p, List.length args)) langs
             
     // pg. 437
     // ------------------------------------------------------------------------- //
@@ -151,9 +151,10 @@ module combining =
     // ------------------------------------------------------------------------- //
 
     let homogenize langs fms =
-        let fvs = unions (List.map fv fms)
-        let n = (Int 1) + List.foldBack (max_varindex "v_") fvs (Int 0)
-        homo langs fms (fun res n defs -> res) n []
+        let n =
+            let fvs = unions (List.map fv fms)
+            (Int 1) + List.foldBack (max_varindex "v_") fvs (Int 0)
+        homo langs fms (fun res _ _ -> res) n []
 
     // pg. 439
     // ------------------------------------------------------------------------- //
@@ -169,6 +170,7 @@ module combining =
     // Partition formulas among a list of languages.                             //
     // ------------------------------------------------------------------------- //
 
+    // OPTIMIZE : Optimize with CPS.
     let rec langpartition langs fms =
         match langs with
         | [] ->
@@ -193,9 +195,12 @@ module combining =
         | _ -> []
 
     let arrangement part =
-        List.foldBack (union << arreq) part
-             (List.map (fun (v, w) -> Not (mk_eq (Var v) (Var w)))
-                  (distinctpairs (List.map List.head part)))
+        part
+        |> List.map List.head
+        |> distinctpairs
+        |> List.map (fun (v, w) ->
+            Not (mk_eq (Var v) (Var w)))
+        |> List.foldBack (union << arreq) part
                   
     // pg. 443
     // ------------------------------------------------------------------------- //
@@ -217,7 +222,9 @@ module combining =
         | None -> eqs
         | Some eq ->
             let x, t = dest_def eq
-            redeqs (List.map (subst (x |=> t)) (subtract eqs [eq]))
+            subtract eqs [eq]
+            |> List.map (subst (x |=> t))
+            |> redeqs
             
     // pg. 443
     // ------------------------------------------------------------------------- //
@@ -225,9 +232,9 @@ module combining =
     // ------------------------------------------------------------------------- //
 
     let trydps ldseps fms =
-        List.exists (fun ((_, _, dp), fms0) ->
+        ldseps
+        |> List.exists (fun ((_, _, dp), fms0) ->
             dp (Not (list_conj (redeqs (fms0 @ fms)))))
-            ldseps
 
     let allpartitions =
         let allinsertions x l acc =
@@ -235,17 +242,29 @@ module combining =
         fun l -> List.foldBack (fun h y -> List.foldBack (allinsertions h) y []) l [[]]
 
     let nelop_refute001 vars ldseps =
-        List.forall (trydps ldseps << arrangement) (allpartitions vars)
+        allpartitions vars
+        |> List.forall (trydps ldseps << arrangement)
 
     let nelop1001 langs fms0 =
-        let fms = homogenize langs fms0
-        let seps = langpartition langs fms
-        let fvlist = List.map (unions << List.map fv) seps
-        let vars = List.filter (fun x -> List.length (List.filter (mem x) fvlist) >= 2) (unions fvlist)
+        let seps =
+            fms0
+            |> homogenize langs
+            |> langpartition langs
+        let vars =
+            let fvlist = List.map (unions << List.map fv) seps
+            // OPTIMIZE : The inner function uses List.filter, but the input is consumed by List.length;
+            // since we only care about the _number_ of matching items, it'd be more efficient to create
+            // a List.count function that folds over a list, applying a predicate to each item and counting
+            // the number of matching items.
+            unions fvlist
+            |> List.filter (fun x ->
+                List.length (List.filter (mem x) fvlist) >= 2)
         nelop_refute001 vars (List.zip langs seps)
 
     let nelop001 langs fm =
-        List.forall (nelop1001 langs) (simpdnf (simplify004 (Not fm)))
+        simplify004 (Not fm)
+        |> simpdnf
+        |> List.forall (nelop1001 langs)
     
     // pg. 445
     // ------------------------------------------------------------------------- //
@@ -255,17 +274,21 @@ module combining =
     // TODO : Optimize by using the Maybe or Either monads instead of using
     // exceptions for control flow.
     let rec findasubset p m l =
-        if m = 0 then p [] else
-        match l with
-        | [] -> failwith "findasubset"
-        | h :: t ->
-            try findasubset (fun s -> p (h :: s)) (m - 1) t
-            with Failure _ -> findasubset p m t
+        if m = 0 then p []
+        else
+            match l with
+            | [] -> failwith "findasubset"
+            | h :: t ->
+                try findasubset (fun s -> p (h :: s)) (m - 1) t
+                with Failure _ -> findasubset p m t
 
     let findsubset p l =
-        tryfind (fun n ->
-            findasubset (fun x -> if p x then x else failwith "") n l)
-            [0 .. List.length l]
+        [0 .. List.length l]
+        |> tryfind (fun n ->
+            (n, l)
+            ||> findasubset (fun x ->
+                if p x then x
+                else failwith "findsubset"))
             
     // pg. 446
     // ------------------------------------------------------------------------- //
@@ -274,20 +297,32 @@ module combining =
 
     let rec nelop_refute eqs ldseps =
         try
-            let dj = findsubset (trydps ldseps << List.map negate) eqs
-            List.forall (fun eq ->
-                nelop_refute (subtract eqs [eq]) (List.map (fun (dps, es) ->
-                    (dps, eq :: es)) ldseps)) dj
+            findsubset (trydps ldseps << List.map negate) eqs
+            |> List.forall (fun eq ->
+                ldseps
+                |> List.map (fun (dps, es) ->
+                    (dps, eq :: es))
+                |> nelop_refute (subtract eqs [eq]))
         with Failure _ ->
             false
 
     let nelop1 langs fms0 =
-        let fms = homogenize langs fms0
-        let seps = langpartition langs fms
-        let fvlist = List.map (unions << List.map fv) seps
-        let vars = List.filter (fun x -> List.length (List.filter (mem x) fvlist) >= 2) (unions fvlist)
-        let eqs = List.map (fun (a, b) -> mk_eq (Var a) (Var b)) (distinctpairs vars)
+        let seps =
+            fms0
+            |> homogenize langs
+            |> langpartition langs        
+        let vars =
+            let fvlist = List.map (unions << List.map fv) seps
+            unions fvlist
+            |> List.filter (fun x ->
+                List.length (List.filter (mem x) fvlist) >= 2)
+        let eqs =
+            distinctpairs vars
+            |> List.map (fun (a, b) ->
+                mk_eq (Var a) (Var b))
         nelop_refute eqs (List.zip langs seps)
 
     let nelop langs fm =
-        List.forall (nelop1 langs) (simpdnf (simplify004 (Not fm)))
+        simplify004 (Not fm)
+        |> simpdnf
+        |> List.forall (nelop1 langs)

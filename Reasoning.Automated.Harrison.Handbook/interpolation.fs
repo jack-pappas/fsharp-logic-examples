@@ -147,8 +147,12 @@ module interpolation =
     // ------------------------------------------------------------------------- //
 
     let einterpolate p q =
-        let rec p' = equalitize p
-        and q' = equalitize q
-        let rec p'' = if p' = p then p else And (fst (dest_imp p'), p)
-        and q'' = if q' = q then q else And (fst (dest_imp q'), q)
+        let rec p'' =
+            let p' = equalitize p
+            if p' = p then p
+            else And (fst (dest_imp p'), p)
+        and q'' =
+            let q' = equalitize q
+            if q' = q then q
+            else And (fst (dest_imp q'), q)
         interpolate p'' q''

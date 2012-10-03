@@ -158,7 +158,7 @@ module prop =
         let seperator = String.replicate (width * (List.length ats) + 9) "-"
         printfn "%s" (List.foldBack (fun s t -> fixw(pname s) + t) ats "| formula")
         printfn "%s" seperator
-        let _ = onallvaluations mk_row (fun x -> false) ats
+        onallvaluations mk_row (fun _ -> false) ats |> ignore
         printfn "%s" seperator
         printfn ""
 
@@ -576,7 +576,9 @@ module prop =
     // F#:    val trivial : 'a formula list -> bool when 'a : comparison
     let trivial lits =
         let pos, neg = List.partition positive lits
-        intersect pos (image negate neg) <> []
+        intersect pos (image negate neg)
+        |> List.isEmpty
+        |> not
 
 // pg. 59
 // ------------------------------------------------------------------------- //
@@ -593,7 +595,12 @@ module prop =
                 nnf fm
                 |> purednf
                 |> List.filter (non trivial)
-            List.filter (fun d -> not (List.exists (fun d' -> psubset d' d) djs)) djs
+            djs
+            |> List.filter (fun d ->
+                djs
+                |> List.exists (fun d' ->
+                    psubset d' d)
+                |> not)
 
 // pg. 59
 // ------------------------------------------------------------------------- //
@@ -628,7 +635,12 @@ module prop =
             let cjs =
                 purecnf fm
                 |> List.filter (non trivial)
-            List.filter (fun c -> not (List.exists (fun c' -> psubset c' c) cjs)) cjs
+            cjs
+            |> List.filter (fun c ->
+                cjs
+                |> List.exists (fun c' ->
+                    psubset c' c)
+                |> not)
             
     // OCaml: val cnf : 'a formula -> 'a formula = <fun>
     // F#:    val cnf : 'a formula -> 'a formula when 'a : comparison

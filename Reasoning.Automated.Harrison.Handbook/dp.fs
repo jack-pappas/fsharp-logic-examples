@@ -51,7 +51,9 @@ module dp =
         | [] -> None
         | pureItem ->
             clauses
-            |> List.filter (fun cl -> intersect cl pureItem = [])
+            |> List.filter (fun cl ->
+                intersect cl pureItem
+                |> List.isEmpty)
             |> Some
             
     // TODO: Verify use of List.partition works

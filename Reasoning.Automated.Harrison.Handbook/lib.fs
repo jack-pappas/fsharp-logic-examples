@@ -321,6 +321,9 @@ module lib =
     // pg. 619
     // OCaml: val uniq : 'a list -> 'a list = <fun>
     // F#:    val uniq : 'a list -> 'a list when 'a : comparison
+    // OPTIMIZE : Replace this (and the private implementation) with
+    // a simpler implementation which folds over the list and uses an
+    // F# set to track the "seen" values.
     let uniq l =
         uniqImpl l id
 

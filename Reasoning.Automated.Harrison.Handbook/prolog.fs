@@ -28,6 +28,7 @@ module prolog =
         let fvs = fv (list_conj (c :: asm))
         let n = List.length fvs
         let inst =
+            // OPTIMIZE : Use List.init instead of List.map.
             let vvs = List.map (fun i -> "_" + string i) [k .. (k + n - 1)]
             subst (fpf fvs (List.map Var vvs))
         (List.map inst asm, inst c), k + n
@@ -43,6 +44,8 @@ module prolog =
         | g :: gs ->
             if n = 0 then failwith "Too deep" 
             else
+                // OPTMIZE : Isn't this the same as the 'tryfind' defined in lib.fs?
+                // If so, delete this definition and just use the other one.
                 let rec tryfind f l =
                     match l with
                     | [] -> failwith "tryfind"
@@ -64,7 +67,11 @@ module prolog =
             List.map negate neg, (if pos = [] then False else List.head pos)
 
     let hornprove fm =
-        let rules = List.map hornify (simpcnf (skolemize (Not (generalize fm))))
+        let rules =
+            Not (generalize fm)
+            |> skolemize
+            |> simpcnf
+            |> List.map hornify
         deepen (fun n -> backchain rules n 0 undefined [False], n) 0
 
 // pg. 210
@@ -96,5 +103,5 @@ module prolog =
 // ------------------------------------------------------------------------- //
 
     let prolog rules gl =
-        let i = solve (simpleprolog rules gl)
+        let i = solve <| simpleprolog rules gl
         mapfilter (fun x -> Atom (R ("=", [Var x; apply i x]))) (fv (parse gl))                      
