@@ -53,8 +53,6 @@ let lerules = ["0 <= X"; "S(X) <= S(Y) :- X <= Y"];;
 
 simpleprolog lerules "S(S(0)) <= S(S(S(0)))";;
 
-simpleprolog lerules "S(S(0)) <= S(S(S(0)))";;
-
 // System.Exception: tryfind - This is the expected result.
 simpleprolog lerules "S(S(0)) <= S(0)";;
 
