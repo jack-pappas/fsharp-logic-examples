@@ -76,8 +76,9 @@ module tableaux =
         let djs1 =
             let inst =
                 let newvars =
+                    // OPTIMIZE : Change this call to List.map to use List.init instead.
                     let l = List.length fvs
-                    List.map (fun k -> "_" + string (n * l + k)) (1--l)
+                    List.map (fun k -> "_" + string (n * l + k)) [1 .. l]
                 fpf fvs (List.map Var newvars)
             distrib (image (image (subst inst)) djs0) djs
 

@@ -370,7 +370,9 @@ module cooper =
                 let p_inf = simplify004 (minusinf x p)
                 list_disj (linrep vars x (mk_numeral j) p_inf :: List.map (p_element j) bs)
 
-            GenericOne --- divlcm x p
+            // OPTIMIZE : Implement a special version of List.init which uses
+            // 'num' instead of 'int'. Then, use it to replace this call to List.map.
+            [GenericOne .. divlcm x p]
             |> List.map stage
             |> list_disj
 

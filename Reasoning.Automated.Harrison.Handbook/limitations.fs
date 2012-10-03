@@ -69,8 +69,9 @@ module limitations =
     // ------------------------------------------------------------------------- //
 
     let number (s : string) =
+        // OPTIMIZE : No need to fold backwards here -- rearrange to use a normal fold.
         List.foldBack (fun i g ->
-            Int (1 + int (char s.[i])) + (Int 256) * g) (0 -- (String.length s - 1)) (Int 0)
+            Int (1 + int (char s.[i])) + (Int 256) * g) [0 .. (String.length s - 1)] (Int 0)
             
     // pg. 532
     // ------------------------------------------------------------------------- //
@@ -241,7 +242,7 @@ module limitations =
             let m =
                 if a = "<" then dtermval v t - Int 1
                 else dtermval v t
-            pred (fun n -> dholds ((x |-> n) v) p) (Int 0 --- m)
+            pred (fun n -> dholds ((x |-> n) v) p) [Int 0 .. m]
 
     // pg. 550
     // ------------------------------------------------------------------------- //
@@ -311,10 +312,10 @@ module limitations =
             veref sign m v (And (Imp (p, q), Imp (q, p)))
         | Exists (x, p)
             when sign true ->
-            List.exists (fun n -> veref sign m ((x |-> n) v) p) (Int 0 --- m)
+            List.exists (fun n -> veref sign m ((x |-> n) v) p) [Int 0 .. m]
         | Forall (x, p)
             when sign false ->
-            List.exists (fun n -> veref sign m ((x |-> n) v) p) (Int 0 --- m)
+            List.exists (fun n -> veref sign m ((x |-> n) v) p) [Int 0 .. m]
         | Forall (x, Imp (Atom (R (a, [Var y;t])), p))
             when sign true ->
             verefboundquant m v x y a t sign p
@@ -329,7 +330,7 @@ module limitations =
             let m =
                 if a = "<" then dtermval v t - Int 1
                 else dtermval v t
-            List.forall (fun n -> veref sign m ((x |-> n) v) p) (Int 0 --- m)
+            List.forall (fun n -> veref sign m ((x |-> n) v) p) [Int 0 .. m]
 
     let sholds = veref id
     

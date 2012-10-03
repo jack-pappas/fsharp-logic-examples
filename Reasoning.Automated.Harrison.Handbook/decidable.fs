@@ -178,7 +178,7 @@ module decidable =
 
     let decide_finite n fm =
         let interps =
-            let dom = 1 -- n
+            let dom = [1 .. n]
             let fints =
                 let funcs = functions fm
                 alldepmappings funcs (allfunctions dom)

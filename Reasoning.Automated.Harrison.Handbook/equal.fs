@@ -52,8 +52,8 @@ module equal =
         else
             // TODO : These instances of List.map could be optimized by using
             // List.init instead (so we don't need the intermediate list).
-            let argnames_x = List.map (fun n -> "x" + (string n)) (1 -- n)
-            let argnames_y = List.map (fun n -> "y" + (string n)) (1 -- n)
+            let argnames_x = List.map (fun n -> "x" + (string n)) [1 .. n]
+            let argnames_y = List.map (fun n -> "y" + (string n)) [1 .. n]
             let args_x = List.map Var argnames_x
             let args_y = List.map Var argnames_y
             let ant = end_itlist mk_and (List.map2 mk_eq args_x args_y)
@@ -70,8 +70,8 @@ module equal =
         else
             // TODO : These instances of List.map could be optimized by using
             // List.init instead (so we don't need the intermediate list).
-            let argnames_x = List.map (fun n -> "x" + (string n)) (1 -- n)
-            let argnames_y = List.map (fun n -> "y" + (string n)) (1 -- n)
+            let argnames_x = List.map (fun n -> "x" + (string n)) [1 .. n]
+            let argnames_y = List.map (fun n -> "y" + (string n)) [1 .. n]
             let args_x = List.map Var argnames_x
             let args_y = List.map Var argnames_y
             let ant = end_itlist mk_and (List.map2 mk_eq args_x args_y)

@@ -27,8 +27,9 @@ module prolog =
     let renamerule k (asm, c) =
         let fvs = fv (list_conj (c :: asm))
         let n = List.length fvs
-        let vvs = List.map (fun i -> "_" + string i) (k -- (k + n - 1))
-        let inst = subst (fpf fvs (List.map (fun x -> Var x) vvs))
+        let inst =
+            let vvs = List.map (fun i -> "_" + string i) [k .. (k + n - 1)]
+            subst (fpf fvs (List.map Var vvs))
         (List.map inst asm, inst c), k + n
         
 // pg. 207

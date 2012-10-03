@@ -39,7 +39,7 @@ module completion =
         let nms1, nms2 = 
             chop_list (List.length fvs1)
                 (List.map (fun n -> Var ("x" + string n))
-                    (0 -- (List.length fvs1 + List.length fvs2 - 1)))
+                    [0 .. (List.length fvs1 + List.length fvs2 - 1)])
         subst (fpf fvs1 nms1) fm1, subst (fpf fvs2 nms2) fm2
   
 // pg. 276

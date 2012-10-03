@@ -94,32 +94,22 @@ module lib =
 // ------------------------------------------------------------------------- //
 // Handy list operations.                                                    //
 // ------------------------------------------------------------------------- //
-
-    // pg. 618
-    // OCaml: val ( -- ) : int -> int -> int list = <fun>
-    // F#:    val ( -- ) : int -> int -> int list
-    let inline (--) m n = [m .. n]
-
-    // pg.618
-    // OCaml: val ( --- ) : num -> num -> num list = <fun>
-    // F#:    val ( --- ) : num -> num -> num list
-    let inline (---) (m : num) (n : num) = [m .. n]
         
     // pg. 619
     // OCaml: val end_itlist : ('a -> 'a -> 'a) -> 'a list -> 'a = <fun>
     // F#:    val end_itlist : ('a -> 'a -> 'a) -> 'a list -> 'a
-    
-
-
+    // TODO : This function seems to be the equivalent of the F# List.reduceBack function;
+    // if it is indeed the same, then make this an alias of List.reduceBack until we can
+    // replace all instances of it.
     let rec end_itlist f l =
         match l with
         | [] -> failwith "end_itlist"
-        | [x] ->
-            // TODO : Shouldn't this be (f x) instead?
-            // Perhaps an error in the original code?
-            x
+        | [x] -> x
         | hd :: tl ->
             f hd (end_itlist f tl)
+
+//    let inline end_itlist f l =
+//        List.reduceBack f l
         
     // pg. 619
     // OCaml: val last : 'a list -> 'a = <fun>

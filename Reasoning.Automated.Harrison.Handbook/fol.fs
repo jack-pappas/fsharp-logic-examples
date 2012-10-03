@@ -261,7 +261,7 @@ module folMod = // TODO : Change this back to 'fol'?
             | "=", [x; y] -> x = y
             | _ -> failwith "uninterpreted predicate"
 
-        0 -- (n - 1), func, pred
+        [0 .. (n - 1)], func, pred
 
 // pg. 127
 // ------------------------------------------------------------------------- //

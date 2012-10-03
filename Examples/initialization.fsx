@@ -28,4 +28,18 @@ let runWithStackFrame stackSize fn =
     let thread = System.Threading.Thread((fun () -> result := fn()), stackSize)
     thread.Start()
     thread.Join() // thread finishes
-    !result
+    !result;;
+
+
+(* TEMP :   These operators were removed from the 'lib' module.
+            Eventually, they should be replaced in the example code
+            by [x .. y] instead. *)
+// pg. 618
+// OCaml: val ( -- ) : int -> int -> int list = <fun>
+// F#:    val ( -- ) : int -> int -> int list
+let inline (--) m n = [m .. n];;
+
+// pg.618
+// OCaml: val ( --- ) : num -> num -> num list = <fun>
+// F#:    val ( --- ) : num -> num -> num list
+let inline (---) (m : num) (n : num) = [m .. n];;

@@ -265,7 +265,7 @@ module combining =
     let findsubset p l =
         tryfind (fun n ->
             findasubset (fun x -> if p x then x else failwith "") n l)
-            (0 -- List.length l)
+            [0 .. List.length l]
             
     // pg. 446
     // ------------------------------------------------------------------------- //

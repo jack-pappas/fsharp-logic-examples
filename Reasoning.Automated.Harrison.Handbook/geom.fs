@@ -71,8 +71,9 @@ module geom =
     // F#:    val coordinate : (formula<fol> -> formula<fol>)
     let coordinate = onatoms <| fun (R (a, args)) ->
         let xtms,ytms = List.unzip (List.map (fun (Var v) -> Var (v + "_x"), Var (v + "_y")) args)
-        let rec xs = List.map (fun n -> string n + "_x") (1 -- List.length args)
-        and ys = List.map (fun n -> string n + "_y") (1 -- List.length args)
+        // OPTIMIZE : Change these calls to List.map to use List.init instead.
+        let rec xs = List.map (fun n -> string n + "_x") [1 .. List.length args]
+        and ys = List.map (fun n -> string n + "_y") [1 .. List.length args]
         subst (fpf (xs @ ys) (xtms @ ytms)) (assoc a coordinations)
     
     // pg. 415
@@ -88,7 +89,7 @@ module geom =
             and y = string n + "_y"
             let i = fpf ["x";"y"] [Var x;Var y]
             (x |-> tsubst i x') ((y |-> tsubst i y') f)
-        Iff (z,subst (List.foldBack m (1 -- 5) undefined) z)
+        Iff (z,subst (List.foldBack m [1 .. 5] undefined) z)
 
     // OCaml: val invariant_under_translation : string * fol formula -> fol formula = <fun>
     // F#:    val invariant_under_translation : (string * formula<fol> -> formula<fol>)
