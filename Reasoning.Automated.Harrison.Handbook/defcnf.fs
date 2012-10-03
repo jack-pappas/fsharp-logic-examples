@@ -68,7 +68,7 @@ module defcnf =
     let max_varindex pfx s (n : num) =
         let m = String.length pfx
         let l = String.length s
-        if l <= m || s.StartsWith pfx then n
+        if l <= m || not <| s.StartsWith pfx then n
         else
             let s' = s.[m .. (l - m)]
             if List.forall numeric (explode s') then
