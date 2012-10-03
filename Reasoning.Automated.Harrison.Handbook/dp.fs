@@ -103,9 +103,9 @@ module dp =
 // Davis-Putnam satisfiability tester and tautology checker.                 //
 // ------------------------------------------------------------------------- //
 
-    let dpsat fm = dp (defcnfs fm)
+    let inline dpsat fm = dp (defcnfs fm)
 
-    let dptaut fm = not (dpsat (Not fm))
+    let inline dptaut fm = not (dpsat (Not fm))
 
 // pg. 85
 // ------------------------------------------------------------------------- //
@@ -147,9 +147,9 @@ module dp =
     let dpll clauses =
         dpllImpl clauses id
                                                      
-    let dpllsat fm = dpll (defcnfs fm)
+    let inline dpllsat fm = dpll (defcnfs fm)
 
-    let dplltaut fm = not (dpllsat (Not fm))
+    let inline dplltaut fm = not (dpllsat (Not fm))
 
 // pg.86
 // ------------------------------------------------------------------------- //
@@ -204,9 +204,9 @@ module dp =
                     let p = maximize (posneg_count cls') ps
                     dpli cls ((p, Guessed) :: trail')
 
-    let dplisat fm = dpli (defcnfs fm) []
+    let inline dplisat fm = dpli (defcnfs fm) []
 
-    let dplitaut fm = not (dplisat (Not fm))
+    let inline dplitaut fm = not (dplisat (Not fm))
 
 // pg. 88
 // ------------------------------------------------------------------------- //
@@ -242,8 +242,8 @@ module dp =
                 let p = maximize (posneg_count cls') ps
                 dplb cls ((p, Guessed) :: trail')
 
-    let dplbsat fm = dplb (defcnfs fm) []
+    let inline dplbsat fm = dplb (defcnfs fm) []
 
-    let dplbtaut fm = not (dplbsat (Not fm))
+    let inline dplbtaut fm = not (dplbsat (Not fm))
 
 

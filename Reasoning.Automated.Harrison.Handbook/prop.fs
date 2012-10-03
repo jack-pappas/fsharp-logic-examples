@@ -113,7 +113,7 @@ module prop =
 
     // OCaml: val atoms : 'a formula -> 'a list = <fun>
     // F#:    val atoms : 'a formula -> 'a list when 'a : comparison
-    let atoms fm =
+    let inline atoms fm =
         atom_union (fun a -> [a]) fm
 
 // pg. 35
@@ -121,7 +121,11 @@ module prop =
 // Code to print out truth tables.                                           //
 // ------------------------------------------------------------------------- //
 
-    let rec onallvaluationsImpl subfn v ats cont =
+(* OPTIMIZE :   It may be possible to replace onallvaluations (and it's implementation)
+                with a call to List.scan. If it is, we should only replace it
+                if it's actually faster. *)
+
+    let rec private onallvaluationsImpl subfn v ats cont =
         match ats with
         | [] ->
             cont (subfn v)
@@ -386,7 +390,7 @@ module prop =
 
     // OCaml: val nnf : 'a formula -> 'a formula = <fun>
     // F#:    val nnf : 'a formula -> 'a formula
-    let nnf fm =
+    let inline nnf fm =
         nnfOrig <| psimplify fm
 
 // pg. 53
@@ -442,7 +446,7 @@ module prop =
         
     // OCaml: val nenf : 'a formula -> 'a formula = <fun>
     // F#:    val nenf : 'a formula -> 'a formula
-    let nenf fm =
+    let inline nenf fm =
         psimplify fm
         |> nenfOrig
 
@@ -453,15 +457,17 @@ module prop =
 
     // OCaml: val list_conj : 'a formula list -> 'a formula = <fun>
     // F#:    val list_conj : 'a formula list -> 'a formula when 'a : equality
-    let list_conj l =
-        if l = [] then True
-        else end_itlist mk_and l
+    let list_conj = function
+        | [] -> True
+        | l ->
+            end_itlist mk_and l
 
     // OCaml: val list_disj : 'a formula list -> 'a formula = <fun>
     // F#:    val list_disj : 'a formula list -> 'a formula when 'a : equality
-    let list_disj l = 
-        if l = [] then False 
-        else end_itlist mk_or l
+    let list_disj = function
+        | [] -> False
+        | l ->
+            end_itlist mk_or l
         
     // OCaml: val mk_lits : 'a formula list -> ('a -> bool) -> 'a formula = <fun>
     // F#:    val mk_lits : 'a formula list -> ('a -> bool) -> 'a formula when 'a : equality
@@ -587,10 +593,10 @@ module prop =
 
     // OCaml: val simpdnf : 'a formula -> 'a formula list list = <fun>
     // F#:    val simpdnf : 'a formula -> 'a formula list list when 'a : comparison
-    let simpdnf fm =
-        if fm = False then [] 
-        elif fm = True then [[]] 
-        else
+    let simpdnf = function
+        | False -> []
+        | True -> [[]]
+        | fm ->
             let djs =
                 nnf fm
                 |> purednf
@@ -628,10 +634,10 @@ module prop =
     
     // OCaml: val simpcnf : 'a formula -> 'a formula list list = <fun>
     // F#:    val simpcnf : 'a formula -> 'a formula list list when 'a : comparison
-    let simpcnf fm =
-        if fm = False then [[]]
-        elif fm = True then []
-        else
+    let simpcnf = function
+        | False -> [[]]
+        | True -> []
+        | fm ->
             let cjs =
                 purecnf fm
                 |> List.filter (non trivial)
