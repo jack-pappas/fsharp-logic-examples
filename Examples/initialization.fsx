@@ -1,5 +1,5 @@
 // ========================================================================= //
-// Copyright (c) 2012 Jack Pappas                                            //
+// Copyright (c) 2012 Jack Pappas, Anh-Dung Phan                             //
 // (See "LICENSE.txt" for details.)                                          //
 // ========================================================================= //
 
@@ -22,3 +22,10 @@ open FSharpx.Compatibility.OCaml.Num;;
 let print_num (n : Num) = n.ToString ();;                (* Avoid range limit  *)
 fsi.AddPrinter print_num;;                               (* when printing nums *)
 
+/// Run a function with custom stack size in byte
+let runWithStackFrame stackSize fn =
+    let result = ref Unchecked.defaultof<'T> // ref cell to hold return value
+    let thread = System.Threading.Thread((fun () -> result := fn()), stackSize)
+    thread.Start()
+    thread.Join() // thread finishes
+    !result
