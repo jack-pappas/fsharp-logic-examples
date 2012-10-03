@@ -22,4 +22,5 @@ Logic Programming in F#
 
 ### F# porting notes ###
  - Turned off the F# compiler warning `FS0025` (about incomplete pattern matches). These matches are found throughout the original OCaml code and eliminating them *correctly* would require extensive changes to the code; so, for compatibility purposes, the code has been left as-is and the warning disabled to promote readability.
+ - Run a few examples with 10MB stack using `runWithStackFrame` in `initialization.fsx`. These examples result in stackoverflow exception in F# on Windows due to small 1MB stack (see extensive discussion [here](http://stackoverflow.com/questions/7947446/why-does-f-impose-a-low-limit-on-stack-size)).
  

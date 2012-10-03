@@ -76,7 +76,7 @@ module tableaux =
 
     [<Test>]
     let ``test splittab 1``() =
-        splittab  (parse "
+        splittab (parse "
 	        ((exists x. forall y. P(x) <=> P(y)) <=> 
              ((exists x. Q(x)) <=> (forall y. Q(y)))) <=> 
             ((exists x. forall y. Q(x) <=> Q(y)) <=> 

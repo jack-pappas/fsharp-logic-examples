@@ -31,10 +31,6 @@ module unif =
         unify_and_apply [(parset "f(x,y)"),(parset "f(y,x)")]
         |> should equal [(Fn ("f",[Var "y"; Var "y"]), Fn ("f",[Var "y"; Var "y"]))]
 
-    // TODO: fix the cyclic error
-
-//    unify_and_apply [(parset "f(x,g(y))"),(parset "f(y,x)")]
-
     [<Test>]
     let ``test unify_and_apply 3``() =
         unify_and_apply [(parset "x_0"),(parset "f(x_1,x_1)");
