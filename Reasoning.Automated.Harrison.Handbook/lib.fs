@@ -250,6 +250,8 @@ module lib =
     // pg. ???
     // OCaml: val merge : ('a -> 'a -> bool) -> 'a list -> 'a list -> 'a list = <fun>
     // F#:    val merge : ('a -> 'a -> bool) -> 'a list -> 'a list -> 'a list
+        // NOTE : 'comparer' returns bool, so it must implement either the
+        // (<=) or (>=) operators.
     let merge comparer l1 l2 =
         mergeImpl comparer l1 l2 id
 
@@ -257,10 +259,12 @@ module lib =
 // Bottom-up mergesort.                                                      //
 // ------------------------------------------------------------------------- //
 
+(* OPTIMIZE :   Replace with List.sortWith. *)
+
     // pg. 619
     // OCaml: val sort : ('a -> 'a -> bool) -> 'a list -> 'a list = <fun>
     // F#:    val sort : ('a -> 'a -> bool) -> ('a list -> 'a list) when 'a : equality
-    let rec mergepairs ord l1 l2 =
+    let rec private mergepairs ord l1 l2 =
         match l1, l2 with
         | [s], [] -> s
         | l, [] ->
@@ -502,13 +506,13 @@ module lib =
     // OCaml: val set_eq : 'a list -> 'a list -> bool = <fun>
     // F#:    val set_eq : 'a list -> 'a list -> bool when 'a : comparison
     // TODO: Can we use (s1 = s2) once they are converted to sets?
-    let rec set_eq s1 s2 =
+    let set_eq s1 s2 =
         setify s1 = setify s2
     
     // pg. 620
     // OCaml: val insert : 'a -> 'a list -> 'a list = <fun>
     // F#:    val insert : 'a -> 'a list -> 'a list when 'a : comparison
-    let insert x s =
+    let inline insert x s =
         union [x] s
     
     // pg. 620
