@@ -82,18 +82,6 @@ module completion =
 // Orienting an equation.                                                    //
 // ------------------------------------------------------------------------- //
 
-//let normalize_and_orient ord eqs (Atom(R("=",[s;t]))) =
-//  let s' = rewrite eqs s and t' = rewrite eqs t in
-//  if ord s' t' then (s',t') else if ord t' s' then (t',s')
-//  else failwith "Can't orient equation";;
-
-//    let normalize_and_orient ord eqs (Atom(R("=",[s;t]))) =
-//        let s' = rewrite eqs s 
-//        let t' = rewrite eqs t
-//        if ord s' t' then Some(s',t') 
-//        elif ord t' s' then Some(t',s')
-//        else None
-
     let normalize_and_orient ord eqs (Atom (R ("=", [s;t]))) =
         let s' = rewrite eqs s
         let t' = rewrite eqs t
@@ -115,22 +103,6 @@ module completion =
 // ------------------------------------------------------------------------- //
 // Completion main loop (deferring non-orientable equations).                //
 // ------------------------------------------------------------------------- //
-
-// let rec complete ord (eqs,def,crits) =
-//   match crits with
-//     eq::ocrits ->
-//         let trip =
-//           try let (s',t') = normalize_and_orient ord eqs eq in
-//               if s' = t' then (eqs,def,ocrits) else
-//               let eq' = Atom(R("=",[s';t'])) in
-//               let eqs' = eq'::eqs in
-//               eqs',def,
-//               ocrits @ List.foldBack ((@) ** critical_pairs eq') eqs' []
-//           with Failure _ -> (eqs,eq::def,ocrits) in
-//         status trip eqs; complete ord trip
-//   | _ -> if def = [] then eqs else
-//          let e = find (can (normalize_and_orient ord eqs)) def in
-//          complete ord (eqs,subtract def [e],[e]);;
 
     let rec complete ord (eqs,def,crits) =
         match crits with
@@ -181,21 +153,7 @@ module completion =
                 mk_eq l r) eqs
         (interreduce [] >>|> complete ord) (eqs', [], unions (allpairs critical_pairs eqs' eqs'))
 
-// pg. 286
-// ------------------------------------------------------------------------- //
-// The commutativity example (of course it fails...).                        //
-// ------------------------------------------------------------------------- //
-
-////******************
-//
-//#trace complete
-//
-//complete_and_simplify ["1"; "*"; "i"]
-// [<<(x * y) * z = x * (y * z)>>;
-//  <<1 * x = x>>; <<x * 1 = x>>; <<x * x = 1>>]
-//
-// *******************//
-
+// Not in book.
 // ------------------------------------------------------------------------- //
 // Step-by-step; note that we *do* deduce commutativity, deferred of course. //
 // ------------------------------------------------------------------------- //
