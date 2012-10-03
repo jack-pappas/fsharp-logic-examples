@@ -64,7 +64,7 @@ module tableaux =
             // NOTE : This is not used anywhere! Did we miss something
             // or is this also in the book code?
             let unifyResult = unify_complements acc
-            tryfind (unify_refute tail >>|> unify_complements acc) (allpairs (fun p q -> (p, q)) pos neg)
+            tryfind (unify_refute tail << unify_complements acc) (allpairs (fun p q -> (p, q)) pos neg)
 
 
 // pg. 175

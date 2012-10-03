@@ -193,7 +193,7 @@ module combining =
         | _ -> []
 
     let arrangement part =
-        List.foldBack (union >>|> arreq) part
+        List.foldBack (union << arreq) part
              (List.map (fun (v, w) -> Not (mk_eq (Var v) (Var w)))
                   (distinctpairs (List.map List.head part)))
                   
@@ -235,12 +235,12 @@ module combining =
         fun l -> List.foldBack (fun h y -> List.foldBack (allinsertions h) y []) l [[]]
 
     let nelop_refute001 vars ldseps =
-        List.forall (trydps ldseps >>|> arrangement) (allpartitions vars)
+        List.forall (trydps ldseps << arrangement) (allpartitions vars)
 
     let nelop1001 langs fms0 =
         let fms = homogenize langs fms0
         let seps = langpartition langs fms
-        let fvlist = List.map (unions >>|> List.map fv) seps
+        let fvlist = List.map (unions << List.map fv) seps
         let vars = List.filter (fun x -> List.length (List.filter (mem x) fvlist) >= 2) (unions fvlist)
         nelop_refute001 vars (List.zip langs seps)
 
@@ -274,7 +274,7 @@ module combining =
 
     let rec nelop_refute eqs ldseps =
         try
-            let dj = findsubset (trydps ldseps >>|> List.map negate) eqs
+            let dj = findsubset (trydps ldseps << List.map negate) eqs
             List.forall (fun eq ->
                 nelop_refute (subtract eqs [eq]) (List.map (fun (dps, es) ->
                     (dps, eq :: es)) ldseps)) dj
@@ -284,7 +284,7 @@ module combining =
     let nelop1 langs fms0 =
         let fms = homogenize langs fms0
         let seps = langpartition langs fms
-        let fvlist = List.map (unions >>|> List.map fv) seps
+        let fvlist = List.map (unions << List.map fv) seps
         let vars = List.filter (fun x -> List.length (List.filter (mem x) fvlist) >= 2) (unions fvlist)
         let eqs = List.map (fun (a, b) -> mk_eq (Var a) (Var b)) (distinctpairs vars)
         nelop_refute eqs (List.zip langs seps)

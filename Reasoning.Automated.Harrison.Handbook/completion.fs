@@ -115,7 +115,7 @@ module completion =
                     else
                         let eq' = Atom (R ("=", [s'; t']))
                         let eqs' = eq' :: eqs
-                        eqs', def, ocrits @ List.foldBack ((@) >>|> critical_pairs eq') eqs' []
+                        eqs', def, ocrits @ List.foldBack ((@) << critical_pairs eq') eqs' []
                 with Failure _ ->
                     eqs, eq :: def, ocrits
             status trip eqs
@@ -151,7 +151,7 @@ module completion =
             List.map (fun e -> 
                 let l, r = normalize_and_orient ord [] e
                 mk_eq l r) eqs
-        (interreduce [] >>|> complete ord) (eqs', [], unions (allpairs critical_pairs eqs' eqs'))
+        (interreduce [] << complete ord) (eqs', [], unions (allpairs critical_pairs eqs' eqs'))
 
 // Not in book.
 // ------------------------------------------------------------------------- //
@@ -181,7 +181,7 @@ module completion =
                         let eq' = Atom (R ("=", [s';t']))
                         let eqs' = eq' :: eqs
                         eqs', def,
-                          ocrits @ List.foldBack ((@) >>|> critical_pairs eq') eqs' []
+                          ocrits @ List.foldBack ((@) << critical_pairs eq') eqs' []
                 with Failure _ ->
                     eqs, eq :: def, ocrits
 

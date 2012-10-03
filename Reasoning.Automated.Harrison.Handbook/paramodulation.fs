@@ -72,7 +72,7 @@ module paramodulation =
                 image (subst i) (pcl' @ ocl')
             let l, r = dest_eq eq
             overlapc (l, r) ocl rfn
-            >>|> overlapc (r, l) ocl rfn)
+            << overlapc (r, l) ocl rfn)
             
 
     let para_clauses cls1 cls2 =
@@ -104,4 +104,4 @@ module paramodulation =
         Not (generalize fm)
         |> askolemize
         |> simpdnf
-        |> List.map (pure_paramodulation >>|> list_conj)
+        |> List.map (pure_paramodulation << list_conj)

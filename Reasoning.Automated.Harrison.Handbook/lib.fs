@@ -13,13 +13,6 @@ module lib =
     open FSharpx.Compatibility.OCaml
     open Num
 
-    // pg. 618
-    // OCaml: val ( ** ) : ('a -> 'b) -> ('c -> 'a) -> 'c -> 'b = <fun>
-    // F#:    val ( >>|> ) : ('a -> 'b) -> ('c -> 'a) -> 'c -> 'b
-    /// Composes two functions, then applies a value to the resulting function.
-    let inline ( >>|> ) f g x =
-        f <| g x
-
 // ------------------------------------------------------------------------- //
 // GCD and LCM on arbitrary-precision numbers.                               //
 // ------------------------------------------------------------------------- //

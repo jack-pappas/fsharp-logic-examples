@@ -46,7 +46,7 @@ module qelim =
     // F#:     val qelim : (fol formula -> fol formula) -> string -> fol formula -> fol formula
     let qelim bfn x p =
         let cjs = conjuncts p
-        let ycjs, ncjs = List.partition (mem x >>|> fv) cjs
+        let ycjs, ncjs = List.partition (mem x << fv) cjs
         if ycjs = [] then p
         else
             let q = bfn (Exists (x, list_conj ycjs))
@@ -130,7 +130,7 @@ module qelim =
             | Not (Iff (p, q)) ->
                 Or (And (cnnf p, cnnf (Not q)), And (cnnf (Not p), cnnf q))
             | _ -> lfn fm
-        simplify004 >>|> cnnf >>|> simplify004
+        simplify004 << cnnf << simplify004
   
 // pg. 334
 //  ------------------------------------------------------------------------- // 
@@ -196,6 +196,6 @@ module qelim =
     // OCaml : val quelim_dlo : fol formula -> fol formula = <fun>
     // F# :    val quelim_dlo : (fol formula -> fol formula)
     let quelim_dlo =
-        lift_qelim afn_dlo (dnf >>|> cnnf lfn_dlo) (fun _ -> dlobasic)
+        lift_qelim afn_dlo (dnf << cnnf lfn_dlo) (fun _ -> dlobasic)
 
 

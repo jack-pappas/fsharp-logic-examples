@@ -33,13 +33,19 @@ let runWithStackFrame stackSize fn =
 
 (* TEMP :   These operators were removed from the 'lib' module.
             Eventually, they should be replaced in the example code
-            by [x .. y] instead. *)
+            by their standard F# equivalents. *)
 // pg. 618
 // OCaml: val ( -- ) : int -> int -> int list = <fun>
 // F#:    val ( -- ) : int -> int -> int list
-let inline (--) m n = [m .. n];;
+let inline (--) m n = [m .. n];;    // Usages of this should be changed to [x .. y]
 
 // pg.618
 // OCaml: val ( --- ) : num -> num -> num list = <fun>
 // F#:    val ( --- ) : num -> num -> num list
-let inline (---) (m : num) (n : num) = [m .. n];;
+let inline (---) (m : num) (n : num) = [m .. n];;   // Usages of this should be changed to [x .. y]
+
+// pg. 618
+// OCaml: val ( ** ) : ('a -> 'b) -> ('c -> 'a) -> 'c -> 'b = <fun>
+// F#:    val ( >>|> ) : ('a -> 'b) -> ('c -> 'a) -> 'c -> 'b
+/// Composes two functions, then applies a value to the resulting function.
+let inline ( >>|> ) f g x = f <| g x;;      // Usages of this should be changed to <<

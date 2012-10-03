@@ -156,14 +156,14 @@ module dp =
         let litabs = function Not q -> q | p -> p
         fun cls trail ->
             subtract (unions (image (image litabs) cls))
-                (image (litabs >>|> fst) trail)
+                (image (litabs << fst) trail)
 
     let rec unit_subpropagate (cls, fn, trail) =
         let uu = function
             | [c] when not (defined fn c) -> [c]
             | _ -> failwith ""
         let cls' =
-            List.map (List.filter (not >>|> defined fn >>|> negate)) cls
+            List.map (List.filter (not << defined fn << negate)) cls
 
         match unions (mapfilter uu cls') with
         | [] ->
@@ -225,7 +225,7 @@ module dp =
                 let conflict =
                     trail'
                     |> List.filter (fun (_, d) -> d = Guessed)
-                    |> image (negate >>|> fst)
+                    |> image (negate << fst)
                     |> insert (negate p)
                 dplb (conflict :: cls) ((negate p, Deduced) :: trail')
             | _ -> false

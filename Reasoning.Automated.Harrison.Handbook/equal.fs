@@ -95,7 +95,7 @@ module equal =
                 let funcs = functions fm
 
                 equivalence_axioms
-                |> List.foldBack (union >>|> predicate_congruence) preds
-                |> List.foldBack (union >>|> function_congruence) funcs
+                |> List.foldBack (union << predicate_congruence) preds
+                |> List.foldBack (union << function_congruence) funcs
 
             Imp (end_itlist mk_and axioms, fm)

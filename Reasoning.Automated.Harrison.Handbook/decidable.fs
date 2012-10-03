@@ -75,7 +75,7 @@ module decidable =
 // ------------------------------------------------------------------------- //
 
     let separate x cjs =
-        match List.partition (mem x >>|> fv) cjs with
+        match List.partition (mem x << fv) cjs with
         | [], no ->
             list_conj no
         | yes, [] ->
@@ -197,14 +197,14 @@ module decidable =
     let limmeson n fm =        
         let rules =
             let cls = simpcnf (specialize (pnf fm))
-            List.foldBack ((@) >>|> contrapositives) cls []
+            List.foldBack ((@) << contrapositives) cls []
         mexpand002 rules [] False id (undefined, n, 0)
 
     let limited_meson n fm =
         Not (generalize fm)
         |> askolemize
         |> simpdnf
-        |> List.map (limmeson n >>|> list_conj)
+        |> List.map (limmeson n << list_conj)
 
     let decide_fmp fm =
         let rec test n =

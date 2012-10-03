@@ -137,7 +137,7 @@ module real =
 
     let dedmatrix cont mat =
         let l = List.length (List.head mat) / 2
-        let mat1 = condense (List.map (inferpsign >>|> chop_list l) mat)
+        let mat1 = condense (List.map (inferpsign << chop_list l) mat)
         let mat2 = [swap true (List.nth (List.head mat1) 1)] :: mat1 @ [[List.nth (last mat1) 1]]
         let mat3 = butlast (List.tail (inferisign mat2))
         cont (condense (List.map (fun l -> List.head l :: List.tail (List.tail l)) mat3))
@@ -225,8 +225,8 @@ module real =
 
     let real_qelim =
         simplify004
-        >>|> evalc
-        >>|> lift_qelim polyatom (simplify004 >>|> evalc) basic_real_qelim
+        << evalc
+        << lift_qelim polyatom (simplify004 << evalc) basic_real_qelim
            
     // pg. 377
     let rec grpterm tm =
@@ -252,5 +252,5 @@ module real =
 
     let real_qelim' =
         simplify004
-        >>|> evalc
-        >>|> lift_qelim polyatom (dnf >>|> cnnf id >>|> evalc) basic_real_qelim
+        << evalc
+        << lift_qelim polyatom (dnf << cnnf id << evalc) basic_real_qelim
