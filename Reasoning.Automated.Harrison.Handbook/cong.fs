@@ -48,14 +48,18 @@ module cong =
         else
             let sp = tryapplyl pfn s' 
             let tp = tryapplyl pfn t'
+            let pairs = allpairs (fun u v -> (u, v)) sp tp
             let eqv' = equate (s, t) eqv            
             let pfn' =
                 let st' = canonize eqv' s'
-                (st' |-> union sp tp) pfn
-            List.foldBack (fun (u, v) (eqv, pfn) ->
-                        if congruent eqv (u, v) then emerge (u, v) (eqv, pfn)
-                        else eqv, pfn)
-                    (allpairs (fun u v -> (u, v)) sp tp) (eqv', pfn')
+                (st' |-> union sp tp) pfn            
+
+            (pairs, (eqv', pfn'))
+            ||> List.foldBack (fun (u, v) (eqv, pfn) ->
+                if congruent eqv (u, v) then
+                    emerge (u, v) (eqv, pfn)
+                else
+                    eqv, pfn)
 
 // pg. 253
 // ------------------------------------------------------------------------- //
@@ -65,7 +69,8 @@ module cong =
     let predecessors t pfn =
         match t with
         | Fn (f, a) ->
-            List.foldBack (fun s f -> (s |-> insert t (tryapplyl f s)) f) (setify a) pfn
+            (setify a, pfn)
+            ||> List.foldBack (fun s f -> (s |-> insert t (tryapplyl f s)) f)
         | _ -> pfn
 
     let ccsatisfiable fms =
@@ -80,8 +85,10 @@ module cong =
                 @ List.map snd eqns
             List.foldBack predecessors (unions (List.map subterms lrs)) undefined
         let eqv, _ = List.foldBack emerge eqps (unequal, pfn)
-        List.forall (fun (l, r) ->
-            not <| equivalent eqv l r) eqns
+
+        eqns
+        |> List.forall (fun (l, r) ->
+            not <| equivalent eqv l r)
 
 // pg. 253
 // ------------------------------------------------------------------------- //

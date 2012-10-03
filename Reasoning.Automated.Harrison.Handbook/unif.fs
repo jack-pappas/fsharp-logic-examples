@@ -59,7 +59,8 @@ module unif =
 // Unification reaching a final solved form (often this isn't needed).       //
 // ------------------------------------------------------------------------- //
 
-    let fullunify eqs = solve (unify undefined eqs)
+    let inline fullunify eqs =
+        solve (unify undefined eqs)
 
 // pg. 171
 // ------------------------------------------------------------------------- //

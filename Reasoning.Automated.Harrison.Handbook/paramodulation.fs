@@ -54,7 +54,7 @@ module paramodulation =
 // Now find paramodulations within a clause.                                 //
 // ------------------------------------------------------------------------- //
 
-    let overlapc (l, r) cl rfn acc =
+    let inline overlapc (l, r) cl rfn acc =
         listcases (overlapl (l, r)) rfn cl acc
 
 // pg. 301
@@ -74,7 +74,6 @@ module paramodulation =
             overlapc (l, r) ocl rfn
             << overlapc (r, l) ocl rfn)
             
-
     let para_clauses cls1 cls2 =
         let cls1' = rename "x" cls1
         let cls2' = rename "y" cls2
@@ -91,8 +90,8 @@ module paramodulation =
             printfn "%i used; %i unused." (List.length used) (List.length unused)
             let used' = insert cls used
             let news =
-                List.foldBack (@) (mapfilter (resolve_clauses cls) used')
-                    (List.foldBack (@) (mapfilter (para_clauses cls) used') [])
+                List.foldBack (@) (mapfilter (para_clauses cls) used') []
+                |> List.foldBack (@) (mapfilter (resolve_clauses cls) used')
             if mem [] news then true 
             else
                 paraloop (used', List.foldBack (incorporate cls) news ros)

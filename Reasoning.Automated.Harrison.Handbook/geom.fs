@@ -70,7 +70,9 @@ module geom =
     // OCaml: val coordinate : fol formula -> fol formula = <fun>
     // F#:    val coordinate : (formula<fol> -> formula<fol>)
     let coordinate = onatoms <| fun (R (a, args)) ->
-        let xtms,ytms = List.unzip (List.map (fun (Var v) -> Var (v + "_x"), Var (v + "_y")) args)
+        let xtms,ytms =
+            // OPTIMIZE : Use List.fold so we don't have to unzip
+            List.unzip (List.map (fun (Var v) -> Var (v + "_x"), Var (v + "_y")) args)
         // OPTIMIZE : Change these calls to List.map to use List.init instead.
         let rec xs = List.map (fun n -> string n + "_x") [1 .. List.length args]
         and ys = List.map (fun n -> string n + "_y") [1 .. List.length args]
@@ -93,13 +95,14 @@ module geom =
 
     // OCaml: val invariant_under_translation : string * fol formula -> fol formula = <fun>
     // F#:    val invariant_under_translation : (string * formula<fol> -> formula<fol>)
-    let invariant_under_translation = invariant ((parset "x + X"),(parset "y + Y"))
+    let invariant_under_translation =
+        invariant ((parset "x + X"),(parset "y + Y"))
 
     // OCaml: val invariant_under_rotation : string * fol formula -> fol formula = <fun>
     // F#:    val invariant_under_rotation : string * formula<fol> -> formula<fol>
     let invariant_under_rotation fm =
-      Imp((parse "s^2 + c^2 = 1"),
-          invariant ((parset "c * x - s * y"),(parset "s * x + c * y")) fm)
+        Imp((parse "s^2 + c^2 = 1"),
+            invariant ((parset "c * x - s * y"),(parset "s * x + c * y")) fm)
     
     // pg. 416
     //  ------------------------------------------------------------------------- // 

@@ -103,5 +103,11 @@ module prolog =
 // ------------------------------------------------------------------------- //
 
     let prolog rules gl =
-        let i = solve <| simpleprolog rules gl
-        mapfilter (fun x -> Atom (R ("=", [Var x; apply i x]))) (fv (parse gl))                      
+        let i =
+            simpleprolog rules gl
+            |> solve
+        
+        parse gl
+        |> fv
+        |> mapfilter (fun x ->
+            Atom (R ("=", [Var x; apply i x])))                      

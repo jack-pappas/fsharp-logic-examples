@@ -11,6 +11,7 @@
 namespace Reasoning.Automated.Harrison.Handbook
 
 module grobner =
+    open LanguagePrimitives
     open FSharpx.Compatibility.OCaml
     open Num
 
@@ -49,7 +50,6 @@ module grobner =
     // ------------------------------------------------------------------------- //
 
     let mmul (c1, m1) (c2, m2) =
-        // TODO : Modify this to use the F# BigInt type (arbitary-precision integer)
         (c1 * c2, List.map2 (+) m1 m2)
 
     let mdiv =
@@ -58,7 +58,6 @@ module grobner =
                 failwith "mdiv"
             else n1 - n2
         fun (c1, m1) (c2, m2) ->
-            // TODO : Modify this to use the F# BigInt type (arbitary-precision integer)
             (c1 / c2, List.map2 index_sub m1 m2)
 
     let mlcm (c1, m1) (c2, m2) =
@@ -79,13 +78,12 @@ module grobner =
     // Arithmetic on canonical multivariate polynomials.                         //
     // ------------------------------------------------------------------------- //
 
-    let mpoly_mmul cm pol = List.map (mmul cm) pol
+    let inline mpoly_mmul cm pol = List.map (mmul cm) pol
 
     let mpoly_neg = List.map (fun (c, m) -> (-c, m))
 
-    let mpoly_const vars c =
-        // c : bigint
-        if c = Int 0 then []
+    let mpoly_const vars (c : num) =
+        if c = GenericZero then []
         else [c, List.map (fun _ -> 0) vars]
 
     let mpoly_var vars x =
@@ -108,7 +106,8 @@ module grobner =
             else
                 (c2, m2) :: (mpoly_add l1 o2)
 
-    let mpoly_sub l1 l2 = mpoly_add l1 (mpoly_neg l2)
+    let mpoly_sub l1 l2 =
+        mpoly_add l1 (mpoly_neg l2)
 
     let rec mpoly_mul l1 l2 =
         match l1 with
@@ -126,7 +125,7 @@ module grobner =
             [(Int 1 / c), m]
         | _ -> failwith "mpoly_inv: non-constant polynomial"
 
-    let mpoly_div p q =
+    let inline mpoly_div p q =
         mpoly_mul p (mpoly_inv q)
         
     // pg. 386
@@ -177,7 +176,8 @@ module grobner =
     // Try this for all polynomials in a basis.                                  //
     // ------------------------------------------------------------------------- //
 
-    let reduceb cm pols = tryfind (reduce1 cm) pols
+    let inline reduceb cm pols =
+        tryfind (reduce1 cm) pols
     
     // pg. 404
     // ------------------------------------------------------------------------- //
@@ -230,7 +230,7 @@ module grobner =
     // Overall function.                                                         //
     // ------------------------------------------------------------------------- //
 
-    let groebner basis =
+    let inline groebner basis =
         grobner basis (distinctpairs basis)
         
     // pg. 412
@@ -277,32 +277,32 @@ module grobner =
     // ------------------------------------------------------------------------- //
 
     let term_of_varpow vars (x,k) =
-      if k = 1 then Var x
-      else Fn ("^", [Var x; mk_numeral (Int k)])
+        if k = 1 then Var x
+        else Fn ("^", [Var x; mk_numeral (Int k)])
 
     let term_of_varpows vars lis =
-      List.zip vars lis
-      |> List.filter (fun (_, b) -> b <> 0)
-      |> List.map (term_of_varpow vars)
-      |> end_itlist (fun s t -> Fn ("*", [s;t]))
+        List.zip vars lis
+        |> List.filter (fun (_, b) -> b <> 0)
+        |> List.map (term_of_varpow vars)
+        |> end_itlist (fun s t -> Fn ("*", [s;t]))
 
     let term_of_monomial vars (c,m) =
-      if List.forall (fun x -> x = 0) m then
-        mk_numeral c
-      elif c =/ Int 1 then
-        term_of_varpows vars m
-      else
-        Fn ("*", [mk_numeral c; term_of_varpows vars m])
+        if List.forall (fun x -> x = 0) m then
+            mk_numeral c
+        elif c =/ Int 1 then
+            term_of_varpows vars m
+        else
+            Fn ("*", [mk_numeral c; term_of_varpows vars m])
 
     let term_of_poly vars pol =
-      pol
-      |> List.map (term_of_monomial vars)
-      |> end_itlist (fun s t -> Fn("+",[s;t]))
+        pol
+        |> List.map (term_of_monomial vars)
+        |> end_itlist (fun s t -> Fn("+",[s;t]))
 
     let grobner_basis vars pols =
-      pols
-      |> List.map (mpolyatom vars)
-      |> groebner
-      |> List.map (term_of_poly vars)
+        pols
+        |> List.map (mpolyatom vars)
+        |> groebner
+        |> List.map (term_of_poly vars)
 
     

@@ -84,15 +84,14 @@ module decidable =
             And (Exists (x, list_conj yes), list_conj no)
 
     let rec pushquant x p =
-        if not (mem x (fv p)) then p
+        if not <| mem x (fv p) then p
         else
             nnf p
             |> purednf
             |> List.map (separate x)
             |> list_disj
 
-    let rec miniscope fm =
-        match fm with
+    let rec miniscope = function
         | Not p ->
             Not (miniscope p)
         | And (p, q) ->
@@ -103,14 +102,19 @@ module decidable =
             Not (pushquant x (Not (miniscope p)))
         | Exists (x, p) ->
             pushquant x (miniscope p)
-        | _ -> fm
+        | fm ->
+            fm
 
 // pg. 316
 // ------------------------------------------------------------------------- //
 // Stronger version of "aedecide" similar to Wang's classic procedure.       //
 // ------------------------------------------------------------------------- //
 
-    let wang fm = aedecide (miniscope (nnf (simplify004 fm)))
+    let wang fm =
+        simplify004 fm
+        |> nnf
+        |> miniscope
+        |> aedecide
 
 // pg. 318
 // ------------------------------------------------------------------------- //
@@ -153,12 +157,17 @@ module decidable =
 
     let all_possible_syllogisms' =
         let p = parse "(exists x. P(x)) /\ (exists x. M(x)) /\ (exists x. S(x))"
-        List.map (fun t -> Imp (p, t)) all_possible_syllogisms
+        all_possible_syllogisms
+        |> List.map (fun t ->
+            Imp (p, t))
 
 // pg. 322
 // ------------------------------------------------------------------------- //
 // Decide a formula on all models of size n.                                 //
 // ------------------------------------------------------------------------- //
+
+(* OPTIMIZE :   Some of these functions use intermediate lists when they could
+                be optimized using other functions like List.init or List.fold. *)
 
     let rec alltuples n l =
         if n = 0 then [[]] 
@@ -172,22 +181,27 @@ module decidable =
     let alldepmappings dom ran =
         List.foldBack (fun (p, n) -> allpairs (valmod p) (ran n)) dom [undef]
 
-    let allfunctions dom n = allmappings (alltuples n dom) dom
+    let allfunctions dom n =
+        allmappings (alltuples n dom) dom
 
-    let allpredicates dom n = allmappings (alltuples n dom) [false; true]
+    let allpredicates dom n =
+        allmappings (alltuples n dom) [false; true]
 
     let decide_finite n fm =
         let interps =
             let dom = [1 .. n]
             let fints =
-                let funcs = functions fm
-                alldepmappings funcs (allfunctions dom)
+                allfunctions dom
+                |> alldepmappings (functions fm)
             let pints =
-                let preds = predicates fm
-                alldepmappings preds (allpredicates dom)
+                allpredicates dom
+                |> alldepmappings (predicates fm)
             allpairs (fun f p -> dom, f, p) fints pints
+
         let fm' = generalize fm
-        List.forall (fun md -> holds md undefined fm') interps
+        interps
+        |> List.forall (fun md ->
+            holds md undefined fm')
   
 // pg. 323
 // ------------------------------------------------------------------------- //
@@ -196,7 +210,10 @@ module decidable =
 
     let limmeson n fm =        
         let rules =
-            let cls = simpcnf (specialize (pnf fm))
+            let cls =
+                pnf fm
+                |> specialize
+                |> simpcnf
             List.foldBack ((@) << contrapositives) cls []
         mexpand002 rules [] False id (undefined, n, 0)
 
@@ -227,8 +244,10 @@ module decidable =
             |> List.partition (fun (_, ar) -> ar = 1)
 
         let funcs = functions fm
-        if funcs <> [] || List.exists (fun (_, ar) -> ar > 1) other then
+        if not (List.isEmpty funcs) || List.exists (fun (_, ar) -> ar > 1) other then
             failwith "Not in the monadic subset"
         else
+            // OPTIMIZE : The 'let n = ...' code here looks like it's equivalent
+            // to (1 <<< List.length monadic).
             let n = funpow (List.length monadic) (( * ) 2) 1
             decide_finite n fm

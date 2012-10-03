@@ -149,22 +149,24 @@ module complex =
 //  Useful utility functions for polynomial terms.                            //
 //  ------------------------------------------------------------------------- //
 
-    let rec coefficients vars = function 
+    let rec coefficients vars p =
+        match p with
         | Fn ("+", [c; Fn ("*", [Var x; q])])
             when x = List.head vars ->
             c :: (coefficients vars q)
         | p -> [p]
 
-    let degree vars p =
+    let inline degree vars p =
         List.length (coefficients vars p) - 1
 
-    let is_constant vars p =
+    let inline is_constant vars p =
         degree vars p = 0
 
-    let head vars p =
+    let inline head vars p =
         last (coefficients vars p)
 
-    let rec behead vars = function
+    let rec behead vars p =
+        match p with
         | Fn ("+", [c; Fn ("*", [Var x; p])])
             when x = List.head vars ->
             let p' = behead vars p
@@ -184,11 +186,10 @@ module complex =
         | _ ->
             numeral1 (fun m -> k * m) p
 
-    let rec headconst p =
-        match p with
+    let rec headconst = function
         | Fn ("+", [c; Fn ("*", [Var x; q])]) ->
             headconst q
-        | Fn (n, []) ->
+        | Fn (n, []) as p ->
             dest_numeral p
 
 //  pg. 359
@@ -267,7 +268,10 @@ module complex =
         else
             let p',swf = monic p
             let s' = swap swf s
-            let s0 = try assoc p' sgns with Failure _ -> s'
+            let s0 =
+                try assoc p' sgns
+                with Failure _ -> s'
+
             if s' = s0 || s0 = Nonzero && (s' = Positive || s' = Negative) then
                 (p', s') :: (subtract sgns [p', s0])
             else
@@ -280,8 +284,11 @@ module complex =
 
     let split_zero sgns pol cont_z cont_n =
         try
-            let z = findsign sgns pol
-            (if z = Zero then cont_z else cont_n) sgns
+            match findsign sgns pol with
+            | Zero ->
+                cont_z sgns
+            | _ ->
+                cont_n sgns
         with Failure "findsign" ->
             let eq = Atom (R ("=", [pol; zero]))
             Or (And (eq, cont_z (assertsign sgns (pol, Zero))),
@@ -294,13 +301,18 @@ module complex =
 
     let poly_nonzero vars sgns pol =
         let dcs, ucs =
-            let cs = coefficients vars pol
-            List.partition (can (findsign sgns)) cs
+            coefficients vars pol
+            |> List.partition (can (findsign sgns))
 
         if List.exists (fun p -> findsign sgns p <> Zero) dcs then True
-        elif ucs = [] then False
         else
-            end_itlist mk_or (List.map (fun p -> Not (mk_eq p zero)) ucs)
+            match ucs with
+            | [] -> False
+            | ucs ->
+                ucs
+                |> List.map (fun p ->
+                    Not (mk_eq p zero))
+                |> end_itlist mk_or
 
 //  pg. 364
 //  ------------------------------------------------------------------------- //
@@ -327,17 +339,26 @@ module complex =
             | Failure "assertsign" -> False
 
         | None ->
-            if eqs = [] then
-                list_conj (List.map (poly_nonzero vars sgns) neqs)
-            else
-                let n = end_itlist min (List.map (degree vars) eqs)
-                let p = List.find (fun p -> degree vars p = n) eqs
+            match eqs with
+            | [] ->
+                neqs
+                |> List.map (poly_nonzero vars sgns)
+                |> list_conj
+            | eqs ->
+                let p =
+                    let n =                        
+                        // OPTIMIZE : Replace with List.minBy?
+                        // eqs |> List.minBy (degree vars)
+                        eqs
+                        |> List.map (degree vars)
+                        |> end_itlist min
+                    List.find (fun p -> degree vars p = n) eqs
                 let oeqs = subtract eqs [p]
                 split_zero sgns (head vars p)
                    (cqelim vars (behead vars p :: oeqs, neqs))
-                   (fun sgns' ->
-                        let cfn s = snd (pdivide vars s p)
+                   (fun sgns' ->                        
                         if oeqs <> [] then
+                            let cfn s = snd (pdivide vars s p)
                             cqelim vars (p :: (List.map cfn oeqs), neqs) sgns'
                         elif neqs = [] then
                             True
@@ -358,8 +379,10 @@ module complex =
     // OCaml: val basic_complex_qelim : string list -> fol formula -> fol formula = <fun>
     // F:     val basic_complex_qelim : string list -> fol formula -> fol formula
     let basic_complex_qelim vars (Exists (x, p)) =
-        let eqs, neqs = List.partition (non negative) (conjuncts p)
-        cqelim (x :: vars) (List.map lhs eqs,List.map (lhs << negate) neqs) init_sgns
+        let eqs, neqs =
+            conjuncts p
+            |> List.partition (non negative)
+        cqelim (x :: vars) (List.map lhs eqs, List.map (lhs << negate) neqs) init_sgns
 
 //  pg. 366
 //  ------------------------------------------------------------------------- //
@@ -369,7 +392,9 @@ module complex =
     // OCaml: val complex_qelim : fol formula -> fol formula = <fun>
     // F#:    val complex_qelim : formula<fol> -> formula<fol>
     let complex_qelim =
-      simplify004 << evalc << lift_qelim polyatom (dnf << cnnf id << evalc) basic_complex_qelim
+      simplify004
+      << evalc
+      << lift_qelim polyatom (dnf << cnnf id << evalc) basic_complex_qelim
 
 
 

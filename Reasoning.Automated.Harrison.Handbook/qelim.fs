@@ -45,8 +45,10 @@ module qelim =
     // OCaml : val qelim : (fol formula -> fol formula) -> string -> fol formula -> fol formula = <fun>
     // F#:     val qelim : (fol formula -> fol formula) -> string -> fol formula -> fol formula
     let qelim bfn x p =
-        let cjs = conjuncts p
-        let ycjs, ncjs = List.partition (mem x << fv) cjs
+        let ycjs, ncjs =
+            conjuncts p
+            |> List.partition (mem x << fv)
+
         if ycjs = [] then p
         else
             let q = bfn (Exists (x, list_conj ycjs))

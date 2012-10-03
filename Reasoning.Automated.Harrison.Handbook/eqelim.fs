@@ -38,34 +38,25 @@ module eqelim =
 // Brand's S and T modifications on clauses.                                 //
 // ------------------------------------------------------------------------- //
 
+    // OPTIMIZE : Tail-calls via CPS.
     // val modify_S : fol formula list -> fol formula list list
     let rec modify_S cl =
-          // val dest_eq : fol formula -> (term * term) option
-          let dest_eq fm =
-            match fm with
+        // val dest_eq : fol formula -> (term * term) option
+        let dest_eq = function
             | Atom (R ("=", [s;t])) ->
-                Some(s, t)
+                Some (s, t)
             | _ -> None
 
-          // val tryfind : ('a -> ('b * 'c) option) -> 'a list -> ('b * 'c) option
-          let rec tryfind dest_eq l =
-              match l with
-              | [] -> None
-              | h :: t ->
-                  match dest_eq h with
-                  | Some _ as x -> x
-                  | None -> tryfind dest_eq t
+        match List.tryPick dest_eq cl with
+        | None -> [cl]
+        | Some (s, t) -> 
+            let eq1 = mk_eq s t 
+            let eq2 = mk_eq t s
+            let sub = modify_S (subtract cl [eq1])
+            List.map (insert eq1) sub @ List.map (insert eq2) sub
 
-          match tryfind dest_eq cl with
-          | None -> [cl]
-          | Some (s, t) -> 
-              let eq1 = mk_eq s t 
-              let eq2 = mk_eq t s
-              let sub = modify_S (subtract cl [eq1])
-              List.map (insert eq1) sub @ List.map (insert eq2) sub
-
-    let rec modify_T cl =
-        match cl with
+    // OPTIMIZE : Tail-calls via CPS.
+    let rec modify_T = function
         | [] -> []
         | (Atom (R ("=", [s; t])) as eq) :: ps ->
             let ps' = modify_T ps
@@ -82,20 +73,19 @@ module eqelim =
 
     // val is_nonvar : term -> bool
     let is_nonvar = function
-        | Var x -> false
+        | Var _ -> false
         | _ -> true
 
-    let find_nestnonvar tm =
-        match tm with
-        | Var x -> failwith "findnvsubt"
-        | Fn (f, args) ->
+    let find_nestnonvar = function
+        | Var _ ->
+            failwith "findnvsubt"
+        | Fn (_, args) ->
             List.find is_nonvar args
 
-    let rec find_nvsubterm fm =
-        match fm with
+    let rec find_nvsubterm = function
         | Atom (R ("=", [s; t])) ->
             tryfind find_nestnonvar [s;t]
-        | Atom (R (p, args)) ->
+        | Atom (R (_, args)) ->
             List.find is_nonvar args
         | Not p ->
             find_nvsubterm p
@@ -115,7 +105,7 @@ module eqelim =
                 Fn (f, List.map (replacet rfn) args)
             | _ -> tm
 
-    let replace rfn =
+    let inline replace rfn =
         onformula (replacet rfn)
 
 // pg. 295
@@ -132,7 +122,8 @@ module eqelim =
         with Failure _ ->
             cls
 
-    let modify_E cls = emodify (List.foldBack (union << fv) cls []) cls
+    let modify_E cls =
+        emodify (List.foldBack (union << fv) cls []) cls
 
 // pg. 296
 // ------------------------------------------------------------------------- //
@@ -140,8 +131,9 @@ module eqelim =
 // ------------------------------------------------------------------------- //
 
     let brand cls =
-        let cls1 = List.map modify_E cls
-        let cls2 = List.foldBack (union << modify_S) cls1 []
+        let cls2 =
+            let cls1 = List.map modify_E cls
+            List.foldBack (union << modify_S) cls1 []
         [mk_eq (Var "x") (Var "x")] :: (List.map modify_T cls2)
 
 // pg. 296
@@ -150,20 +142,23 @@ module eqelim =
 // ------------------------------------------------------------------------- //
 
     let bpuremeson fm =
-        let cls = brand (simpcnf (specialize (pnf fm)))
-        let rules = List.foldBack ((@) << contrapositives) cls []
+        let rules =
+            let cls = brand (simpcnf (specialize (pnf fm)))
+            List.foldBack ((@) << contrapositives) cls []
         deepen (fun n ->
             mexpand002 rules [] False id (undefined, n, 0)
             |> ignore
             n) 0
 
     let bmeson fm =
-      let fm1 = askolemize (Not (generalize fm))
-      List.map (bpuremeson << list_conj) (simpdnf fm1)
+        Not (generalize fm)
+        |> askolemize
+        |> simpdnf
+        |> List.map (bpuremeson << list_conj)
 
     // Moved from section - Older stuff not now in the text
     // to here because it is still in the text.  EGT
-    let emeson fm = meson002 (equalitize fm)
+    let inline emeson fm = meson002 (equalitize fm)
 
 
 

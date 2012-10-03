@@ -36,10 +36,14 @@ module completion =
     let renamepair (fm1,fm2) =
         let fvs1 = fv fm1
         let fvs2 = fv fm2
-        let nms1, nms2 = 
-            chop_list (List.length fvs1)
-                (List.map (fun n -> Var ("x" + string n))
-                    [0 .. (List.length fvs1 + List.length fvs2 - 1)])
+        let nms1, nms2 =
+            // OPTIMIZE : Replace this call to List.map with a call to
+            // List.init instead. Also, instead of calling chop_list
+            // we could just make two separate calls to List.init.
+            [0 .. (List.length fvs1 + List.length fvs2 - 1)]
+            |> List.map (fun n -> Var ("x" + string n))
+            |> chop_list (List.length fvs1)
+
         subst (fpf fvs1 nms1) fm1, subst (fpf fvs2 nms2) fm2
   
 // pg. 276
@@ -74,8 +78,10 @@ module completion =
 
     let critical_pairs fma fmb =
         let fm1, fm2 = renamepair (fma, fmb)
-        if fma = fmb then crit1 fm1 fm2
-        else union (crit1 fm1 fm2) (crit1 fm2 fm1)
+        if fma = fmb then
+            crit1 fm1 fm2
+        else
+            union (crit1 fm1 fm2) (crit1 fm2 fm1)
 
 // pg. 278
 // ------------------------------------------------------------------------- //
@@ -94,8 +100,10 @@ module completion =
 // Status report so the user doesn't get too bored.                          //
 // ------------------------------------------------------------------------- //
 
+    let [<Literal>] private statusStepSize = 1000
+
     let status (eqs, def, crs) eqs0 =
-        if not (eqs = eqs0 && (List.length crs) % 1000 <> 0) then
+        if not (eqs = eqs0 && (List.length crs) % statusStepSize <> 0) then
             printfn "%i equations and %i pending critical pairs + %i deferred"
                 (List.length eqs) (List.length crs) (List.length def)
    
@@ -121,8 +129,9 @@ module completion =
             status trip eqs
             complete ord trip
         | _ -> 
-            if def = [] then eqs
-            else
+            match def with
+            | [] -> eqs
+            | def ->
                 let e = List.find (can (normalize_and_orient ord eqs)) def
                 complete ord (eqs, subtract def [e], [e])
 
@@ -147,10 +156,11 @@ module completion =
 
     let complete_and_simplify wts eqs =
         let ord = lpo_ge (weight wts)
-        let eqs' = 
-            List.map (fun e -> 
+        let eqs' =
+            eqs
+            |> List.map (fun e -> 
                 let l, r = normalize_and_orient ord [] e
-                mk_eq l r) eqs
+                mk_eq l r)
         (interreduce [] << complete ord) (eqs', [], unions (allpairs critical_pairs eqs' eqs'))
 
 // Not in book.
