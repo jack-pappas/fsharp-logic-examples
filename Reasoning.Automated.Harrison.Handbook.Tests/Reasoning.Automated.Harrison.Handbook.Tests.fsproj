@@ -55,6 +55,9 @@
     <Compile Include="herbrand.fs" />
     <Compile Include="unif.fs" />
     <Compile Include="tableaux.fs" />
+    <Compile Include="resolution.fs" />
+    <Compile Include="prolog.fs" />
+    <Compile Include="meson.fs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="FSharpx.Compatibility.OCaml">
