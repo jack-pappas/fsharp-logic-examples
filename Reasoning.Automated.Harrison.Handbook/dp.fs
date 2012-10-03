@@ -113,6 +113,10 @@ module dp =
 // ------------------------------------------------------------------------- //
 
     let posneg_count cls l =
+        // OPTIMIZE : Since we only need the number of matching items in the list,
+        // it's inefficient to use List.filter because it builds an additional list.
+        // Instead, implement a List.count function which does the same thing with
+        // a single pass over the list.
         let m = List.length (List.filter (mem l) cls)                 
         let n = List.length (List.filter (mem (negate l)) cls)
         m + n
