@@ -51,7 +51,9 @@ module dp =
         | [] -> None
         | pureItem ->
             clauses
-            |> List.filter (fun cl -> intersect cl pureItem = [])
+            |> List.filter (fun cl ->
+                intersect cl pureItem
+                |> List.isEmpty)
             |> Some
             
     // TODO: Verify use of List.partition works
@@ -101,9 +103,9 @@ module dp =
 // Davis-Putnam satisfiability tester and tautology checker.                 //
 // ------------------------------------------------------------------------- //
 
-    let dpsat fm = dp (defcnfs fm)
+    let inline dpsat fm = dp (defcnfs fm)
 
-    let dptaut fm = not (dpsat (Not fm))
+    let inline dptaut fm = not (dpsat (Not fm))
 
 // pg. 85
 // ------------------------------------------------------------------------- //
@@ -111,6 +113,10 @@ module dp =
 // ------------------------------------------------------------------------- //
 
     let posneg_count cls l =
+        // OPTIMIZE : Since we only need the number of matching items in the list,
+        // it's inefficient to use List.filter because it builds an additional list.
+        // Instead, implement a List.count function which does the same thing with
+        // a single pass over the list.
         let m = List.length (List.filter (mem l) cls)                 
         let n = List.length (List.filter (mem (negate l)) cls)
         m + n
@@ -141,9 +147,9 @@ module dp =
     let dpll clauses =
         dpllImpl clauses id
                                                      
-    let dpllsat fm = dpll (defcnfs fm)
+    let inline dpllsat fm = dpll (defcnfs fm)
 
-    let dplltaut fm = not (dpllsat (Not fm))
+    let inline dplltaut fm = not (dpllsat (Not fm))
 
 // pg.86
 // ------------------------------------------------------------------------- //
@@ -156,14 +162,14 @@ module dp =
         let litabs = function Not q -> q | p -> p
         fun cls trail ->
             subtract (unions (image (image litabs) cls))
-                (image (litabs >>|> fst) trail)
+                (image (litabs << fst) trail)
 
     let rec unit_subpropagate (cls, fn, trail) =
         let uu = function
             | [c] when not (defined fn c) -> [c]
             | _ -> failwith ""
         let cls' =
-            List.map (List.filter (not >>|> defined fn >>|> negate)) cls
+            List.map (List.filter (not << defined fn << negate)) cls
 
         match unions (mapfilter uu cls') with
         | [] ->
@@ -198,9 +204,9 @@ module dp =
                     let p = maximize (posneg_count cls') ps
                     dpli cls ((p, Guessed) :: trail')
 
-    let dplisat fm = dpli (defcnfs fm) []
+    let inline dplisat fm = dpli (defcnfs fm) []
 
-    let dplitaut fm = not (dplisat (Not fm))
+    let inline dplitaut fm = not (dplisat (Not fm))
 
 // pg. 88
 // ------------------------------------------------------------------------- //
@@ -225,7 +231,7 @@ module dp =
                 let conflict =
                     trail'
                     |> List.filter (fun (_, d) -> d = Guessed)
-                    |> image (negate >>|> fst)
+                    |> image (negate << fst)
                     |> insert (negate p)
                 dplb (conflict :: cls) ((negate p, Deduced) :: trail')
             | _ -> false
@@ -236,8 +242,8 @@ module dp =
                 let p = maximize (posneg_count cls') ps
                 dplb cls ((p, Guessed) :: trail')
 
-    let dplbsat fm = dplb (defcnfs fm) []
+    let inline dplbsat fm = dplb (defcnfs fm) []
 
-    let dplbtaut fm = not (dplbsat (Not fm))
+    let inline dplbtaut fm = not (dplbsat (Not fm))
 
 

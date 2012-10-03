@@ -60,8 +60,7 @@ module cooper =
     // Convert a term to a F# BigIntenger, i.e. OCaml Num
     // OCaml: val dest_numeral : term -> num        = <fun>
     // F#:    val dest_numeral : term -> num
-    let dest_numeral t : num =
-        match t with
+    let dest_numeral = function
         | Fn (ns, []) ->
             num_of_string ns
         | _ ->
@@ -69,17 +68,20 @@ module cooper =
 
     // OCaml: val is_numeral :  term -> bool = <fun>
     // F#:    val is_numeral : (term -> bool)
-    let is_numeral = can dest_numeral
+    let inline is_numeral tm =
+        can dest_numeral tm
 
     // OCaml: val numeral1 : (num -> num) -> term -> term = <fun>
     // F#:    val numeral1 : (num -> num) -> term -> term
     let numeral1 fn n =
-        mk_numeral (fn (dest_numeral n))
+        fn (dest_numeral n)
+        |> mk_numeral
 
     // OCaml: val numeral2 : (num -> num -> num) -> term -> term -> term = <fun>
     // F#:    val numeral2 : (num -> num -> num) -> term -> term -> term
     let numeral2 fn m n =
-        mk_numeral (fn (dest_numeral m) (dest_numeral n))
+        fn (dest_numeral m) (dest_numeral n)
+        |> mk_numeral
 
 // pg.338
 // ------------------------------------------------------------------------- //
@@ -125,18 +127,24 @@ module cooper =
 
     // OCaml: val linear_neg : term -> term = <fun>
     // F#:    val linear_neg : term -> term 
-    let linear_neg tm = linear_cmul -GenericOne tm
+    let inline linear_neg tm =
+        linear_cmul -GenericOne tm
 
     // OCaml: val linear_sub : string list -> term -> term -> term = <fun>
     // F#:    val linear_sub : string list -> term -> term -> term
-    let linear_sub vars tm1 tm2 = linear_add vars tm1 (linear_neg tm2)
+    let inline linear_sub vars tm1 tm2 =
+        linear_neg tm2
+        |> linear_add vars tm1
 
     // OCaml: val linear_mul : term -> term -> term = <fun>
     // F#:    val linear_mul : term -> term -> term
     let linear_mul tm1 tm2 =
-        if is_numeral tm1 then linear_cmul (dest_numeral tm1) tm2
-        elif is_numeral tm2 then linear_cmul (dest_numeral tm2) tm1
-        else failwith "linear_mul: nonlinearity"
+        if is_numeral tm1 then
+            linear_cmul (dest_numeral tm1) tm2
+        elif is_numeral tm2 then
+            linear_cmul (dest_numeral tm2) tm1
+        else
+            failwith "linear_mul: nonlinearity"
   
 // pg.340
 // ------------------------------------------------------------------------- //
@@ -196,11 +204,11 @@ module cooper =
     
     // OCaml: val posineq : fol formula -> fol formula = <fun>
     // F#:    val posineq : fol formula -> fol formula
-    let rec posineq fm =
-        match fm with
+    let rec posineq = function
         | Not (Atom (R ("<", [Fn ("0", []); t]))) ->
             Atom (R ("<", [zero; linear_sub [] (Fn ("1", [])) t]))
-        | _ -> fm
+        | fm ->
+            fm
   
 // pg.342
 // ------------------------------------------------------------------------- //
@@ -370,7 +378,9 @@ module cooper =
                 let p_inf = simplify004 (minusinf x p)
                 list_disj (linrep vars x (mk_numeral j) p_inf :: List.map (p_element j) bs)
 
-            GenericOne --- divlcm x p
+            // OPTIMIZE : Implement a special version of List.init which uses
+            // 'num' instead of 'int'. Then, use it to replace this call to List.map.
+            [GenericOne .. divlcm x p]
             |> List.map stage
             |> list_disj
 
@@ -431,8 +441,8 @@ module cooper =
     // F#:    val integer_qelim : (fol formula -> fol formula)
     let integer_qelim = 
         simplify004
-        >>|> evalc
-        >>|> lift_qelim linform (cnnf posineq >>|> evalc) cooper
+        << evalc
+        << lift_qelim linform (cnnf posineq << evalc) cooper
 
 // pg.350
 // ------------------------------------------------------------------------- //
@@ -461,5 +471,5 @@ module cooper =
     // F#: val natural_qelim : (fol formula -> fol formula)
     let natural_qelim =
         integer_qelim
-        >>|> relativize (fun x ->
+        << relativize (fun x ->
             Atom (R ("<=", [zero; Var x])))

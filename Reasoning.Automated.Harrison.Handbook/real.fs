@@ -136,11 +136,20 @@ module real =
     // ------------------------------------------------------------------------- //
 
     let dedmatrix cont mat =
-        let l = List.length (List.head mat) / 2
-        let mat1 = condense (List.map (inferpsign >>|> chop_list l) mat)
-        let mat2 = [swap true (List.nth (List.head mat1) 1)] :: mat1 @ [[List.nth (last mat1) 1]]
-        let mat3 = butlast (List.tail (inferisign mat2))
-        cont (condense (List.map (fun l -> List.head l :: List.tail (List.tail l)) mat3))
+        let mat2 =
+            let mat1 =
+                let l = List.length (List.head mat) / 2
+                condense (List.map (inferpsign << chop_list l) mat)
+            [swap true (List.nth (List.head mat1) 1)] :: mat1 @ [[List.nth (last mat1) 1]]
+           
+        inferisign mat2 
+        |> List.tail
+        |> butlast
+        |> List.map (fun l ->
+            // OPTIMIZE : Replace 'fun l ->' with 'function hd :: _ :: tl'
+            List.head l :: List.tail (List.tail l))
+        |> condense
+        |> cont
         
     // pg. 373
     // ------------------------------------------------------------------------- //
@@ -149,14 +158,16 @@ module real =
 
     let pdivide_pos vars sgns s p =
         let a = head vars p
-        let (k, r) = pdivide vars s p
-        let sgn = findsign sgns a
-        if sgn = Zero then
+        let k, r = pdivide vars s p
+        match findsign sgns a with
+        | Zero ->
             failwith "pdivide_pos: zero head coefficient"
-        elif sgn = Positive || k % 2 = 0 then r
-        elif sgn = Negative then poly_neg r
-        else poly_mul vars a r
-
+        | Positive when k % 2 = 0 ->
+            r
+        | Negative ->
+            poly_neg r
+        | _ ->
+            poly_mul vars a r
         
     // pg. 373
     // ------------------------------------------------------------------------- //
@@ -172,7 +183,8 @@ module real =
         | _ -> cont sgns
 
     let split_trichotomy sgns pol cont_z cont_pn =
-        split_zero sgns pol cont_z (fun s' -> split_sign s' pol cont_pn)
+        split_zero sgns pol cont_z <| fun s' ->
+            split_sign s' pol cont_pn
         
     // pg. 374
     // ------------------------------------------------------------------------- //
@@ -194,12 +206,13 @@ module real =
         casesplit vars dun ops cont' sgns
 
     and matrix vars pols cont sgns =
-        if pols = [] then
+        match pols with
+        | [] ->
             try
                 cont [[]]
             with Failure _ ->
                 False
-        else
+        | _ ->
             let p = List.head (sort (decreasing (degree vars)) pols)
             let rec p' = poly_diff vars p
             and i = index p pols
@@ -225,8 +238,8 @@ module real =
 
     let real_qelim =
         simplify004
-        >>|> evalc
-        >>|> lift_qelim polyatom (simplify004 >>|> evalc) basic_real_qelim
+        << evalc
+        << lift_qelim polyatom (simplify004 << evalc) basic_real_qelim
            
     // pg. 377
     let rec grpterm tm =
@@ -252,5 +265,5 @@ module real =
 
     let real_qelim' =
         simplify004
-        >>|> evalc
-        >>|> lift_qelim polyatom (dnf >>|> cnnf id >>|> evalc) basic_real_qelim
+        << evalc
+        << lift_qelim polyatom (dnf << cnnf id << evalc) basic_real_qelim

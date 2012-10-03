@@ -56,7 +56,7 @@ module herbrand =
                 allpairs (fun h t -> h :: t)
                     (groundterms cntms funcs k)
                     (groundtuples cntms funcs (n - k) (m - 1)) @ l)
-                    (0 -- n) []
+                    [0 .. n] []
 
 // pg. 160
 // ------------------------------------------------------------------------- //
@@ -120,7 +120,7 @@ module herbrand =
         match dunno with
         | [] -> need
         | cl :: dknow ->
-            let mfn = dp_mfn cjs0 >>|> subst >>|> fpf fvs
+            let mfn = dp_mfn cjs0 << subst << fpf fvs
             let need' =
                 if dpll (List.foldBack mfn (need @ dknow) []) then cl :: need
                 else need

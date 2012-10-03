@@ -97,7 +97,7 @@ module resolution =
 
     let resolution001 fm =
         let fm1 = askolemize (Not (generalize fm))
-        List.map (pure_resolution001 >>|> list_conj) (simpdnf fm1)
+        List.map (pure_resolution001 << list_conj) (simpdnf fm1)
 
 // pg. 187
 // ------------------------------------------------------------------------- //
@@ -187,7 +187,7 @@ module resolution =
         Not (generalize fm)
         |> askolemize
         |> simpdnf
-        |> List.map (pure_resolution002 >>|> list_conj)
+        |> List.map (pure_resolution002 << list_conj)
 
 // pg. 198
 // ------------------------------------------------------------------------- //
@@ -216,7 +216,7 @@ module resolution =
         Not (generalize fm)
         |> askolemize
         |> simpdnf
-        |> List.map (pure_presolution >>|> list_conj)
+        |> List.map (pure_presolution << list_conj)
 
 // pg. 201
 // ------------------------------------------------------------------------- //
@@ -234,4 +234,4 @@ module resolution =
         Not (generalize fm)
         |> askolemize
         |> simpdnf
-        |> List.map (pure_resolution >>|> list_conj)
+        |> List.map (pure_resolution << list_conj)

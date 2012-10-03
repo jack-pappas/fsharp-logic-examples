@@ -61,7 +61,7 @@ module meson =
     let puremeson001 fm =        
         let rules =
             let cls = simpcnf (specialize (pnf fm))
-            List.foldBack ((@) >>|> contrapositives) cls []
+            List.foldBack ((@) << contrapositives) cls []
         deepen (fun n ->
             mexpand001 rules [] False id (undefined, n, 0)
             |> ignore
@@ -71,7 +71,7 @@ module meson =
         Not (generalize fm)
         |> askolemize
         |> simpdnf
-        |> List.map (puremeson001 >>|> list_conj)
+        |> List.map (puremeson001 << list_conj)
 
 // pg. 221
 // ------------------------------------------------------------------------- //
@@ -96,7 +96,8 @@ module meson =
             if n < 0 then failwith "Too deep" 
             else
                 let m = List.length gs
-                if m <= 1 then List.foldBack (mexpand002 rules ancestors) gs cont (env, n, k) 
+                if m <= 1 then
+                    List.foldBack (mexpand002 rules ancestors) gs cont (env, n, k) 
                 else
                     let n1 = n / 2
                     let n2 = n - n1
@@ -124,8 +125,13 @@ module meson =
                     rules
 
     let puremeson002 fm =   
-        let cls = simpcnf (specialize (pnf fm))
-        let rules = List.foldBack ((@) >>|> contrapositives) cls []
+        
+        let rules =
+            let cls =
+                pnf fm
+                |> specialize
+                |> simpcnf
+            List.foldBack ((@) << contrapositives) cls []
         deepen (fun n ->
             mexpand002 rules [] False id (undefined, n, 0)
             |> ignore
@@ -135,4 +141,4 @@ module meson =
         Not (generalize fm)
         |> askolemize
         |> simpdnf
-        |> List.map (puremeson002 >>|> list_conj)
+        |> List.map (puremeson002 << list_conj)

@@ -31,9 +31,9 @@ module stal =
     let triplicate fm =
         let p, defs, _ =
             let fm' = nenf fm
-            let n = (num_of_int 1) + overatoms (max_varindex "p_" >>|> pname) fm' (num_of_int 0)
+            let n = (num_of_int 1) + overatoms (max_varindex "p_" << pname) fm' (num_of_int 0)
             maincnf (fm', undefined, n)
-        p, List.map (snd >>|> snd) (graph defs)
+        p, List.map (snd << snd) (graph defs)
 
 // pg. 92
 // ------------------------------------------------------------------------- //
@@ -76,9 +76,12 @@ module stal =
         |> List.filter follows
         |> irredundant (equate2 peq unequal)
 
-    let triggers fm =        
+    let triggers fm =
         let lits =
-            let poslits = insert True (List.map Atom (atoms fm))
+            let poslits =
+                atoms fm
+                |> List.map Atom
+                |> insert True
             union poslits (List.map negate poslits)
         
         let eqs =
@@ -92,9 +95,10 @@ module stal =
 
         eqs
         // raw
-        |> List.map (fun p -> p, consequences p fm eqs)
+        |> List.map (fun p ->
+            p, consequences p fm eqs)
         //
-        |> List.filter (fun (p, c) -> not <| List.isEmpty c)
+        |> List.filter (snd >> List.isEmpty >> not)
 
 // pg. 94
 // ------------------------------------------------------------------------- //
@@ -123,11 +127,11 @@ module stal =
                         // TODO: Figure out how to use match with with this let to remove warning
                         let inst_fn [x; y; z] =
                             let subfn = fpf [P"p"; P"q"; P"r"] [x; y; z]
-                            ddnegate >>|> psubst subfn
+                            ddnegate << psubst subfn
                         align (inst_fn i p, inst_fn i q)
                     inst2_fn i a, List.map (inst2_fn i) c
                 
-                List.map >>|> instn_fn
+                List.map << instn_fn
 
             function
             | Iff (x, And (y, z)) ->
@@ -175,7 +179,7 @@ module stal =
                 (canonize eqv' p |-> union sp_pos sq_pos)
                     ((canonize eqv' p' |-> union sp_neg sq_neg) rfn)
             let nw = union (intersect sp_pos sq_pos) (intersect sp_neg sq_neg)
-            List.foldBack (union >>|> snd) nw [], (eqv', rfn')
+            List.foldBack (union << snd) nw [], (eqv', rfn')
 
 // pg. 96
 // ------------------------------------------------------------------------- //
@@ -198,7 +202,9 @@ module stal =
         let (eqv', rfn' as erf') = zero_saturate erf trigs
         let vars = List.filter positive (equated eqv')
         if List.exists (fun x -> canonize eqv' x = canonize eqv' (Not x)) vars then
-            snd <| equatecons (True, Not True) erf'
+            erf'
+            |> equatecons (True, Not True)
+            |> snd
         else erf'
 
 // pg. 96
@@ -217,7 +223,10 @@ module stal =
     let rec equateset s0 eqfn =
         match s0 with
         | a :: (b :: s2 as s1) ->
-            equateset s1 (snd (equatecons (a, b) eqfn))
+            eqfn
+            |> equatecons (a, b)
+            |> snd
+            |> equateset s1
         | _ -> eqfn
 
 // pg. 97
@@ -229,11 +238,14 @@ module stal =
         match els with
         | [] -> erf
         | x :: xs ->
-            let b1 = canonize eq1 x
-            let b2 = canonize eq2 x
-            let s1 = apply rev1 b1
-            let s2 = apply rev2 b2
-            let s = intersect s1 s2
+            let s =
+                let s1 =
+                    let b1 = canonize eq1 x
+                    apply rev1 b1
+                let s2 =
+                    let b2 = canonize eq2 x
+                    apply rev2 b2
+                intersect s1 s2
             inter (subtract xs s) erf1 erf2 rev1 rev2 (equateset s erf)
 
 // pg. 97
@@ -242,6 +254,9 @@ module stal =
 // ------------------------------------------------------------------------- //
 
     let reverseq domain eqv =
+        // OPTIMIZE : The separate calls to List.map and List.foldBack can be
+        // combined into a single call to List.foldBack. Unless it matters,
+        // it'd be better to use List.fold instead of List.foldBack.
         let al = List.map (fun x -> x, canonize eqv x) domain
         List.foldBack (fun (y, x) f -> (x |-> insert y (tryapplyl f x)) f)
             al undefined
@@ -282,9 +297,10 @@ module stal =
             if canonize eqv p <> p then
                 splits n erf allvars ovars
             else
-                let erf0 = saturate (n - 1) erf [p, Not True] allvars
-                let erf1 = saturate (n - 1) erf [p, True] allvars
-                let (eqv',_ as erf') = stal_intersect erf0 erf1 erf
+                let (eqv',_ as erf') =
+                    let erf0 = saturate (n - 1) erf [p, Not True] allvars
+                    let erf1 = saturate (n - 1) erf [p, True] allvars
+                    stal_intersect erf0 erf1 erf
                 if truefalse eqv' then erf'
                 else splits n erf' allvars ovars
 
@@ -319,7 +335,7 @@ module stal =
         | fm' ->
             let p, triplets = triplicate fm'
             let trigfn =
-                List.foldBack (List.foldBack include_trig >>|> trigger) triplets undefined
+                List.foldBack (List.foldBack include_trig << trigger) triplets undefined
             let vars =
                 triplets
                 |> List.map atoms

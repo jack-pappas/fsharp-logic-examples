@@ -37,7 +37,7 @@ module fol =
     [<Test>]
     let ``test holds with a range of mod_interp``() =
         let fm = (parse "forall x. ~(x = 0) ==> exists y. x * y = 1")
-        List.filter (fun n -> holds (mod_interp n) undefined fm) (1--45)
+        List.filter (fun n -> holds (mod_interp n) undefined fm) [1..45]
         |> should equal [1; 2; 3; 5; 7; 11; 13; 17; 19; 23; 29; 31; 37; 41; 43]
 
     // pg. 129

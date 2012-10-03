@@ -24,6 +24,8 @@
     <WarningLevel>3</WarningLevel>
     <DocumentationFile>bin\Debug\Reasoning.Automated.Harrison.Handbook.XML</DocumentationFile>
     <NoWarn>25</NoWarn>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningsAsErrors>64</WarningsAsErrors>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>

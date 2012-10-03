@@ -64,7 +64,7 @@ module tableaux =
             // NOTE : This is not used anywhere! Did we miss something
             // or is this also in the book code?
             let unifyResult = unify_complements acc
-            tryfind (unify_refute tail >>|> unify_complements acc) (allpairs (fun p q -> (p, q)) pos neg)
+            tryfind (unify_refute tail << unify_complements acc) (allpairs (fun p q -> (p, q)) pos neg)
 
 
 // pg. 175
@@ -76,8 +76,9 @@ module tableaux =
         let djs1 =
             let inst =
                 let newvars =
+                    // OPTIMIZE : Change this call to List.map to use List.init instead.
                     let l = List.length fvs
-                    List.map (fun k -> "_" + string (n * l + k)) (1--l)
+                    List.map (fun k -> "_" + string (n * l + k)) [1 .. l]
                 fpf fvs (List.map Var newvars)
             distrib (image (image (subst inst)) djs0) djs
 
@@ -143,8 +144,10 @@ module tableaux =
             n) 0
 
     let tab fm =
-        let sfm = askolemize (Not (generalize fm))
-        if sfm = False then 0 else tabrefute [sfm]
+        match askolemize (Not (generalize fm)) with
+        | False -> 0
+        | sfm ->
+            tabrefute [sfm]
 
 // pg. 178
 // ------------------------------------------------------------------------- //

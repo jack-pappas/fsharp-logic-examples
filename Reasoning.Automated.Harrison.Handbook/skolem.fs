@@ -203,10 +203,10 @@ module skolem =
         match tm with
         | Var x -> []
         | Fn (f, args) ->
-            List.foldBack (union >>|> funcs) args [f,List.length args]
+            List.foldBack (union << funcs) args [f,List.length args]
 
     let functions fm =
-        atom_union (fun (R (p, a)) -> List.foldBack (union >>|> funcs) a []) fm
+        atom_union (fun (R (p, a)) -> List.foldBack (union << funcs) a []) fm
 
 // pg. 149
 // ------------------------------------------------------------------------- //

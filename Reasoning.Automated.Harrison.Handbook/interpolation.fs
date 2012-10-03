@@ -82,10 +82,10 @@ module interpolation =
         | Var x -> []
         | Fn (f, args) ->
             if mem (f, List.length args) fns then [tm]
-            else List.foldBack (union >>|> toptermt fns) args []
+            else List.foldBack (union << toptermt fns) args []
 
     let topterms fns =
-        atom_union (fun (R (p, args)) -> List.foldBack (union >>|> toptermt fns) args [])
+        atom_union (fun (R (p, args)) -> List.foldBack (union << toptermt fns) args [])
         
     // pg. 433
     // ------------------------------------------------------------------------- //
@@ -131,8 +131,10 @@ module interpolation =
     let interpolate p q =
         let rec vs = List.map (fun v -> Var v) (intersect (fv p) (fv q))
         and fns = functions (And (p, q))
-        let n = List.foldBack (max_varindex "c_" >>|> fst) fns (Int 0) + (Int 1)
-        let cs = List.map (fun i -> Fn ("c_" + i.ToString(), [])) (n --- (n + Int (List.length vs - 1)))
+        let n = List.foldBack (max_varindex "c_" << fst) fns (Int 0) + (Int 1)
+        // OPTIMIZE : Implement a special version of List.init which uses 'num'
+        // instead of 'int'. Then, use it to replace this call to List.map.
+        let cs = List.map (fun i -> Fn ("c_" + i.ToString(), [])) [n .. (n + Int (List.length vs - 1))]
         let rec fn_vc = fpf vs cs
         and fn_cv = fpf cs vs
         let rec p' = replace fn_vc p
@@ -145,8 +147,12 @@ module interpolation =
     // ------------------------------------------------------------------------- //
 
     let einterpolate p q =
-        let rec p' = equalitize p
-        and q' = equalitize q
-        let rec p'' = if p' = p then p else And (fst (dest_imp p'), p)
-        and q'' = if q' = q then q else And (fst (dest_imp q'), q)
+        let rec p'' =
+            let p' = equalitize p
+            if p' = p then p
+            else And (fst (dest_imp p'), p)
+        and q'' =
+            let q' = equalitize q
+            if q' = q then q
+            else And (fst (dest_imp q'), q)
         interpolate p'' q''

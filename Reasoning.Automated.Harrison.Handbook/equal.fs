@@ -31,8 +31,8 @@ module equal =
         | _ ->
             failwith "dest_eq: not an equation"
 
-    let lhs eq = fst <| dest_eq eq
-    let rhs eq = snd <| dest_eq eq
+    let inline lhs eq = fst <| dest_eq eq
+    let inline rhs eq = snd <| dest_eq eq
 
 // pg. 239
 // ------------------------------------------------------------------------- //
@@ -52,11 +52,14 @@ module equal =
         else
             // TODO : These instances of List.map could be optimized by using
             // List.init instead (so we don't need the intermediate list).
-            let argnames_x = List.map (fun n -> "x" + (string n)) (1 -- n)
-            let argnames_y = List.map (fun n -> "y" + (string n)) (1 -- n)
+            let argnames_x = List.map (fun n -> "x" + (string n)) [1 .. n]
+            let argnames_y = List.map (fun n -> "y" + (string n)) [1 .. n]
             let args_x = List.map Var argnames_x
             let args_y = List.map Var argnames_y
-            let ant = end_itlist mk_and (List.map2 mk_eq args_x args_y)
+            let ant =
+                (args_x, args_y)
+                ||> List.map2 mk_eq
+                |> end_itlist mk_and
             let con = mk_eq (Fn (f, args_x)) (Fn (f, args_y))
             [List.foldBack mk_forall (argnames_x @ argnames_y) (Imp (ant, con))]
 
@@ -70,11 +73,14 @@ module equal =
         else
             // TODO : These instances of List.map could be optimized by using
             // List.init instead (so we don't need the intermediate list).
-            let argnames_x = List.map (fun n -> "x" + (string n)) (1 -- n)
-            let argnames_y = List.map (fun n -> "y" + (string n)) (1 -- n)
+            let argnames_x = List.map (fun n -> "x" + (string n)) [1 .. n]
+            let argnames_y = List.map (fun n -> "y" + (string n)) [1 .. n]
             let args_x = List.map Var argnames_x
             let args_y = List.map Var argnames_y
-            let ant = end_itlist mk_and (List.map2 mk_eq args_x args_y)
+            let ant =
+                (args_x, args_y)
+                ||> List.map2 mk_eq
+                |> end_itlist mk_and
             let con = Imp (Atom (R (p, args_x)), Atom (R (p, args_y)))
             [List.foldBack mk_forall (argnames_x @ argnames_y) (Imp (ant, con))]
 
@@ -95,7 +101,7 @@ module equal =
                 let funcs = functions fm
 
                 equivalence_axioms
-                |> List.foldBack (union >>|> predicate_congruence) preds
-                |> List.foldBack (union >>|> function_congruence) funcs
+                |> List.foldBack (union << predicate_congruence) preds
+                |> List.foldBack (union << function_congruence) funcs
 
             Imp (end_itlist mk_and axioms, fm)

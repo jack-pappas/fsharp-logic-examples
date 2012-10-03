@@ -84,8 +84,9 @@ module folMod = // TODO : Change this back to 'fol'?
     let parse_infix_atom vs inp =
         let tm, rest = parse_term vs inp
         if List.exists (nextin rest) ["="; "<"; "<="; ">"; ">="] then
-            papply (fun tm' -> Atom (R (List.head rest, [tm; tm'])))
-                    (parse_term vs (List.tail rest))
+            List.tail rest
+            |> parse_term vs
+            |> papply (fun tm' -> Atom (R (List.head rest, [tm; tm'])))
         else failwith ""
 
     let parse_atom vs inp =
@@ -261,7 +262,7 @@ module folMod = // TODO : Change this back to 'fol'?
             | "=", [x; y] -> x = y
             | _ -> failwith "uninterpreted predicate"
 
-        0 -- (n - 1), func, pred
+        [0 .. (n - 1)], func, pred
 
 // pg. 127
 // ------------------------------------------------------------------------- //

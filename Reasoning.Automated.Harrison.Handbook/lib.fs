@@ -13,13 +13,6 @@ module lib =
     open FSharpx.Compatibility.OCaml
     open Num
 
-    // pg. 618
-    // OCaml: val ( ** ) : ('a -> 'b) -> ('c -> 'a) -> 'c -> 'b = <fun>
-    // F#:    val ( >>|> ) : ('a -> 'b) -> ('c -> 'a) -> 'c -> 'b
-    /// Composes two functions, then applies a value to the resulting function.
-    let inline ( >>|> ) f g x =
-        f <| g x
-
 // ------------------------------------------------------------------------- //
 // GCD and LCM on arbitrary-precision numbers.                               //
 // ------------------------------------------------------------------------- //
@@ -94,32 +87,12 @@ module lib =
 // ------------------------------------------------------------------------- //
 // Handy list operations.                                                    //
 // ------------------------------------------------------------------------- //
-
-    // pg. 618
-    // OCaml: val ( -- ) : int -> int -> int list = <fun>
-    // F#:    val ( -- ) : int -> int -> int list
-    let inline (--) m n = [m .. n]
-
-    // pg.618
-    // OCaml: val ( --- ) : num -> num -> num list = <fun>
-    // F#:    val ( --- ) : num -> num -> num list
-    let inline (---) (m : num) (n : num) = [m .. n]
         
     // pg. 619
     // OCaml: val end_itlist : ('a -> 'a -> 'a) -> 'a list -> 'a = <fun>
     // F#:    val end_itlist : ('a -> 'a -> 'a) -> 'a list -> 'a
-    
-
-
-    let rec end_itlist f l =
-        match l with
-        | [] -> failwith "end_itlist"
-        | [x] ->
-            // TODO : Shouldn't this be (f x) instead?
-            // Perhaps an error in the original code?
-            x
-        | hd :: tl ->
-            f hd (end_itlist f tl)
+    let inline end_itlist f l =
+        List.reduceBack f l
         
     // pg. 619
     // OCaml: val last : 'a list -> 'a = <fun>
@@ -277,6 +250,8 @@ module lib =
     // pg. ???
     // OCaml: val merge : ('a -> 'a -> bool) -> 'a list -> 'a list -> 'a list = <fun>
     // F#:    val merge : ('a -> 'a -> bool) -> 'a list -> 'a list -> 'a list
+        // NOTE : 'comparer' returns bool, so it must implement either the
+        // (<=) or (>=) operators.
     let merge comparer l1 l2 =
         mergeImpl comparer l1 l2 id
 
@@ -284,10 +259,12 @@ module lib =
 // Bottom-up mergesort.                                                      //
 // ------------------------------------------------------------------------- //
 
+(* OPTIMIZE :   Replace with List.sortWith. *)
+
     // pg. 619
     // OCaml: val sort : ('a -> 'a -> bool) -> 'a list -> 'a list = <fun>
     // F#:    val sort : ('a -> 'a -> bool) -> ('a list -> 'a list) when 'a : equality
-    let rec mergepairs ord l1 l2 =
+    let rec private mergepairs ord l1 l2 =
         match l1, l2 with
         | [s], [] -> s
         | l, [] ->
@@ -338,6 +315,9 @@ module lib =
     // pg. 619
     // OCaml: val uniq : 'a list -> 'a list = <fun>
     // F#:    val uniq : 'a list -> 'a list when 'a : comparison
+    // OPTIMIZE : Replace this (and the private implementation) with
+    // a simpler implementation which folds over the list and uses an
+    // F# set to track the "seen" values.
     let uniq l =
         uniqImpl l id
 
@@ -526,13 +506,13 @@ module lib =
     // OCaml: val set_eq : 'a list -> 'a list -> bool = <fun>
     // F#:    val set_eq : 'a list -> 'a list -> bool when 'a : comparison
     // TODO: Can we use (s1 = s2) once they are converted to sets?
-    let rec set_eq s1 s2 =
+    let set_eq s1 s2 =
         setify s1 = setify s2
     
     // pg. 620
     // OCaml: val insert : 'a -> 'a list -> 'a list = <fun>
     // F#:    val insert : 'a -> 'a list -> 'a list when 'a : comparison
-    let insert x s =
+    let inline insert x s =
         union [x] s
     
     // pg. 620
@@ -590,8 +570,9 @@ module lib =
     // pg. 620
     // OCaml: val allsets : int -> 'a list -> 'a list list = <fun>
     // F#:    val allsets : int -> 'a list -> 'a list list when 'a : comparison
-    let allsets m l =
-        allsetsImpl m l id
+    /// Produces all n-element subsets of l.
+    let allsets n l =
+        allsetsImpl n l id
 
     //
     let rec private allsubsetsImpl s cont =
@@ -601,23 +582,42 @@ module lib =
         | a :: t ->
             allsubsetsImpl t <| fun res ->
                 cont (union (image (fun b -> a :: b) res) res)
+
+    (* TODO :   Perhaps switch to this more-efficient and succint
+                implementation of the powerset function. It just
+                needs to be modified to use CPS for efficiency. *)
+    (*
+    let rec allsubsets = function
+        | [] -> [[]]
+        | h::t ->
+            [ for x in allsubsets t do
+                for t in [x;h::x] -> t ]
+    *)
         
     // pg. 620
     // OCaml: val allsubsets : 'a list -> 'a list list = <fun>
     // F#:    val allsubsets : 'a list -> 'a list list when 'a : comparison
+    /// Produces all subsets of l.
+    // NOTE : This is simply the powerset function.
     let allsubsets s =
         allsubsetsImpl s id
                     
     // pg. 620
     // OCaml: val allnonemptysubsets : 'a list -> 'a list list = <fun>
     // F#:    val allnonemptysubsets : 'a list -> 'a list list when 'a : comparison
-    let allnonemptysubsets s =
-        subtract (allsubsets s) [[]]
+    /// Produces all non-empty subsets of l.
+    let allnonemptysubsets l =
+        subtract (allsubsets l) [[]]
 
 // pg. 619
 // ------------------------------------------------------------------------- //
 // Explosion and implosion of strings.                                       //
 // ------------------------------------------------------------------------- //
+
+    (* OPTIMIZE :   'explode' should return a 'char list' instead of a 'string list'
+                    for efficiency. Ideally, we should optimize consuming code
+                    to use a char[], at which point 'explode' could simply become
+                    an alias for the String.ToCharArray(...) function. *)
 
     // pg. 619
     // OCaml: val explode : string -> string list = <fun>
@@ -654,26 +654,11 @@ module lib =
         result
 
 // ------------------------------------------------------------------------- //
-// Polymorphic finite partial functions via Patricia trees.                  //
-//                                                                           //
-// The point of this strange representation is that it is canonical (equal   //
-// functions have the same encoding) yet reasonably efficient on average.    //
-//                                                                           //
-// Idea due to Diego Olivier Fernandez Pons (OCaml list, 2003/11/10).        //
+// Polymorphic finite partial functions via F# Map type.                     //
 // ------------------------------------------------------------------------- //
-//
 
     // pg. 621
-    // OCaml: 
-    //   type ('a, 'b) func =
-    //     Empty
-    //   | Leaf of int * ('a * 'b) list
-    //   | Branch of int * int * ('a, 'b) func * ('a, 'b) func
-    // F#:    
-    type func<'a,'b> =
-        | Empty
-        | Leaf of int * ('a * 'b) list
-        | Branch of int * int * func<'a,'b> * func<'a,'b>
+    type func<'a, 'b when 'a : comparison> = Map<'a, 'b>
 
 // ------------------------------------------------------------------------- //
 // Undefined function.                                                       //
@@ -682,7 +667,7 @@ module lib =
     // pg. 621
     // OCaml: val undefined : ('a, 'b) func = Empty
     // F#:    val undefined : func<'a,'b>
-    let undefined = Empty
+    let undefined : func<_,_> = Map.empty
 
 // ------------------------------------------------------------------------- //
 // In case of equality comparison worries, better use this.                  //
@@ -691,9 +676,7 @@ module lib =
     // pg. 621
     // OCaml: val is_undefined : ('a, 'b) func -> bool = <fun>
     // F#:    val is_undefined : func<'a,'b>   -> bool
-    let is_undefined = function
-        | Empty -> true
-        | _     -> false
+    let inline is_undefined (f : func<_,_>) = Map.isEmpty f
 
 // ------------------------------------------------------------------------- //
 // Operation analogous to "map" for lists.                                   //
@@ -702,22 +685,8 @@ module lib =
     // pg. 621
     // OCaml: val mapf : ('a -> 'b)  -> ('c, 'a) func -> ('c, 'b) func = <fun>
     // F#:    val mapf : (('a -> 'b) -> func<'c,'a>   -> func<'c,'b>)
-    let mapf =
-        // TODO : Optimize using continuation-passing style.
-        let rec map_list f l =
-            match l with
-            | [] -> []
-            | (x, y) :: t ->
-                (x, f y) :: (map_list f t)
-        // TODO : Optimize using continuation-passing style.
-        let rec mapf f t =
-            match t with
-            | Empty -> Empty
-            | Leaf (h, l) ->
-                Leaf (h, map_list f l)
-            | Branch (p, b, l, r) ->
-                Branch (p, b, mapf f l, mapf f r)
-        mapf
+    let inline mapf mapping (f : func<_,_>) : func<_,_> =
+        Map.map (fun _ v -> mapping v) f
 
 // ------------------------------------------------------------------------- //
 // Operations analogous to "fold" for lists.                                 //
@@ -726,50 +695,14 @@ module lib =
     // pg. ???
     // OCaml: val foldl : ('a -> 'b -> 'c -> 'a) -> 'a -> ('b, 'c) func -> 'a = <fun>
     // F#:    val foldl : (('a -> 'b -> 'c -> 'a) -> 'a -> func<'b,'c> -> 'a)
-    let foldl =
-        let rec foldl_list f a l =
-            match l with
-            | [] -> a
-            | (x, y) :: t ->
-                foldl_list f (f a x y) t
-
-        let rec foldl f a t cont =
-            match t with
-            | Empty ->
-                cont a
-            | Leaf (h, l) ->
-                cont (foldl_list f a l)
-            | Branch (p, b, l, r) ->
-                foldl f a l <| fun leftResult ->
-                    foldl f leftResult r cont
-
-        fun f a t ->
-            foldl f a t id
+    let inline foldl folder state (f : func<_,_>) =
+        Map.fold folder state f
         
     // pg. ???
     // OCaml: val foldr :  ('a -> 'b -> 'c -> 'c) -> ('a, 'b) func -> 'c -> 'c = <fun>
     // F#:    val foldr : (('a -> 'b -> 'c -> 'c) -> func<'a,'b>   -> 'c -> 'c)
-    let foldr =
-        let rec foldr_list f l a cont =
-            match l with
-            | [] ->
-                cont a
-            | (x, y) :: t ->
-                foldr_list f t a <| fun result ->
-                    cont (f x y result)
-
-        let rec foldr f t a cont =
-            match t with
-            | Empty ->
-                cont a
-            | Leaf (h, l) ->
-                foldr_list f l a cont
-            | Branch (p, b, l, r) ->
-                foldr f r a <| fun rightResult ->
-                    foldr f l rightResult cont
-
-        fun f t a ->
-            foldr f t a id
+    let inline foldr folder (f : func<_,_>) state =
+        Map.foldBack folder f state
 
 // ------------------------------------------------------------------------- //
 // Mapping to sorted-list representation of the graph, domain and range.     //
@@ -778,21 +711,30 @@ module lib =
     // pg. 621
     // OCaml: val graph : ('a, 'b) func -> ('a * 'b) list = <fun>
     // F#:    val graph : func<'a,'b>   -> ('a * 'b) list when 'a : comparison and 'b : comparison
-    let graph f =
+    let graph (f : func<_,_>) =
+        // TODO : Replace with call to Map.toList
+        // IMPORTANT : Make sure the values are returned in the same order
+        // that they would be by 'setify'.
         foldl (fun a x y -> (x, y) :: a) [] f
         |> setify
     
     // pg. 621
     // OCaml: val dom : ('a, 'b) func -> 'a list = <fun>
     // F#:    val dom : func<'a,'b>   -> 'a list when 'a : comparison
-    let dom f =
+    let dom (f : func<_,_>) =
+        // TODO : Replace with Map.fold to create list of keys.
+        // IMPORTANT : Make sure the values are returned in the same order
+        // that they would be by 'setify'.
         foldl (fun a x y -> x :: a) [] f
         |> setify
     
     // pg. 621
     // OCaml: val ran : ('a, 'b) func -> 'b list = <fun>
     // F#:    val ran : func<'a,'b>   -> 'b list when 'b : comparison
-    let ran f =
+    let ran (f : func<_,_>) =
+        // TODO : Replace with Map.fold to create list of values.
+        // IMPORTANT : Make sure the values are returned in the same order
+        // that they would be by 'setify'.
         foldl (fun a x y -> y :: a) [] f
         |> setify
 
@@ -803,302 +745,73 @@ module lib =
     // pg. 621
     // OCaml: val applyd :  ('a, 'b) func -> ('a -> 'b) -> 'a -> 'b = <fun>
     // F#:    val applyd : (func<'a,'b>   -> ('a -> 'b) -> 'a -> 'b) when 'a : comparison
-    let applyd =
-        let rec apply_listd l d x =
-            match l with
-            | [] -> d x
-            | (a, b) :: tl ->
-                let c = compare x a
-                if c = 0 then b
-                elif c > 0 then apply_listd tl d x
-                else d x
-            
-        fun f d x ->
-            let k = hash x
-            let rec look t =
-                match t with
-                | Leaf (h, l) when h = k ->
-                    apply_listd l d x
-                | Branch (p, b, l, r) when (k ^^^ p) &&& (b - 1) = 0 ->
-                    if k &&& b = 0 then l else r
-                    |> look
-                | _ -> d x
-            look f
+    // Apply with default value.
+    let applyd (f : func<_,_>) defaultValueGenerator value : 'b =
+        match Map.tryFind value f with
+        | Some x -> x
+        | None ->
+            // Return a default value.
+            // NOTE : This value is _not_ added to the func/map.
+            defaultValueGenerator value
 
     // pg. 621
     // OCaml: val apply : ('a, 'b) func -> 'a -> 'b = <fun>
     // F#:    val apply : func<'a,'b>   -> ('a -> 'b) when 'a : comparison
-    let apply f =
-        applyd f (fun _ -> failwith "apply")
+    let apply (f : func<_,_>) a =
+        match Map.tryFind a f with
+        | Some x -> x
+        | None ->
+            failwith "apply"
 
     // EGT
-    let apply_none f =
-        applyd f (fun _ -> None)
+    let inline apply_none (f : func<_,_>) a =
+        applyd f (fun _ -> None) a
 
     // pg. 621
     // OCaml: val tryapplyd : ('a, 'b) func -> 'a -> 'b -> 'b = <fun>
     // F#:    val tryapplyd : func<'a,'b>   -> 'a -> 'b -> 'b when 'a : comparison
-    let tryapplyd f a d =
-        applyd f (fun _ -> d) a
+    let tryapplyd (f : func<_,_>) a d =
+        match Map.tryFind a f with
+        | Some x -> x
+        | None -> d
 
     // pg. 621
     // OCaml: val tryapplyl : ('a, 'b list) func -> 'a -> 'b list = <fun>
     // F#:    val tryapplyl : func<'a,'b list>   -> 'a -> 'b list when 'a : comparison
-    let tryapplyl f x =
+    let inline tryapplyl (f : func<_,_>) x =
         tryapplyd f x []
     
     // pg. 621
     // OCaml: val defined : ('a, 'b) func -> 'a -> bool = <fun>
     // F#:    val defined : func<'a,'b>   -> 'a -> bool when 'a : comparison
-    let defined f x =
-        try
-            apply f x |> ignore
-            true
-        with
-        | Failure _ -> false
+    let inline defined (f : func<_,_>) a =
+        Map.containsKey a f
 
 // ------------------------------------------------------------------------- //
 // Undefinition.                                                             //
 // ------------------------------------------------------------------------- //
 
-    //
-    let rec private undefine_listImpl x l cont =
-        match l with
-        | [] ->
-            cont []
-        | (a, b as ab) :: t ->
-            let c = compare x a
-            if c = 0 then
-                cont t
-            elif c < 0 then
-                cont l
-            else
-                undefine_listImpl x t <| fun t' ->
-                    if t' = t then cont l
-                    else cont (ab :: t')
-
-    //
-    let private undefine_list x l =
-        undefine_listImpl x l id
-
     // pg. 621
     // OCaml: val undefine :  'a -> ('a, 'b) func -> ('a, 'b) func = <fun>
     // F#:    val undefine : ('a -> func<'a,'b>   -> func<'a,'b>) when 'a : comparison and 'b : equality
-    let undefine x =
-        let k = hash x
-        let rec und t cont =
-            match t with
-            | Leaf (h, l) when h = k ->
-                match undefine_list x l with
-                | l' when l' = l ->
-                    cont t
-                | [] ->
-                    cont Empty
-                | l' ->
-                    cont (Leaf (h, l'))
-
-            | Branch (p, b, l, r) when k &&& (b - 1) = p ->
-                if k &&& b = 0 then
-                    und l <| function
-                        | l' when l' = l ->
-                            cont t
-                        | Empty ->
-                            cont r
-                        | l' ->
-                            cont (Branch (p, b, l', r))
-                else
-                    und r <| function
-                        | r' when r' = r ->
-                            cont t
-                        | Empty ->
-                            cont l
-                        | r' ->
-                            cont (Branch (p, b, l, r'))
-            | _ ->
-                cont t
-
-        fun t ->
-            und t id
+    let inline undefine x (f : func<_,_>) =
+        Map.remove x f
 
 // ------------------------------------------------------------------------- //
 // Redefinition and combination.                                             //
 // ------------------------------------------------------------------------- //
+(* NOTE :   The 'combine' function wasn't actually used anywhere, so it hasn't
+            been re-implemented for the F# map type. If necessary, it should
+            be fairly simple to re-implement. *)
 
-    let private newbranch p1 t1 p2 t2 =
-        let zp = p1 ^^^ p2
-        let b = zp &&& -zp
-        let p = p1 &&& (b - 1)
-        if p1 &&& b = 0 then
-            Branch (p, b, t1, t2)
-        else
-            Branch (p, b, t2, t1)
-
-    let rec private define_listImpl (x, y as xy) l cont =
-        match l with
-        | [] ->
-            cont [xy]
-        | (a, b as ab) :: t ->
-            let c = compare x a
-            if c = 0 then
-                cont (xy :: t)
-            elif c < 0 then
-                cont (xy :: l)
-            else
-                define_listImpl xy t <| fun lst ->
-                    cont (ab :: lst)
-
-    and private combine_listImpl op z l1 l2 cont =
-        match l1, l2 with
-        | [], x
-        | x, [] ->
-            cont x
-        | ((x1, y1 as xy1) :: t1, (x2, y2 as xy2) :: t2) ->
-            let c = compare x1 x2
-            if c < 0 then
-                combine_listImpl op z t1 l2 <| fun lst ->
-                    cont (xy1 :: lst)
-            elif c > 0 then
-                combine_listImpl op z l1 t2 <| fun lst ->
-                    cont (xy2 :: lst)
-            else
-                let y = op y1 y2
-                combine_listImpl op z t1 t2 <| fun l ->
-                    cont (if z y then l else (x1, y) :: l)
-
-    let private define_list xy l =
-        define_listImpl xy l id
-
-    let private combine_list op z l1 l2 =
-        combine_listImpl op z l1 l2 id
 
     // Finite Partial Functions (FPF)
     // To update the FPF with a new mapping from x to y.
     // pg. 621
     // OCaml: val ( |-> ) :  'a -> 'b -> ('a, 'b) func -> ('a, 'b) func = <fun>
     // F#:    val ( |-> ) : ('a -> 'b -> func<'a,'b>   -> func<'a,'b>) when 'a : comparison
-    let (|->) x y =
-        let k = hash x
-        let rec upd t cont =
-            match t with
-            | Empty ->
-                cont (Leaf (k, [x, y]))
-            | Leaf (h, l) ->
-                if h = k then
-                    cont (Leaf (h, define_list (x, y) l))
-                else
-                    cont (newbranch h t k (Leaf (k, [x, y])))
-            | Branch (p, b, l, r) ->
-                if k &&& (b - 1) <> p then
-                    cont (newbranch p t k (Leaf (k, [x, y])))
-                elif k &&& b = 0 then
-                    upd l <| fun upd_l ->
-                        cont (Branch (p, b, upd_l, r))
-                else
-                    upd r <| fun upd_r ->
-                        cont (Branch (p, b, l, upd_r))
-
-        fun t ->
-            upd t id
-
-    //
-    let rec private combineImpl op z t1 t2 cont =
-        match t1, t2 with
-        | Empty, x
-        | x, Empty ->
-            cont x
-        | Leaf (h1, l1), Leaf (h2, l2) ->
-            if h1 = h2 then
-                match combine_list op z l1 l2 with
-                | [] ->
-                    cont Empty
-                | l ->
-                    cont (Leaf (h1, l))
-            else
-                cont (newbranch h1 t1 h2 t2)
-
-        | (Leaf (k, lis) as lf), (Branch (p, b, l, r) as br) ->
-            if k &&& (b - 1) = p then
-                if k &&& b = 0 then
-                    combineImpl op z lf l <| function
-                        | Empty ->
-                            cont r
-                        | l' ->
-                            cont (Branch (p, b, l', r))
-                else
-                    combineImpl op z lf r <| function
-                        | Empty ->
-                            cont l
-                        | r' ->
-                            cont (Branch (p, b, l, r'))
-            else
-                cont (newbranch k lf p br)
-
-        | (Branch (p, b, l, r) as br), (Leaf (k, lis) as lf) ->
-            if k &&& (b - 1) = p then
-                if k &&& b = 0 then
-                    combineImpl op z l lf <| function
-                        | Empty ->
-                            cont r
-                        | l' ->
-                            cont (Branch (p, b, l', r))
-                else
-                    combineImpl op z r lf <| function
-                        | Empty ->
-                            cont l
-                        | r' ->
-                            cont (Branch (p, b, l, r'))
-            else
-                cont (newbranch p br k lf)
-
-        | Branch (p1, b1, l1, r1), Branch (p2, b2, l2, r2) ->
-            if b1 < b2 then
-                if p2 &&& (b1 - 1) <> p1 then
-                    cont (newbranch p1 t1 p2 t2)
-                elif p2 &&& b1 = 0 then
-                    combineImpl op z l1 t2 <| function
-                        | Empty ->
-                            cont r1
-                        | l ->
-                            cont (Branch (p1, b1, l, r1))
-                else
-                    combineImpl op z r1 t2 <| function
-                        | Empty ->
-                            cont l1
-                        | r ->
-                            cont (Branch (p1, b1, l1, r))
-
-            elif b2 < b1 then
-                if p1 &&& (b2 - 1) <> p2 then
-                    cont (newbranch p1 t1 p2 t2)
-                elif p1 &&& b2 = 0 then
-                    combineImpl op z t1 l2 <| function
-                        | Empty ->
-                            cont r2
-                        | l ->
-                            cont (Branch (p2, b2, l, r2))
-                else
-                    combineImpl op z t1 r2 <| function
-                        | Empty ->
-                            cont l2
-                        | r ->
-                            cont (Branch (p2, b2, l2, r))
-
-            elif p1 = p2 then
-                combineImpl op z l1 l2 <| fun result1 ->
-                combineImpl op z r1 r2 <| fun result2 ->
-                    match result1, result2 with
-                    | Empty, x
-                    | x, Empty ->
-                        cont x
-                    | l, r ->
-                        cont (Branch (p1, b1, l, r))
-            else
-                cont (newbranch p1 t1 p2 t2)
-
-    // OCaml: val combine :  ('a -> 'a -> 'a) -> ('a -> bool) -> ('b, 'a) func -> ('b, 'a) func -> ('b, 'a) func = <fun>
-    // F#:    val combine : (('c -> 'c -> 'c) -> ('c -> bool) -> func<'d,'c>   -> func<'d,'c>   -> func<'d,'c>) when 'c : equality and 'd : comparison
-    let combine op z t1 t2 =
-        combineImpl op z t1 t2 id
+    let inline (|->) x y (f : func<_,_>) =
+        Map.add x y f
 
 // ------------------------------------------------------------------------- //
 // Special case of point function.                                           //
@@ -1109,8 +822,8 @@ module lib =
     // pg. 621
     // OCaml: val ( |=> ) : 'a -> 'b -> ('a, 'b) func = <fun>
     // F#:    val ( |=> ) : 'a -> 'b -> func<'a,'b> when 'a : comparison
-    let inline (|=>) x y = 
-        (x |-> y) undefined
+    let inline (|=>) x y : func<_,_> =
+        Map.add x y undefined
 
 // ------------------------------------------------------------------------- //
 // Idiom for a mapping zipping domain and range lists.                       //
@@ -1119,7 +832,8 @@ module lib =
     // pg. 621
     // OCaml: val fpf : 'a list -> 'b list -> ('a, 'b) func = <fun>
     // F#:    val fpf : 'a list -> 'b list -> func<'a,'b> when 'a : comparison
-    let inline fpf xs ys =
+    let inline fpf xs ys : func<_,_> =
+        // OPTIMIZE : Use standard List.fold2
         List.foldBack2 (|->) xs ys undefined
 
 // ------------------------------------------------------------------------- //
@@ -1129,15 +843,9 @@ module lib =
     // pg. ???
     // OCaml: val choose : ('a, 'b) func -> 'a * 'b = <fun>
     // F#:    val choose : func<'a,'b>   -> 'a * 'b
-    let rec choose t =
-        match t with
-        | Empty ->
-            failwith "choose: completely undefined function"
-        | Leaf (_, l) ->
-            // NOTE : This will fail (crash) when 'l' is an empty list!
-            List.head l
-        | Branch (b, p, t1, t2) ->
-            choose t1
+    let choose (t : func<_,_>) =
+        Map.toSeq t
+        |> Seq.head
 
 // ------------------------------------------------------------------------- //
 // Install a (trivial) printer for finite partial functions.                 //
@@ -1165,12 +873,16 @@ module lib =
     // pg. 618
     // OCaml: val undef : 'a -> 'b = <fun>
     // F#:    val undef : 'a -> 'b
-    let undef x =
+    let undef _ =
         failwith "undefined function"
 
 // ------------------------------------------------------------------------- //
 // Union-find algorithm.                                                     //
 // ------------------------------------------------------------------------- //
+
+(*  TODO :  Replace with our much-more-efficient F# version of union-find,
+            then modify the functions below to work with it. *)
+
 
     // pg. ???
     // OCaml: type 'a pnode = Nonterminal of 'a | Terminal of 'a * int
@@ -1182,7 +894,7 @@ module lib =
     // pg. 619
     // OCaml: type 'a partition = Partition of ('a, 'a pnode) func
     // F#:    type 'a partition = | Partition of func<'a,'a pnode>
-    type partition<'a> = Partition of func<'a, pnode<'a>>
+    type partition<'a when 'a : comparison> = Partition of func<'a, pnode<'a>>
     
     // pg. ???
     // OCaml: val terminus : 'a partition -> 'a -> 'a * int = <fun>
@@ -1234,7 +946,7 @@ module lib =
     // pg. 622
     // OCaml: val equated : 'a partition -> 'a list = <fun>
     // F#:    val equated : 'a partition -> 'a list when 'a : comparison
-    let equated (Partition f) = dom f
+    let inline equated (Partition f) = dom f
 
 // ------------------------------------------------------------------------- //
 // First number starting at n for which p succeeds.                          //
