@@ -22,6 +22,7 @@ module skolems =
 
     let rename_form = onformula rename_term
 
+    // TODO : Optimize using CPS
     let rec skolems fms corr =
         match fms with
         | [] ->

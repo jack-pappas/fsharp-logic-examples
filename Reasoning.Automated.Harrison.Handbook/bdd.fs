@@ -178,7 +178,7 @@ module bdd =
         | Not p -> p, False
         | _ -> dest_imp fm
 
-    let rec dest_iffdef fm =
+    let dest_iffdef fm =
         match fm with
         | Iff (Atom x, r)
         | Iff (r, Atom x) ->
@@ -246,12 +246,14 @@ module bdd =
         let l, r =
             try dest_nimp fm
             with _ -> True, fm
-        let eqs, noneqs =
-            let parFun fm =
+        let eqs, noneqs =            
+            conjuncts l
+            |> List.partition (fun fm ->
                 try
                     dest_iffdef fm |> ignore
                     true
-                with _ -> false
-            List.partition parFun (conjuncts l)
-        let defs, fm' = sort_defs [] (List.map dest_iffdef eqs) (List.foldBack mk_imp noneqs r)
+                with _ ->
+                    false)
+        let defs, fm' =
+            sort_defs [] (List.map dest_iffdef eqs) (List.foldBack mk_imp noneqs r)
         snd (mkbdds undefined (mk_bdd (<), undefined) defs fm') = 1

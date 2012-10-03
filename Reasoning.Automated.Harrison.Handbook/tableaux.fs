@@ -61,6 +61,8 @@ module tableaux =
         | [] -> acc
         | head :: tail -> 
             let pos, neg = List.partition positive head
+            // NOTE : This is not used anywhere! Did we miss something
+            // or is this also in the book code?
             let unifyResult = unify_complements acc
             tryfind (unify_refute tail >>|> unify_complements acc) (allpairs (fun p q -> (p, q)) pos neg)
 
@@ -71,12 +73,17 @@ module tableaux =
 // ------------------------------------------------------------------------- //
 
     let rec prawitz_loop djs0 fvs djs n =
-        let l = List.length fvs
-        let newvars = List.map (fun k -> "_" + string (n * l + k)) (1--l)
-        let inst = fpf fvs (List.map (fun x -> Var x) newvars)
-        let djs1 = distrib (image (image (subst inst)) djs0) djs
-        try unify_refute djs1 undefined,(n + 1) with 
-        | Failure _ -> prawitz_loop djs0 fvs djs1 (n + 1)
+        let djs1 =
+            let inst =
+                let newvars =
+                    let l = List.length fvs
+                    List.map (fun k -> "_" + string (n * l + k)) (1--l)
+                fpf fvs (List.map Var newvars)
+            distrib (image (image (subst inst)) djs0) djs
+
+        try unify_refute djs1 undefined,(n + 1)
+        with Failure _ ->
+            prawitz_loop djs0 fvs djs1 (n + 1)
 
     let prawitz fm =
         let fm0 = skolemize (Not (generalize fm))

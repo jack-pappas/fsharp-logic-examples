@@ -238,11 +238,12 @@ module real =
         | Fn ("i", [t]) ->
             Fn ("^", [grpterm t; Fn ("2", [])])
         | Fn ("1", []) ->
-            Fn ("2", [])        
+            Fn ("2", [])
 
     let grpform (Atom (R ("=", [s; t]))) =
-        let fm = generalize (Atom (R (">", [grpterm s; grpterm t])))
-        relativize (fun x -> Atom (R (">", [Var x; Fn("1",[])]))) fm
+        generalize (Atom (R (">", [grpterm s; grpterm t])))
+        |> relativize (fun x ->
+            Atom (R (">", [Var x; Fn("1",[])])))
    
     // pg. 379
     // ------------------------------------------------------------------------- //
@@ -250,5 +251,6 @@ module real =
     // ------------------------------------------------------------------------- //
 
     let real_qelim' =
-        simplify004 >>|> evalc >>|>
-        lift_qelim polyatom (dnf >>|> cnnf (fun x -> x) >>|> evalc) basic_real_qelim
+        simplify004
+        >>|> evalc
+        >>|> lift_qelim polyatom (dnf >>|> cnnf id >>|> evalc) basic_real_qelim

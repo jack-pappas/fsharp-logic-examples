@@ -44,11 +44,12 @@ module dp =
     let affirmative_negative_rule clauses =
         let neg', pos = List.partition negative (unions clauses)
         let neg = image negate neg'
-        let pos_only = subtract pos neg 
+        let pos_only = subtract pos neg
         let neg_only = subtract neg pos
-        let pureItem = union pos_only (image negate neg_only)
-        if pureItem = [] then None
-        else
+
+        match union pos_only (image negate neg_only) with
+        | [] -> None
+        | pureItem ->
             clauses
             |> List.filter (fun cl -> intersect cl pureItem = [])
             |> Some
@@ -58,21 +59,25 @@ module dp =
         let p' = negate p 
         let pos, notpos = List.partition (mem p) clauses
         let neg, other = List.partition (mem p') notpos
-        let res0 =
-            let pos' = image (List.filter (fun l -> l <> p)) pos
-            let neg' = image (List.filter (fun l -> l <> p')) neg
-            allpairs union pos' neg'
-        let clauses' = union other (List.filter (non trivial) res0)
-        clauses'
+        let pos' = image (List.filter (fun l -> l <> p)) pos
+        let neg' = image (List.filter (fun l -> l <> p')) neg
 
+        allpairs union pos' neg'
+        |> List.filter (non trivial)
+        |> union other
+
+    //
     let resolution_blowup cls l =
         let m = List.length (List.filter (mem l) cls)
         let n = List.length (List.filter (mem (negate l)) cls)
         m * n - m - n
 
+    //
     let resolution_rule clauses =
-        let pvs = List.filter positive (unions clauses)
-        let p = minimize (resolution_blowup clauses) pvs
+        let p =
+            unions clauses
+            |> List.filter positive
+            |> minimize (resolution_blowup clauses)
         resolve_on p clauses
 
 //. pg. 84. 
@@ -109,13 +114,12 @@ module dp =
         let m = List.length (List.filter (mem l) cls)                 
         let n = List.length (List.filter (mem (negate l)) cls)
         m + n
-
     
     let rec private dpllImpl clauses cont =
         if clauses = [] then
-            cont true 
+            cont true
         elif mem [] clauses then
-            cont false 
+            cont false
         else
             match one_literal_rule clauses with
             | Some value ->
@@ -139,7 +143,7 @@ module dp =
                                                      
     let dpllsat fm = dpll (defcnfs fm)
 
-    let dplltaut fm = not (dpllsat (Not fm))                   
+    let dplltaut fm = not (dpllsat (Not fm))
 
 // pg.86
 // ------------------------------------------------------------------------- //
@@ -149,32 +153,29 @@ module dp =
     type trailmix = Guessed | Deduced
 
     let unassigned =
-        let litabs p = 
-            match p with
-            | Not q -> q
-            | _ -> p
+        let litabs = function Not q -> q | p -> p
         fun cls trail ->
             subtract (unions (image (image litabs) cls))
                 (image (litabs >>|> fst) trail)
 
     let rec unit_subpropagate (cls, fn, trail) =
-        let cls' = List.map (List.filter (not >>|> defined fn >>|> negate)) cls        
-        let newunits =
-            let uu = function
-                | [c] when not (defined fn c) -> [c]
-                | _ -> failwith ""
-            unions (mapfilter uu cls')
+        let uu = function
+            | [c] when not (defined fn c) -> [c]
+            | _ -> failwith ""
+        let cls' =
+            List.map (List.filter (not >>|> defined fn >>|> negate)) cls
 
-        if newunits = [] then
+        match unions (mapfilter uu cls') with
+        | [] ->
             cls', fn, trail
-        else
+        | newunits ->
             let trail' = List.foldBack (fun p t -> (p, Deduced) :: t) newunits trail
             let fn' = List.foldBack (fun u -> u |-> ()) newunits fn
             unit_subpropagate (cls', fn', trail')
 
     let unit_propagate (cls, trail) =
         let fn = List.foldBack (fun (x, _) -> x |-> ()) trail undefined
-        let cls', fn', trail' = unit_subpropagate (cls, fn, trail)
+        let cls', _, trail' = unit_subpropagate (cls, fn, trail)
         cls', trail'
 
     let rec backtrack trail =
@@ -210,7 +211,9 @@ module dp =
         match backtrack trail with
         | (q, Guessed) :: tt ->
             let cls', trail' = unit_propagate (cls, (p, Guessed) :: tt)
-            if mem [] cls' then backjump cls p tt else trail
+            if mem [] cls' then
+                backjump cls p tt
+            else trail
         | _ -> trail
 
     let rec dplb cls trail =
@@ -218,10 +221,12 @@ module dp =
         if mem [] cls' then
             match backtrack trail with
             | (p, Guessed) :: tt ->
-                let trail' = backjump cls p tt                
+                let trail' = backjump cls p tt
                 let conflict =
-                    let declits = List.filter (fun (_, d) -> d = Guessed) trail'
-                    insert (negate p) (image (negate >>|> fst) declits)
+                    trail'
+                    |> List.filter (fun (_, d) -> d = Guessed)
+                    |> image (negate >>|> fst)
+                    |> insert (negate p)
                 dplb (conflict :: cls) ((negate p, Deduced) :: trail')
             | _ -> false
         else

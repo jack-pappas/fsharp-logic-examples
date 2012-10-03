@@ -42,10 +42,12 @@ module paramodulation =
     let rec overlapl (l, r) fm rfn =
         match fm with
         | Atom (R (f, args)) ->
-            listcases (overlaps (l, r)) (fun i a -> rfn i (Atom (R (f, a)))) args []
+            (args, [])
+            ||> listcases (overlaps (l, r)) (fun i a -> rfn i (Atom (R (f, a))))
         | Not p ->
             overlapl (l, r) p (fun i p -> rfn i (Not p))
-        | _ -> failwith "overlapl: not a literal"
+        | _ ->
+            failwith "overlapl: not a literal"
   
 // pg. 301
 // ------------------------------------------------------------------------- //
@@ -61,12 +63,17 @@ module paramodulation =
 // ------------------------------------------------------------------------- //
 
     let paramodulate pcl ocl =
-        List.foldBack (fun eq ->
-            let pcl' = subtract pcl [eq]
+        // TODO : Since the initial state is an empty list, could we
+        // use List.reduceBack here instead of foldBack?
+        (List.filter is_eq pcl, [])
+        ||> List.foldBack (fun eq ->
+            let rfn i ocl' =
+                let pcl' = subtract pcl [eq]
+                image (subst i) (pcl' @ ocl')
             let l, r = dest_eq eq
-            let rfn i ocl' = image (subst i) (pcl' @ ocl')
-            overlapc (l, r) ocl rfn >>|> overlapc (r, l) ocl rfn)
-            (List.filter is_eq pcl) []
+            overlapc (l, r) ocl rfn
+            >>|> overlapc (r, l) ocl rfn)
+            
 
     let para_clauses cls1 cls2 =
         let cls1' = rename "x" cls1
@@ -91,8 +98,10 @@ module paramodulation =
                 paraloop (used', List.foldBack (incorporate cls) news ros)
 
     let pure_paramodulation fm =
-      paraloop ([], [mk_eq (Var "x") (Var "x")] :: simpcnf (specialize (pnf fm)))
+        paraloop ([], [mk_eq (Var "x") (Var "x")] :: simpcnf (specialize (pnf fm)))
 
     let paramodulation fm =
-      let fm1 = askolemize (Not (generalize fm))
-      List.map (pure_paramodulation >>|> list_conj) (simpdnf fm1)
+        Not (generalize fm)
+        |> askolemize
+        |> simpdnf
+        |> List.map (pure_paramodulation >>|> list_conj)

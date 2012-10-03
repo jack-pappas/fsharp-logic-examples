@@ -56,19 +56,21 @@ module resolution =
 // ------------------------------------------------------------------------- //
 
     let resolvents cl1 cl2 p acc =
-        let ps2 = List.filter (unifiable (negate p)) cl2
-        if ps2 = [] then acc 
-        else
-            let ps1 = List.filter (fun q -> q <> p && unifiable p q) cl1
-            let pairs = allpairs (fun s1 s2 -> s1, s2)
-                                (List.map (fun pl -> p :: pl) (allsubsets ps1))
-                                (allnonemptysubsets ps2)
-            List.foldBack (fun (s1, s2) sof ->
-                    try 
-                        image (subst (mgu (s1 @ List.map negate s2) undefined))
-                                (union (subtract cl1 s1) (subtract cl2 s2)) :: sof
-                    with 
-                    | Failure _ -> sof) pairs acc
+        match List.filter (unifiable (negate p)) cl2 with
+        | [] -> acc
+        | ps2 ->
+            let pairs =
+                let ps1 = List.filter (fun q -> q <> p && unifiable p q) cl1
+                allpairs (fun s1 s2 -> s1, s2)
+                    (List.map (fun pl -> p :: pl) (allsubsets ps1))
+                    (allnonemptysubsets ps2)
+
+            (pairs, acc)
+            ||> List.foldBack (fun (s1, s2) sof ->
+                try
+                    image (subst (mgu (s1 @ List.map negate s2) undefined))
+                            (union (subtract cl1 s1) (subtract cl2 s2)) :: sof
+                with Failure _ -> sof)
 
     let resolve_clauses cls1 cls2 =
         let cls1' = rename "x" cls1 
@@ -182,8 +184,10 @@ module resolution =
         resloop002 ([], simpcnf (specialize (pnf fm)))
 
     let resolution002 fm =
-        let fm1 = askolemize (Not (generalize fm))
-        List.map (pure_resolution002 >>|> list_conj) (simpdnf fm1)
+        Not (generalize fm)
+        |> askolemize
+        |> simpdnf
+        |> List.map (pure_resolution002 >>|> list_conj)
 
 // pg. 198
 // ------------------------------------------------------------------------- //
@@ -209,8 +213,10 @@ module resolution =
         presloop ([], simpcnf (specialize (pnf fm)))
 
     let presolution fm =
-        let fm1 = askolemize (Not (generalize fm))
-        List.map (pure_presolution >>|> list_conj) (simpdnf fm1)
+        Not (generalize fm)
+        |> askolemize
+        |> simpdnf
+        |> List.map (pure_presolution >>|> list_conj)
 
 // pg. 201
 // ------------------------------------------------------------------------- //
@@ -218,8 +224,14 @@ module resolution =
 // ------------------------------------------------------------------------- //
 
     let pure_resolution fm =
-        resloop002 (List.partition (List.exists positive) (simpcnf (specialize (pnf fm))))
+        pnf fm
+        |> specialize
+        |> simpcnf
+        |> List.partition (List.exists positive)
+        |> resloop002
 
     let resolution003 fm =
-        let fm1 = askolemize (Not (generalize fm))
-        List.map (pure_resolution >>|> list_conj) (simpdnf fm1)
+        Not (generalize fm)
+        |> askolemize
+        |> simpdnf
+        |> List.map (pure_resolution >>|> list_conj)

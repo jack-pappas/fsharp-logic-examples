@@ -42,20 +42,32 @@ module decidable =
 // ------------------------------------------------------------------------- //
 
     let aedecide fm =
-        let sfm = skolemize (Not fm)
-        let fvs = fv sfm
+        let sfm = skolemize (Not fm)        
         let cnsts, funcs =
             functions sfm
             |> List.partition (fun (_, ar) -> ar = 0)
-        if funcs <> [] then
+
+        match funcs with
+        | [] ->
+            let cntms =
+                let consts =
+                    match cnsts with
+                    | [] -> ["c", 0]
+                    | x -> x
+                consts
+                |> List.map (fun (c, _) -> Fn (c, []))
+
+            let fvs = fv sfm
+            let cjs = simpcnf sfm            
+            groundtuples cntms [] 0 (List.length fvs)
+            |> List.map (fun tup ->
+                image (image (subst (fpf fvs tup))) cjs)
+            |> unions
+            |> dpll
+            |> not
+
+        | _ ->
             failwith "Not decidable"
-        else
-            let consts = if cnsts = [] then ["c", 0] else cnsts
-            let cntms = List.map (fun (c, _) -> Fn (c, [])) consts
-            let alltuples = groundtuples cntms [] 0 (List.length fvs)
-            let cjs = simpcnf sfm
-            let grounds = List.map (fun tup -> image (image (subst (fpf fvs tup))) cjs) alltuples
-            not(dpll(unions grounds))
  
 // pg. 314
 // ------------------------------------------------------------------------- //
@@ -63,16 +75,21 @@ module decidable =
 // ------------------------------------------------------------------------- //
 
     let separate x cjs =
-        let yes, no = List.partition (mem x >>|> fv) cjs
-        if yes = [] then list_conj no
-        elif no = [] then Exists (x, list_conj yes)
-        else And (Exists (x, list_conj yes), list_conj no)
+        match List.partition (mem x >>|> fv) cjs with
+        | [], no ->
+            list_conj no
+        | yes, [] ->
+            Exists (x, list_conj yes)
+        | yes, no ->
+            And (Exists (x, list_conj yes), list_conj no)
 
     let rec pushquant x p =
         if not (mem x (fv p)) then p
         else
-            let djs = purednf (nnf p)
-            list_disj (List.map (separate x) djs)
+            nnf p
+            |> purednf
+            |> List.map (separate x)
+            |> list_disj
 
     let rec miniscope fm =
         match fm with
@@ -177,21 +194,26 @@ module decidable =
 // Decision procedure in principle for formulas with finite model property.  //
 // ------------------------------------------------------------------------- //
 
-    let limmeson n fm =
-        let cls = simpcnf (specialize (pnf fm))
-        let rules = List.foldBack ((@) >>|> contrapositives) cls []
+    let limmeson n fm =        
+        let rules =
+            let cls = simpcnf (specialize (pnf fm))
+            List.foldBack ((@) >>|> contrapositives) cls []
         mexpand002 rules [] False id (undefined, n, 0)
 
     let limited_meson n fm =
-        let fm1 = askolemize (Not (generalize fm))
-        List.map (limmeson n >>|> list_conj) (simpdnf fm1)
+        Not (generalize fm)
+        |> askolemize
+        |> simpdnf
+        |> List.map (limmeson n >>|> list_conj)
 
     let decide_fmp fm =
         let rec test n =
             try limited_meson n fm |> ignore
                 true
             with _ ->
-                if decide_finite n fm then test (n + 1) else false
+                if decide_finite n fm then
+                    test (n + 1)
+                else false
         test 1
 
 // pg. 325
@@ -200,11 +222,13 @@ module decidable =
 // ------------------------------------------------------------------------- //
 
     let decide_monadic fm =
+        let monadic, other =
+            predicates fm
+            |> List.partition (fun (_, ar) -> ar = 1)
+
         let funcs = functions fm
-        let preds = predicates fm
-        let monadic, other = List.partition (fun (_, ar) -> ar = 1) preds
-        if funcs <> [] || List.exists (fun (_, ar) -> ar > 1) other
-        then failwith "Not in the monadic subset"
+        if funcs <> [] || List.exists (fun (_, ar) -> ar > 1) other then
+            failwith "Not in the monadic subset"
         else
             let n = funpow (List.length monadic) (( * ) 2) 1
             decide_finite n fm

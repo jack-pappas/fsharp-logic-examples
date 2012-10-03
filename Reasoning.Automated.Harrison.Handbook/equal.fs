@@ -50,10 +50,12 @@ module equal =
     let function_congruence (f, n) =
         if n = 0 then [] 
         else
+            // TODO : These instances of List.map could be optimized by using
+            // List.init instead (so we don't need the intermediate list).
             let argnames_x = List.map (fun n -> "x" + (string n)) (1 -- n)
             let argnames_y = List.map (fun n -> "y" + (string n)) (1 -- n)
-            let args_x = List.map (fun x -> Var x) argnames_x
-            let args_y = List.map (fun x -> Var x) argnames_y
+            let args_x = List.map Var argnames_x
+            let args_y = List.map Var argnames_y
             let ant = end_itlist mk_and (List.map2 mk_eq args_x args_y)
             let con = mk_eq (Fn (f, args_x)) (Fn (f, args_y))
             [List.foldBack mk_forall (argnames_x @ argnames_y) (Imp (ant, con))]
@@ -66,10 +68,12 @@ module equal =
     let predicate_congruence (p, n) =
         if n = 0 then []
         else
+            // TODO : These instances of List.map could be optimized by using
+            // List.init instead (so we don't need the intermediate list).
             let argnames_x = List.map (fun n -> "x" + (string n)) (1 -- n)
             let argnames_y = List.map (fun n -> "y" + (string n)) (1 -- n)
-            let args_x = List.map (fun x -> Var x) argnames_x
-            let args_y = List.map (fun x -> Var x) argnames_y
+            let args_x = List.map Var argnames_x
+            let args_y = List.map Var argnames_y
             let ant = end_itlist mk_and (List.map2 mk_eq args_x args_y)
             let con = Imp (Atom (R (p, args_x)), Atom (R (p, args_y)))
             [List.foldBack mk_forall (argnames_x @ argnames_y) (Imp (ant, con))]
@@ -86,9 +90,12 @@ module equal =
         let allpreds = predicates fm
         if not (mem ("=", 2) allpreds) then fm
         else
-            let preds = subtract allpreds ["=", 2]
-            let funcs = functions fm
-            let axioms = List.foldBack (union >>|> function_congruence) funcs
-                                (List.foldBack (union >>|> predicate_congruence) preds
-                                        equivalence_axioms)
+            let axioms =
+                let preds = subtract allpreds ["=", 2]
+                let funcs = functions fm
+
+                equivalence_axioms
+                |> List.foldBack (union >>|> predicate_congruence) preds
+                |> List.foldBack (union >>|> function_congruence) funcs
+
             Imp (end_itlist mk_and axioms, fm)

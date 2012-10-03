@@ -58,17 +58,20 @@ module meson =
 // Full MESON procedure.                                                     //
 // ------------------------------------------------------------------------- //
 
-    let puremeson001 fm =
-        let cls = simpcnf (specialize (pnf fm))
-        let rules = List.foldBack ((@) >>|> contrapositives) cls []
+    let puremeson001 fm =        
+        let rules =
+            let cls = simpcnf (specialize (pnf fm))
+            List.foldBack ((@) >>|> contrapositives) cls []
         deepen (fun n ->
             mexpand001 rules [] False id (undefined, n, 0)
             |> ignore
             n) 0
 
     let meson001 fm =
-        let fm1 = askolemize (Not (generalize fm))
-        List.map (puremeson001 >>|> list_conj) (simpdnf fm1)
+        Not (generalize fm)
+        |> askolemize
+        |> simpdnf
+        |> List.map (puremeson001 >>|> list_conj)
 
 // pg. 221
 // ------------------------------------------------------------------------- //
@@ -129,5 +132,7 @@ module meson =
             n) 0
 
     let meson002 fm =
-        let fm1 = askolemize (Not (generalize fm))
-        List.map (puremeson002 >>|> list_conj) (simpdnf fm1)
+        Not (generalize fm)
+        |> askolemize
+        |> simpdnf
+        |> List.map (puremeson002 >>|> list_conj)

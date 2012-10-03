@@ -36,7 +36,9 @@ module order =
         match tm with
         | Var x -> 1
         | Fn (f, args) ->
-            List.foldBack (fun t n -> termsize t + n) args 1
+            (args, 1)
+            ||> List.foldBack (fun t n ->
+                termsize t + n)
 
 // pg. 267
 // ------------------------------------------------------------------------- //

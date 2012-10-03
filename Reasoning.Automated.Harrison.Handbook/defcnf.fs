@@ -33,24 +33,32 @@ module defcnf =
 // Core definitional CNF procedure.                                          //
 // ------------------------------------------------------------------------- //
 
-    let rec maincnf (fm, defs, n as trip) =
+    let rec private maincnfImpl (fm, defs, n as trip) cont =
         match fm with
         | And (p, q) ->
-            defstep mk_and (p, q) trip
+            defstepImpl mk_and (p, q) trip cont
         | Or (p, q) ->
-            defstep mk_or (p, q) trip
+            defstepImpl mk_or (p, q) trip cont
         | Iff (p, q) ->
-            defstep mk_iff (p, q) trip
-        | _ -> trip
+            defstepImpl mk_iff (p, q) trip cont
+        | _ ->
+            cont trip
 
-    and defstep op (p, q) (fm, defs, n) =
-        let fm1, defs1, n1 = maincnf (p, defs, n)
-        let fm2, defs2, n2 = maincnf (q, defs1, n1)
-        let fm' = op fm1 fm2
-        try fst(apply defs2 fm'), defs2, n2
-        with _ ->
-            let v, n3 = mkprop n2
-            v, (fm' |-> (v, Iff (v, fm'))) defs2, n3
+    and private defstepImpl op (p, q) (fm, defs, n) cont =
+        maincnfImpl (p, defs, n) <| fun (fm1, defs1, n1) ->
+        maincnfImpl (q, defs1, n1) <| fun (fm2, defs2, n2) ->
+            let fm' = op fm1 fm2
+            try
+                cont (fst (apply defs2 fm'), defs2, n2)
+            with _ ->
+                let v, n3 = mkprop n2
+                cont (v, (fm' |-> (v, Iff (v, fm'))) defs2, n3)
+
+    let maincnf trip =
+        maincnfImpl trip id
+
+    let defstep op pq trip =
+        defstepImpl op pq trip id
 
 // pg. 76
 // ------------------------------------------------------------------------- //
@@ -60,21 +68,23 @@ module defcnf =
     let max_varindex pfx s (n : num) =
         let m = String.length pfx
         let l = String.length s
-        if l <= m || s.[0..m] <> pfx then n else
-        let s' = s.[m.. (l - m)]
-        if List.forall numeric (explode s') then
-            max n (num_of_string s')
-        else n
+        if l <= m || s.StartsWith pfx then n
+        else
+            let s' = s.[m .. (l - m)]
+            if List.forall numeric (explode s') then
+                max n (num_of_string s')
+            else n
 
 // pg. 77
 // ------------------------------------------------------------------------- //
 // Overall definitional CNF.                                                 //
 // ------------------------------------------------------------------------- //
 
-    let mk_defcnf fn fm =
-        let fm' = nenf fm
-        let n = GenericOne + overatoms (max_varindex "p_" >>|> pname) fm' GenericZero
-        let fm'', defs, _ = fn (fm', undefined, n)
+    let mk_defcnf fn fm =        
+        let fm'', defs, _ =
+            let fm' = nenf fm
+            let n = GenericOne + overatoms (max_varindex "p_" >>|> pname) fm' GenericZero
+            fn (fm', undefined, n)
         let deflist = List.map (snd >>|> snd) (graph defs)
         unions <| simpcnf fm'' :: List.map simpcnf deflist
 

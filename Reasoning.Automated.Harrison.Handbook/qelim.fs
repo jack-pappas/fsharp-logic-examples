@@ -161,9 +161,10 @@ module qelim =
         | Exists (x, p) ->
             let cjs = subtract (conjuncts p) [Atom (R ("=", [Var x; Var x]))]
             try
-                let eqn = List.find is_eq cjs
-                let s, t = dest_eq eqn
-                let y = if s = Var x then t else s
+                let eqn = List.find is_eq cjs                
+                let y =
+                    let s, t = dest_eq eqn
+                    if s = Var x then t else s
                 list_conj (List.map (subst (x |=> y)) (subtract cjs [eqn]))
             with 
             | :? System.Collections.Generic.KeyNotFoundException ->
@@ -195,6 +196,6 @@ module qelim =
     // OCaml : val quelim_dlo : fol formula -> fol formula = <fun>
     // F# :    val quelim_dlo : (fol formula -> fol formula)
     let quelim_dlo =
-        lift_qelim afn_dlo (dnf >>|> cnnf lfn_dlo) (fun v -> dlobasic)
+        lift_qelim afn_dlo (dnf >>|> cnnf lfn_dlo) (fun _ -> dlobasic)
 
 

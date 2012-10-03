@@ -53,32 +53,48 @@ module stal =
     let equate2 (p, q) eqv =
         equate (negate p, negate q) (equate (p, q) eqv)
 
-    // TODO : Optimize using continuation-passing style.
-    let rec irredundant rel eqs =
+    //
+    let rec private irredundantImpl rel eqs cont =
         match eqs with
-        | [] -> []
+        | [] ->
+            cont []
         | (p, q) :: oth ->
             if canonize rel p = canonize rel q then
-                irredundant rel oth
+                irredundantImpl rel oth cont
             else
-                insert (p, q) (irredundant (equate2 (p, q) rel) oth)
+                irredundantImpl (equate2 (p, q) rel) oth <| fun result ->
+                    cont (insert (p, q) result)
+
+    let irredundant rel eqs =
+        irredundantImpl rel eqs id
 
     let consequences (p, q as peq) fm eqs =
         let follows (r, s) =
             tautology <| Imp (And (Iff (p, q), fm), Iff (r, s))
 
-        irredundant (equate2 peq unequal) (List.filter follows eqs)
+        eqs
+        |> List.filter follows
+        |> irredundant (equate2 peq unequal)
 
-    let triggers fm =
-        let poslits = insert True (List.map (fun p -> Atom p) (atoms fm))
-        let lits = union poslits (List.map negate poslits)
-        // TODO : From here on down, the code can be reformatted to form a pipeline
-        // using the (|>) operator instead of assigning intermediate results to variables.
-        let pairs = allpairs (fun p q -> p, q) lits lits
-        let npairs = List.filter (fun (p, q) -> atom p <> atom q) pairs
-        let eqs = setify <| List.map align npairs
-        let raw = List.map (fun p -> p, consequences p fm eqs) eqs
-        List.filter (fun (p, c) -> not <| List.isEmpty c) raw
+    let triggers fm =        
+        let lits =
+            let poslits = insert True (List.map Atom (atoms fm))
+            union poslits (List.map negate poslits)
+        
+        let eqs =
+            // pairs
+            allpairs (fun p q -> p, q) lits lits
+            // npairs
+            |> List.filter (fun (p, q) -> atom p <> atom q)
+            // eqs
+            |> List.map align
+            |> setify
+
+        eqs
+        // raw
+        |> List.map (fun p -> p, consequences p fm eqs)
+        //
+        |> List.filter (fun (p, c) -> not <| List.isEmpty c)
 
 // pg. 94
 // ------------------------------------------------------------------------- //
@@ -95,19 +111,24 @@ module stal =
             let p = parse_prop_formula "p"
             let q = parse_prop_formula "q"
             let r = parse_prop_formula "r"
+
             let ddnegate fm =
                 match fm with
                 | Not (Not p) -> p
                 | _ -> fm
-            // TODO: Figure out how to use match with with this let to remove warning
-            let inst_fn [x; y; z] =
-                let subfn = fpf [P"p"; P"q"; P"r"] [x; y; z]
-                ddnegate >>|> psubst subfn
-            let inst2_fn i (p, q) =
-                align (inst_fn i p, inst_fn i q)
-            let instn_fn i (a, c) =
-                inst2_fn i a, List.map (inst2_fn i) c
-            let inst_trigger = List.map >>|> instn_fn
+            
+            let inst_trigger =
+                let instn_fn i (a, c) =
+                    let inst2_fn i (p, q) =
+                        // TODO: Figure out how to use match with with this let to remove warning
+                        let inst_fn [x; y; z] =
+                            let subfn = fpf [P"p"; P"q"; P"r"] [x; y; z]
+                            ddnegate >>|> psubst subfn
+                        align (inst_fn i p, inst_fn i q)
+                    inst2_fn i a, List.map (inst2_fn i) c
+                
+                List.map >>|> instn_fn
+
             function
             | Iff (x, And (y, z)) ->
                 inst_trigger [x; y; z] trig_and
@@ -127,9 +148,9 @@ module stal =
 // Compute a function mapping each variable/true to relevant triggers.       //
 // ------------------------------------------------------------------------- //
 
-    let relevance trigs =
-        let insert_relevant p trg f = (p |-> insert trg (tryapplyl f p)) f
+    let relevance trigs =        
         let insert_relevant2 ((p, q),_ as trg) f =
+            let insert_relevant p trg f = (p |-> insert trg (tryapplyl f p)) f
             insert_relevant p trg (insert_relevant q trg f)
         List.foldBack insert_relevant2 trigs undefined
 
@@ -291,13 +312,18 @@ module stal =
     let stalmarck fm =
         let include_trig (e, cqs) f =
             (e |-> union cqs (tryapplyl f e)) f
-        let fm' = psimplify <| Not fm
-        if fm' = False then true
-        elif fm' = True then false
-        else
+
+        match psimplify <| Not fm with
+        | False -> true
+        | True -> false
+        | fm' ->
             let p, triplets = triplicate fm'
             let trigfn =
                 List.foldBack (List.foldBack include_trig >>|> trigger) triplets undefined
-            let vars = List.map (fun p -> Atom p) (unions (List.map atoms triplets))
+            let vars =
+                triplets
+                |> List.map atoms
+                |> unions
+                |> List.map Atom
             saturate_upto vars 0 2 (graph trigfn) [p, True]
 

@@ -108,11 +108,16 @@ module lib =
     // pg. 619
     // OCaml: val end_itlist : ('a -> 'a -> 'a) -> 'a list -> 'a = <fun>
     // F#:    val end_itlist : ('a -> 'a -> 'a) -> 'a list -> 'a
-    // TODO : Optimize using continuation-passing style.
+    
+
+
     let rec end_itlist f l =
         match l with
         | [] -> failwith "end_itlist"
-        | [x] -> x
+        | [x] ->
+            // TODO : Shouldn't this be (f x) instead?
+            // Perhaps an error in the original code?
+            x
         | hd :: tl ->
             f hd (end_itlist f tl)
         
@@ -147,29 +152,44 @@ module lib =
     let butlast l =
         butlastImpl l id
         
+    
+    let rec private allpairsImpl f l1 l2 cont =
+        match l1 with
+        | [] ->
+            cont []
+        | h1 :: t1 ->
+            allpairsImpl f t1 l2 <| fun result ->
+                (l2, result)
+                ||> List.foldBack (fun x a -> f h1 x :: a)
+                |> cont
+    
     // pg. 620
     // OCaml: val allpairs : ('a -> 'b -> 'c) -> 'a list -> 'b list -> 'c list = <fun>
     // F#:    val allpairs : ('a -> 'b -> 'c) -> 'a list -> 'b list -> 'c list
-    // TODO : Optimize using continuation-passing style.
-    let rec allpairs f l1 l2 =
-        match l1 with
-        | [] -> []
-        | h1 :: t1 ->
-            List.foldBack (fun x a -> f h1 x :: a) l2 (allpairs f t1 l2)
+    let allpairs f l1 l2 =
+        allpairsImpl f l1 l2 id
 
     // pg. 620
     // OCaml: val distinctpairs : 'a list -> ('a * 'a) list = <fun>
     // F#:    val distinctpairs : 'a list -> ('a * 'a) list
-    // TODO : Optimize using continuation-passing style.
-    let rec distinctpairs l =
+    let rec private distinctpairsImpl l cont =
         match l with
-        | [] -> []
+        | [] ->
+            cont []
         | x :: t ->
-            List.foldBack (fun y a -> (x, y) :: a) t (distinctpairs t)
+            distinctpairsImpl t <| fun result ->
+                (t, result)
+                ||> List.foldBack (fun y a -> (x, y) :: a)
+                |> cont
+
+    let distinctpairs l =
+        distinctpairsImpl l id
         
     // pg. 619
     // OCaml: val chop_list : int -> 'a list -> 'a list * 'a list = <fun>
     // F#:    val chop_list : int -> 'a list -> 'a list * 'a list
+    // Takes the first n items from a list. Returns those items as a list,
+    // along with any items remaining in the original list.
     // TODO : Optimize using continuation-passing style.
     let rec chop_list n l =
         if n = 0 then [], l

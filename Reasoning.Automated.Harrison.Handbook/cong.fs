@@ -48,9 +48,10 @@ module cong =
         else
             let sp = tryapplyl pfn s' 
             let tp = tryapplyl pfn t'
-            let eqv' = equate (s, t) eqv
-            let st' = canonize eqv' s'
-            let pfn' = (st' |-> union sp tp) pfn
+            let eqv' = equate (s, t) eqv            
+            let pfn' =
+                let st' = canonize eqv' s'
+                (st' |-> union sp tp) pfn
             List.foldBack (fun (u, v) (eqv, pfn) ->
                         if congruent eqv (u, v) then emerge (u, v) (eqv, pfn)
                         else eqv, pfn)
@@ -88,5 +89,8 @@ module cong =
 // ------------------------------------------------------------------------- //
 
     let ccvalid fm =
-        let fms = simpdnf (askolemize (Not (generalize fm)))
-        not (List.exists ccsatisfiable fms)
+        Not (generalize fm)
+        |> askolemize
+        |> simpdnf
+        |> List.exists ccsatisfiable
+        |> not

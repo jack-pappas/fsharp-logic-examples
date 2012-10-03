@@ -49,7 +49,7 @@ module herbrand =
 
     and groundtuples cntms funcs n m =
         if m = 0 then 
-            if n = 0 then [[]] 
+            if n = 0 then [[]]
             else [] 
         else
             List.foldBack (fun k l -> 
@@ -83,8 +83,10 @@ module herbrand =
 
     let gilmore_loop =
         let mfn djs0 ifn djs =
-            List.filter (non trivial) (distrib (image (image ifn) djs0) djs)
-        herbloop mfn (fun djs -> djs <> [])
+            djs
+            |> distrib (image (image ifn) djs0)
+            |> List.filter (non trivial)
+        herbloop mfn (not << List.isEmpty)
 
     let gilmore fm =
         let sfm = skolemize (Not (generalize fm))
