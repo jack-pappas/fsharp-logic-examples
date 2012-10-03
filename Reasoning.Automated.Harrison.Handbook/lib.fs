@@ -91,18 +91,8 @@ module lib =
     // pg. 619
     // OCaml: val end_itlist : ('a -> 'a -> 'a) -> 'a list -> 'a = <fun>
     // F#:    val end_itlist : ('a -> 'a -> 'a) -> 'a list -> 'a
-    // TODO : This function seems to be the equivalent of the F# List.reduceBack function;
-    // if it is indeed the same, then make this an alias of List.reduceBack until we can
-    // replace all instances of it.
-    let rec end_itlist f l =
-        match l with
-        | [] -> failwith "end_itlist"
-        | [x] -> x
-        | hd :: tl ->
-            f hd (end_itlist f tl)
-
-//    let inline end_itlist f l =
-//        List.reduceBack f l
+    let inline end_itlist f l =
+        List.reduceBack f l
         
     // pg. 619
     // OCaml: val last : 'a list -> 'a = <fun>
@@ -1175,7 +1165,7 @@ module lib =
     // pg. 618
     // OCaml: val undef : 'a -> 'b = <fun>
     // F#:    val undef : 'a -> 'b
-    let undef x =
+    let undef _ =
         failwith "undefined function"
 
 // ------------------------------------------------------------------------- //
