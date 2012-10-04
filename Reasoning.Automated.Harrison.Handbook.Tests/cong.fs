@@ -7,9 +7,6 @@
 namespace Reasoning.Automated.Harrison.Handbook.Tests
 
 module cong =
-    open NUnit.Framework
-    open FsUnit
-
     open Reasoning.Automated.Harrison.Handbook.lib
     open Reasoning.Automated.Harrison.Handbook.formulas
     open Reasoning.Automated.Harrison.Handbook.prop
@@ -20,6 +17,9 @@ module cong =
     open Reasoning.Automated.Harrison.Handbook.equal
     open Reasoning.Automated.Harrison.Handbook.cong
 
+    open NUnit.Framework
+    open FsUnit
+
     // pg. 253
     // ------------------------------------------------------------------------- //
     // Example.                                                                  //
@@ -29,10 +29,10 @@ module cong =
     let ``test ccvalid 1``() =
         ccvalid (parse "f(f(f(f(f(c))))) = c /\ f(f(f(c))) = c 
             ==> f(c) = c \/ f(g(c)) = g(f(c))")
-        |> should be FsUnit.True
+        |> should be True
     
     [<Test>]
     let ``test ccvalid 2``() =
         ccvalid (parse "f(f(f(f(c)))) = c /\ f(f(c)) = c ==> f(c) = c")
-        |> should be FsUnit.False
+        |> should be False
 

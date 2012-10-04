@@ -7,13 +7,13 @@
 namespace Reasoning.Automated.Harrison.Handbook.Tests
 
 module prop =
-    open NUnit.Framework
-    open FsUnit
-
     open Reasoning.Automated.Harrison.Handbook.lib
     open Reasoning.Automated.Harrison.Handbook.intro
     open Reasoning.Automated.Harrison.Handbook.formulas
     open Reasoning.Automated.Harrison.Handbook.prop
+ 
+    open NUnit.Framework
+    open FsUnit
 
     // pg. 33
     // ------------------------------------------------------------------------- //
@@ -79,7 +79,7 @@ module prop =
             parse_prop_formula "p /\ q <=> (p ==> q ==> false) ==> false";
             parse_prop_formula "p \/ q <=> (p ==> false) ==> q";
             parse_prop_formula "(p <=> q) <=> ((p ==> q) ==> (q ==> p) ==> false) ==> false"; ]
-        |> should be FsUnit.True
+        |> should be True
 
     // pg. 53
     // ------------------------------------------------------------------------- //
@@ -91,7 +91,7 @@ module prop =
         let fm003 = (parse_prop_formula ("(p <=> q) <=> ~(r ==> s)"))
         let fm003' = nnf fm003
         tautology(Iff(fm003,fm003'))
-        |> should be FsUnit.True
+        |> should be True
 
     // pg. 54
     // ------------------------------------------------------------------------- //
@@ -136,7 +136,7 @@ module prop =
     let ``test dnf``() =
         let fm005 = (parse_prop_formula ("(p \/ q /\ r) /\ (~p \/ ~r)"))
         tautology(Iff(fm005,dnf fm005))
-        |> should be FsUnit.True
+        |> should be True
 
     // pg. 61
     // ------------------------------------------------------------------------- //
@@ -147,4 +147,4 @@ module prop =
     let ``test cnf``() =
         let fm006 = (parse_prop_formula ("(p \/ q /\ r) /\ (~p \/ ~r)"))
         tautology(Iff(fm006,cnf fm006))
-        |> should be FsUnit.True
+        |> should be True

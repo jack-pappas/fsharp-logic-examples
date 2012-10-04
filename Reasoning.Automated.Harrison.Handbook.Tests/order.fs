@@ -7,12 +7,12 @@
 namespace Reasoning.Automated.Harrison.Handbook.Tests
 
 module order =
-    open NUnit.Framework
-    open FsUnit
-
     open Reasoning.Automated.Harrison.Handbook.lib
     open Reasoning.Automated.Harrison.Handbook.folMod
     open Reasoning.Automated.Harrison.Handbook.order
+
+    open NUnit.Framework
+    open FsUnit
 
     let s = parset "f(x,x,x)"
     let t = parset "g(x,y)"
@@ -20,7 +20,7 @@ module order =
     [<Test>]
     let ``test termsize 1``() =
         termsize s > termsize t
-        |> should be FsUnit.True
+        |> should be True
 
     // ------------------------------------------------------------------------- //
     // This fails the rewrite properties.                                        //
@@ -31,6 +31,6 @@ module order =
     [<Test>]
     let ``test termsize 2``() =
         termsize (tsubst i s) > termsize (tsubst i t)
-        |> should be FsUnit.False
+        |> should be False
 
     
