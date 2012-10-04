@@ -138,6 +138,7 @@ module skolem =
 // Prenex normal form.                                                       //
 // ------------------------------------------------------------------------- //
 
+    // OPTIMIZE : Optimize using CPS.
     let rec pullquants fm =
         match fm with
         | And (Forall (x, p), Forall (y, q)) ->
@@ -166,7 +167,10 @@ module skolem =
         let z = variant x (fv fm)
         let p' = if l then subst (x |=> Var z) p else p
         let q' = if r then subst (y |=> Var z) q else q
-        quant z (pullquants(op p' q'))
+
+        op p' q'
+        |> pullquants
+        |> quant z
 
 
     let rec private prenexImpl fm cont =
@@ -192,7 +196,9 @@ module skolem =
         prenexImpl fm id
 
     let pnf fm =
-        prenex (nnf (simplify004 fm))
+        simplify004 fm
+        |> nnf
+        |> prenex
 
 // pg. 146
 // ------------------------------------------------------------------------- //
@@ -247,7 +253,10 @@ module skolem =
 // ------------------------------------------------------------------------- //
 
     let askolemize fm =
-        fst (skolem (nnf (simplify004 fm)) (List.map fst (functions fm)))
+        functions fm
+        |> List.map fst
+        |> skolem (simplify004 fm |> nnf)
+        |> fst
 
     let rec specialize fm =
         match fm with
@@ -256,4 +265,6 @@ module skolem =
         | _ -> fm
 
     let skolemize fm =
-        specialize (pnf (askolemize fm))
+        askolemize fm
+        |> pnf
+        |> specialize
