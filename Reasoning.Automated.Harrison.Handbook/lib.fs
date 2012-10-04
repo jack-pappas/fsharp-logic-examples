@@ -10,6 +10,7 @@ namespace Reasoning.Automated.Harrison.Handbook
 [<AutoOpen>]
 module lib =
     open LanguagePrimitives
+    open OptimizedClosures
     open FSharpx.Compatibility.OCaml
     open Num
 
@@ -62,11 +63,17 @@ module lib =
 
     // pg. 612
     // OCaml: val funpow : int -> ('a -> 'a) -> 'a -> 'a = <fun>
-    // F#:    val funpow : int -> ('a -> 'a) -> 'a -> 'a               
-    // TODO : Optimize to use imperative loop instead of recursion.
-    let rec funpow n f x =
-        if n < 1 then x
-        else funpow (n - 1) f (f x)
+    // F#:    val funpow : int -> ('a -> 'a) -> 'a -> 'a
+    let funpow n f x =
+        if n < 0 then
+            failwith "A function cannot be executed a negative number of times."
+        elif n = 0 then
+            x
+        else
+            let mutable x = x
+            for i = 1 to n do
+                x <- f x
+            x
 
     // pg. 618
     // OCaml: val can : ('a -> 'b) -> 'a -> bool = <fun>
@@ -99,64 +106,66 @@ module lib =
         | [x] -> x
         | _ :: tl ->
             last tl
-        
-    /// Private, recursive implementation of 'butlast' which
-    /// improves performance by using continuation-passing-style.
-    let rec private butlastImpl lst cont =
-        match lst with
-        | [] ->
-            failwith "butlastImpl"
-        | [_] ->
-            cont []
-        | hd :: tl ->
-            butlastImpl tl <| fun lst' ->
-                cont (hd :: lst')
-
-    // pg. 619
-    // OCaml: val butlast : 'a list -> 'a list = <fun>
-    // F#:    val butlast : 'a list -> 'a list
-    // val butlast : 'a list -> 'a list
-    let butlast l =
-        butlastImpl l id
-
 
     (* OPTIMIZE :   Implement a special version of allpairs which creates the
                     pairs as tuples; that is, it should work like this code which
                     is used in a number of places throughout the project:
                         allpairs (fun s1 s2 -> s1, s2) *)
     
-    let rec private allpairsImpl f l1 l2 cont =
-        match l1 with
-        | [] ->
-            cont []
-        | h1 :: t1 ->
-            allpairsImpl f t1 l2 <| fun result ->
-                (l2, result)
-                ||> List.foldBack (fun x a -> f h1 x :: a)
-                |> cont
-    
     // pg. 620
     // OCaml: val allpairs : ('a -> 'b -> 'c) -> 'a list -> 'b list -> 'c list = <fun>
     // F#:    val allpairs : ('a -> 'b -> 'c) -> 'a list -> 'b list -> 'c list
+    // Produces the Cartesian product of two lists, then applies
+    // a mapping function to each pair of elements in the product.
     let allpairs f l1 l2 =
-        allpairsImpl f l1 l2 id
+        if List.isEmpty l1 then []
+        elif List.isEmpty l2 then []
+        else
+            let f = FSharpFunc<_,_,_>.Adapt f
+            let results =
+                (List.length l1) * (List.length l2)
+                |> Array.zeroCreate
+            let mutable index = 0
+            let mutable l1 = l1            
+            while not <| List.isEmpty l1 do
+                // Create a mutable *copy* of l2.
+                let mutable l2 = l2
+
+                while not <| List.isEmpty l2 do
+                    results.[index] <-
+                        let x = List.head l1
+                        let y = List.head l2
+                        f.Invoke (x, y)
+
+                    // Update the loop counter
+                    index <- index + 1
+
+                    // Update the inner list
+                    l2 <- List.tail l2
+
+                // Update the outer list
+                l1 <- List.tail l1
+
+            // Convert the results into a list and return it.
+            Array.toList results
 
     // pg. 620
     // OCaml: val distinctpairs : 'a list -> ('a * 'a) list = <fun>
     // F#:    val distinctpairs : 'a list -> ('a * 'a) list
-    let rec private distinctpairsImpl l cont =
-        match l with
-        | [] ->
-            cont []
-        | x :: t ->
-            distinctpairsImpl t <| fun result ->
-                (t, result)
-                ||> List.foldBack (fun y a -> (x, y) :: a)
-                |> cont
-
+    // Produces all distinct pairs of elements from a list.
     let distinctpairs l =
-        distinctpairsImpl l id
-
+        let s = Set.ofList l
+        (Set.empty, s)
+        ||> Set.fold (fun pairs x ->
+            (pairs, s)
+            ||> Set.fold (fun pairs y ->
+                // The pair is only added when
+                // certain conditions are met.
+                if x < y then
+                    Set.add (x, y) pairs
+                else
+                    pairs))
+        |> Set.toList
         
     // pg. 619
     // OCaml: val chop_list : int -> 'a list -> 'a list * 'a list = <fun>
@@ -181,6 +190,26 @@ module lib =
                     chopRec (i + 1) (List.tail lst)
 
             chopRec 0 l
+
+    /// Private, recursive implementation of 'butlast' which
+    /// improves performance by using continuation-passing-style.
+    let rec private butlastImpl lst cont =
+        match lst with
+        | [] ->
+            failwith "butlastImpl"
+        | [_] ->
+            cont []
+        | hd :: tl ->
+            butlastImpl tl <| fun lst' ->
+                cont (hd :: lst')
+
+    // pg. 619
+    // OCaml: val butlast : 'a list -> 'a list = <fun>
+    // F#:    val butlast : 'a list -> 'a list
+    // val butlast : 'a list -> 'a list
+    let butlast l =
+        // OPTIMIZE : Re-implement 'butlast' using 'chop_list'.
+        butlastImpl l id
     
     // pg. 619
     // OCaml: val insertat : int -> 'a -> 'a list -> 'a list = <fun>
@@ -381,6 +410,8 @@ module lib =
     // pg. 619
     // OCaml: val mapfilter : ('a -> 'b) -> 'a list -> 'b list = <fun>
     // F#:    val mapfilter : ('a -> 'b) -> 'a list -> 'b list
+    // Like 'map', but removes elements of the list for which
+    // the function fails (i.e., raises an exception).
     let mapfilter f l =
         l |> List.choose (fun el ->
             try Some <| f el
@@ -408,7 +439,6 @@ module lib =
     // pg. 620
     // OCaml: val union : 'a list -> 'a list -> 'a list = <fun>
     // F#:    val union : ('a list -> 'a list -> 'a list) when 'a : comparison
-        // OPTIMIZE : Change to Set.union
     let union s1 s2 =
         Set.union (Set.ofList s1) (Set.ofList s2)
         |> Set.toList
@@ -416,7 +446,6 @@ module lib =
     // pg. 620
     // OCaml: val intersect : 'a list -> 'a list -> 'a list = <fun>
     // F#:    val intersect : ('a list -> 'a list -> 'a list) when 'a : comparison
-        // OPTIMIZE : Use Set.intersect
     let intersect s1 s2 =
         Set.intersect (Set.ofList s1) (Set.ofList s2)
         |> Set.toList
@@ -424,7 +453,6 @@ module lib =
     // pg. 620
     // OCaml: val subtract : 'a list -> 'a list -> 'a list = <fun>
     // F#:    val subtract : ('a list -> 'a list -> 'a list) when 'a : comparison
-        // OPTIMIZE : Change to Set.difference 
     let subtract s1 s2 =
         Set.difference (Set.ofList s1) (Set.ofList s2)
         |> Set.toList
@@ -432,43 +460,25 @@ module lib =
     // pg. 620
     // OCaml: val subset : 'a list -> 'a list -> bool = <fun>
     // F#:    val subset : 'a list -> 'a list -> bool when 'a : comparison
-        // OPTIMIZE : Change to Set.isSubset
-    let rec private subsetImpl l1 l2 =
-        match l1, l2 with
-        | [], l2 -> true
-        | l1, [] -> false
-        | h1 :: t1, h2 :: t2 ->
-            if h1 = h2 then subsetImpl t1 t2
-            elif h1 < h2 then false
-            else subsetImpl l1 t2
+    // Determines if s1 is a subset of s2.
     let subset s1 s2 =
-        subsetImpl (setify s1) (setify s2)
+        Set.isSubset (Set.ofList s1) (Set.ofList s2)
 
     // OCaml: val psubset : 'a list -> 'a list -> bool = <fun>
     // F#:    val psubset : ('b list -> 'b list -> bool) when 'b : comparison
-        // OPTIMIZE : Change to Set.isProperSubset
-    let rec private psubsetImpl l1 l2 =
-        match l1, l2 with
-        | l1, [] -> false
-        | [], l2 -> true
-        | h1 :: t1, h2 :: t2 ->
-            if h1 = h2 then psubsetImpl t1 t2
-            elif h1 < h2 then false
-            else subsetImpl l1 t2
+    // Determines if s1 is a proper subset of s2.
     let psubset s1 s2 =
-        psubsetImpl (setify s1) (setify s2)
+        Set.isProperSubset (Set.ofList s1) (Set.ofList s2)
 
     // pg. 620
     // OCaml: val set_eq : 'a list -> 'a list -> bool = <fun>
     // F#:    val set_eq : 'a list -> 'a list -> bool when 'a : comparison
-        // OPTIMIZE : This can be inlined and implemented as (s1 = s2).
     let set_eq s1 s2 =
         (Set.ofList s1) = (Set.ofList s2)
     
     // pg. 620
     // OCaml: val insert : 'a -> 'a list -> 'a list = <fun>
     // F#:    val insert : 'a -> 'a list -> 'a list when 'a : comparison
-        // OPTMIZE : Change to Set.add
     let insert x s =
         Set.ofList s
         |> Set.add x
@@ -477,7 +487,6 @@ module lib =
     // pg. 620
     // OCaml: val image : ('a -> 'b) -> 'a list -> 'b list = <fun>
     // F#:    val image : ('a -> 'b) -> 'a list -> 'b list when 'b : comparison
-        // OPTIMIZE : Change to Set.map
     let image f s =
         Set.ofList s
         |> Set.map f
@@ -490,7 +499,6 @@ module lib =
     // pg. 620
     // OCaml: val unions : 'a list list -> 'a list = <fun>
     // F#:    val unions : 'a list list -> 'a list when 'a : comparison
-        // OPTIMIZE : Change to Set.unionMany
     let unions s =
         (Set.empty, s)
         ||> List.fold (fun combined s ->
