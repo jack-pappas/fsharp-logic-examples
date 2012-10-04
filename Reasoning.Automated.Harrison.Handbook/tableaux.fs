@@ -99,7 +99,7 @@ module tableaux =
     // the code to make the CPS more explicit (as in the other CPS-transformed functions.)
     let rec tableau (fms, lits, n) cont (env, k) =
         if n < 0 then
-            failwith "no proof at this level" 
+            failwith "no proof at this level"
         else
             match fms with
             | [] ->
@@ -149,9 +149,5 @@ module tableaux =
         |> Not
         |> askolemize
         |> simpdnf
-        |> List.mapi (fun i fm ->
-            printfn "tabrefute, formula #%i" i
-            printfn "%O" fm
-            printfn ""
-            tabrefute fm)
+        |> List.map tabrefute
 
