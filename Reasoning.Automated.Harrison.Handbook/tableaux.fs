@@ -94,42 +94,47 @@ module tableaux =
 // More standard tableau procedure, effectively doing DNF incrementally.     //
 // ------------------------------------------------------------------------- //
 
-
-    // OPTIMIZE : Modify this function so the 'cont' parameter is last; then, reformat
-    // the code to make the CPS more explicit (as in the other CPS-transformed functions.)
-    let rec tableau (fms, lits, n) cont (env, k) =
+    let rec tableau (fms, lits, n, env, k) cont =
         if n < 0 then
             failwith "no proof at this level"
         else
             match fms with
             | [] ->
                 failwith "tableau: no proof"
+
             | And (p, q) :: unexp ->
-                tableau (p :: q :: unexp, lits, n) cont (env, k)
+                tableau (p :: q :: unexp, lits, n, env, k) cont
+
             | Or (p, q) :: unexp ->
-                tableau (p :: unexp, lits, n) (tableau (q :: unexp, lits, n) cont) (env, k)
+                tableau (p :: unexp, lits, n, env, k) <| fun (env, k) ->
+                    tableau (q :: unexp, lits, n, env, k) cont
+
             | Forall (x, p) :: unexp ->
-                let y = Var ("_" + string k)
-                let p' = subst (x |=> y) p
-                tableau (p' :: unexp @ [Forall (x, p)], lits, n - 1) cont (env, k + 1)
+                let fms =
+                    let p' =
+                        let y = Var ("_" + string k)
+                        subst (x |=> y) p
+                    p' :: unexp @ [Forall (x, p)]
+
+                tableau (fms, lits, n - 1, env, k + 1) cont
+
             | fm :: unexp ->
                 try
                     lits
                     |> tryfind (fun l ->
                         cont (unify_complements env (fm, l), k))
                 with Failure _ ->
-                    tableau (unexp, fm :: lits, n) cont (env, k)
+                    tableau (unexp, fm :: lits, n, env, k) cont
 
     let rec deepen n f =
-        try printf "Searching with depth limit "
-            printfn "%d" n
+        try printfn "Searching with depth limit %d" n
             f n
         with Failure _ ->
             deepen (n + 1) f
         
     let tabrefute fms =
         deepen 0 <| fun n ->
-            tableau (fms, [], n) id (undefined, 0)
+            tableau (fms, [], n, undefined, 0) id
             |> ignore
             n
 
