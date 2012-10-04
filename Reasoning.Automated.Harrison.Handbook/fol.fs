@@ -199,6 +199,7 @@ module folMod = // TODO : Change this back to 'fol'?
 // Semantics, implemented of course for finite domains only.                 //
 // ------------------------------------------------------------------------- //
 
+    // OPTIMIZE : Optimize using CPS.
     let rec termval (domain, func, pred as m) v tm =
         match tm with
         | Var x ->
@@ -206,6 +207,7 @@ module folMod = // TODO : Change this back to 'fol'?
         | Fn (f, args) ->
             func f (List.map (termval m v) args)
 
+    // OPTIMIZE : Optimize using CPS.
     let rec holds (domain, func, pred as m) v fm =
         match fm with
         | False -> false
@@ -348,6 +350,49 @@ module folMod = // TODO : Change this back to 'fol'?
 // ------------------------------------------------------------------------- //
 // Substitution in formulas, with variable renaming.                         //
 // ------------------------------------------------------------------------- //
+
+(*
+    let rec substImpl subfn fm cont =
+        match fm with
+        | False ->
+            cont False
+        | True ->
+            cont True
+        | Atom (R (p, args)) ->
+            Atom (R (p, List.map (tsubst subfn) args))
+            |> cont
+        | Not p ->
+            substImpl subfn p <| fun subst_p ->
+                cont (Not subst_p)
+        | And (p, q) ->
+            substImpl subfn p <| fun subst_p ->
+            substImpl subfn q <| fun subst_q ->
+                cont (And (subst_p, subst_q))
+        | Or (p, q) ->
+            substImpl subfn p <| fun subst_p ->
+            substImpl subfn q <| fun subst_q ->
+                cont (Or (subst_p, subst_q))
+        | Imp (p, q) ->
+            substImpl subfn p <| fun subst_p ->
+            substImpl subfn q <| fun subst_q ->
+                cont (Imp (subst_p, subst_q))
+        | Iff (p, q) ->
+            substImpl subfn p <| fun subst_p ->
+            substImpl subfn q <| fun subst_q ->
+                cont (Iff (subst_p, subst_q))
+        | Forall (x, p) ->
+            substqImpl subfn mk_forall x p cont
+        | Exists (x, p) ->
+            substqImpl subfn mk_exists x p cont
+
+    and substqImpl subfn quant x p cont =
+        let x' =
+            // OPTIMIZE : Change 'subtract' to Set.remove
+            if List.exists (fun y -> mem x (fvt (tryapplyd subfn y (Var y)))) (subtract (fv p) [x]) then
+                variant x (fv (substImpl (undefine x subfn) p))
+            else x
+        quant x' (substImpl ((x |-> Var x') subfn) p)
+*)
     
     // OPTIMIZE : Optimize using CPS.
     let rec subst subfn fm =

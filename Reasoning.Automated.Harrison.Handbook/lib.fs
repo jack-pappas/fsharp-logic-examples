@@ -118,7 +118,12 @@ module lib =
     // val butlast : 'a list -> 'a list
     let butlast l =
         butlastImpl l id
-        
+
+
+    (* OPTIMIZE :   Implement a special version of allpairs which creates the
+                    pairs as tuples; that is, it should work like this code which
+                    is used in a number of places throughout the project:
+                        allpairs (fun s1 s2 -> s1, s2) *)
     
     let rec private allpairsImpl f l1 l2 cont =
         match l1 with

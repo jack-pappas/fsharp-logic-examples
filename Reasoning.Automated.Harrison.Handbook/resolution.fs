@@ -31,14 +31,16 @@ module resolution =
         match l with
         | a :: b :: rest ->
             mgu (b :: rest) (unify_literals env (a, b))
-        | _ -> solve env
+        | _ ->
+            solve env
 
     let unifiable p q =
         let f = unify_literals undefined
-        let x = p, q
-        try f x |> ignore
+        try f (p, q)
+            |> ignore
             true
-        with _ -> false 
+        with _ ->
+            false 
 
 // pg. 184
 // ------------------------------------------------------------------------- //
@@ -56,21 +58,27 @@ module resolution =
 // ------------------------------------------------------------------------- //
 
     let resolvents cl1 cl2 p acc =
-        match List.filter (unifiable (negate p)) cl2 with
+        match List.filter (unifiable <| negate p) cl2 with
         | [] -> acc
         | ps2 ->
             let pairs =
-                let ps1 = List.filter (fun q -> q <> p && unifiable p q) cl1
+                let ps1 =
+                    cl1
+                    |> List.filter (fun q ->
+                        q <> p && unifiable p q)
+                    |> allsubsets
+                    |> List.map (fun pl -> p :: pl)
+
                 allpairs (fun s1 s2 -> s1, s2)
-                    (List.map (fun pl -> p :: pl) (allsubsets ps1))
-                    (allnonemptysubsets ps2)
+                    ps1 (allnonemptysubsets ps2)
 
             (pairs, acc)
             ||> List.foldBack (fun (s1, s2) sof ->
                 try
                     image (subst (mgu (s1 @ List.map negate s2) undefined))
                             (union (subtract cl1 s1) (subtract cl2 s2)) :: sof
-                with Failure _ -> sof)
+                with Failure _ ->
+                    sof)
 
     let resolve_clauses cls1 cls2 =
         let cls1' = rename "x" cls1 
@@ -82,9 +90,10 @@ module resolution =
 // Basic "Argonne" loop.                                                     //
 // ------------------------------------------------------------------------- //
 
-    let rec resloop001 (used,unused) =
+    let rec resloop001 (used, unused) =
         match unused with
-        | [] -> failwith "No proof found"
+        | [] ->
+            failwith "No proof found"
         | cl :: ros ->
             printfn "%i used; %i unused." (List.length used) (List.length unused)
             let used' = insert cl used
@@ -96,8 +105,11 @@ module resolution =
         resloop001 ([], simpcnf (specialize (pnf fm)))
 
     let resolution001 fm =
-        let fm1 = askolemize (Not (generalize fm))
-        List.map (pure_resolution001 << list_conj) (simpdnf fm1)
+        generalize fm
+        |> Not
+        |> askolemize
+        |> simpdnf
+        |> List.map (pure_resolution001 << list_conj)
 
 // pg. 187
 // ------------------------------------------------------------------------- //
@@ -134,20 +146,17 @@ module resolution =
 // ------------------------------------------------------------------------- //
 
     let subsumes_clause cls1 cls2 =
-        let rec tryfind f l =
-            match l with
-            | [] -> failwith "tryfind"
-            | h :: t ->
-                try f h
-                with _ -> tryfind f t
-
         let rec subsume env cls =
             match cls with
             | [] -> env
             | l1 :: clt ->
-                tryfind (fun l2 -> subsume (match_literals env (l1,l2)) clt) cls2
+                cls2
+                |> tryfind (fun l2 ->
+                    subsume (match_literals env (l1,l2)) clt)
         try 
-            (subsume undefined) cls1 |> ignore
+            cls1
+            |> subsume undefined
+            |> ignore
             true 
         with _ -> false
 

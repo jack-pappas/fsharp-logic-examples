@@ -23,7 +23,8 @@ module herbrand =
 // Propositional valuation.                                                  //
 // ------------------------------------------------------------------------- //
 
-    let pholds d fm = eval fm (fun p -> d (Atom p))
+    let pholds d fm =
+        eval fm (Atom >> d)
 
 // pg. 156
 // ------------------------------------------------------------------------- //
@@ -31,8 +32,11 @@ module herbrand =
 // ------------------------------------------------------------------------- //
 
     let herbfuns fm =
-        let cns, fns = List.partition (fun (_, ar) -> ar = 0) (functions fm)
-        if cns = [] then ["c", 0], fns else cns, fns
+        match functions fm |> List.partition (fun (_, ar) -> ar = 0) with
+        | [], fns ->
+            ["c", 0], fns
+        | cns_fns ->
+            cns_fns
 
 // pg. 159
 // ------------------------------------------------------------------------- //
@@ -40,12 +44,14 @@ module herbrand =
 // ------------------------------------------------------------------------- //
 
     let rec groundterms cntms funcs n =
-        if n = 0 then cntms else
-        List.foldBack (fun (f, m) l -> 
-            List.map (fun args -> 
-                Fn (f, args))
-                (groundtuples cntms funcs (n - 1) m) @ l)
-            funcs []
+        if n = 0 then
+            cntms
+        else
+            List.foldBack (fun (f, m) l -> 
+                List.map (fun args -> 
+                    Fn (f, args))
+                    (groundtuples cntms funcs (n - 1) m) @ l)
+                funcs []
 
     and groundtuples cntms funcs n m =
         if m = 0 then 
@@ -73,8 +79,11 @@ module herbrand =
             herbloop mfn tfn fl0 cntms funcs fvs (n + 1) fl tried newtups
         | tup :: tups ->
             let fl' = mfn fl0 (subst (fpf fvs tup)) fl
-            if not (tfn fl') then tup :: tried
-            else herbloop mfn tfn fl0 cntms funcs fvs n fl' (tup :: tried) tups
+            if tfn fl' then
+                herbloop mfn tfn fl0 cntms funcs fvs n fl' (tup :: tried) tups
+            else
+                tup :: tried
+                
 
 // pg. 160
 // ------------------------------------------------------------------------- //
