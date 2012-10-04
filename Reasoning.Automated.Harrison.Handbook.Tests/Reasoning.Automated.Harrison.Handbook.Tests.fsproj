@@ -58,6 +58,9 @@
     <Compile Include="resolution.fs" />
     <Compile Include="prolog.fs" />
     <Compile Include="meson.fs" />
+    <Compile Include="equal.fs" />
+    <Compile Include="cong.fs" />
+    <Compile Include="order.fs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="FSharpx.Compatibility.OCaml">
