@@ -740,7 +740,7 @@ module lib =
     // pg. 621
     // OCaml: val undefine :  'a -> ('a, 'b) func -> ('a, 'b) func = <fun>
     // F#:    val undefine : ('a -> func<'a,'b>   -> func<'a,'b>) when 'a : comparison and 'b : equality
-    let inline undefine x (f : func<_,_>) =
+    let inline undefine x (f : func<_,_>) : func<_,_> =
         Map.remove x f
 
 // ------------------------------------------------------------------------- //
@@ -756,7 +756,7 @@ module lib =
     // pg. 621
     // OCaml: val ( |-> ) :  'a -> 'b -> ('a, 'b) func -> ('a, 'b) func = <fun>
     // F#:    val ( |-> ) : ('a -> 'b -> func<'a,'b>   -> func<'a,'b>) when 'a : comparison
-    let inline (|->) x y (f : func<_,_>) =
+    let inline (|->) x y (f : func<_,_>) : func<_,_> =
         Map.add x y f
 
 // ------------------------------------------------------------------------- //

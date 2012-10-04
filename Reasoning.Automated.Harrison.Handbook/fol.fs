@@ -269,6 +269,8 @@ module folMod = // TODO : Change this back to 'fol'?
 // Free variables in terms and formulas.                                     //
 // ------------------------------------------------------------------------- //
 
+// OPTIMIZE :   Optimize these mutually-recursive functions using CPS.
+
     let rec fvt tm =
         match tm with
         | Var x -> [x]
@@ -290,6 +292,7 @@ module folMod = // TODO : Change this back to 'fol'?
             union (var p) (var q)
         | Forall (x, p)
         | Exists (x, p) ->
+            // OPTIMIZE : Change to use Set.add
             insert x (var p)
 
     let rec fv fm =
@@ -307,6 +310,7 @@ module folMod = // TODO : Change this back to 'fol'?
             union (fv p) (fv q)
         | Forall (x, p)
         | Exists (x, p) ->
+            // OPTIMIZE : Change to use Set.remove
             subtract (fv p) [x]
 
 // pg. 131
@@ -322,6 +326,7 @@ module folMod = // TODO : Change this back to 'fol'?
 // Substitution within terms.                                                //
 // ------------------------------------------------------------------------- //
 
+    // OPTIMIZE : Optimize using CPS.
     let rec tsubst sfn tm =
         match tm with
         | Var x ->
@@ -344,7 +349,7 @@ module folMod = // TODO : Change this back to 'fol'?
 // Substitution in formulas, with variable renaming.                         //
 // ------------------------------------------------------------------------- //
     
-    // TODO : Optimize using continuation-passing style.
+    // OPTIMIZE : Optimize using CPS.
     let rec subst subfn fm =
         match fm with
         | False -> False
@@ -368,6 +373,7 @@ module folMod = // TODO : Change this back to 'fol'?
 
     and substq subfn quant x p =
         let x' =
+            // OPTIMIZE : Change 'subtract' to Set.remove
             if List.exists (fun y -> mem x (fvt (tryapplyd subfn y (Var y)))) (subtract (fv p) [x]) then
                 variant x (fv (subst (undefine x subfn) p)) 
             else x

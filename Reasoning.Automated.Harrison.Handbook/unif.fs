@@ -30,7 +30,6 @@ module unif =
 // ------------------------------------------------------------------------- //
 
     let rec unify (env : func<string, term>) eqs =
-        printfn "unify" // TEMP
         match eqs with
         | [] -> env
         | (Fn (f, fargs), Fn (g, gargs)) :: oth ->
@@ -58,7 +57,7 @@ module unif =
 
     let rec solve env =
         let env' = mapf (tsubst env) env
-        if env' = env then env 
+        if env' = env then env
         else solve env'
 
 // pg. 171
@@ -67,7 +66,8 @@ module unif =
 // ------------------------------------------------------------------------- //
 
     let inline fullunify eqs =
-        solve (unify undefined eqs)
+        unify undefined eqs
+        |> solve
 
 // pg. 171
 // ------------------------------------------------------------------------- //
