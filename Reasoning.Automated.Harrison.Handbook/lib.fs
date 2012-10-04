@@ -505,7 +505,10 @@ module lib =
             | h :: t ->
                 allsetsImpl (m - 1) t <| fun result1 ->
                 allsetsImpl m t <| fun result2 ->
-                    cont (union (image (fun g -> h :: g) result1) result2)
+                    result1
+                    |> image (fun g -> h :: g)
+                    |> union result2
+                    |> cont
 
     // pg. 620
     // OCaml: val allsets : int -> 'a list -> 'a list list = <fun>
@@ -521,7 +524,10 @@ module lib =
             cont [[]]
         | a :: t ->
             allsubsetsImpl t <| fun res ->
-                cont (union (image (fun b -> a :: b) res) res)
+                res
+                |> image (fun b -> a :: b)
+                |> union res
+                |> cont
 
     (* TODO :   Perhaps switch to this more-efficient and succint
                 implementation of the powerset function. It just
