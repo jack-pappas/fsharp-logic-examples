@@ -68,9 +68,10 @@ module stal =
     let irredundant rel eqs =
         irredundantImpl rel eqs id
 
-    let consequences (p, q as peq) fm eqs =
+    let consequences peq fm eqs =
         let follows (r, s) =
-            tautology <| Imp (And (Iff (p, q), fm), Iff (r, s))
+            Imp (And (Iff peq, fm), Iff (r, s))
+            |> tautology
 
         eqs
         |> List.filter follows
@@ -152,11 +153,11 @@ module stal =
 // Compute a function mapping each variable/true to relevant triggers.       //
 // ------------------------------------------------------------------------- //
 
-    let relevance trigs =        
-        let insert_relevant2 ((p, q),_ as trg) f =
+    let relevance trigs =
+        (trigs, undefined)
+        ||> List.foldBack (fun ((p, q),_ as trg) f ->
             let insert_relevant p trg f = (p |-> insert trg (tryapplyl f p)) f
-            insert_relevant p trg (insert_relevant q trg f)
-        List.foldBack insert_relevant2 trigs undefined
+            insert_relevant p trg (insert_relevant q trg f))
 
 // pg. 96
 // ------------------------------------------------------------------------- //
@@ -190,8 +191,8 @@ module stal =
         match assigs with
         | [] -> erf
         | (p, q) :: ts ->
-            let news, erf' = equatecons (p, q) erf
-            zero_saturate erf' (union ts news)
+            let news, erf = equatecons (p, q) erf
+            zero_saturate erf (union ts news)
 
 // pg. 96
 // ------------------------------------------------------------------------- //
@@ -199,13 +200,13 @@ module stal =
 // ------------------------------------------------------------------------- //
 
     let zero_saturate_and_check erf trigs =
-        let (eqv', rfn' as erf') = zero_saturate erf trigs
-        let vars = List.filter positive (equated eqv')
-        if List.exists (fun x -> canonize eqv' x = canonize eqv' (Not x)) vars then
-            erf'
+        let (eqv, _ as erf) = zero_saturate erf trigs
+        let vars = List.filter positive (equated eqv)
+        if List.exists (fun x -> canonize eqv x = canonize eqv (Not x)) vars then
+            erf
             |> equatecons (True, Not True)
             |> snd
-        else erf'
+        else erf
 
 // pg. 96
 // ------------------------------------------------------------------------- //
@@ -240,11 +241,11 @@ module stal =
         | x :: xs ->
             let s =
                 let s1 =
-                    let b1 = canonize eq1 x
-                    apply rev1 b1
+                    canonize eq1 x
+                    |> apply rev1
                 let s2 =
-                    let b2 = canonize eq2 x
-                    apply rev2 b2
+                    canonize eq2 x
+                    |> apply rev2
                 intersect s1 s2
             inter (subtract xs s) erf1 erf2 rev1 rev2 (equateset s erf)
 

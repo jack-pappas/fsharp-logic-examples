@@ -73,8 +73,12 @@ module equal =
         else
             // TODO : These instances of List.map could be optimized by using
             // List.init instead (so we don't need the intermediate list).
-            let argnames_x = List.map (fun n -> "x" + (string n)) [1 .. n]
-            let argnames_y = List.map (fun n -> "y" + (string n)) [1 .. n]
+            let argnames_x =
+                //List.init n <| fun n -> "x" + string (n + 1)
+                List.map (fun n -> "x" + (string n)) [1 .. n]
+            let argnames_y =
+                //List.init n <| fun n -> "y" + string (n + 1)
+                List.map (fun n -> "y" + (string n)) [1 .. n]
             let args_x = List.map Var argnames_x
             let args_y = List.map Var argnames_y
             let ant =

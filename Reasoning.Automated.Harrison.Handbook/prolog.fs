@@ -25,12 +25,16 @@ module prolog =
 // ------------------------------------------------------------------------- //
 
     let renamerule k (asm, c) =
-        let fvs = fv (list_conj (c :: asm))
+        let fvs = fv <| list_conj (c :: asm)
         let n = List.length fvs
         let inst =
             // OPTIMIZE : Use List.init instead of List.map.
-            let vvs = List.map (fun i -> "_" + string i) [k .. (k + n - 1)]
-            subst (fpf fvs (List.map Var vvs))
+            [k .. (k + n - 1)]
+            |> List.map (fun i ->
+                Var ("_" + string i))
+            |> fpf fvs
+            |> subst
+
         (List.map inst asm, inst c), k + n
         
 // pg. 207
@@ -44,20 +48,10 @@ module prolog =
         | g :: gs ->
             if n = 0 then failwith "Too deep" 
             else
-                // OPTMIZE : Isn't this the same as the 'tryfind' defined in lib.fs?
-                // If so, delete this definition and just use the other one.
-                let rec tryfind f l =
-                    match l with
-                    | [] -> failwith "tryfind"
-                    | h :: t ->
-                        try f h
-                        with _ -> tryfind f t
-                tryfind (
-                    fun rule ->
-                        let (a, c), k' =
-                            renamerule k rule
-                        backchain rules (n - 1) k' (unify_literals env (c, g)) (a @ gs))
-                        rules
+                rules
+                |> tryfind (fun rule ->
+                    let (a, c), k' = renamerule k rule
+                    backchain rules (n - 1) k' (unify_literals env (c, g)) (a @ gs))
 
     let hornify cls =
         let pos, neg = List.partition positive cls

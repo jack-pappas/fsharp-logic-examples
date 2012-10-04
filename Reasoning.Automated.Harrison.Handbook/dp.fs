@@ -56,7 +56,6 @@ module dp =
                 |> List.isEmpty)
             |> Some
             
-    // TODO: Verify use of List.partition works
     let resolve_on p clauses =
         let p' = negate p 
         let pos, notpos = List.partition (mem p) clauses
