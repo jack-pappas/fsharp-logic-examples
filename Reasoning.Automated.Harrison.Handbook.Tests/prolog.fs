@@ -27,20 +27,19 @@ module prolog =
     // ------------------------------------------------------------------------- //
 
     [<Test>]
-    let ``test hornprove``() =    
+    let ``test hornprove``() =
         hornprove (parse " 
             (forall x. P(x) /\ (G(x) \/ H(x)) ==> Q(x)) /\ 
             (forall x. Q(x) /\ H(x) ==> J(x)) /\ 
             (forall x. R(x) ==> H(x)) 
             ==> (forall x. P(x) /\ R(x) ==> J(x))")
-        |> should equal (Branch
-                             (47089,65536,
-                              Branch
-                                (47089,131072,Leaf (-843532303,[("_2", Var "_0")]),
-                                 Leaf (-843401231,[("_0", Fn ("c_x",[]))])),
-                              Branch
-                                (112625,131072,Leaf (-843466767,[("_1", Var "_0")]),
-                                 Leaf (-843597839,[("_3", Var "_2")]))), 8)
+        |> should equal
+        <| (Map.ofList [
+                ("_0", Fn ("c_x", []));
+                ("_1", Var "_0");
+                ("_2", Var "_0");
+                ("_3", Var "_2");],
+                8)
 
     // pg. 210
     // ------------------------------------------------------------------------- //
@@ -52,18 +51,13 @@ module prolog =
     [<Test>]
     let ``test simpleprolog``() =  
         simpleprolog lerules "S(S(0)) <= S(S(S(0)))"
-        |> should equal (Branch
-                            (47089,65536,
-                             Branch
-                               (47089,131072,Leaf (-843532303,[("_2", Fn ("0",[]))]),
-                                Branch
-                                  (178161,262144,
-                                   Leaf (-843401231,[("_0", Fn ("S",[Fn ("0",[])]))]),
-                                   Leaf (-843663375,[("_4", Var "_3")]))),
-                             Branch
-                               (112625,131072,
-                                Leaf (-843466767,[("_1", Fn ("S",[Fn ("S",[Fn ("0",[])])]))]),
-                                Leaf (-843597839,[("_3", Fn ("S",[Fn ("0",[])]))]))))
+        |> should equal
+        <| Map.ofList [
+                ("_0", Fn ("S", [Fn ("0", [])]));
+                ("_1", Fn ("S", [Fn ("S", [Fn ("0", [])])]));
+                ("_2", Fn ("0", []));
+                ("_3", Fn ("S", [Fn ("0", [])]));
+                ("_4", Var "_3"); ]
 
     [<Test>]
     let ``test apply``() = 

@@ -312,7 +312,7 @@ module complex =
                 ucs
                 |> List.map (fun p ->
                     Not (mk_eq p zero))
-                |> end_itlist mk_or
+                |> List.reduceBack mk_or
 
 //  pg. 364
 //  ------------------------------------------------------------------------- //
@@ -351,7 +351,7 @@ module complex =
                         // eqs |> List.minBy (degree vars)
                         eqs
                         |> List.map (degree vars)
-                        |> end_itlist min
+                        |> List.reduceBack min
                     List.find (fun p -> degree vars p = n) eqs
                 let oeqs = subtract eqs [p]
                 split_zero sgns (head vars p)
@@ -363,7 +363,7 @@ module complex =
                         elif neqs = [] then
                             True
                         else
-                            let q = end_itlist (poly_mul vars) neqs
+                            let q = List.reduceBack (poly_mul vars) neqs
                             poly_nondiv vars sgns' p (poly_pow vars q (degree vars p)))            
 
 

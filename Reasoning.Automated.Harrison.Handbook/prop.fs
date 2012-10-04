@@ -460,14 +460,14 @@ module prop =
     let list_conj = function
         | [] -> True
         | l ->
-            end_itlist mk_and l
+            List.reduceBack mk_and l
 
     // OCaml: val list_disj : 'a formula list -> 'a formula = <fun>
     // F#:    val list_disj : 'a formula list -> 'a formula when 'a : equality
     let list_disj = function
         | [] -> False
         | l ->
-            end_itlist mk_or l
+            List.reduceBack mk_or l
         
     // OCaml: val mk_lits : 'a formula list -> ('a -> bool) -> 'a formula = <fun>
     // F#:    val mk_lits : 'a formula list -> ('a -> bool) -> 'a formula when 'a : equality

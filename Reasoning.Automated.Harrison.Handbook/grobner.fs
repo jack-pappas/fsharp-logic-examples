@@ -284,7 +284,7 @@ module grobner =
         List.zip vars lis
         |> List.filter (fun (_, b) -> b <> 0)
         |> List.map (term_of_varpow vars)
-        |> end_itlist (fun s t -> Fn ("*", [s;t]))
+        |> List.reduceBack (fun s t -> Fn ("*", [s;t]))
 
     let term_of_monomial vars (c,m) =
         if List.forall (fun x -> x = 0) m then
@@ -297,7 +297,7 @@ module grobner =
     let term_of_poly vars pol =
         pol
         |> List.map (term_of_monomial vars)
-        |> end_itlist (fun s t -> Fn("+",[s;t]))
+        |> List.reduceBack (fun s t -> Fn("+",[s;t]))
 
     let grobner_basis vars pols =
         pols

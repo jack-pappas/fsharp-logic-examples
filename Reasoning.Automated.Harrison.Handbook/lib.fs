@@ -89,12 +89,6 @@ module lib =
 // ------------------------------------------------------------------------- //
         
     // pg. 619
-    // OCaml: val end_itlist : ('a -> 'a -> 'a) -> 'a list -> 'a = <fun>
-    // F#:    val end_itlist : ('a -> 'a -> 'a) -> 'a list -> 'a
-    let inline end_itlist f l =
-        List.reduceBack f l
-        
-    // pg. 619
     // OCaml: val last : 'a list -> 'a = <fun>
     // F#:    val last : 'a list -> 'a
     // val last : 'a list -> 'a

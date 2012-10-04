@@ -59,7 +59,7 @@ module equal =
             let ant =
                 (args_x, args_y)
                 ||> List.map2 mk_eq
-                |> end_itlist mk_and
+                |> List.reduceBack mk_and
             let con = mk_eq (Fn (f, args_x)) (Fn (f, args_y))
             [List.foldBack mk_forall (argnames_x @ argnames_y) (Imp (ant, con))]
 
@@ -80,7 +80,7 @@ module equal =
             let ant =
                 (args_x, args_y)
                 ||> List.map2 mk_eq
-                |> end_itlist mk_and
+                |> List.reduceBack mk_and
             let con = Imp (Atom (R (p, args_x)), Atom (R (p, args_y)))
             [List.foldBack mk_forall (argnames_x @ argnames_y) (Imp (ant, con))]
 
@@ -104,4 +104,4 @@ module equal =
                 |> List.foldBack (union << predicate_congruence) preds
                 |> List.foldBack (union << function_congruence) funcs
 
-            Imp (end_itlist mk_and axioms, fm)
+            Imp (List.reduceBack mk_and axioms, fm)

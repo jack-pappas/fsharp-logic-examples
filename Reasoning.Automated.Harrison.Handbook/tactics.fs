@@ -155,7 +155,7 @@ module tactics =
     let right_exists x t p : thm =
         let th = contrapos (ispec t (Forall (x, Not p)))
         let p' = match antecedent (concl th) with Not (Not p') -> p'
-        end_itlist imp_trans [
+        List.reduceBack imp_trans [
             imp_contr p' False;
             imp_add_concl False (iff_imp1 (axiom_not p'));
             iff_imp2 (axiom_not (Not p'));
@@ -330,7 +330,7 @@ module tactics =
         imp_swap (funpow (i - 1) (unshunt << imp_front 2) th1)
 
     let assume lps (Goals((asl, Imp (p, q)) :: gls, jfn)) =
-        if end_itlist mk_and (List.map snd lps) <> p then failwith "assume" else
+        if List.reduceBack mk_and (List.map snd lps) <> p then failwith "assume" else
         let jfn' th =
             if asl = [] then add_assum True th
             else multishunt (List.length lps) th
