@@ -364,93 +364,49 @@ module lib =
 // Set operations on ordered lists.                                          //
 // ------------------------------------------------------------------------- //
 
-    // TODO: Should these be converted to F# Set
-    // i.e. Set.union, Set.intersect, Set.difference
+(* OPTIMIZE :   Instead of using ordered lists to represent sets, use the
+                built-in F# Set type -- it'll be easier to work with and is
+                algorithmically faster.
+                
+                NOTE : The code below has already been modified to use functions
+                from the Set module, but for compatibility with the existing code,
+                we still input/output lists. *)
 
     // pg. 620
     // OCaml: val setify : 'a list -> 'a list = <fun>
     // F#:    val setify : ('a list -> 'a list) when 'a : comparison
-    let setify =
-        let rec canonical lis =
-            match lis with
-            | x :: (y :: _ as rest) ->
-                compare x y < 0
-                && canonical rest
-            | _ -> true
-        fun l -> 
-            if canonical l then l
-            else uniq (sort (fun x y -> compare x y <= 0) l)
+    let setify lst =
+        Set.ofList lst
+        |> Set.toList
 
     // pg. 620
     // OCaml: val union : 'a list -> 'a list -> 'a list = <fun>
     // F#:    val union : ('a list -> 'a list -> 'a list) when 'a : comparison
-    // TODO: Use Set.union
-    // F#:    val union : Set<'T> -> Set<'T> -> Set<'T> (requires comparison)
-    let union =
-        let rec union l1 l2 cont =
-            match l1, l2 with
-            | [], l2 ->
-                cont l2
-            | l1, [] ->
-                cont l1
-            | (h1 :: t1 as l1), (h2 :: t2 as l2) ->
-                if h1 = h2 then
-                    union t1 t2 <| fun lst ->
-                        cont (h1 :: lst)
-                elif h1 < h2 then
-                    union t1 l2 <| fun lst ->
-                        cont (h1 :: lst)
-                else
-                    union l1 t2 <| fun lst ->
-                        cont (h2 :: lst)
-        fun s1 s2 ->
-            union (setify s1) (setify s2) id
-        
+        // OPTIMIZE : Change to Set.union
+    let union s1 s2 =
+        Set.union (Set.ofList s1) (Set.ofList s2)
+        |> Set.toList
+
     // pg. 620
     // OCaml: val intersect : 'a list -> 'a list -> 'a list = <fun>
     // F#:    val intersect : ('a list -> 'a list -> 'a list) when 'a : comparison
-    // TODO: Use Set.intersect
-    // F#:    val intersect : Set<'T> -> Set<'T> -> Set<'T> (requires comparison)
-    let intersect =
-        let rec intersect l1 l2 cont =
-            match l1, l2 with
-            | [], _
-            | _, [] ->
-                cont []
-            | (h1 :: t1 as l1), (h2 :: t2 as l2) ->
-                if h1 = h2 then
-                    intersect t1 t2 <| fun lst ->
-                        cont (h1 :: lst)
-                elif h1 < h2 then
-                    intersect t1 l2 cont
-                else
-                    intersect l1 t2 cont
-        fun s1 s2 ->
-            intersect (setify s1) (setify s2) id
-        
+        // OPTIMIZE : Use Set.intersect
+    let intersect s1 s2 =
+        Set.intersect (Set.ofList s1) (Set.ofList s2)
+        |> Set.toList
+
     // pg. 620
     // OCaml: val subtract : 'a list -> 'a list -> 'a list = <fun>
     // F#:    val subtract : ('a list -> 'a list -> 'a list) when 'a : comparison
-    // TODO: Use Set.Difference or (l1 - l2)
-    // F#:    val difference : Set<'T> -> Set<'T> -> Set<'T> (requires comparison)
-    let subtract =
-        let rec subtract l1 l2 cont =
-            match l1, l2 with
-            | [], _ ->
-                cont []
-            | l1, [] ->
-                cont l1
-            | (h1 :: t1 as l1), (h2 :: t2 as l2) ->
-                if h1 = h2 then
-                    subtract t1 t2 cont
-                elif h1 < h2 then
-                    subtract t1 l2 <| fun lst ->
-                        cont (h1 :: lst)
-                else
-                    subtract l1 t2 cont
-        fun s1 s2 ->
-            subtract (setify s1) (setify s2) id
-
+        // OPTIMIZE : Change to Set.difference 
+    let subtract s1 s2 =
+        Set.difference (Set.ofList s1) (Set.ofList s2)
+        |> Set.toList
+        
+    // pg. 620
+    // OCaml: val subset : 'a list -> 'a list -> bool = <fun>
+    // F#:    val subset : 'a list -> 'a list -> bool when 'a : comparison
+        // OPTIMIZE : Change to Set.isSubset
     let rec private subsetImpl l1 l2 =
         match l1, l2 with
         | [], l2 -> true
@@ -459,7 +415,12 @@ module lib =
             if h1 = h2 then subsetImpl t1 t2
             elif h1 < h2 then false
             else subsetImpl l1 t2
+    let subset s1 s2 =
+        subsetImpl (setify s1) (setify s2)
 
+    // OCaml: val psubset : 'a list -> 'a list -> bool = <fun>
+    // F#:    val psubset : ('b list -> 'b list -> bool) when 'b : comparison
+        // OPTIMIZE : Change to Set.isProperSubset
     let rec private psubsetImpl l1 l2 =
         match l1, l2 with
         | l1, [] -> false
@@ -468,36 +429,33 @@ module lib =
             if h1 = h2 then psubsetImpl t1 t2
             elif h1 < h2 then false
             else subsetImpl l1 t2
-        
-    // pg. 620
-    // OCaml: val subset : 'a list -> 'a list -> bool = <fun>
-    // F#:    val subset : 'a list -> 'a list -> bool when 'a : comparison
-    let subset s1 s2 =
-        subsetImpl (setify s1) (setify s2)
-
-    // OCaml: val psubset : 'a list -> 'a list -> bool = <fun>
-    // F#:    val psubset : ('b list -> 'b list -> bool) when 'b : comparison
     let psubset s1 s2 =
         psubsetImpl (setify s1) (setify s2)
 
     // pg. 620
     // OCaml: val set_eq : 'a list -> 'a list -> bool = <fun>
     // F#:    val set_eq : 'a list -> 'a list -> bool when 'a : comparison
-    // TODO: Can we use (s1 = s2) once they are converted to sets?
+        // OPTIMIZE : This can be inlined and implemented as (s1 = s2).
     let set_eq s1 s2 =
-        setify s1 = setify s2
+        (Set.ofList s1) = (Set.ofList s2)
     
     // pg. 620
     // OCaml: val insert : 'a -> 'a list -> 'a list = <fun>
     // F#:    val insert : 'a -> 'a list -> 'a list when 'a : comparison
-    let inline insert x s =
-        union [x] s
+        // OPTMIZE : Change to Set.add
+    let insert x s =
+        Set.ofList s
+        |> Set.add x
+        |> Set.toList
     
     // pg. 620
     // OCaml: val image : ('a -> 'b) -> 'a list -> 'b list = <fun>
     // F#:    val image : ('a -> 'b) -> 'a list -> 'b list when 'b : comparison
+        // OPTIMIZE : Change to Set.map
     let image f s =
-        setify (List.map f s)
+        Set.ofList s
+        |> Set.map f
+        |> Set.toList
 
 // ------------------------------------------------------------------------- //
 // Union of a family of sets.                                                //
@@ -506,9 +464,13 @@ module lib =
     // pg. 620
     // OCaml: val unions : 'a list list -> 'a list = <fun>
     // F#:    val unions : 'a list list -> 'a list when 'a : comparison
+        // OPTIMIZE : Change to Set.unionMany
     let unions s =
-        List.foldBack (@) s []
-        |> setify
+        (Set.empty, s)
+        ||> List.fold (fun combined s ->
+            Set.ofList s
+            |> Set.union combined)
+        |> Set.toList
 
 // ------------------------------------------------------------------------- //
 // List membership. This does *not* assume the list is a set.                //
