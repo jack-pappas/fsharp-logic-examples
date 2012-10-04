@@ -439,27 +439,8 @@ module formulas =
 
     // OCaml: val overatoms : ('a -> 'b -> 'b) -> 'a formula -> 'b -> 'b = <fun>
     // F#:    val overatoms : ('a -> 'b -> 'b) -> 'a formula -> 'b -> 'b
-        // TODO : Ensure output is the same as the original.
     let overatoms f fm b =
         overatomsImpl f fm b id
-
-//    // OCaml: val overatoms : ('a -> 'b -> 'b) -> 'a formula -> 'b -> 'b = <fun>
-//    // F#:    val overatoms : ('a -> 'b -> 'b) -> 'a formula -> 'b -> 'b
-//    let rec overatoms f fm b =
-//        match fm with
-//        | Atom a ->
-//            f a b
-//        | Not p ->
-//            overatoms f p b
-//        | And (p, q)
-//        | Or (p, q)
-//        | Imp (p, q)
-//        | Iff (p, q) ->
-//            overatoms f p (overatoms f q b)
-//        | Forall (x, p)
-//        | Exists (x, p) ->
-//            overatoms f p b
-//        | _ -> b
 
 // pg. 32
 // ------------------------------------------------------------------------- //
