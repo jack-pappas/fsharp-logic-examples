@@ -53,7 +53,7 @@ Logic Programming in F#
 
  - Replaced the `(--)` and `(---)` operators with F# list comprehensions using the range syntax, e.g., `[m..n]`.
 
- - Replaced the Patricia trie datatype used to implement Finite Partial Functions (the `func<_,_>` type in the code) with the F# `Map<_,_>` type.
+  - Replaced the Patricia trie datatype used to implement Finite Partial Functions (the `func<_,_>` type in the code) with the F# `Map<_,_>` type.
   - `func<_,_>` is now just an alias for `Map<_,_>`.
   - Removed some of the functions for manipulating the Patricia trie type, since they were no longer needed.
   - Modified the remaining functions for working with `func<_,_>` so they work with `Map<_,_>` instead; some of these functions are now just aliases for functions in the F# `Map` module.
@@ -64,7 +64,7 @@ Logic Programming in F#
   - Reformat heavily-nested function calls using the F# pipeline operator `(|>)`.
   - Use `match` instead of 'if-elif-else' when it seems appropriate.
 
- ### Optimization TODO ###
+### Optimization TODO ###
  - Rewrite functions, as needed, to avoid unnecessary data-manipulation and list traversals. The code makes extensive use of the `(@)` operator and the `List.foldBack` function, which should be replaced (if possible) with `(::)` and `List.fold`. In addition, there are a number of places where the range operator `[m..n]` is used to create a list of values which is immediately consumed using `List.foldBack`, `List.map`, etc.; instead, these should be replaced with the `List.init` function.
  - Modify code to use arrays instead of lists, where possible.
  - Modify code to use `Option` and `Choice<_,_>` instead of handling backtracking with exceptions.
