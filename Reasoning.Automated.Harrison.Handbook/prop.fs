@@ -57,12 +57,7 @@ module prop =
         print_qformula print_propvar
 
     // Added by EGT
-    let rec print_prop_list x =
-        match x with
-        | []   -> ()
-        | h::t -> 
-            print_prop_formula h
-            print_prop_list t
+    let print_prop_list xs = List.iter print_prop_formula xs
 
 // pg. 32
 // ------------------------------------------------------------------------- //

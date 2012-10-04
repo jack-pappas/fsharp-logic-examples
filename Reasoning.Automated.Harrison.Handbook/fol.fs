@@ -119,80 +119,82 @@ module folMod = // TODO : Change this back to 'fol'?
 // Printing of terms.                                                        //
 // ------------------------------------------------------------------------- //
 
-    let rec print_term prec fm =
+    open System.IO
+
+    let rec fprint_term tw prec fm =
         match fm with
         | Var x ->
-            printf "%s" x
+            fprintf tw "%s" x
         | Fn ("^", [tm1; tm2;]) ->
-            print_infix_term true prec 24 "^" tm1 tm2
+            fprint_infix_term tw true prec 24 "^" tm1 tm2
         | Fn ("/", [tm1; tm2;]) ->
-            print_infix_term true prec 22 " /" tm1 tm2
+            fprint_infix_term tw true prec 22 " /" tm1 tm2
         | Fn ("*", [tm1; tm2;]) ->
-            print_infix_term false prec 20 " *" tm1 tm2
+            fprint_infix_term tw false prec 20 " *" tm1 tm2
         | Fn ("-", [tm1; tm2;]) ->
-            print_infix_term true prec 18 " -" tm1 tm2
+            fprint_infix_term tw true prec 18 " -" tm1 tm2
         | Fn ("+", [tm1; tm2;]) ->
-            print_infix_term false prec 16 " +" tm1 tm2
+            fprint_infix_term tw false prec 16 " +" tm1 tm2
         | Fn ("::", [tm1; tm2;]) ->
-            print_infix_term false prec 14 "::" tm1 tm2
+            fprint_infix_term tw false prec 14 "::" tm1 tm2
         | Fn (f, args) ->
-            print_fargs f args
+            fprint_fargs tw f args
 
-    and print_fargs f args =
-        printf "%s" f
+    and fprint_fargs tw f args =
+        fprintf tw "%s" f
         if args <> [] then
-            printf "("
-            print_term 0 (List.head args)
+            fprintf tw "("
+            fprint_term tw 0 (List.head args)
             List.iter (
                       fun t -> 
-                        printf ","
-                        print_term 0 t)
+                        fprintf tw ","
+                        fprint_term tw 0 t)
                 (List.tail args)
-            printf ")"
+            fprintf tw ")"
 
-    and print_infix_term isleft oldprec newprec sym p q =
+    and fprint_infix_term tw isleft oldprec newprec sym p q =
         if oldprec > newprec then 
-            printf "("
-        print_term (if isleft then newprec else newprec + 1) p
-        printf "%s" sym
-        print_term (if isleft then newprec + 1 else newprec) q
+            fprintf tw "("
+        fprint_term tw (if isleft then newprec else newprec + 1) p
+        fprintf tw "%s" sym
+        fprint_term tw (if isleft then newprec + 1 else newprec) q
         if oldprec > newprec then
-            printf ")"
+            fprintf tw ")"
 
-    let printert tm =
-        printf "<<|"
-        print_term 0 tm
-        printf "|>>"
+    let fprintert tw tm =
+        fprintf tw "<<|"
+        fprint_term tw 0 tm
+        fprintf tw "|>>"
 
-    // Added by EGT
-    let rec print_term_list = function
-        | [] -> ()
-        | h :: t ->
-            print_term 0 h
-            print_term_list t
+    // Added by EGT, updated by Phan
+    let fprint_term_list tw ts = List.iter (fprint_term tw 0) ts
 
 // pg. 630
 // ------------------------------------------------------------------------- //
 // Printing of formulas.                                                     //
 // ------------------------------------------------------------------------- //
 
-    let print_atom prec (R (p, args)) : unit =
+    let fprint_atom tw prec (R (p, args)) : unit =
         if mem p ["="; "<"; "<="; ">"; ">="] && List.length args = 2 then
-            print_infix_term false 12 12 (" " + p) (List.nth args 0) (List.nth args 1)
+            fprint_infix_term tw false 12 12 (" " + p) (List.nth args 0) (List.nth args 1)
         else
-            print_fargs p args
+            fprint_fargs tw p args
 
-    let print_fol_formula =
-        print_qformula print_atom
+    // Actual function for printing
+    let inline print_atom prec arg = fprint_atom stdout prec arg
 
-    // Added by EGT
-    let rec print_fol_formula_list x =
-        match x with
-        | [] -> ()
-        | h :: t -> 
-            print_qformula print_atom h
-            print_fol_formula_list t
-        
+    let fprint_fol_formula tw =
+        fprint_qformula tw (fprint_atom tw)
+  
+    let inline print_fol_formula f = fprint_fol_formula stdout f
+    let inline sprint_fol_formula f = writeToString (fun sw -> fprint_fol_formula sw f)
+
+    // Added by EGT, updated by Phan
+    let inline fprint_fol_formula_list tw fs = List.iter (fprint_fol_formula tw) fs
+
+    let inline print_fol_formula_list fs = fprint_fol_formula_list stdout fs
+    let inline sprint_fol_formula_list fs = writeToString (fun sw -> fprint_fol_formula_list sw fs)
+
 // pg. 125
 // ------------------------------------------------------------------------- //
 // Semantics, implemented of course for finite domains only.                 //

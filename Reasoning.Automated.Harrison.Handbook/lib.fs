@@ -1321,3 +1321,9 @@ module lib =
     let rec first n p =
         if p n then n
         else first (n + Int 1) p
+
+    // A general scheme to use StringWriter
+    let writeToString fn = 
+        use sw = new System.IO.StringWriter()
+        fn sw
+        sw.ToString()
