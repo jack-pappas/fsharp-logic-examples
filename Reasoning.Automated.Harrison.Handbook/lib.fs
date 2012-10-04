@@ -156,33 +156,53 @@ module lib =
 
     let distinctpairs l =
         distinctpairsImpl l id
+
         
     // pg. 619
     // OCaml: val chop_list : int -> 'a list -> 'a list * 'a list = <fun>
     // F#:    val chop_list : int -> 'a list -> 'a list * 'a list
     // Takes the first n items from a list. Returns those items as a list,
     // along with any items remaining in the original list.
-    // TODO : Optimize using continuation-passing style.
-    let rec chop_list n l =
-        if n = 0 then [], l
+    let chop_list n l =
+        if n > List.length l then
+            failwith "chop_list"
+        elif n = 0 then
+            // Optimized case for n = 0.
+            [], l
         else
-            try
-                let m, l' = chop_list (n - 1) (List.tail l) 
-                (List.head l) :: m, l'
-            with _ ->
-                failwith "chop_list"
+            // Holds the chopped items.
+            let choppedItems = Array.zeroCreate n
+
+            let rec chopRec i lst =
+                if i >= n then
+                    (Array.toList choppedItems), lst
+                else
+                    choppedItems.[i] <- List.head lst
+                    chopRec (i + 1) (List.tail lst)
+
+            chopRec 0 l
     
     // pg. 619
     // OCaml: val insertat : int -> 'a -> 'a list -> 'a list = <fun>
     // F#:    val insertat : int -> 'a -> 'a list -> 'a list
-    // TODO : Optimize using continuation-passing style.
-    let rec insertat i x l =
-        if i = 0 then x :: l
+    let insertat i x l =
+        if i > List.length l then
+            failwith "insertat: list too short for position to exist"
+        elif i = 0 then
+            // Optimized case for i = 0.
+            x :: l
         else
-            match l with
-            | [] -> failwith "insertat: list too short for position to exist"
-            | h :: t ->
-                h :: (insertat (i - 1) x t)
+            let rec insertRec (stack, lst) =
+                if List.length stack = i then
+                    (x :: lst, stack)
+                    ||> List.fold (fun lst el ->
+                        el :: lst)
+                else
+                    let stack = (List.head lst) :: stack
+                    let lst = List.tail lst
+                    insertRec (stack, lst)
+
+            insertRec ([], l)
         
     // pg. 619
     // OCaml: val index : 'a -> 'a list -> int = <fun>
@@ -201,7 +221,8 @@ module lib =
         match l with
         | [] -> false
         | h :: t ->
-            (compare h y <> 0) && (compare h x = 0 || earlier t x y)
+            compare h y <> 0
+            && (compare h x = 0 || earlier t x y)
 
 // ------------------------------------------------------------------------- //
 // Association lists.                                                        //
