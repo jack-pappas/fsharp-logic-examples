@@ -78,60 +78,61 @@ module skolem =
     let rec private nnfImpl fm cont =
         match fm with
         | And (p, q) ->
-            nnfImpl p <| fun p' ->
-            nnfImpl q <| fun q' ->
-                cont (And (p', q'))
+            nnfImpl p <| fun nnf_p ->
+            nnfImpl q <| fun nnf_q ->
+                cont (And (nnf_p, nnf_q))
         | Or (p, q) ->
-            nnfImpl p <| fun p' ->
-            nnfImpl q <| fun q' ->
-                cont (Or (p', q'))
+            nnfImpl p <| fun nnf_p ->
+            nnfImpl q <| fun nnf_q ->
+                cont (Or (nnf_p, nnf_q))
         | Imp (p, q) ->
-            nnfImpl (Not p) <| fun p' ->
-            nnfImpl q <| fun q' ->
-                cont (Or (p', q'))
+            nnfImpl (Not p) <| fun nnf_not_p ->
+            nnfImpl q <| fun nnf_q ->
+                cont (Or (nnf_not_p, nnf_q))
         | Iff (p, q) ->
-            nnfImpl p <| fun p' ->
-            nnfImpl q <| fun q' ->
-            nnfImpl (Not p) <| fun not_p' ->
-            nnfImpl (Not q) <| fun not_q' ->
-                cont (Or (And (p', q'), And (not_p', not_q')))
+            nnfImpl p <| fun nnf_p ->
+            nnfImpl q <| fun nnf_q ->
+            nnfImpl (Not p) <| fun nnf_not_p ->
+            nnfImpl (Not q) <| fun nnf_not_q ->
+                cont (Or (And (nnf_p, nnf_q), And (nnf_not_p, nnf_not_q)))
         | Not (Not p) ->
             nnfImpl p cont
         | Not (And (p, q)) ->
-            nnfImpl (Not p) <| fun not_p' ->
-            nnfImpl (Not q) <| fun not_q' ->
-                cont (Or (not_p', not_q'))
+            nnfImpl (Not p) <| fun nnf_not_p ->
+            nnfImpl (Not q) <| fun nnf_not_q ->
+                cont (Or (nnf_not_p, nnf_not_q))
         | Not (Or (p, q)) ->
-            nnfImpl (Not p) <| fun not_p' ->
-            nnfImpl (Not q) <| fun not_q' ->
-                cont (And (not_p', not_q'))
+            nnfImpl (Not p) <| fun nnf_not_p ->
+            nnfImpl (Not q) <| fun nnf_not_q ->
+                cont (And (nnf_not_p, nnf_not_q))
         | Not (Imp (p, q)) ->
-            nnfImpl p <| fun p' ->
-            nnfImpl (Not q) <| fun not_q' ->
-                cont (And (p', not_q'))
+            nnfImpl p <| fun nnf_p ->
+            nnfImpl (Not q) <| fun nnf_not_q ->
+                cont (And (nnf_p, nnf_not_q))
         | Not (Iff (p, q)) ->
-            nnfImpl p <| fun p' ->
-            nnfImpl (Not q) <| fun not_q' ->
-            nnfImpl (Not p) <| fun not_p' ->
-            nnfImpl q <| fun q' ->
-                cont (Or (And (p', not_q'), And (not_p', q)))
+            nnfImpl p <| fun nnf_p ->
+            nnfImpl (Not q) <| fun nnf_not_q ->
+            nnfImpl (Not p) <| fun nnf_not_p ->
+            nnfImpl q <| fun nnf_q ->
+                cont (Or (And (nnf_p, nnf_not_q), And (nnf_not_p, nnf_q)))
         | Forall (x, p) ->
-            nnfImpl p <| fun p' ->
-                cont (Forall (x, p'))
+            nnfImpl p <| fun nnf_p ->
+                cont (Forall (x, nnf_p))
         | Exists (x, p) ->
-            nnfImpl p <| fun p' ->
-                cont (Exists (x, p'))
+            nnfImpl p <| fun nnf_p ->
+                cont (Exists (x, nnf_p))
         | Not (Forall (x, p)) ->
-            nnfImpl (Not p) <| fun not_p' ->
-                cont (Exists (x, not_p'))
+            nnfImpl (Not p) <| fun nnf_not_p ->
+                cont (Exists (x, nnf_not_p))
         | Not (Exists (x, p)) ->
-            nnfImpl (Not p) <| fun not_p' ->
-                cont (Forall (x, not_p'))
+            nnfImpl (Not p) <| fun nnf_not_p ->
+                cont (Forall (x, nnf_not_p))
         | fm ->
             cont fm
 
     let nnf fm =
         nnfImpl fm id
+
 
 // pg. 143
 // ------------------------------------------------------------------------- //
@@ -228,7 +229,8 @@ module skolem =
             skolemImpl (subst (y |=> fx) p) (f :: fns) cont
         | Forall (x, p) ->
             skolemImpl p fns <| fun (p', fns') ->
-                cont (Forall (x, p'), fns')
+                (Forall (x, p'), fns')
+                |> cont
         | And (p, q) ->
             skolem2Impl And (p, q) fns cont
         | Or (p, q) ->
@@ -237,15 +239,17 @@ module skolem =
             cont (fm, fns)
 
     and skolem2Impl cons (p, q) fns cont =
-        skolemImpl p fns <| fun (p', fns') ->
-        skolemImpl q fns' <| fun (q', fns'') ->
-            cont (cons (p', q'), fns'')
+        skolemImpl p fns <| fun (p', fns) ->
+        skolemImpl q fns <| fun (q', fns) ->
+            (cons (p', q'), fns)
+            |> cont
 
     let skolem fm fns =
         skolemImpl fm fns id
 
     let skolem2 cons (p, q) fns =
         skolem2Impl cons (p, q) fns id
+
 
 // pg. 149
 // ------------------------------------------------------------------------- //
