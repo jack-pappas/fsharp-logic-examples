@@ -361,22 +361,6 @@ module lib =
             with Failure _ -> None)
 
 // ------------------------------------------------------------------------- //
-// Find list member that maximizes or minimizes a function.                  //
-// ------------------------------------------------------------------------- //
-
-    // pg. 620
-    // OCaml: val maximize : ('a -> 'b) -> 'a list -> 'a = <fun>
-    // F#:    val maximize : ('a -> 'b) -> 'a list -> 'a when 'b : comparison
-    let inline maximize f l =
-        List.maxBy f l
-    
-    // pg. 620
-    // OCaml: val minimize : ('a -> 'b) -> 'a list -> 'a = <fun>
-    // F#:    val minimize : ('a -> 'b) -> 'a list -> 'a when 'b : comparison
-    let inline minimize f l =
-        List.minBy f l
-
-// ------------------------------------------------------------------------- //
 // Set operations on ordered lists.                                          //
 // ------------------------------------------------------------------------- //
 

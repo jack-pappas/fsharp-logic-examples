@@ -79,7 +79,7 @@ module dp =
         let p =
             unions clauses
             |> List.filter positive
-            |> minimize (resolution_blowup clauses)
+            |> List.minBy (resolution_blowup clauses)
         resolve_on p clauses
 
 //. pg. 84. 
@@ -138,7 +138,7 @@ module dp =
                     let p =
                         unions clauses
                         |> List.filter positive
-                        |> maximize (posneg_count clauses)
+                        |> List.maxBy (posneg_count clauses)
 
                     dpllImpl (insert [p] clauses) <| fun p' ->
                     dpllImpl (insert [negate p] clauses) <| fun q' ->
@@ -158,11 +158,14 @@ module dp =
 
     type trailmix = Guessed | Deduced
 
-    let unassigned =
-        let litabs = function Not q -> q | p -> p
-        fun cls trail ->
-            subtract (unions (image (image litabs) cls))
-                (image (litabs << fst) trail)
+    let private litabs = function
+        | Not q -> q
+        | p -> p
+
+    let unassigned cls trail =
+        trail
+        |> image (litabs << fst)
+        |> subtract (unions (image (image litabs) cls))
 
     let rec unit_subpropagate (cls, fn, trail) =
         let uu = function
@@ -171,7 +174,7 @@ module dp =
         let cls' =
             List.map (List.filter (not << defined fn << negate)) cls
 
-        match unions (mapfilter uu cls') with
+        match unions <| mapfilter uu cls' with
         | [] ->
             cls', fn, trail
         | newunits ->
@@ -201,7 +204,7 @@ module dp =
                 match unassigned cls trail' with
                 | [] -> true
                 | ps ->
-                    let p = maximize (posneg_count cls') ps
+                    let p = List.maxBy (posneg_count cls') ps
                     dpli cls ((p, Guessed) :: trail')
 
     let inline dplisat fm = dpli (defcnfs fm) []
@@ -239,7 +242,7 @@ module dp =
             match unassigned cls trail' with
             | [] -> true
             | ps ->
-                let p = maximize (posneg_count cls') ps
+                let p = List.maxBy (posneg_count cls') ps
                 dplb cls ((p, Guessed) :: trail')
 
     let inline dplbsat fm = dplb (defcnfs fm) []

@@ -49,3 +49,21 @@ let inline (---) (m : num) (n : num) = [m .. n];;   // Usages of this should be 
 // F#:    val ( >>|> ) : ('a -> 'b) -> ('c -> 'a) -> 'c -> 'b
 /// Composes two functions, then applies a value to the resulting function.
 let inline ( >>|> ) f g x = f <| g x;;      // Usages of this should be changed to <<
+
+// ------------------------------------------------------------------------- //
+// Find list member that maximizes or minimizes a function.                  //
+// ------------------------------------------------------------------------- //
+
+// pg. 620
+// OCaml: val maximize : ('a -> 'b) -> 'a list -> 'a = <fun>
+// F#:    val maximize : ('a -> 'b) -> 'a list -> 'a when 'b : comparison
+let inline maximize f l =
+    List.maxBy f l
+    
+// pg. 620
+// OCaml: val minimize : ('a -> 'b) -> 'a list -> 'a = <fun>
+// F#:    val minimize : ('a -> 'b) -> 'a list -> 'a when 'b : comparison
+let inline minimize f l =
+    List.minBy f l
+
+
