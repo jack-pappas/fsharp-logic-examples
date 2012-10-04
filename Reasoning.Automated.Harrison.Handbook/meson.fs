@@ -62,10 +62,10 @@ module meson =
         let rules =
             let cls = simpcnf (specialize (pnf fm))
             List.foldBack ((@) << contrapositives) cls []
-        deepen (fun n ->
+        deepen 0 <| fun n ->
             mexpand001 rules [] False id (undefined, n, 0)
             |> ignore
-            n) 0
+            n
 
     let meson001 fm =
         Not (generalize fm)
@@ -124,18 +124,18 @@ module meson =
                     mexpands002 rules (g :: ancestors) asm cont (unify_literals env (g, c), n - List.length asm, k'))
                     rules
 
-    let puremeson002 fm =   
-        
+    let puremeson002 fm =        
         let rules =
             let cls =
                 pnf fm
                 |> specialize
                 |> simpcnf
             List.foldBack ((@) << contrapositives) cls []
-        deepen (fun n ->
+
+        deepen 0 <| fun n ->
             mexpand002 rules [] False id (undefined, n, 0)
             |> ignore
-            n) 0
+            n
 
     let meson002 fm =
         Not (generalize fm)

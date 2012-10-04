@@ -300,6 +300,6 @@ module lcffol =
     let lcffol fm =
         let fvs = fv fm
         let fm' = Imp(List.foldBack mk_forall fvs fm,False)
-        let th1 = deepen (fun n -> lcfrefute fm' n deskolcont) 0
+        let th1 = deepen 0 (fun n -> lcfrefute fm' n deskolcont)
         let th2 = modusponens (axiom_doubleneg (negatef fm')) th1
         List.foldBack (fun v -> spec (Var v)) (List.rev fvs) th2

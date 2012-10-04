@@ -72,7 +72,8 @@ module prolog =
             |> skolemize
             |> simpcnf
             |> List.map hornify
-        deepen (fun n -> backchain rules n 0 undefined [False], n) 0
+        deepen 0 <| fun n ->
+            backchain rules n 0 undefined [False], n
 
 // pg. 210
 // ------------------------------------------------------------------------- //

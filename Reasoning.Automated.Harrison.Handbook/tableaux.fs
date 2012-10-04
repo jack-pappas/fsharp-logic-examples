@@ -102,11 +102,15 @@ module tableaux =
 // More standard tableau procedure, effectively doing DNF incrementally.     //
 // ------------------------------------------------------------------------- //
 
+    // OPTIMIZE : Modify this function so the 'cont' parameter is last; then, reformat
+    // the code to make the CPS more explicit (as in the other CPS-transformed functions.)
     let rec tableau (fms, lits, n) cont (env, k) =
-        if n < 0 then failwith "no proof at this level" 
+        if n < 0 then
+            failwith "no proof at this level" 
         else
             match fms with
-            | [] -> failwith "tableau: no proof"
+            | [] ->
+                failwith "tableau: no proof"
             | And (p, q) :: unexp ->
                 tableau (p :: q :: unexp, lits, n) cont (env, k)
             | Or (p, q) :: unexp ->
@@ -116,6 +120,8 @@ module tableaux =
                 let p' = subst (x |=> y) p
                 tableau (p' :: unexp @ [Forall (x, p)], lits, n - 1) cont (env, k + 1)
             | fm :: unexp ->
+                // OPTIMIZE : Replace this 'tryfind' with List.tryFind or similar
+                // instead of using exceptions to handle failures.
                 let rec tryfind f l =
                     match l with
                     | [] -> failwith "tryfind"
@@ -130,21 +136,21 @@ module tableaux =
                 with _ ->
                     tableau (unexp, fm :: lits, n) cont (env, k)
 
-    let rec deepen f n =
+    let rec deepen n f =
         try printf "Searching with depth limit "
             printfn "%d" n
             f n
         with _ ->
-            deepen f (n + 1)
+            deepen (n + 1) f
         
     let tabrefute fms =
-        deepen (fun n ->
+        deepen 0 <| fun n ->
             tableau (fms, [], n) id (undefined, 0)
             |> ignore
-            n) 0
+            n
 
     let tab fm =
-        match askolemize (Not (generalize fm)) with
+        match askolemize <| Not (generalize fm) with
         | False -> 0
         | sfm ->
             tabrefute [sfm]
@@ -159,5 +165,9 @@ module tableaux =
         |> Not
         |> askolemize
         |> simpdnf
-        |> List.map tabrefute
+        |> List.mapi (fun i fm ->
+            printfn "tabrefute, formula #%i" i
+            printfn "%O" fm
+            printfn ""
+            tabrefute fm)
 
