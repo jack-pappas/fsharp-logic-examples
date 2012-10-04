@@ -26,19 +26,21 @@ module tableaux =
 
     let rec unify_literals env tmp =
         match tmp with
-        | Atom (R (p1, a1)), Atom (R (p2, a2)) ->
-            unify env [Fn (p1, a1), Fn (p2, a2)]
+        | False, False ->
+            env
         | Not p, Not q ->
             unify_literals env (p, q)
-        | False, False -> env
-        | _ -> failwith "Can't unify literals"
+        | Atom (R (p1, a1)), Atom (R (p2, a2)) ->
+            unify env [Fn (p1, a1), Fn (p2, a2)]        
+        | _ ->
+            failwith "Can't unify literals"
 
 // pg. 174
 // ------------------------------------------------------------------------- //
 // Unify complementary literals.                                             //
 // ------------------------------------------------------------------------- //
 
-    let unify_complements env (p, q) =
+    let inline unify_complements env (p, q) =
         unify_literals env (p, negate q)
 
 // pg. 174
@@ -46,25 +48,15 @@ module tableaux =
 // Unify and refute a set of disjuncts.                                      //
 // ------------------------------------------------------------------------- //
 
-    // Note: Used book tryfind instead of F# List.tryFind
     let rec unify_refute djs (acc : func<string, term>) : func<string, term> =
-        let rec tryfind f l =
-            match l with
-            | [] ->
-                failwith "tryfind"
-            | h::t -> 
-                try f h
-                with _ ->
-                    tryfind f t
-
         match djs with
-        | [] -> acc
-        | head :: tail -> 
-            let pos, neg = List.partition positive head
-            // NOTE : This is not used anywhere! Did we miss something
-            // or is this also in the book code?
-            let unifyResult = unify_complements acc
-            tryfind (unify_refute tail << unify_complements acc) (allpairs (fun p q -> (p, q)) pos neg)
+        | [] ->
+            acc
+        | head :: tail ->
+            head
+            |> List.partition positive
+            ||> allpairs (fun p q -> (p, q))
+            |> tryfind (unify_refute tail << unify_complements acc)
 
 
 // pg. 175
@@ -102,6 +94,7 @@ module tableaux =
 // More standard tableau procedure, effectively doing DNF incrementally.     //
 // ------------------------------------------------------------------------- //
 
+
     // OPTIMIZE : Modify this function so the 'cont' parameter is last; then, reformat
     // the code to make the CPS more explicit (as in the other CPS-transformed functions.)
     let rec tableau (fms, lits, n) cont (env, k) =
@@ -120,27 +113,18 @@ module tableaux =
                 let p' = subst (x |=> y) p
                 tableau (p' :: unexp @ [Forall (x, p)], lits, n - 1) cont (env, k + 1)
             | fm :: unexp ->
-                // OPTIMIZE : Replace this 'tryfind' with List.tryFind or similar
-                // instead of using exceptions to handle failures.
-                let rec tryfind f l =
-                    match l with
-                    | [] -> failwith "tryfind"
-                    | h :: t ->
-                        try f h
-                        with _ ->
-                            tryfind f t
                 try
                     lits
                     |> tryfind (fun l ->
                         cont (unify_complements env (fm, l), k))
-                with _ ->
+                with Failure _ ->
                     tableau (unexp, fm :: lits, n) cont (env, k)
 
     let rec deepen n f =
         try printf "Searching with depth limit "
             printfn "%d" n
             f n
-        with _ ->
+        with Failure _ ->
             deepen (n + 1) f
         
     let tabrefute fms =
