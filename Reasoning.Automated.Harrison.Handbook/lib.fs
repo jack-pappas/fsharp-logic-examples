@@ -117,7 +117,7 @@ module lib =
     let (---) (m : num) (n : num) =
         // For compatibility with the original OCaml function,
         // return an empty list for invalid inputs.
-        if m >= n then []
+        if m > n then [] // NB: fix singleton range
         else
             [m .. n]
 
