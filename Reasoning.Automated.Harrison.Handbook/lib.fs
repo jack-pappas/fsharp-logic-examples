@@ -350,27 +350,6 @@ module lib =
 // ------------------------------------------------------------------------- //
 
     //
-    let rec private uniqImpl l cont =
-        match l with
-        | x :: (y :: _ as t) ->
-            uniqImpl t <| fun t' ->
-                if compare x y = 0 then t' 
-                elif t' = t then l 
-                else x :: t'
-                |> cont
-        | _ ->
-            cont l
-
-    // pg. 619
-    // OCaml: val uniq : 'a list -> 'a list = <fun>
-    // F#:    val uniq : 'a list -> 'a list when 'a : comparison
-    // OPTIMIZE : Replace this (and the private implementation) with
-    // a simpler implementation which folds over the list and uses an
-    // F# set to track the "seen" values.
-    let uniq l =
-        uniqImpl l id
-
-    //
     let rec private repcount n l cont =
         match l with
         | [] ->
