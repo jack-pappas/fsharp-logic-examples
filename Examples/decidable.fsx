@@ -6,7 +6,7 @@
 
 #load "initialization.fsx"
 
-//open Reasoning.Automated.Harrison.Handbook.lib
+open Reasoning.Automated.Harrison.Handbook.lib
 //open Reasoning.Automated.Harrison.Handbook.intro
 open Reasoning.Automated.Harrison.Handbook.formulas
 //open Reasoning.Automated.Harrison.Handbook.prop
@@ -52,7 +52,7 @@ tab (parse "forall x. p(x)")
 
 // 0 used; 1 unused.
 // System.Exception: No proof found
-resolution (parse "forall x. p(x)")
+resolution001 (parse "forall x. p(x)")
 
 // pg. 309
 // ------------------------------------------------------------------------- //
@@ -166,11 +166,11 @@ aedecide (parse "(forall x. P(x,x,1)) /\ (forall u v w x y z. P(x,y,u) /\ P(y,z,
 // A bigger example.                                                         //
 // ------------------------------------------------------------------------- //
 
+// Use 10MB stackframe
 // val it : bool = true
-aedecide
- (parse "(exists x. P(x)) /\ (exists x. G(x))
+Initialization.runWithStackFrame 10000000 (fun () -> aedecide (parse "(exists x. P(x)) /\ (exists x. G(x))
    ==> ((forall x. P(x) ==> H(x)) /\ (forall x. G(x) ==> J(x)) <=>
-        (forall x y. P(x) /\ G(y) ==> H(x) /\ J(y)))")
+        (forall x y. P(x) /\ G(y) ==> H(x) /\ J(y)))"))
 
 // pg. 313
 // ------------------------------------------------------------------------- //

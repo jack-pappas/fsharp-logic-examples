@@ -62,6 +62,23 @@
     <Compile Include="cong.fs" />
     <Compile Include="order.fs" />
     <Compile Include="completion.fs" />
+    <Compile Include="eqelim.fs" />
+    <Compile Include="paramodulation.fs" />
+    <Compile Include="decidable.fs" />
+    <Compile Include="qelim.fs" />
+    <Compile Include="cooper.fs" />
+    <Compile Include="complex.fs" />
+    <Compile Include="real.fs" />
+    <Compile Include="grobner.fs" />
+    <Compile Include="geom.fs" />
+    <Compile Include="interpolation.fs" />
+    <Compile Include="combining.fs" />
+    <Compile Include="lcf.fs" />
+    <Compile Include="lcfprop.fs" />
+    <Compile Include="folderived.fs" />
+    <Compile Include="lcffol.fs" />
+    <Compile Include="tactics.fs" />
+    <Compile Include="limitations.fs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="FSharpx.Compatibility.OCaml">

@@ -143,6 +143,7 @@ module decidable =
         sprintf "If %s and %s, then %s"
             (anglicize_premiss t1) (anglicize_premiss t2) (anglicize_premiss t3)
 
+    // Phan: should this be moved to fsx?
     let all_possible_syllogisms =
         let sylltypes = [premiss_A; premiss_E; premiss_I; premiss_O]
         let prems1 = allpairs id sylltypes ["M","P"; "P","M"]
