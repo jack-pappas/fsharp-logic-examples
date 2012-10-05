@@ -4,33 +4,32 @@
 // (See "LICENSE.txt" for details.)                                          //
 // ========================================================================= //
 
-namespace Reasoning.Automated.Harrison.Handbook.Tests
+module Reasoning.Automated.Harrison.Handbook.Tests.order
 
-module order =
-    open Reasoning.Automated.Harrison.Handbook.lib
-    open Reasoning.Automated.Harrison.Handbook.folMod
-    open Reasoning.Automated.Harrison.Handbook.order
+open Reasoning.Automated.Harrison.Handbook.lib
+open Reasoning.Automated.Harrison.Handbook.folMod
+open Reasoning.Automated.Harrison.Handbook.order
 
-    open NUnit.Framework
-    open FsUnit
+open NUnit.Framework
+open FsUnit
 
-    let s = parset "f(x,x,x)"
-    let t = parset "g(x,y)"
+let s = parset "f(x,x,x)"
+let t = parset "g(x,y)"
 
-    [<Test>]
-    let ``test termsize 1``() =
-        termsize s > termsize t
-        |> should be True
+[<Test>]
+let ``test termsize 1``() =
+    termsize s > termsize t
+    |> should be True
 
-    // ------------------------------------------------------------------------- //
-    // This fails the rewrite properties.                                        //
-    // ------------------------------------------------------------------------- //
+// ------------------------------------------------------------------------- //
+// This fails the rewrite properties.                                        //
+// ------------------------------------------------------------------------- //
 
-    let i = "y" |=> parset "f(x,x,x)"
+let i = "y" |=> parset "f(x,x,x)"
 
-    [<Test>]
-    let ``test termsize 2``() =
-        termsize (tsubst i s) > termsize (tsubst i t)
-        |> should be False
+[<Test>]
+let ``test termsize 2``() =
+    termsize (tsubst i s) > termsize (tsubst i t)
+    |> should be False
 
     

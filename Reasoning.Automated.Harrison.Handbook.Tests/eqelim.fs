@@ -52,6 +52,8 @@ let ``examples 2``() =
               (exists y. y = g(f(y)) /\ forall y'. y' = g(f(y')) ==> y = y')")
     |> should equal [16; 16]
 
+// NOTE : This test currently passes, but it takes a
+// *long* time to run (approx. 10-15 minutes).
 [<Test>]
 let ``examples 3``() =
     bmeson 

@@ -4,41 +4,40 @@
 // (See "LICENSE.txt" for details.)                                          //
 // ========================================================================= //
 
-namespace Reasoning.Automated.Harrison.Handbook.Tests
+module Reasoning.Automated.Harrison.Handbook.Tests.bdd
 
-module bdd =
-    open Reasoning.Automated.Harrison.Handbook.lib
-    open Reasoning.Automated.Harrison.Handbook.formulas
-    open Reasoning.Automated.Harrison.Handbook.prop
-    open Reasoning.Automated.Harrison.Handbook.propexamples
-    open Reasoning.Automated.Harrison.Handbook.bdd
+open Reasoning.Automated.Harrison.Handbook.lib
+open Reasoning.Automated.Harrison.Handbook.formulas
+open Reasoning.Automated.Harrison.Handbook.prop
+open Reasoning.Automated.Harrison.Handbook.propexamples
+open Reasoning.Automated.Harrison.Handbook.bdd
  
-    open NUnit.Framework
-    open FsUnit
+open NUnit.Framework
+open FsUnit
 
-    // pg. 105
-    // ------------------------------------------------------------------------- //
-    // Examples.                                                                 //
-    // ------------------------------------------------------------------------- //
+// pg. 105
+// ------------------------------------------------------------------------- //
+// Examples.                                                                 //
+// ------------------------------------------------------------------------- //
 
-    [<Test>]
-    let ``test bddtaut``() =
-        bddtaut (mk_adder_test 4 2)
-        |> should be True
+[<Test>]
+let ``test bddtaut``() =
+    bddtaut (mk_adder_test 4 2)
+    |> should be True
 
-    // pg. 107
-    // ------------------------------------------------------------------------- //
-    // Examples.                                                                 //
-    // ------------------------------------------------------------------------- //
+// pg. 107
+// ------------------------------------------------------------------------- //
+// Examples.                                                                 //
+// ------------------------------------------------------------------------- //
 
-    [<Test>]
-    let ``test ebddtaut with prime``() =
-        ebddtaut (prime 101)
-        |> should be True
+[<Test>]
+let ``test ebddtaut with prime``() =
+    ebddtaut (prime 101)
+    |> should be True
 
-    [<Test>]
-    let ``test ebddtaut with mk_adder_test``() =
-        ebddtaut (mk_adder_test 9 5)
-        |> should be True
+[<Test>]
+let ``test ebddtaut with mk_adder_test``() =
+    ebddtaut (mk_adder_test 9 5)
+    |> should be True
 
 

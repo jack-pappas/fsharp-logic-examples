@@ -4,17 +4,16 @@
 // (See "LICENSE.txt" for details.)                                          //
 // ========================================================================= //
 
-namespace Reasoning.Automated.Harrison.Handbook.Tests
+module Reasoning.Automated.Harrison.Handbook.Tests.paramodulation
 
-module paramodulation =
-    open Reasoning.Automated.Harrison.Handbook.folMod
-    open Reasoning.Automated.Harrison.Handbook.paramodulation
+open Reasoning.Automated.Harrison.Handbook.folMod
+open Reasoning.Automated.Harrison.Handbook.paramodulation
 
-    open NUnit.Framework
-    open FsUnit
+open NUnit.Framework
+open FsUnit
 
-    [<Test>]
-    let ``test paramodulation``() =
-        paramodulation (parse "(forall x. f(f(x)) = f(x)) /\ (forall x. exists y. f(y) = x)
-                                ==> forall x. f(x) = x")
-       |> should equal [true]
+[<Test>]
+let ``test paramodulation``() =
+    paramodulation (parse "(forall x. f(f(x)) = f(x)) /\ (forall x. exists y. f(y) = x)
+                            ==> forall x. f(x) = x")
+    |> should equal [true]
