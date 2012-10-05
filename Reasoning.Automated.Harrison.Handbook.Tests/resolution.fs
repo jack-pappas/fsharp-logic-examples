@@ -7,9 +7,6 @@
 namespace Reasoning.Automated.Harrison.Handbook.Tests
 
 module resolution =
-    open NUnit.Framework
-    open FsUnit
-
     open Reasoning.Automated.Harrison.Handbook.lib
     open Reasoning.Automated.Harrison.Handbook.formulas
     open Reasoning.Automated.Harrison.Handbook.prop
@@ -18,6 +15,9 @@ module resolution =
     open Reasoning.Automated.Harrison.Handbook.unif
     open Reasoning.Automated.Harrison.Handbook.tableaux
     open Reasoning.Automated.Harrison.Handbook.resolution
+
+    open NUnit.Framework
+    open FsUnit
 
     // pg. 185
     // ------------------------------------------------------------------------- //

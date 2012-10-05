@@ -119,8 +119,6 @@ module folMod = // TODO : Change this back to 'fol'?
 // Printing of terms.                                                        //
 // ------------------------------------------------------------------------- //
 
-    open System.IO
-
     let rec fprint_term tw prec fm =
         match fm with
         | Var x ->

@@ -7,11 +7,11 @@
 namespace Reasoning.Automated.Harrison.Handbook.Tests
 
 module intro =
-    open NUnit.Framework
-    open FsUnit
-
     open Reasoning.Automated.Harrison.Handbook.lib
     open Reasoning.Automated.Harrison.Handbook.intro
+
+    open NUnit.Framework
+    open FsUnit
 
     // pg. 16
     // ------------------------------------------------------------------------- //
