@@ -123,3 +123,14 @@ module lib =
         apply smallsqs 3
         |> should equal 9
 
+    // Some additional tests (not in the book)
+    [<Test>]
+    let ``test dom finite partial function``() =
+        dom smallsqs
+        |> should equal [1; 2; 3]
+
+    [<Test>]
+    let ``test ran finite partial function``() =
+        ran smallsqs
+        |> should equal [1; 4; 9]
+
