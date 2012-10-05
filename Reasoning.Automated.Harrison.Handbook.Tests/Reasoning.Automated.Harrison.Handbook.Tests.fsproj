@@ -64,6 +64,7 @@
     <Compile Include="completion.fs" />
     <Compile Include="paramodulation.fs" />
     <Compile Include="decidable.fs" />
+    <Compile Include="qelim.fs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="FSharpx.Compatibility.OCaml">

@@ -166,7 +166,8 @@ module qelim =
                 let y = if s = Var x then t else s
                 list_conj (List.map (subst (x |=> y)) (subtract cjs [eqn]))
             with 
-            | :? System.Collections.Generic.KeyNotFoundException ->
+            | Failure _ ->
+            //| :? System.Collections.Generic.KeyNotFoundException -> // List.find is modified to return failure again
                 if mem (Atom (R ("<", [Var x; Var x]))) cjs then False
                 else
                     let lefts, rights = List.partition (fun (Atom (R ("<", [s; t]))) -> t = Var x) cjs
