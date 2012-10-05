@@ -7,18 +7,17 @@
 namespace Reasoning.Automated.Harrison.Handbook.Tests
 
 module unif =
-    open NUnit.Framework
-    open FsUnit
-
     open Reasoning.Automated.Harrison.Handbook.lib
     open Reasoning.Automated.Harrison.Handbook.folMod
     open Reasoning.Automated.Harrison.Handbook.unif
+
+    open NUnit.Framework
+    open FsUnit
 
     // pg. 171
     // ------------------------------------------------------------------------- //
     // Examples.                                                                 //
     // ------------------------------------------------------------------------- //
-
 
     [<Test>]
     let ``test unify_and_apply 1``() =

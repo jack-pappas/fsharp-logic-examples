@@ -7,15 +7,15 @@
 namespace Reasoning.Automated.Harrison.Handbook.Tests
 
 module equal =
-    open NUnit.Framework
-    open FsUnit
-
     open Reasoning.Automated.Harrison.Handbook.lib
     open Reasoning.Automated.Harrison.Handbook.formulas
     open Reasoning.Automated.Harrison.Handbook.folMod
     open Reasoning.Automated.Harrison.Handbook.skolem
     open Reasoning.Automated.Harrison.Handbook.meson
     open Reasoning.Automated.Harrison.Handbook.equal
+
+    open NUnit.Framework
+    open FsUnit
 
     // pg. 241
     // ------------------------------------------------------------------------- //
@@ -30,13 +30,13 @@ module equal =
             (forall x y. g(x) /\ g(y) ==> x = y) 
             ==> forall y. g(y) ==> f(y)")
         |> meson002
-        |> should FsUnit.equal [6]
+        |> should equal [6]
 
     [<Test>]
     let ``test meson002 2``() =
         equalitize (parse "forall c. f(f(f(f(f(c))))) = c /\ f(f(f(c))) = c ==> f(c) = c")
         |> meson002
-        |> should FsUnit.equal [8]
+        |> should equal [8]
 
     [<Test>]
     let ``test meson002 3``() =
@@ -55,4 +55,4 @@ module equal =
         (forall x y. x = y ==> cong(f(x),f(y))) 
         ==> f(c) = c")
         |> meson002
-        |> should FsUnit.equal [17]
+        |> should equal [17]

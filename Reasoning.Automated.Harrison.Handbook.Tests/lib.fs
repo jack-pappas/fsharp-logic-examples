@@ -7,10 +7,10 @@
 namespace Reasoning.Automated.Harrison.Handbook.Tests
 
 module lib =
+    open Reasoning.Automated.Harrison.Handbook.lib
+
     open NUnit.Framework
     open FsUnit
-
-    open Reasoning.Automated.Harrison.Handbook.lib
 
     // pg. 621
     let smallsqs = fpf [1;2;3] [1;4;9]

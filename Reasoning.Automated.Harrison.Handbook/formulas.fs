@@ -149,10 +149,10 @@ module formulas =
     // OCaml: val bracket : bool -> int -> ('a -> 'b -> 'c) -> 'a -> 'b -> unit = <fun>
     // F#:    val bracket : bool -> 'a -> ('b -> 'c -> unit) -> 'b -> 'c -> unit
     // Note: No use of OCaml format module. i.e. print_box removed during conversion
-    let bracket p n f x y =
-        if p then printf "("
+    let fbracket tw p n f x y =
+        if p then fprintf tw "("
         f x y
-        if p then printf ")"
+        if p then fprintf tw ")"
 
     // OCaml: val strip_quant : 'a formula -> string list * 'a formula = <fun>
     // F#:    val strip_quant : 'a formula -> string list * 'a formula
@@ -219,43 +219,43 @@ module formulas =
     // OCaml: val print_formula : (int -> 'a -> unit) -> 'a formula -> unit = <fun>
     // F#:    val print_formula : (int -> 'a -> unit) -> ('a formula -> unit)
     // Note: No use of OCaml format module. i.e. print_box removed during conversion
-    let print_formula pfn =
+    let fprint_formula tw pfn =
         let rec print_formula pr fm =
             match fm with
             | False ->
-                printf "false"
+                fprintf tw "false"
             | True ->
-                printf "true"
+                fprintf tw "true"
             | Atom pargs ->
                 pfn pr pargs
             | Not p ->
-                bracket (pr > 10) 1 (print_prefix 10) "~" p
+                fbracket tw (pr > 10) 1 (print_prefix 10) "~" p
             | And (p, q) ->
-                bracket (pr > 8) 0 (print_infix 8 "/\\") p q
+                fbracket tw (pr > 8) 0 (print_infix 8 "/\\") p q
             | Or (p, q) ->
-                bracket (pr > 6) 0 (print_infix  6 "\\/") p q
+                fbracket tw (pr > 6) 0 (print_infix  6 "\\/") p q
             | Imp (p, q) ->
-                bracket (pr > 4) 0 (print_infix 4 "==>") p q
+                fbracket tw (pr > 4) 0 (print_infix 4 "==>") p q
             | Iff (p, q) ->
-                bracket (pr > 2) 0 (print_infix 2 "<=>") p q
+                fbracket tw (pr > 2) 0 (print_infix 2 "<=>") p q
             | Forall (x, p) ->
-                bracket (pr > 0) 2 print_qnt "forall" (strip_quant fm)
+                fbracket tw (pr > 0) 2 print_qnt "forall" (strip_quant fm)
             | Exists (x, p) ->
-                bracket (pr > 0) 2 print_qnt "exists" (strip_quant fm)
+                fbracket tw (pr > 0) 2 print_qnt "exists" (strip_quant fm)
 
         and print_qnt qname (bvs, bod) =
-            printf "%s" qname
-            List.iter (printf " %s") bvs
-            printf ". "
+            fprintf tw "%s" qname
+            List.iter (fprintf tw " %s") bvs
+            fprintf tw ". "
             print_formula 0 bod
 
         and print_prefix newpr sym p =
-            printf "%s" sym
+            fprintf tw "%s" sym
             print_formula (newpr + 1) p
 
         and print_infix newpr sym p q =
             print_formula (newpr + 1) p
-            printf " %s " sym
+            fprintf tw " %s " sym
             print_formula newpr q
 
         print_formula 0
@@ -265,7 +265,7 @@ module formulas =
 //        open_box 0
 //        print_string "<<"
 //        open_box 0
-//        print_formula pfn fm
+//        fprint_formula tw pfn fm
 //        close_box ()
 //        print_string ">>"
 //        close_box ()
@@ -274,11 +274,17 @@ module formulas =
     // F#:    val print_qformula : (int -> 'a -> unit) -> 'a formula -> unit
     // Note: No use of OCaml format module. i.e. print_box removed during conversion
     // pg. 28
-    let print_qformula pfn fm =
-        printf "<<"
-        print_formula pfn fm
-        printfn ">>"
+    let fprint_qformula tw pfn fm =
+        fprintf tw "<<"
+        fprint_formula tw pfn fm
+        fprintfn tw ">>"
 
+    // Actuals functions to call from other modules
+    let inline print_formula pfn fm = fprint_formula stdout pfn fm
+    let inline sprint_formula pfn fm = writeToString (fun sw -> fprint_formula sw pfn fm)
+    
+    let inline print_qformula pfn fm = fprint_qformula stdout pfn fm
+    let inline sprint_qformula pfn fm = writeToString (fun sw -> fprint_qformula sw pfn fm)
 
 // pg.30
 // ------------------------------------------------------------------------- //

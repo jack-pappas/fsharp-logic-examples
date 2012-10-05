@@ -7,9 +7,6 @@
 namespace Reasoning.Automated.Harrison.Handbook.Tests
 
 module herbrand =
-    open NUnit.Framework
-    open FsUnit
-
     open Reasoning.Automated.Harrison.Handbook.lib    
     open Reasoning.Automated.Harrison.Handbook.formulas
     open Reasoning.Automated.Harrison.Handbook.prop
@@ -17,6 +14,9 @@ module herbrand =
     open Reasoning.Automated.Harrison.Handbook.folMod
     open Reasoning.Automated.Harrison.Handbook.skolem
     open Reasoning.Automated.Harrison.Handbook.herbrand
+
+    open NUnit.Framework
+    open FsUnit
 
     // pg. 161
     // ------------------------------------------------------------------------- //

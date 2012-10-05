@@ -7,31 +7,31 @@
 namespace Reasoning.Automated.Harrison.Handbook.Tests
 
 module fol =
-    open NUnit.Framework
-    open FsUnit
-
     open Reasoning.Automated.Harrison.Handbook.lib
     open Reasoning.Automated.Harrison.Handbook.intro
     open Reasoning.Automated.Harrison.Handbook.formulas
     open Reasoning.Automated.Harrison.Handbook.prop
     open Reasoning.Automated.Harrison.Handbook.folMod
     
+    open NUnit.Framework
+    open FsUnit
+
     // pg. 126
 
     [<Test>]
     let ``test holds with bool_interp``() =
         holds bool_interp undefined (parse "forall x. (x = 0) \/ (x = 1)")
-        |> should be FsUnit.True
+        |> should be True
 
     [<Test>]
     let ``test holds with mod_interp 1``() =
         holds (mod_interp 2) undefined (parse "forall x. (x = 0) \/ (x = 1)")
-        |> should be FsUnit.True
+        |> should be True
 
     [<Test>]
     let ``test holds with mod_interp 2``() =
         holds (mod_interp 3) undefined (parse "forall x. (x = 0) \/ (x = 1)")
-        |> should be FsUnit.False    
+        |> should be False    
 
     
     [<Test>]
@@ -45,12 +45,12 @@ module fol =
     [<Test>]
     let ``test holds with mod_interp 3``() =
         holds (mod_interp 3) undefined (parse "(forall x. x = 0) ==> 1 = 0")
-        |> should be FsUnit.True
+        |> should be True
 
     [<Test>]
     let ``test holds with mod_interp 4``() =
         holds (mod_interp 3) undefined (parse "forall x. x = 0 ==> 1 = 0")
-        |> should be FsUnit.False    
+        |> should be False    
 
     // pg. 133
     // ------------------------------------------------------------------------- //

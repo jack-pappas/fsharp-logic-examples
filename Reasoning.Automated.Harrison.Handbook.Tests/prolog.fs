@@ -7,9 +7,6 @@
 namespace Reasoning.Automated.Harrison.Handbook.Tests
 
 module prolog =
-    open NUnit.Framework
-    open FsUnit
-
     open Reasoning.Automated.Harrison.Handbook.lib
     open Reasoning.Automated.Harrison.Handbook.intro
     open Reasoning.Automated.Harrison.Handbook.formulas
@@ -20,6 +17,9 @@ module prolog =
     open Reasoning.Automated.Harrison.Handbook.tableaux
     open Reasoning.Automated.Harrison.Handbook.resolution
     open Reasoning.Automated.Harrison.Handbook.prolog
+
+    open NUnit.Framework
+    open FsUnit
 
     // pg. 208
     // ------------------------------------------------------------------------- //

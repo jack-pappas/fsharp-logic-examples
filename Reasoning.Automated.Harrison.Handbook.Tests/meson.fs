@@ -7,9 +7,6 @@
 namespace Reasoning.Automated.Harrison.Handbook.Tests
 
 module meson =
-    open NUnit.Framework
-    open FsUnit
-
     open Reasoning.Automated.Harrison.Handbook.lib
     open Reasoning.Automated.Harrison.Handbook.formulas
     open Reasoning.Automated.Harrison.Handbook.prop
@@ -18,6 +15,9 @@ module meson =
     open Reasoning.Automated.Harrison.Handbook.tableaux
     open Reasoning.Automated.Harrison.Handbook.prolog
     open Reasoning.Automated.Harrison.Handbook.meson
+
+    open NUnit.Framework
+    open FsUnit
 
     // pg. 215
     // ------------------------------------------------------------------------- //
@@ -48,7 +48,7 @@ module meson =
         meson002 (parse "exists x. exists y. forall z. 
                             (F(x,y) ==> (F(y,z) /\ F(z,z))) /\ 
                             ((F(x,y) /\ G(x,y)) ==> (G(x,z) /\ G(z,z)))")
-        |> should FsUnit.equal [8] // There is also an equal in meson module
+        |> should equal [8] // There is also an equal in meson module
 
     [<TestCase("p ==> q <=> ~q ==> ~p")>]    
     [<TestCase("~ ~p <=> p")>]
@@ -69,4 +69,4 @@ module meson =
     [<TestCase("p /\ (q ==> r) ==> s <=> (~p \/ q \/ s) /\ (~p \/ ~r \/ s)")>]
     let ``test meson002 returns empty`` f =
         meson002 (parse f)
-        |> should FsUnit.equal []
+        |> should equal []

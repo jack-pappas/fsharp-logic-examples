@@ -8,13 +8,13 @@ namespace Reasoning.Automated.Harrison.Handbook.Tests
 
 // Below tests take a few seconds to complete
 module propexamples =
-    open NUnit.Framework
-    open FsUnit
-
     open Reasoning.Automated.Harrison.Handbook.lib
     open Reasoning.Automated.Harrison.Handbook.formulas
     open Reasoning.Automated.Harrison.Handbook.prop
     open Reasoning.Automated.Harrison.Handbook.propexamples
+
+    open NUnit.Framework
+    open FsUnit
 
     // pg. 63
     // ------------------------------------------------------------------------- //
