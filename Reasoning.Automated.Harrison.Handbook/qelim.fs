@@ -109,6 +109,7 @@ module qelim =
     // OCaml : val cnnf : (fol formula -> fol formula) -> fol formula -> fol formula = <fun>
     // F# :    val cnnf : (fol formula -> fol formula) -> (fol formula -> fol formula)
     let cnnf lfn =
+        // OPTIMIZE : Optimize with CPS.
         let rec cnnf fm =
             match fm with
             | And (p, q) ->
@@ -163,6 +164,7 @@ module qelim =
         | Exists (x, p) ->
             let cjs = subtract (conjuncts p) [Atom (R ("=", [Var x; Var x]))]
             try
+                // OPTIMIZE : Use List.tryFind instead of List.find and the try/catch.
                 let eqn = List.find is_eq cjs                
                 let y =
                     let s, t = dest_eq eqn

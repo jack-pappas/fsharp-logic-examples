@@ -83,7 +83,7 @@ module decidable =
         | yes, no ->
             And (Exists (x, list_conj yes), list_conj no)
 
-    let rec pushquant x p =
+    let pushquant x p =
         if not <| mem x (fv p) then p
         else
             nnf p
@@ -91,6 +91,7 @@ module decidable =
             |> List.map (separate x)
             |> list_disj
 
+    // OPTIMIZE : Optimize with CPS.
     let rec miniscope = function
         | Not p ->
             Not (miniscope p)
