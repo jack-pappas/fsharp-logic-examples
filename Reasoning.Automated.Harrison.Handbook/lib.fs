@@ -507,28 +507,71 @@ module lib =
 // Finding all subsets or all subsets of a given size.                       //
 // ------------------------------------------------------------------------- //
 
-    //
-    let rec private allsetsImpl m l cont =
-        if m = 0 then
-            cont [[]]
+    // TODO : Once we change over to use F# Set<_> instead of list to represent
+    // sets, this function can be used directly (simply rename it to 'allsets').
+    let private allsetsImpl n (s : Set<_>) : Set<Set<_>> =
+        if n < 0 then
+            failwith "Subset size cannot be negative."
+        elif n = 0 then
+            // Optimized case for n = 0.
+            Set.singleton Set.empty
+        elif n = 1 then
+            // Optimized case for n = 1.
+            Set.map Set.singleton s
         else
-            match l with
-            | [] ->
-                cont []
-            | h :: t ->
-                allsetsImpl (m - 1) t <| fun result1 ->
-                allsetsImpl m t <| fun result2 ->
-                    result1
-                    |> image (fun g -> h :: g)
-                    |> union result2
-                    |> cont
+            let sizeOfSet = Set.count s
+            if n = sizeOfSet then
+                // Optimized case for getting the entire set.
+                Set.singleton s
+            elif n > sizeOfSet then
+                failwith "Subset size cannot be greater than the size of the set."
+            else
+                // OPTIMIZE : Implement a fast binomial function or approximation
+                // and use it to determine how many subsets of a given size there
+                // are based on the number of elements in the original set.
+                // Then, we can just use a normal array since we'll know the exact size.
+                let mutable allSetsOfPrevSize = ResizeArray<_> (sizeOfSet)
+
+                // Populate the ResizeArray with single-item sets to start with.
+                s |> Set.iter (Set.singleton >> allSetsOfPrevSize.Add)
+
+                for i = 2 to n do
+                    allSetsOfPrevSize <-
+                        let allSetsOfCurrentSize = ResizeArray<_> (sizeOfSet)
+
+                        allSetsOfPrevSize
+                        |> ResizeArray.iter (fun currentSet ->
+                            s |> Set.iter (fun el ->
+                                let currentSet = Set.add el currentSet
+                                if Set.count currentSet = i then
+                                    allSetsOfCurrentSize.Add currentSet))
+
+                        allSetsOfCurrentSize
+
+                // DEBUG : Make sure all of the sets have the
+                // correct number of elements. 
+                assert (allSetsOfPrevSize.Count > 0)
+                assert (
+                    allSetsOfPrevSize
+                    |> ResizeArray.forall (fun x -> Set.count x = n))
+
+                // Convert the ResizeArray to a Set<_> and return it.
+                (Set.empty, allSetsOfPrevSize)
+                ||> ResizeArray.fold (fun setOfSets el ->
+                    Set.add el setOfSets)
+
 
     // pg. 620
     // OCaml: val allsets : int -> 'a list -> 'a list list = <fun>
     // F#:    val allsets : int -> 'a list -> 'a list list when 'a : comparison
     /// Produces all n-element subsets of l.
+    // NOTE : 'allsets' creates combinations (not permutations!)
     let allsets n l =
-        allsetsImpl n l id
+        let subsets = allsetsImpl n (Set.ofList l)
+        ([], subsets)
+        ||> Set.fold (fun setList s ->
+            (Set.toList s) :: setList)
+        |> List.rev
 
     //
     let rec private allsubsetsImpl s cont =
