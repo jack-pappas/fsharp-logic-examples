@@ -6,7 +6,7 @@
 
 module Reasoning.Automated.Harrison.Handbook.Tests.lcfprop
 
-open Reasoning.Automated.Harrison.Handbook.lib
+open Reasoning.Automated.Harrison.Handbook.folMod
 open Reasoning.Automated.Harrison.Handbook.lcfprop
 open NUnit.Framework
 open FsUnit

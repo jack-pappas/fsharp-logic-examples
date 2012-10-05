@@ -7,6 +7,14 @@
 module Reasoning.Automated.Harrison.Handbook.Tests.real
 
 open Reasoning.Automated.Harrison.Handbook.lib
+open Reasoning.Automated.Harrison.Handbook.intro
+open Reasoning.Automated.Harrison.Handbook.formulas
+open Reasoning.Automated.Harrison.Handbook.prop
+open Reasoning.Automated.Harrison.Handbook.folMod
+open Reasoning.Automated.Harrison.Handbook.completion
+open Reasoning.Automated.Harrison.Handbook.qelim
+open Reasoning.Automated.Harrison.Handbook.cooper
+open Reasoning.Automated.Harrison.Handbook.complex
 open Reasoning.Automated.Harrison.Handbook.real
 open NUnit.Framework
 open FsUnit
