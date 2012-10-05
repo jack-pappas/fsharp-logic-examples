@@ -572,37 +572,24 @@ module lib =
         ||> Set.fold (fun setList s ->
             (Set.toList s) :: setList)
         |> List.rev
-
-    //
-    let rec private allsubsetsImpl s cont =
-        match s with
-        | [] ->
-            cont [[]]
-        | a :: t ->
-            allsubsetsImpl t <| fun res ->
-                res
-                |> image (fun b -> a :: b)
-                |> union res
-                |> cont
-
-    (* TODO :   Perhaps switch to this more-efficient and succint
-                implementation of the powerset function. It just
-                needs to be modified to use CPS for efficiency. *)
-    (*
-    let rec allsubsets = function
-        | [] -> [[]]
-        | h::t ->
-            [ for x in allsubsets t do
-                for t in [x;h::x] -> t ]
-    *)
         
     // pg. 620
     // OCaml: val allsubsets : 'a list -> 'a list list = <fun>
     // F#:    val allsubsets : 'a list -> 'a list list when 'a : comparison
     /// Produces all subsets of l.
     // NOTE : This is simply the powerset function.
-    let allsubsets s =
-        allsubsetsImpl s id
+    // NOTE : The produced subsets are combinations, not permutations.
+    let allsubsets l =
+        let subsetsBySize =
+            let s = Set.ofList l
+            Array.init (Set.count s + 1) <| fun n ->
+                allsetsImpl n s
+
+        ([], subsetsBySize)
+        ||> Array.fold (
+            Set.fold (fun subsetList subset ->
+                (Set.toList subset) :: subsetList))
+        |> List.sort
                     
     // pg. 620
     // OCaml: val allnonemptysubsets : 'a list -> 'a list list = <fun>
