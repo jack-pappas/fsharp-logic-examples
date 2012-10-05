@@ -1,6 +1,6 @@
 ﻿// ========================================================================= //
 // Copyright (c) 2003-2007, John Harrison.                                   //
-// Copyright (c) 2012 Eric Taucher, Jack Pappas                              //
+// Copyright (c) 2012 Eric Taucher, Jack Pappas, Anh-Dung Phan               //
 // (See "LICENSE.txt" for details.)                                          //
 // ========================================================================= //
 
@@ -1327,3 +1327,12 @@ module lib =
         use sw = new System.IO.StringWriter()
         fn sw
         sw.ToString()
+    
+    // The exception fired by failwith is used as a control flow.
+    // KeyNotFoundException is not recognized in many cases, so we have to use failwith for compatibility.
+    // Using exception as a control flow should be eliminated in the future.
+    module List =
+        let inline find p l =
+            match List.tryFind p l with
+            | Some x -> x
+            | None -> failwith "find"
