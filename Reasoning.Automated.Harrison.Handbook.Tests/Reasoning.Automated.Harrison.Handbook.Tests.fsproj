@@ -63,6 +63,7 @@
     <Compile Include="order.fs" />
     <Compile Include="completion.fs" />
     <Compile Include="paramodulation.fs" />
+    <Compile Include="decidable.fs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="FSharpx.Compatibility.OCaml">
