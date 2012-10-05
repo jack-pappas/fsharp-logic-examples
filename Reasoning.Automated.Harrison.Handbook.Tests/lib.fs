@@ -51,11 +51,6 @@ module lib =
         |> should equal [1; 1; 2; 3; 3; 4; 5; 5; 5; 6; 9]
 
     [<Test>]
-    let ``test uniq sort``() =
-        uniq (sort (<) [3; 1; 4; 1; 5; 9; 2; 6; 5; 3; 5])
-        |> should equal [1; 2; 3; 4; 5; 6; 9]
-
-    [<Test>]
     let ``test sort by increasing length``() =
         sort (increasing List.length) [[1]; [1;2;3]; []; [3; 4]]
         |> should equal [[]; [1]; [3; 4]; [1; 2; 3]]
