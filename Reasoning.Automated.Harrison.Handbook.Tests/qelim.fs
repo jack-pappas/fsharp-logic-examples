@@ -23,26 +23,15 @@ open Reasoning.Automated.Harrison.Handbook.qelim
 //  Examples.                                                                 // 
 //  ------------------------------------------------------------------------- // 
 
-let results = [| 
-                True;
-                True;
-                Atom (R ("<",[Var "x"; Var "y"]));
-                Not ((Or (Atom (R ("<",[Var "b"; Var "a"])),Atom (R ("<",[Var "b"; Var "a"])))));
-                True;
-                True;
-                False;
-                |]
-    
-// Manually mapping results by indices
-[<TestCase("forall x y. exists z. z < x /\ z < y", 0)>]
-[<TestCase("exists z. z < x /\ z < y", 1)>]
-[<TestCase("exists z. x < z /\ z < y", 2)>]
-[<TestCase( "(forall x. x < a ==> x < b)", 3)>]
-[<TestCase("forall a b. (forall x. x < a ==> x < b) <=> a <= b", 4)>]
-[<TestCase("forall a b. (forall x. x < a <=> x < b) <=> a = b", 5)>]
+[<TestCase("forall x y. exists z. z < x /\ z < y", "true")>]
+[<TestCase("exists z. z < x /\ z < y", "true")>]
+[<TestCase("exists z. x < z /\ z < y", "x < y")>]
+[<TestCase("(forall x. x < a ==> x < b)", "~(b < a \/ b < a)")>]
+[<TestCase("forall a b. (forall x. x < a ==> x < b) <=> a <= b", "true")>]
+[<TestCase("forall a b. (forall x. x < a <=> x < b) <=> a = b", "true")>]
 [<TestCase("exists x y z. forall u.
-                    x < x \/ ~x < u \/ (x < y /\ y < z /\ ~x < z)", 6)>]
-let ``test quelim_dlo`` (f, idx) =
-    quelim_dlo (parse f)
-    |> should equal results.[idx]
+					x < x \/ ~x < u \/ (x < y /\ y < z /\ ~x < z)", "false")>]
+let ``test quelim_dlo`` (input, expected) =
+    quelim_dlo (parse input)
+    |> should equal (parse expected)
 
