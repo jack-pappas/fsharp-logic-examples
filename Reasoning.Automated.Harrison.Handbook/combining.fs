@@ -142,8 +142,11 @@ module combining =
     let rec homo langs fms cont =
         listify (homol langs) fms
         <| fun dun n defs ->
-            if defs = [] then cont dun n defs
-            else homo langs defs (fun res -> cont (dun @ res)) n []
+            match defs with
+            | [] ->
+                cont dun n defs
+            | defs ->
+                homo langs defs (fun res -> cont (dun @ res)) n []
 
     // pg. 438
     // ------------------------------------------------------------------------- //
@@ -271,7 +274,7 @@ module combining =
     // Find the smallest subset satisfying a predicate.                          //
     // ------------------------------------------------------------------------- //
 
-    // TODO : Optimize by using the Maybe or Either monads instead of using
+    // OPTIMIZE : Optimize by using the Maybe or Either monads instead of using
     // exceptions for control flow.
     let rec findasubset p m l =
         if m = 0 then p []
