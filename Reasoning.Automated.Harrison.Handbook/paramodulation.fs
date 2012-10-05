@@ -43,9 +43,11 @@ module paramodulation =
         match fm with
         | Atom (R (f, args)) ->
             (args, [])
-            ||> listcases (overlaps (l, r)) (fun i a -> rfn i (Atom (R (f, a))))
+            ||> listcases (overlaps (l, r)) (fun i a ->
+                rfn i (Atom (R (f, a))))
         | Not p ->
-            overlapl (l, r) p (fun i p -> rfn i (Not p))
+            overlapl (l, r) p (fun i p ->
+                rfn i (Not p))
         | _ ->
             failwith "overlapl: not a literal"
   
@@ -92,7 +94,7 @@ module paramodulation =
             let news =
                 List.foldBack (@) (mapfilter (para_clauses cls) used') []
                 |> List.foldBack (@) (mapfilter (resolve_clauses cls) used')
-            if mem [] news then true 
+            if mem [] news then true
             else
                 paraloop (used', List.foldBack (incorporate cls) news ros)
 

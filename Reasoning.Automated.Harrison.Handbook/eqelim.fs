@@ -143,8 +143,13 @@ module eqelim =
 
     let bpuremeson fm =
         let rules =
-            let cls = brand (simpcnf (specialize (pnf fm)))
+            let cls =
+                pnf fm
+                |> specialize
+                |> simpcnf
+                |> brand
             List.foldBack ((@) << contrapositives) cls []
+
         deepen 0 <| fun n ->
             mexpand002 rules [] False id (undefined, n, 0)
             |> ignore

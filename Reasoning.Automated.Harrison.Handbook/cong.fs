@@ -49,7 +49,7 @@ module cong =
             let sp = tryapplyl pfn s' 
             let tp = tryapplyl pfn t'
             let pairs = allpairs (fun u v -> (u, v)) sp tp
-            let eqv' = equate (s, t) eqv            
+            let eqv' = equate (s, t) eqv
             let pfn' =
                 let st' = canonize eqv' s'
                 (st' |-> union sp tp) pfn            
@@ -70,7 +70,8 @@ module cong =
         match t with
         | Fn (f, a) ->
             (setify a, pfn)
-            ||> List.foldBack (fun s f -> (s |-> insert t (tryapplyl f s)) f)
+            ||> List.foldBack (fun s f ->
+                (s |-> insert t (tryapplyl f s)) f)
         | _ -> pfn
 
     let ccsatisfiable fms =
