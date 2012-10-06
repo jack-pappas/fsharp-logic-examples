@@ -97,7 +97,7 @@ prove (parse "(forall x. x <= x) /\(forall x y z. x <= y /\ y <= z ==> x <= z) /
         [imp_intro_tac "ant";
         conj_intro_tac;
         auto_tac by ["ant"];
-        auto_tac by ["ant"]];;
+        auto_tac by ["ant"]] |> sprint_thm;;
       
 // pg. 518
 // ------------------------------------------------------------------------- //
@@ -121,7 +121,7 @@ let ewd954 =
     so have (parse "f(x) = f(x) * f(y)") by ["eq_trans"; "hom"];
     so have (parse "f(x) * f(y) = f(x)") by ["eq_sym"];
     so conclude (parse "f(x) <= f(y)") by ["le"];
-    qed];;
+    qed] |> sprint_thm;;
 
 // ------------------------------------------------------------------------- //
 // More examples not in the main text.                                       //
@@ -139,7 +139,7 @@ prove
     consider ("a",(parse "p(a)")) by ["A"];
     take (parset "a");
     so conclude (parse "p(f(f(f(f(a)))))") by ["C"];
-    qed];;
+    qed] |> sprint_thm;;
 
 // ------------------------------------------------------------------------- //
 // Alternative formulation with lemma construct.                             //
@@ -160,7 +160,7 @@ prove
     consider ("a",(parse "p(a)")) by ["A"];
     take (parset "a");
     so conclude (parse "p(f(f(f(f(a)))))") by ["C"];
-    qed];;
+    qed] |> sprint_thm;;
 
 // ------------------------------------------------------------------------- //
 // Running a series of proof steps one by one on goals.                      //
@@ -196,7 +196,7 @@ let b () =
 
 prove (parse "p(a) ==> (forall x. p(x) ==> p(f(x))) ==> exists y. p(y) /\ p(f(y))")
         [our thesis at once;
-        qed];;
+        qed] |> sprint_thm;;
 
 prove
     (parse "(exists x. p(x)) ==> (forall x. p(x) ==> p(f(x))) ==> exists y. p(f(f(f(f(y)))))")
@@ -209,7 +209,7 @@ prove
     consider ("a",(parse "p(a)")) by ["A"];
     take (parset "a");
     so our thesis by ["C"];
-    qed];;
+    qed] |> sprint_thm;;
 
 prove (parse "forall a. p(a) ==> (forall x. p(x) ==> p(f(x))) ==> exists y. p(y) /\ p(f(y))")
         [fix "c";
@@ -219,7 +219,7 @@ prove (parse "forall a. p(a) ==> (forall x. p(x) ==> p(f(x))) ==> exists y. p(y)
         conclude (parse "p(c)") by ["A"];
         note ("C",(parse "p(c) ==> p(f(c))")) by ["B"];
         so our thesis by ["C"; "A"];
-        qed];;
+        qed] |> sprint_thm;;
 
 prove (parse "p(c) ==> (forall x. p(x) ==> p(f(x))) ==> exists y. p(y) /\ p(f(y))")
         [assume ["A",(parse "p(c)")];
@@ -227,7 +227,7 @@ prove (parse "p(c) ==> (forall x. p(x) ==> p(f(x))) ==> exists y. p(y) /\ p(f(y)
         take (parset "c");
         conclude (parse "p(c)") by ["A"];
         our thesis by ["A"; "B"];
-        qed];;
+        qed] |> sprint_thm;;
 
 prove (parse "forall a. p(a) ==> (forall x. p(x) ==> p(f(x))) ==> exists y. p(y) /\ p(f(y))")
         [fix "c";
@@ -237,7 +237,7 @@ prove (parse "forall a. p(a) ==> (forall x. p(x) ==> p(f(x))) ==> exists y. p(y)
         conclude (parse "p(c)") by ["A"];
         note ("C",(parse "p(c) ==> p(f(c))")) by ["B"];
         our thesis by ["C"; "A"];
-        qed];;
+        qed] |> sprint_thm;;
 
 prove (parse "forall a. p(a) ==> (forall x. p(x) ==> p(f(x))) ==> exists y. p(y) /\ p(f(y))")
         [fix "c";
@@ -247,7 +247,7 @@ prove (parse "forall a. p(a) ==> (forall x. p(x) ==> p(f(x))) ==> exists y. p(y)
         note ("D",(parse "p(c)")) by ["A"];
         note ("C",(parse "p(c) ==> p(f(c))")) by ["B"];
         our thesis by ["C"; "A"; "D"];
-        qed];;
+        qed] |> sprint_thm;;
 
 
 prove (parse "(p(a) \/ p(b)) ==> q ==> exists y. p(y)")
@@ -260,26 +260,24 @@ prove (parse "(p(a) \/ p(b)) ==> q ==> exists y. p(y)")
 
         take (parset "b");
         so our thesis at once;
-        qed];;
+        qed] |> sprint_thm;;
         
-// TODO: Fix this so it works
-//let v1 = "A"
-//let v2 = (parse "p(a)")
-//let v3 = note(v1,v2)
-//prove
-//    (parse "(p(a) \/ p(b)) /\ (forall x. p(x) ==> p(f(x))) ==> exists y. p(f(y))")
-//    [assume ["base",(parse "p(a) \/ p(b)");
-//            "Step",(parse "forall x. p(x) ==> p(f(x))")];
-//    cases (parse "p(a) \/ p(b)") by ["base"]; 
-//        so v3 at once;
-//        note ("X",(parse "p(a) ==> p(f(a))")) by ["Step"];
-//        take (parset "a");
-//        our thesis by ["A"; "X"];
-//        qed;
-//
-//        take (parset "b");
-//        so our thesis by ["Step"];
-//        qed];;
+// Fixed this so it works
+let v1 = "A"
+let v2 = (parse "p(a)")
+prove
+    (parse "(p(a) \/ p(b)) /\ (forall x. p(x) ==> p(f(x))) ==> exists y. p(f(y))")
+    [assume ["base",(parse "p(a) \/ p(b)");
+            "Step",(parse "forall x. p(x) ==> p(f(x))")];
+    cases (parse "p(a) \/ p(b)") by ["base"]; 
+        so note (v1, v2) at once; // use function app instead of value
+        note ("X",(parse "p(a) ==> p(f(a))")) by ["Step"];
+        take (parset "a");
+        our thesis by ["A"; "X"];
+        qed;
+        take (parset "b");
+        so our thesis by ["Step"];
+        qed] |> sprint_thm;;
 
 prove
     (parse "(exists x. p(x)) ==> (forall x. p(x) ==> p(f(x))) ==> exists y. p(f(y))")
@@ -289,7 +287,7 @@ prove
     so note ("concl",(parse "p(f(a))")) by ["B"];
     take (parset "a");
     our thesis by ["concl"];
-    qed];;
+    qed] |> sprint_thm;;
 
 prove (parse "(forall x. p(x) ==> q(x)) ==> (forall x. q(x) ==> p(x))
         ==> (p(a) <=> q(a))")
@@ -298,7 +296,7 @@ prove (parse "(forall x. p(x) ==> q(x)) ==> (forall x. q(x) ==> p(x))
     note ("von",(parse "p(a) ==> q(a)")) by ["A"];
     note ("bis",(parse "q(a) ==> p(a)")) by ["B"];
     our thesis by ["von"; "bis"];
-    qed];;
+    qed] |> sprint_thm;;
 
 //** Mizar-like
 // This is an example of Mizar proof, it will not work with this.
@@ -317,7 +315,7 @@ prove (parse "(forall x. p(x) ==> q(x)) ==> (forall x. q(x) ==> p(x))
 //        suppose ("base",(parse "p(b)"));
 //        our thesis by ["Step"; "base"];
 //        qed;
-//    endcase];;
+//    endcase] |> sprint_thm;;
        
 // ------------------------------------------------------------------------- //
 // Some amusing efficiency tests versus a "direct" spec.                     //
