@@ -215,13 +215,17 @@ module type Proofsystem =
 
 //    include Proven;;
 
-    let print_thm th =
+    let fprint_thm sw th =
 //        open_box 0
-        printfn "|-"
+        fprintf sw "|- " // write on the same line
 //        print_space ()
 //        open_box 0
-        print_formula print_atom (concl th)
+        fprint_formula sw (fprint_atom sw) (concl th)
 //        close_box ()
 //        close_box ()
+
+    // Add printing facility
+    let inline print_thm th = fprint_thm stdout th
+    let inline sprint_thm th = writeToString (fun sw -> fprint_thm sw th)
 
     //#install_printer print_thm;;
