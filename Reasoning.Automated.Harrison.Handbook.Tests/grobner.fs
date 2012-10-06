@@ -9,6 +9,7 @@ module Reasoning.Automated.Harrison.Handbook.Tests.grobner
 open NUnit.Framework
 open FsUnit
 open Reasoning.Automated.Harrison.Handbook.lib
+open Reasoning.Automated.Harrison.Handbook.formulas
 open Reasoning.Automated.Harrison.Handbook.folMod
 open Reasoning.Automated.Harrison.Handbook.complex
 open Reasoning.Automated.Harrison.Handbook.grobner
@@ -49,7 +50,7 @@ let ``examples 2``() =
         |> parse
 
     complex_qelim (generalize fm)
-    |> should equal True
+    |> should equal formula<fol>.True
 
     grobner_decide
     |> should equal true
@@ -134,7 +135,7 @@ let ``examples 5``() =
      ==> (a * d * e)^2 + (c^2 * d * e)^2 + (c * d^2 * e)^2 + (b * d * e)^2 + 1 = 0"
     |> parse
     |> complex_qelim
-    |> should equal True
+    |> should equal formula<fol>.True
 
 [<Test>]
 let ``examples 6``() =
@@ -156,7 +157,7 @@ let ``examples 7``() =
      ==> 2 * (d * e)^2 + (d^2 * e)^2 + (b * d * e)^2 + 1 = 0"
     |> parse
     |> complex_qelim
-    |> should equal True
+    |> should equal formula<fol>.True
 
 [<Test>]
 let ``examples 8``() =

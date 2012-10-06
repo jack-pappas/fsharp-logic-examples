@@ -67,7 +67,7 @@ let ``nelop real_lang`` f =
 // ------------------------------------------------------------------------- //
 
 [<Test>]
-let ``non-convexity 1``() = 
+let ``non-convexity real_qelim``() = 
     List.map (real_qelim >>|> generalize) [
         parse @"x * y = 0 /\ z = 0 ==> x = z \/ y = z";
         parse @"x * y = 0 /\ z = 0 ==> x = z";
@@ -75,7 +75,7 @@ let ``non-convexity 1``() =
     |> should equal [formula<fol>.True; formula<fol>.False; formula<fol>.False]
 
 [<Test>]
-let ``non-convexity 2``() = 
+let ``non-convexity integer_qelim``() = 
     List.map (integer_qelim >>|> generalize) [
         parse @"0 <= x /\ x < 2 /\ y = 0 /\ z = 1 ==> x = y \/ x = z";
         parse @"0 <= x /\ x < 2 /\ y = 0 /\ z = 1 ==> x = y";
