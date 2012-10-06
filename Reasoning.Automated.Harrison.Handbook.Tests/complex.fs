@@ -886,6 +886,7 @@ let private example_results_10 : formula<fol>[] = [|
    t - u = n /\ 27 * t * u = m^3
    ==> exists ct cu. ct^3 = t /\ cu^3 = u /\
                      (x = ct - cu ==> x^3 + m * x = n)", 1)>]
+[<Category("LongRunning")>]
 let ``examples 10`` (f, idx) =
     parse f
     |> complex_qelim
