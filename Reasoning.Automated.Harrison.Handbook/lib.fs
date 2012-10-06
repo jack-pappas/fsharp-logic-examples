@@ -13,6 +13,16 @@ module lib =
     open FSharpx.Compatibility.OCaml
     open Num
 
+    // The exception fired by failwith is used as a control flow.
+    // KeyNotFoundException is not recognized in many cases, so we have to use redefine Failure for compatibility.
+    // Using exception as a control flow should be eliminated in the future.
+    let (|Failure|_|) (exn: exn) =
+        match exn with
+        | :? System.Collections.Generic.KeyNotFoundException as p -> Some p.Message
+        | :? System.ArgumentException as p -> Some p.Message
+        | Failure s -> Some s
+        | _ -> None
+
     // pg. 618
     // OCaml: val ( ** ) : ('a -> 'b) -> ('c -> 'a) -> 'c -> 'b = <fun>
     // F#:    val ( >>|> ) : ('a -> 'b) -> ('c -> 'a) -> 'c -> 'b
@@ -1329,12 +1339,3 @@ module lib =
         use sw = new System.IO.StringWriter()
         fn sw
         sw.ToString()
-    
-    // The exception fired by failwith is used as a control flow.
-    // KeyNotFoundException is not recognized in many cases, so we have to use failwith for compatibility.
-    // Using exception as a control flow should be eliminated in the future.
-    module List =
-        let inline find p l =
-            match List.tryFind p l with
-            | Some x -> x
-            | None -> failwith "find"
