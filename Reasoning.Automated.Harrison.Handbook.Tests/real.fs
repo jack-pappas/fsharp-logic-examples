@@ -13,6 +13,7 @@ open Reasoning.Automated.Harrison.Handbook.intro
 open Reasoning.Automated.Harrison.Handbook.formulas
 open Reasoning.Automated.Harrison.Handbook.prop
 open Reasoning.Automated.Harrison.Handbook.folMod
+open Reasoning.Automated.Harrison.Handbook.skolem
 open Reasoning.Automated.Harrison.Handbook.completion
 open Reasoning.Automated.Harrison.Handbook.qelim
 open Reasoning.Automated.Harrison.Handbook.cooper
@@ -66,5 +67,22 @@ let ``examples 2``() =
     |> should equal True
 
 
-// TODO : Finish implementing tests from real.ml.
+// TODO : Add the other test in this section; ocamltop truncates the
+// output so we can't determine the expected result.
+
+
+(* ------------------------------------------------------------------------- *)
+(* A case where using DNF is an improvement.                                 *)
+(* ------------------------------------------------------------------------- *)
+
+[<Test>]
+let ``examples 3``() =
+    "forall d.
+     (exists c. forall a b. (a = d /\ b = c) \/ (a = c /\ b = 1)
+                            ==> a^2 = b)
+     <=> d^4 = 1"
+    |> parse
+    |> real_qelim'
+    |> should equal True
+
 
