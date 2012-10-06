@@ -34,6 +34,29 @@ simpcnf(skolemize(Not barb));;
 // Simple example that works well.                                           //
 // ------------------------------------------------------------------------- //
 
+let count = ref 0
+let buffer = ResizeArray()
+let results = ResizeArray<bool list>()
+
+// Shadow time function to record test cases
+let time fn input =
+    let result = time fn (parse input)
+    let testCase = sprintf "[<TestCase(@\"%s\", %i)>]" input !count
+    buffer.Add(testCase) |> ignore
+    results.Add(result) |> ignore
+    incr count
+    result
+
+// Content is only written to files here
+let  flush_buffer () =
+    let path = __SOURCE_DIRECTORY__ + "\\__tests__.fsx"
+    System.IO.File.WriteAllLines(path, buffer)
+    let sb = System.Text.StringBuilder()
+    sb.AppendLine "[|" |> ignore
+    results |> Seq.iteri (fun i xs -> sprintf "%A; // %i" xs i |> sb.AppendLine |> ignore) // %A might not work with long lists
+    sb.AppendLine "|]" |> ignore
+    System.IO.File.AppendAllText(path, sb.ToString())
+
 let davis_putnam_example001 = resolution001 (parse "
     exists x. exists y. forall z. 
         (F(x,y) ==> (F(y,z) /\ F(z,z))) /\ 
@@ -54,7 +77,7 @@ let davis_putnam_example002 = resolution002 (parse "
 // Example: the (in)famous Los problem.                                      //
 // ------------------------------------------------------------------------- //
 
-let losp = time presolution (parse "
+let losp = time presolution ("
     (forall x y z. P(x,y) ==> P(y,z) ==> P(x,z)) /\ 
     (forall x y z. Q(x,y) ==> Q(y,z) ==> Q(x,z)) /\ 
     (forall x y. Q(x,y) ==> Q(y,x)) /\ 
@@ -65,102 +88,102 @@ let losp = time presolution (parse "
 // The Pelletier examples again.                                             //
 // ------------------------------------------------------------------------- //
 
-let p1p = time presolution (parse "
+let p1p = time presolution ("
 	p ==> q <=> ~q ==> ~p");;
 
-let p2p = time presolution (parse "
+let p2p = time presolution ("
 	~ ~p <=> p");;
 
-let p3p = time presolution (parse "
+let p3p = time presolution ("
 	~(p ==> q) ==> q ==> p");;
 
-let p4p = time presolution (parse "
+let p4p = time presolution ("
 	~p ==> q <=> ~q ==> p");;
 
-let p5p = time presolution (parse "
+let p5p = time presolution ("
 	(p \/ q ==> p \/ r) ==> p \/ (q ==> r)");;
 
-let p6p = time presolution (parse "
+let p6p = time presolution ("
 	p \/ ~p");;
 
-let p7p = time presolution (parse "
+let p7p = time presolution ("
 	p \/ ~ ~ ~p");;
 
-let p8p = time presolution (parse "
+let p8p = time presolution ("
 	((p ==> q) ==> p) ==> p");;
 
-let p9p = time presolution (parse "
+let p9p = time presolution ("
 	(p \/ q) /\ (~p \/ q) /\ (p \/ ~q) ==> ~(~q \/ ~q)");;
 
-let p10p = time presolution (parse "
+let p10p = time presolution ("
 	(q ==> r) /\ (r ==> p /\ q) /\ (p ==> q /\ r) ==> (p <=> q)");;
 
-let p11p = time presolution (parse "
+let p11p = time presolution ("
 	p <=> p");;
 
-let p12p = time presolution (parse "
+let p12p = time presolution ("
 	((p <=> q) <=> r) <=> (p <=> (q <=> r))");;
 
-let p13p = time presolution (parse "
+let p13p = time presolution ("
 	p \/ q /\ r <=> (p \/ q) /\ (p \/ r)");;
 
-let p14p = time presolution (parse "
+let p14p = time presolution ("
 	(p <=> q) <=> (q \/ ~p) /\ (~q \/ p)");;
 
-let p15p = time presolution (parse "
+let p15p = time presolution ("
 	p ==> q <=> ~p \/ q");;
 
-let p16p = time presolution (parse "
+let p16p = time presolution ("
 	(p ==> q) \/ (q ==> p)");;
 
-let p17p = time presolution (parse "
+let p17p = time presolution ("
 	p /\ (q ==> r) ==> s <=> (~p \/ q \/ s) /\ (~p \/ ~r \/ s)");;
 
 // ------------------------------------------------------------------------- //
 // Monadic Predicate Logic.                                                  //
 // ------------------------------------------------------------------------- //
 
-let p18p = time presolution (parse "
+let p18p = time presolution ("
 	exists y. forall x. P(y) ==> P(x)");;
 
-let p19p = time presolution (parse "
+let p19p = time presolution ("
 	exists x. forall y z. (P(y) ==> Q(z)) ==> P(x) ==> Q(x)");;
 
-let p20p = time presolution (parse "
+let p20p = time presolution ("
 	(forall x y. exists z. forall w. P(x) /\ Q(y) ==> R(z) /\ U(w)) 
     ==> (exists x y. P(x) /\ Q(y)) ==> (exists z. R(z))");;
 
-let p21p = time presolution (parse "
+let p21p = time presolution ("
 	(exists x. P ==> Q(x)) /\ (exists x. Q(x) ==> P) ==> (exists x. P <=> Q(x))");;
 
-let p22p = time presolution (parse "
+let p22p = time presolution ("
 	(forall x. P <=> Q(x)) ==> (P <=> (forall x. Q(x)))");;
 
-let p23p = time presolution (parse "
+let p23p = time presolution ("
 	(forall x. P \/ Q(x)) <=> P \/ (forall x. Q(x))");;
 
-let p24p = time presolution (parse "
+let p24p = time presolution ("
     ~(exists x. U(x) /\ Q(x)) /\ 
     (forall x. P(x) ==> Q(x) \/ R(x)) /\ 
     ~(exists x. P(x) ==> (exists x. Q(x))) /\ 
     (forall x. Q(x) /\ R(x) ==> U(x)) ==> 
     (exists x. P(x) /\ R(x))");;
 
-let p25p = time presolution (parse "
+let p25p = time presolution ("
 	(exists x. P(x)) /\ 
     (forall x. U(x) ==> ~G(x) /\ R(x)) /\ 
     (forall x. P(x) ==> G(x) /\ U(x)) /\ 
     ((forall x. P(x) ==> Q(x)) \/ (exists x. Q(x) /\ P(x))) 
     ==> (exists x. Q(x) /\ P(x))");;
 
-let p26p = time presolution (parse "
+let p26p = time presolution ("
 	(exists x. P(x)) /\ 
     (forall x. U(x) ==> ~G(x) /\ R(x)) /\ 
     (forall x. P(x) ==> G(x) /\ U(x)) /\ 
     ((forall x. P(x) ==> Q(x)) \/ (exists x. Q(x) /\ P(x))) 
     ==> (exists x. Q(x) /\ P(x))");;
 
-let p27p = time presolution (parse "
+let p27p = time presolution ("
 	(exists x. P(x) /\ ~Q(x)) /\ 
     (forall x. P(x) ==> R(x)) /\ 
     (forall x. U(x) /\ V(x) ==> P(x)) /\ 
@@ -168,7 +191,7 @@ let p27p = time presolution (parse "
     ==> (forall x. U(x) ==> ~R(x)) 
         ==> (forall x. U(x) ==> ~V(x))");;
 
-let p28p = time presolution (parse "
+let p28p = time presolution ("
 	(exists x. P(x) /\ ~Q(x)) /\ 
     (forall x. P(x) ==> R(x)) /\ 
     (forall x. U(x) /\ V(x) ==> P(x)) /\ 
@@ -176,53 +199,53 @@ let p28p = time presolution (parse "
     ==> (forall x. U(x) ==> ~R(x)) 
         ==> (forall x. U(x) ==> ~V(x))");;
 
-let p29p = time presolution (parse "
+let p29p = time presolution ("
 	(exists x. P(x)) /\ (exists x. G(x)) ==> 
     ((forall x. P(x) ==> H(x)) /\ (forall x. G(x) ==> J(x)) <=> 
      (forall x y. P(x) /\ G(y) ==> H(x) /\ J(y)))");;
 
-let p30p = time presolution (parse "
+let p30p = time presolution ("
 	(forall x. P(x) \/ G(x) ==> ~H(x)) /\ 
     (forall x. (G(x) ==> ~U(x)) ==> P(x) /\ H(x)) 
     ==> (forall x. U(x))");;
 
-let p31p = time presolution (parse "
+let p31p = time presolution ("
 	~(exists x. P(x) /\ (G(x) \/ H(x))) /\ 
     (exists x. Q(x) /\ P(x)) /\ 
     (forall x. ~H(x) ==> J(x)) 
     ==> (exists x. Q(x) /\ J(x))");;
 
-let p32p = time presolution (parse "
+let p32p = time presolution ("
 	(forall x. P(x) /\ (G(x) \/ H(x)) ==> Q(x)) /\ 
     (forall x. Q(x) /\ H(x) ==> J(x)) /\ 
     (forall x. R(x) ==> H(x)) 
     ==> (forall x. P(x) /\ R(x) ==> J(x))");;
 
-let p33p = time presolution (parse "
+let p33p = time presolution ("
 	(forall x. P(a) /\ (P(x) ==> P(b)) ==> P(c)) <=> 
     (forall x. P(a) ==> P(x) \/ P(c)) /\ (P(a) ==> P(b) ==> P(c))");;
 
-let p34p = time presolution (parse "
+let p34p = time presolution ("
 	((exists x. forall y. P(x) <=> P(y)) <=>
      ((exists x. Q(x)) <=> (forall y. Q(y)))) <=>
     ((exists x. forall y. Q(x) <=> Q(y)) <=>
      ((exists x. P(x)) <=> (forall y. P(y))))");;
 
-let p35p = time presolution (parse "
+let p35p = time presolution ("
 	exists x y. P(x,y) ==> (forall x y. P(x,y))");;
 
 // ------------------------------------------------------------------------- //
 // Full predicate logic (without Identity and Functions)                     //
 // ------------------------------------------------------------------------- //
 
-let p36p = time presolution (parse "
+let p36p = time presolution ("
 	(forall x. exists y. P(x,y)) /\ 
     (forall x. exists y. G(x,y)) /\ 
     (forall x y. P(x,y) \/ G(x,y) 
     ==> (forall z. P(y,z) \/ G(y,z) ==> H(x,z))) 
         ==> (forall x. exists y. H(x,y))");;
 
-let p37p = time presolution (parse "
+let p37p = time presolution ("
 	(forall z. 
       exists w. forall x. exists y. (P(x,z) ==> P(y,w)) /\ P(y,z) /\ 
       (P(y,w) ==> (exists u. Q(u,w)))) /\ 
@@ -231,7 +254,7 @@ let p37p = time presolution (parse "
     (forall x. exists y. R(x,y))");;
 
 // long running
-//let p38p = time presolution (parse "
+//let p38p = time presolution ("
 //    (forall x. 
 //      P(a) /\ (P(x) ==> (exists y. P(y) /\ R(x,y))) ==> 
 //      (exists z w. P(z) /\ R(x,w) /\ R(w,z))) <=> 
@@ -240,32 +263,32 @@ let p37p = time presolution (parse "
 //      (~P(a) \/ ~(exists y. P(y) /\ R(x,y)) \/ 
 //      (exists z w. P(z) /\ R(x,w) /\ R(w,z))))");;
 
-let p39p = time presolution (parse "
+let p39p = time presolution ("
 	~(exists x. forall y. P(y,x) <=> ~P(y,y))");;
 
-let p40p = time presolution (parse "
+let p40p = time presolution ("
     (exists y. forall x. P(x,y) <=> P(x,x))
     ==> ~(forall x. exists y. forall z. P(z,y) <=> ~P(z,x))");;
 
-let p41p = time presolution (parse "
+let p41p = time presolution ("
 	(forall z. exists y. forall x. P(x,y) <=> P(x,z) /\ ~P(x,x)) 
     ==> ~(exists z. forall x. P(x,z))");;
 
-let p42p = time presolution (parse "
+let p42p = time presolution ("
 	~(exists y. forall x. P(x,y) <=> ~(exists z. P(x,z) /\ P(z,x)))");;
 
 // long running
-//let p43p = time presolution (parse "
+//let p43p = time presolution ("
 //	(forall x y. Q(x,y) <=> forall z. P(z,x) <=> P(z,y)) 
 //    ==> forall x y. Q(x,y) <=> Q(y,x)");;
 
-let p44p = time presolution (parse "
+let p44p = time presolution ("
 	(forall x. P(x) ==> (exists y. G(y) /\ H(x,y)) /\ 
     (exists y. G(y) /\ ~H(x,y))) /\ 
     (exists x. J(x) /\ (forall y. G(y) ==> H(x,y))) ==> 
     (exists x. J(x) /\ ~P(x))");;
 
-let p45p = time presolution (parse "
+let p45p = time presolution ("
 	(forall x. 
       P(x) /\ (forall y. G(y) /\ H(x,y) ==> J(x,y)) ==> 
         (forall y. G(y) /\ H(x,y) ==> R(y))) /\ 
@@ -274,7 +297,7 @@ let p45p = time presolution (parse "
       L(y)) /\ (forall y. G(y) /\ H(x,y) ==> J(x,y))) ==> 
     (exists x. P(x) /\ ~(exists y. G(y) /\ H(x,y)))");;
 
-let p46p = time presolution (parse "
+let p46p = time presolution ("
 	(forall x. P(x) /\ (forall y. P(y) /\ H(y,x) ==> G(y)) ==> G(x)) /\ 
     ((exists x. P(x) /\ ~G(x)) ==> 
      (exists x. P(x) /\ ~G(x) /\ 
@@ -286,7 +309,7 @@ let p46p = time presolution (parse "
 // Example from Manthey and Bry, CADE-9.                                     //
 // ------------------------------------------------------------------------- //
 
-let p55p = time presolution (parse "
+let p55p = time presolution ("
 	lives(agatha) /\ lives(butler) /\ lives(charles) /\ 
     (killed(agatha,agatha) \/ killed(butler,agatha) \/ 
      killed(charles,agatha)) /\ 
@@ -300,7 +323,7 @@ let p55p = time presolution (parse "
         ~killed(butler,agatha) /\ 
         ~killed(charles,agatha)");;
 
-let p57p = time presolution (parse "
+let p57p = time presolution ("
 	P(f((a),b),f(b,c)) /\ 
     P(f(b,c),f(a,c)) /\ 
     (forall (x) y z. P(x,y) /\ P(y,z) ==> P(x,z)) 
@@ -310,14 +333,14 @@ let p57p = time presolution (parse "
 // See info-hol, circa 1500.                                                 //
 // ------------------------------------------------------------------------- //
 
-let p58p = time presolution (parse "
+let p58p = time presolution ("
 	forall P Q R. forall x. exists v. exists w. forall y. forall z. 
     ((P(x) /\ Q(y)) ==> ((P(v) \/ R(w))  /\ (R(z) ==> Q(v))))");;
 
-let p59p = time presolution (parse "
+let p59p = time presolution ("
 	(forall x. P(x) <=> ~P(f(x))) ==> (exists x. P(x) /\ ~P(f(x)))");;
 
-let p60p = time presolution (parse "
+let p60p = time presolution ("
 	forall x. P(x,f(x)) <=> 
               exists y. (forall z. P(z,y) ==> P(z,f(x))) /\ P(x,y)");;
 
@@ -325,7 +348,7 @@ let p60p = time presolution (parse "
 // From Gilmore's classic paper.                                             //
 // ------------------------------------------------------------------------- //
 
-let gilmore_1p = time presolution (parse "
+let gilmore_1p = time presolution ("
 	exists x. forall y z. 
         ((F(y) ==> G(y)) <=> F(x)) /\ 
         ((F(y) ==> H(y)) <=> G(x)) /\ 
@@ -334,47 +357,47 @@ let gilmore_1p = time presolution (parse "
 
 // long running
 //** This is not valid, according to Gilmore
-//let gilmore_2p = time presolution (parse "
+//let gilmore_2p = time presolution ("
 //    exists x y. forall z. 
 //        (F(x,z) <=> F(z,y)) /\ (F(z,y) <=> F(z,z)) /\ (F(x,y) <=> F(y,x)) 
 //        ==> (F(x,y) <=> F(x,z))");;
 
-let gilmore_3p = time presolution (parse "
+let gilmore_3p = time presolution ("
     exists x. forall y z. 
         ((F(y,z) ==> (G(y) ==> H(x))) ==> F(x,x)) /\ 
         ((F(z,x) ==> G(x)) ==> H(z)) /\ 
         F(x,y) 
         ==> F(z,z)");;
 
-let gilmore_4p = time presolution (parse "
+let gilmore_4p = time presolution ("
     exists x. forall y z. 
         ((F(y,z) ==> (G(y) ==> H(x))) ==> F(x,x)) /\ 
         ((F(z,x) ==> G(x)) ==> H(z)) /\ 
         F(x,y) 
         ==> F(z,z)");;
 
-let gilmore_5p = time presolution (parse "
+let gilmore_5p = time presolution ("
 	(forall x. exists y. F(x,y) \/ F(y,x)) /\ 
     (forall x y. F(y,x) ==> F(y,y)) 
     ==> exists z. F(z,z)");;
 
-let gilmore_6p = time presolution (parse "
+let gilmore_6p = time presolution ("
 	(forall x. exists y. F(x,y) \/ F(y,x)) /\ 
     (forall x y. F(y,x) ==> F(y,y)) 
     ==> exists z. F(z,z)");;
 
-let gilmore_7p = time presolution (parse "
+let gilmore_7p = time presolution ("
 	(forall x. exists y. F(x,y) \/ F(y,x)) /\ 
     (forall x y. F(y,x) ==> F(y,y)) 
     ==> exists z. F(z,z)");;
 
-let gilmore_8p = time presolution (parse "
+let gilmore_8p = time presolution ("
 	(forall x. exists y. F(x,y) \/ F(y,x)) /\ 
     (forall x y. F(y,x) ==> F(y,y)) 
     ==> exists z. F(z,z)");;
 
 // long running
-//let gilmore_9p = time presolution (parse "
+//let gilmore_9p = time presolution ("
 //    forall x. exists y. forall z. 
 //        ((forall u. exists v. F(y,u,v) /\ G(y,u) /\ ~H(y,x)) 
 //          ==> (forall u. exists v. F(x,u,v) /\ G(z,u) /\ ~H(x,z)) 
@@ -388,16 +411,18 @@ let gilmore_8p = time presolution (parse "
 // Example from Davis-Putnam papers where Gilmore procedure is poor.         //
 // ------------------------------------------------------------------------- //
 
-let davis_putnam_examplep = time presolution (parse "
+let davis_putnam_examplep = time presolution ("
     exists x. exists y. forall z. 
         (F(x,y) ==> (F(y,z) /\ F(z,z))) /\ 
         ((F(x,y) /\ G(x,y)) ==> (G(x,z) /\ G(z,z)))");;
+
+flush_buffer();;
 
 // ------------------------------------------------------------------------- //
 // Example                                                                   //
 // ------------------------------------------------------------------------- //
 
-let gilmore_1 = resolution003 (parse "
+let gilmore_1 = time resolution003 ("
 	exists x. forall y z. 
         ((F(y) ==> G(y)) <=> F(x)) /\ 
         ((F(y) ==> H(y)) <=> G(x)) /\ 
@@ -408,102 +433,102 @@ let gilmore_1 = resolution003 (parse "
 // Pelletiers yet again.                                                     //
 // ------------------------------------------------------------------------- //
 
-let p1r = time resolution003 (parse "
+let p1r = time resolution003 ("
 	p ==> q <=> ~q ==> ~p");;
 
-let p2r = time resolution003 (parse "
+let p2r = time resolution003 ("
 	~ ~p <=> p");;
 
-let p3r = time resolution003 (parse "
+let p3r = time resolution003 ("
 	~(p ==> q) ==> q ==> p");;
 
-let p4r = time resolution003 (parse "
+let p4r = time resolution003 ("
 	~p ==> q <=> ~q ==> p");;
 
-let p5r = time resolution003 (parse "
+let p5r = time resolution003 ("
 	(p \/ q ==> p \/ r) ==> p \/ (q ==> r)");;
 
-let p6r = time resolution003 (parse "
+let p6r = time resolution003 ("
 	p \/ ~p");;
 
-let p7r = time resolution003 (parse "
+let p7r = time resolution003 ("
 	p \/ ~ ~ ~p");;
 
-let p8r = time resolution003 (parse "
+let p8r = time resolution003 ("
 	((p ==> q) ==> p) ==> p");;
 
-let p9r = time resolution003 (parse "
+let p9r = time resolution003 ("
 	(p \/ q) /\ (~p \/ q) /\ (p \/ ~q) ==> ~(~q \/ ~q)");;
 
-let p10r = time resolution003 (parse "
+let p10r = time resolution003 ("
 	(q ==> r) /\ (r ==> p /\ q) /\ (p ==> q /\ r) ==> (p <=> q)");;
 
-let p11r = time resolution003 (parse "
+let p11r = time resolution003 ("
 	p <=> p");;
 
-let p12r = time resolution003 (parse "
+let p12r = time resolution003 ("
 	((p <=> q) <=> r) <=> (p <=> (q <=> r))");;
 
-let p13r = time resolution003 (parse "
+let p13r = time resolution003 ("
 	p \/ q /\ r <=> (p \/ q) /\ (p \/ r)");;
 
-let p14r = time resolution003 (parse "
+let p14r = time resolution003 ("
 	(p <=> q) <=> (q \/ ~p) /\ (~q \/ p)");;
 
-let p15r = time resolution003 (parse "
+let p15r = time resolution003 ("
 	p ==> q <=> ~p \/ q");;
 
-let p16r = time resolution003 (parse "
+let p16r = time resolution003 ("
 	(p ==> q) \/ (q ==> p)");;
 
-let p17r = time resolution003 (parse "
+let p17r = time resolution003 ("
 	p /\ (q ==> r) ==> s <=> (~p \/ q \/ s) /\ (~p \/ ~r \/ s)");;
 
 // ------------------------------------------------------------------------- //
 // Monadic Predicate Logic.                                                  //
 // ------------------------------------------------------------------------- //
 
-let p18r = time resolution003 (parse "
+let p18r = time resolution003 ("
 	exists y. forall x. P(y) ==> P(x)");;
 
-let p19r = time resolution003 (parse "
+let p19r = time resolution003 ("
 	exists x. forall y z. (P(y) ==> Q(z)) ==> P(x) ==> Q(x)");;
 
-let p20r = time resolution003 (parse "
+let p20r = time resolution003 ("
 	(forall x y. exists z. forall w. P(x) /\ Q(y) ==> R(z) /\ U(w)) 
     ==> (exists x y. P(x) /\ Q(y)) ==> (exists z. R(z))");;
 
-let p21r = time resolution003 (parse "
+let p21r = time resolution003 ("
 	(exists x. P ==> Q(x)) /\ (exists x. Q(x) ==> P) ==> (exists x. P <=> Q(x))");;
 
-let p22r = time resolution003 (parse "
+let p22r = time resolution003 ("
 	(forall x. P <=> Q(x)) ==> (P <=> (forall x. Q(x)))");;
 
-let p23r = time resolution003 (parse "
+let p23r = time resolution003 ("
 	(forall x. P \/ Q(x)) <=> P \/ (forall x. Q(x))");;
 
-let p24r = time resolution003 (parse "
+let p24r = time resolution003 ("
     ~(exists x. U(x) /\ Q(x)) /\ 
     (forall x. P(x) ==> Q(x) \/ R(x)) /\ 
     ~(exists x. P(x) ==> (exists x. Q(x))) /\ 
     (forall x. Q(x) /\ R(x) ==> U(x)) ==> 
     (exists x. P(x) /\ R(x))");;
 
-let p25r = time resolution003 (parse "
+let p25r = time resolution003 ("
 	(exists x. P(x)) /\ 
     (forall x. U(x) ==> ~G(x) /\ R(x)) /\ 
     (forall x. P(x) ==> G(x) /\ U(x)) /\ 
     ((forall x. P(x) ==> Q(x)) \/ (exists x. Q(x) /\ P(x))) 
     ==> (exists x. Q(x) /\ P(x))");;
 
-let p26r = time resolution003 (parse "
+let p26r = time resolution003 ("
 	(exists x. P(x)) /\ 
     (forall x. U(x) ==> ~G(x) /\ R(x)) /\ 
     (forall x. P(x) ==> G(x) /\ U(x)) /\ 
     ((forall x. P(x) ==> Q(x)) \/ (exists x. Q(x) /\ P(x))) 
     ==> (exists x. Q(x) /\ P(x))");;
 
-let p27r = time resolution003 (parse "
+let p27r = time resolution003 ("
 	(exists x. P(x) /\ ~Q(x)) /\ 
     (forall x. P(x) ==> R(x)) /\ 
     (forall x. U(x) /\ V(x) ==> P(x)) /\ 
@@ -511,7 +536,7 @@ let p27r = time resolution003 (parse "
     ==> (forall x. U(x) ==> ~R(x)) 
         ==> (forall x. U(x) ==> ~V(x))");;
 
-let p28r = time resolution003 (parse "
+let p28r = time resolution003 ("
 	(exists x. P(x) /\ ~Q(x)) /\ 
     (forall x. P(x) ==> R(x)) /\ 
     (forall x. U(x) /\ V(x) ==> P(x)) /\ 
@@ -519,53 +544,53 @@ let p28r = time resolution003 (parse "
     ==> (forall x. U(x) ==> ~R(x)) 
         ==> (forall x. U(x) ==> ~V(x))");;
 
-let p29r = time resolution003 (parse "
+let p29r = time resolution003 ("
 	(exists x. P(x)) /\ (exists x. G(x)) ==> 
     ((forall x. P(x) ==> H(x)) /\ (forall x. G(x) ==> J(x)) <=> 
      (forall x y. P(x) /\ G(y) ==> H(x) /\ J(y)))");;
 
-let p30r = time resolution003 (parse "
+let p30r = time resolution003 ("
 	(forall x. P(x) \/ G(x) ==> ~H(x)) /\ 
     (forall x. (G(x) ==> ~U(x)) ==> P(x) /\ H(x)) 
     ==> (forall x. U(x))");;
 
-let p31r = time resolution003 (parse "
+let p31r = time resolution003 ("
 	~(exists x. P(x) /\ (G(x) \/ H(x))) /\ 
     (exists x. Q(x) /\ P(x)) /\ 
     (forall x. ~H(x) ==> J(x)) 
     ==> (exists x. Q(x) /\ J(x))");;
 
-let p32r = time resolution003 (parse "
+let p32r = time resolution003 ("
 	(forall x. P(x) /\ (G(x) \/ H(x)) ==> Q(x)) /\ 
     (forall x. Q(x) /\ H(x) ==> J(x)) /\ 
     (forall x. R(x) ==> H(x)) 
     ==> (forall x. P(x) /\ R(x) ==> J(x))");;
 
-let p33r = time resolution003 (parse "
+let p33r = time resolution003 ("
 	(forall x. P(a) /\ (P(x) ==> P(b)) ==> P(c)) <=> 
     (forall x. P(a) ==> P(x) \/ P(c)) /\ (P(a) ==> P(b) ==> P(c))");;
 
-let p34r = time resolution003 (parse "
+let p34r = time resolution003 ("
 	((exists x. forall y. P(x) <=> P(y)) <=>
      ((exists x. Q(x)) <=> (forall y. Q(y)))) <=>
     ((exists x. forall y. Q(x) <=> Q(y)) <=>
      ((exists x. P(x)) <=> (forall y. P(y))))");;
 
-let p35r = time resolution003 (parse "
+let p35r = time resolution003 ("
 	exists x y. P(x,y) ==> (forall x y. P(x,y))");;
 
 // ------------------------------------------------------------------------- //
 // Full predicate logic (without Identity and Functions)                     //
 // ------------------------------------------------------------------------- //
 
-let p36r = time resolution003 (parse "
+let p36r = time resolution003 ("
 	(forall x. exists y. P(x,y)) /\ 
     (forall x. exists y. G(x,y)) /\ 
     (forall x y. P(x,y) \/ G(x,y) 
     ==> (forall z. P(y,z) \/ G(y,z) ==> H(x,z))) 
         ==> (forall x. exists y. H(x,y))");;
 
-let p37r = time resolution003 (parse "
+let p37r = time resolution003 ("
 	(forall z. 
       exists w. forall x. exists y. (P(x,z) ==> P(y,w)) /\ P(y,z) /\ 
       (P(y,w) ==> (exists u. Q(u,w)))) /\ 
@@ -574,7 +599,7 @@ let p37r = time resolution003 (parse "
     (forall x. exists y. R(x,y))");;
 
 // long running
-//let p38r = time resolution003 (parse "
+//let p38r = time resolution003 ("
 //    (forall x. 
 //      P(a) /\ (P(x) ==> (exists y. P(y) /\ R(x,y))) ==> 
 //      (exists z w. P(z) /\ R(x,w) /\ R(w,z))) <=> 
@@ -583,53 +608,53 @@ let p37r = time resolution003 (parse "
 //      (~P(a) \/ ~(exists y. P(y) /\ R(x,y)) \/ 
 //      (exists z w. P(z) /\ R(x,w) /\ R(w,z))))");;
 
-let p39r = time resolution003 (parse "
+let p39r = time resolution003 ("
 	~(exists x. forall y. P(y,x) <=> ~P(y,y))");;
 
-let p40r = time resolution003 (parse "
+let p40r = time resolution003 ("
     (exists y. forall x. P(x,y) <=> P(x,x))
     ==> ~(forall x. exists y. forall z. P(z,y) <=> ~P(z,x))");;
 
-let p41r = time resolution003 (parse "
+let p41r = time resolution003 ("
 	(forall z. exists y. forall x. P(x,y) <=> P(x,z) /\ ~P(x,x)) 
     ==> ~(exists z. forall x. P(x,z))");;
 
-let p42r = time resolution003 (parse "
+let p42r = time resolution003 ("
 	~(exists y. forall x. P(x,y) <=> ~(exists z. P(x,z) /\ P(z,x)))");;
 
 // long running
-//let p43r = time resolution003 (parse "
+//let p43r = time resolution003 ("
 //	(forall x y. Q(x,y) <=> forall z. P(z,x) <=> P(z,y)) 
 //    ==> forall x y. Q(x,y) <=> Q(y,x)");;
 
-let p44r = time resolution003 (parse "
-	(forall x. P(x) ==> (exists y. G(y) /\ H(x,y)) /\ 
-    (exists y. G(y) /\ ~H(x,y))) /\ 
-    (exists x. J(x) /\ (forall y. G(y) ==> H(x,y))) ==> 
-    (exists x. J(x) /\ ~P(x))");;
-
-let p45r = time resolution003 (parse "
-	(forall x. 
-      P(x) /\ (forall y. G(y) /\ H(x,y) ==> J(x,y)) ==> 
-        (forall y. G(y) /\ H(x,y) ==> R(y))) /\ 
-    ~(exists y. L(y) /\ R(y)) /\ 
-    (exists x. P(x) /\ (forall y. H(x,y) ==> 
-      L(y)) /\ (forall y. G(y) /\ H(x,y) ==> J(x,y))) ==> 
-    (exists x. P(x) /\ ~(exists y. G(y) /\ H(x,y)))");;
-
-let p46r = time resolution003 (parse "
-	(forall x. P(x) /\ (forall y. P(y) /\ H(y,x) ==> G(y)) ==> G(x)) /\ 
-    ((exists x. P(x) /\ ~G(x)) ==> 
-     (exists x. P(x) /\ ~G(x) /\ 
-                (forall y. P(y) /\ ~G(y) ==> J(x,y)))) /\ 
-    (forall x y. P(x) /\ P(y) /\ H(x,y) ==> ~J(y,x)) ==> 
-    (forall x. P(x) ==> G(x))");;
+//let p44r = time resolution003 ("
+//	(forall x. P(x) ==> (exists y. G(y) /\ H(x,y)) /\ 
+//    (exists y. G(y) /\ ~H(x,y))) /\ 
+//    (exists x. J(x) /\ (forall y. G(y) ==> H(x,y))) ==> 
+//    (exists x. J(x) /\ ~P(x))");;
+//
+//let p45r = time resolution003 ("
+//	(forall x. 
+//      P(x) /\ (forall y. G(y) /\ H(x,y) ==> J(x,y)) ==> 
+//        (forall y. G(y) /\ H(x,y) ==> R(y))) /\ 
+//    ~(exists y. L(y) /\ R(y)) /\ 
+//    (exists x. P(x) /\ (forall y. H(x,y) ==> 
+//      L(y)) /\ (forall y. G(y) /\ H(x,y) ==> J(x,y))) ==> 
+//    (exists x. P(x) /\ ~(exists y. G(y) /\ H(x,y)))");;
+//
+//let p46r = time resolution003 ("
+//	(forall x. P(x) /\ (forall y. P(y) /\ H(y,x) ==> G(y)) ==> G(x)) /\ 
+//    ((exists x. P(x) /\ ~G(x)) ==> 
+//     (exists x. P(x) /\ ~G(x) /\ 
+//                (forall y. P(y) /\ ~G(y) ==> J(x,y)))) /\ 
+//    (forall x y. P(x) /\ P(y) /\ H(x,y) ==> ~J(y,x)) ==> 
+//    (forall x. P(x) ==> G(x))");;
 
 // ------------------------------------------------------------------------- //
 // Example from Manthey and Bry, CADE-9.                                     //
 // ------------------------------------------------------------------------- //
 
-let p55r = time resolution003 (parse "
+let p55r = time resolution003 ("
 	lives(agatha) /\ lives(butler) /\ lives(charles) /\ 
     (killed(agatha,agatha) \/ killed(butler,agatha) \/ 
      killed(charles,agatha)) /\ 
@@ -643,7 +668,7 @@ let p55r = time resolution003 (parse "
         ~killed(butler,agatha) /\ 
         ~killed(charles,agatha)");;
 
-let p57r = time resolution003 (parse "
+let p57r = time resolution003 ("
 	P(f((a),b),f(b,c)) /\ 
     P(f(b,c),f(a,c)) /\ 
     (forall (x) y z. P(x,y) /\ P(y,z) ==> P(x,z)) 
@@ -653,14 +678,14 @@ let p57r = time resolution003 (parse "
 // See info-hol, circa 1500.                                                 //
 // ------------------------------------------------------------------------- //
 
-let p58r = time resolution003 (parse "
+let p58r = time resolution003 ("
 	forall P Q R. forall x. exists v. exists w. forall y. forall z. 
     ((P(x) /\ Q(y)) ==> ((P(v) \/ R(w))  /\ (R(z) ==> Q(v))))");;
 
-let p59r = time resolution003 (parse "
+let p59r = time resolution003 ("
 	(forall x. P(x) <=> ~P(f(x))) ==> (exists x. P(x) /\ ~P(f(x)))");;
 
-let p60r = time resolution003 (parse "
+let p60r = time resolution003 ("
 	forall x. P(x,f(x)) <=> 
               exists y. (forall z. P(z,y) ==> P(z,f(x))) /\ P(x,y)");;
 
@@ -668,7 +693,7 @@ let p60r = time resolution003 (parse "
 // From Gilmore's classic paper.                                             //
 // ------------------------------------------------------------------------- //
 
-let gilmore_1r = time resolution003 (parse "
+let gilmore_1r = time resolution003 ("
 	exists x. forall y z. 
         ((F(y) ==> G(y)) <=> F(x)) /\ 
         ((F(y) ==> H(y)) <=> G(x)) /\ 
@@ -677,47 +702,47 @@ let gilmore_1r = time resolution003 (parse "
 
 // long running
 //** This is not valid, according to Gilmore
-//let gilmore_2r = time resolution003 (parse "
+//let gilmore_2r = time resolution003 ("
 //    exists x y. forall z. 
 //        (F(x,z) <=> F(z,y)) /\ (F(z,y) <=> F(z,z)) /\ (F(x,y) <=> F(y,x)) 
 //        ==> (F(x,y) <=> F(x,z))");;
 
-let gilmore_3r = time resolution003 (parse "
-    exists x. forall y z. 
-        ((F(y,z) ==> (G(y) ==> H(x))) ==> F(x,x)) /\ 
-        ((F(z,x) ==> G(x)) ==> H(z)) /\ 
-        F(x,y) 
-        ==> F(z,z)");;
+//let gilmore_3r = time resolution003 ("
+//    exists x. forall y z. 
+//        ((F(y,z) ==> (G(y) ==> H(x))) ==> F(x,x)) /\ 
+//        ((F(z,x) ==> G(x)) ==> H(z)) /\ 
+//        F(x,y) 
+//        ==> F(z,z)");;
+//
+//let gilmore_4r = time resolution003 ("
+//    exists x. forall y z. 
+//        ((F(y,z) ==> (G(y) ==> H(x))) ==> F(x,x)) /\ 
+//        ((F(z,x) ==> G(x)) ==> H(z)) /\ 
+//        F(x,y) 
+//        ==> F(z,z)");;
 
-let gilmore_4r = time resolution003 (parse "
-    exists x. forall y z. 
-        ((F(y,z) ==> (G(y) ==> H(x))) ==> F(x,x)) /\ 
-        ((F(z,x) ==> G(x)) ==> H(z)) /\ 
-        F(x,y) 
-        ==> F(z,z)");;
-
-let gilmore_5r = time resolution003 (parse "
+let gilmore_5r = time resolution003 ("
 	(forall x. exists y. F(x,y) \/ F(y,x)) /\ 
     (forall x y. F(y,x) ==> F(y,y)) 
     ==> exists z. F(z,z)");;
 
-let gilmore_6r = time resolution003 (parse "
+let gilmore_6r = time resolution003 ("
 	(forall x. exists y. F(x,y) \/ F(y,x)) /\ 
     (forall x y. F(y,x) ==> F(y,y)) 
     ==> exists z. F(z,z)");;
 
-let gilmore_7r = time resolution003 (parse "
+let gilmore_7r = time resolution003 ("
 	(forall x. exists y. F(x,y) \/ F(y,x)) /\ 
     (forall x y. F(y,x) ==> F(y,y)) 
     ==> exists z. F(z,z)");;
 
-let gilmore_8r = time resolution003 (parse "
+let gilmore_8r = time resolution003 ("
 	(forall x. exists y. F(x,y) \/ F(y,x)) /\ 
     (forall x y. F(y,x) ==> F(y,y)) 
     ==> exists z. F(z,z)");;
 
 // long running
-//let gilmore_9r = time resolution003 (parse "
+//let gilmore_9r = time resolution003 ("
 //    forall x. exists y. forall z. 
 //        ((forall u. exists v. F(y,u,v) /\ G(y,u) /\ ~H(y,x)) 
 //          ==> (forall u. exists v. F(x,u,v) /\ G(z,u) /\ ~H(x,z)) 
@@ -731,7 +756,7 @@ let gilmore_8r = time resolution003 (parse "
 // Example from Davis-Putnam papers where Gilmore procedure is poor.         //
 // ------------------------------------------------------------------------- //
 
-let davis_putnam_exampler = time resolution003 (parse "
+let davis_putnam_exampler = time resolution003 ("
     exists x. exists y. forall z. 
         (F(x,y) ==> (F(y,z) /\ F(z,z))) /\ 
         ((F(x,y) /\ G(x,y)) ==> (G(x,z) /\ G(z,z)))");;
@@ -739,11 +764,14 @@ let davis_putnam_exampler = time resolution003 (parse "
 // ------------------------------------------------------------------------- //
 // The (in)famous Los problem.                                               //
 // ------------------------------------------------------------------------- //
+//
+//let losr = time resolution003 ("
+//    (forall x y z. P(x,y) ==> P(y,z) ==> P(x,z)) /\ 
+//    (forall x y z. Q(x,y) ==> Q(y,z) ==> Q(x,z)) /\ 
+//    (forall x y. Q(x,y) ==> Q(y,x)) /\ 
+//    (forall x y. P(x,y) \/ Q(x,y)) 
+//    ==> (forall x y. P(x,y)) \/ (forall x y. Q(x,y))");;
 
-let losr = time resolution003 (parse "
-    (forall x y z. P(x,y) ==> P(y,z) ==> P(x,z)) /\ 
-    (forall x y z. Q(x,y) ==> Q(y,z) ==> Q(x,z)) /\ 
-    (forall x y. Q(x,y) ==> Q(y,x)) /\ 
-    (forall x y. P(x,y) \/ Q(x,y)) 
-    ==> (forall x y. P(x,y)) \/ (forall x y. Q(x,y))");;
+flush_buffer();;
+
 
