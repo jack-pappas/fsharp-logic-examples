@@ -62,3 +62,9 @@ let ``test holds with mod_interp 4``() =
 [<TestCase("x", "x", "x'", Result="x''")>]
 let ``test variant``(x, y, z) =
     variant x [y; z]
+
+[<TestCase("forall x. x = y", Result="<<forall x'. x' =x>>\r\n")>]
+[<TestCase("forall x x'. x = y ==> x = x'", Result="<<forall x' x''. x' =x ==> x' =x''>>\r\n")>]
+let ``test subst`` f =
+    subst ("y" |=> Var "x") (parse f)
+    |> sprint_fol_formula
