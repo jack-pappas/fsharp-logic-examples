@@ -74,6 +74,12 @@ let ``examples 1`` (f, idx) =
 (* More tests, not in the main text.                                         *)
 (* ------------------------------------------------------------------------- *)
 
+// Helper function
+let private polytest tm =
+    //time (polynate (fvt tm)) tm
+    polynate (fvt tm) tm
+
+
 [<Test>]
 let ``lagrange_4``() =
     parset "((w + x)^4 + (w + y)^4 + (w + z)^4 +
@@ -558,7 +564,439 @@ let ``examples 2`` (f, idx) =
 (* This seems harder, so see how many quantifiers are feasible.              *)
 (* ------------------------------------------------------------------------- *)
 
-// TODO : Implement remaining tests from complex.ml.
+// TODO : These tests will be implemented later -- the output is truncated by
+// ocamltop so we can't determine the expected results for the test cases.
+(*
+let private example_results_3 : formula<fol>[] = [|
+    // TODO
+    |]
+
+[<TestCase("(a * x^2 + b * x + c = 0) /\
+  (a * y^2 + b * y + c = 0) /\
+  (forall z. (a * z^2 + b * z + c = 0)
+       ==> (z = x) \/ (z = y))
+  ==> (a * x * y = c) /\ (a * (x + y) + b = 0)", 0)>]
+[<TestCase("forall y. (a * x^2 + b * x + c = 0) /\
+            (a * y^2 + b * y + c = 0) /\
+            (forall z. (a * z^2 + b * z + c = 0)
+                       ==> (z = x) \/ (z = y))
+            ==> (a * x * y = c) /\ (a * (x + y) + b = 0)", 1)>]
+[<TestCase("~(forall x1 y1 x2 y2 x3 y3.
+      exists x0 y0. (x1 - x0)^2 + (y1 - y0)^2 = (x2 - x0)^2 + (y2 - y0)^2 /\
+                    (x2 - x0)^2 + (y2 - y0)^2 = (x3 - x0)^2 + (y3 - y0)^2)", 2)>]
+[<TestCase("forall a b c.
+      (exists x y. (a * x^2 + b * x + c = 0) /\
+             (a * y^2 + b * y + c = 0) /\
+             ~(x = y)) <=>
+      (a = 0) /\ (b = 0) /\ (c = 0) \/
+      ~(a = 0) /\ ~(b^2 = 4 * a * c)", 3)>]
+[<TestCase("~(forall x1 y1 x2 y2 x3 y3 x0 y0 x0' y0'.
+        (x1 - x0)^2 + (y1 - y0)^2 =
+        (x2 - x0)^2 + (y2 - y0)^2 /\
+        (x2 - x0)^2 + (y2 - y0)^2 =
+        (x3 - x0)^2 + (y3 - y0)^2 /\
+        (x1 - x0')^2 + (y1 - y0')^2 =
+        (x2 - x0')^2 + (y2 - y0')^2 /\
+        (x2 - x0')^2 + (y2 - y0')^2 =
+        (x3 - x0')^2 + (y3 - y0')^2
+        ==> x0 = x0' /\ y0 = y0')", 4)>]
+[<TestCase("forall a b c.
+        a * x^2 + b * x + c = 0 /\
+        a * y^2 + b * y + c = 0 /\
+        ~(x = y)
+        ==> a * (x + y) + b = 0", 5)>]
+[<TestCase("forall a b c.
+        (a * x^2 + b * x + c = 0) /\
+        (2 * a * y^2 + 2 * b * y + 2 * c = 0) /\
+        ~(x = y)
+        ==> (a * (x + y) + b = 0)", 6)>]
+[<TestCase("forall y_1 y_2 y_3 y_4.
+       (y_1 = 2 * y_3) /\
+       (y_2 = 2 * y_4) /\
+       (y_1 * y_3 = y_2 * y_4)
+       ==> (y_1^2 = y_2^2)", 7)>]
+[<TestCase("forall y.
+         a * x^2 + b * x + c = 0 /\
+         a * y^2 + b * y + c = 0 /\
+         ~(x = y)
+         ==> a * x * y = c /\ a * (x + y) + b = 0", 8)>]
+let ``examples 3`` (f, idx) =
+    parse f
+    |> complex_qelim
+    |> should equal example_results_3.[idx]
+*)
+
+let private example_results_3a : formula<fol>[] = [|
+    True;
+    True;
+    True;
+    True;
+    True;
+    |]
+
+[<TestCase("a * x^2 + b * x + c = 0 /\
+    a * y^2 + b * y + c = 0 /\
+    ~(x = y)
+    ==> a * x * y = c /\ a * (x + y) + b = 0", 0)>]
+[<TestCase("(x1 = u3) /\
+  (x1 * (u2 - u1) = x2 * u3) /\
+  (x4 * (x2 - u1) = x1 * (x3 - u1)) /\
+  (x3 * u3 = x4 * u2) /\
+  ~(u1 = 0) /\
+  ~(u3 = 0)
+  ==> (x3^2 + x4^2 = (u2 - x3)^2 + (u3 - x4)^2)", 1)>]
+[<TestCase("(u1 * x1 - u1 * u3 = 0) /\
+  (u3 * x2 - (u2 - u1) * x1 = 0) /\
+  (x1 * x4 - (x2 - u1) * x3 - u1 * x1 = 0) /\
+  (u3 * x4 - u2 * x3 = 0) /\
+  ~(u1 = 0) /\
+  ~(u3 = 0)
+  ==> (2 * u2 * x4 + 2 * u3 * x3 - u3^2 - u2^2 = 0)", 2)>]
+[<TestCase("(y1 * y3 + x1 * x3 = 0) /\
+  (y3 * (y2 - y3) + (x2 - x3) * x3 = 0) /\
+  ~(x3 = 0) /\
+  ~(y3 = 0)
+  ==> (y1 * (x2 - x3) = x1 * (y2 - y3))", 3)>]
+[<TestCase("a * x^2 + b * x + c = 0 /\
+    a * y^2 + b * y + c = 0 /\
+    ~(x = y)
+    ==> a * x * y = c /\ a * (x + y) + b = 0", 4)>]
+let ``examples 3a`` (f, idx) =
+    parse f
+    |> generalize
+    |> complex_qelim
+    |> should equal example_results_3a.[idx]
 
 
+(* ------------------------------------------------------------------------- *)
+(* Checking resultants from Maple.                                           *)
+(* ------------------------------------------------------------------------- *)
+
+let private example_results_4 : formula<fol>[] = [|
+    True;
+    True;
+    True;
+    |]
+
+[<TestCase("forall a b c.
+           (exists x. a * x^2 + b * x + c = 0 /\ 2 * a * x + b = 0) \/ (a = 0) <=>
+           (4*a^2*c-b^2*a = 0)", 0)>]
+[<TestCase("forall a b c d e.
+            (exists x. a * x^2 + b * x + c = 0 /\ d * x + e = 0) \/
+            a = 0 /\ d = 0 <=> d^2*c-e*d*b+a*e^2 = 0", 1)>]
+[<TestCase("forall a b c d e f.
+           (exists x. a * x^2 + b * x + c = 0 /\ d * x^2 + e * x + f = 0) \/
+           (a = 0) /\ (d = 0) <=>
+           d^2*c^2-2*d*c*a*f+a^2*f^2-e*d*b*c-e*b*a*f+a*e^2*c+f*d*b^2 = 0", 2)>]
+let ``examples 4`` (f, idx) =
+    parse f
+    |> complex_qelim
+    |> should equal example_results_4.[idx]
+
+
+(* ------------------------------------------------------------------------- *)
+(* Some trigonometric addition formulas (checking stuff from Maple).         *)
+(* ------------------------------------------------------------------------- *)
+
+[<Test>]
+let ``examples 5``() =
+    "forall x y. x^2 + y^2 = 1 ==> (2 * y^2 - 1)^2 + (2 * x * y)^2 = 1"
+    |> parse
+    |> complex_qelim
+    |> should equal True
+
+
+(* ------------------------------------------------------------------------- *)
+(* The examples from my thesis.                                              *)
+(* ------------------------------------------------------------------------- *)
+
+let private example_results_6 : formula<fol>[] = [|
+    True;
+    True;
+    True;
+    |]
+
+[<TestCase("forall s c. s^2 + c^2 = 1
+            ==> 2 * s - (2 * s * c * c - s^3) = 3 * s^3", 0)>]
+[<TestCase("forall u v.
+  -((((9 * u^8) * v) * v - (u * u^9)) * 128) -
+     (((7 * u^6) * v) * v - (u * u^7)) * 144 -
+     (((5 * u^4) * v) * v - (u * u^5)) * 168 -
+     (((3 * u^2) * v) * v - (u * u^3)) * 210 -
+     (v * v - (u * u)) * 315 + 315 - 1280 * u^10 =
+   (-(1152) * u^8 - 1008 * u^6 - 840 * u^4 - 630 * u^2 - 315) *
+   (u^2 + v^2 - 1)", 1)>]
+[<TestCase("forall u v.
+        u^2 + v^2 = 1
+        ==> (((9 * u^8) * v) * v - (u * u^9)) * 128 +
+            (((7 * u^6) * v) * v - (u * u^7)) * 144 +
+            (((5 * u^4) * v) * v - (u * u^5)) * 168 +
+            (((3 * u^2) * v) * v - (u * u^3)) * 210 +
+            (v * v - (u * u)) * 315 + 1280 * u^10 = 315", 2)>]
+let ``examples 6`` (f, idx) =
+    parse f
+    |> complex_qelim
+    |> should equal example_results_6.[idx]
+
+
+(* ------------------------------------------------------------------------- *)
+(* Deliberately silly examples from Poizat's model theory book (6.6).        *)
+(* ------------------------------------------------------------------------- *)
+
+let private example_results_7 : formula<fol>[] = [|
+    Or
+     (And
+       (Atom
+         (R ("=",
+           [Fn ("+", [Fn ("0", []); Fn ("*", [Var "x"; Fn ("1", [])])]);
+            Fn ("0", [])])),
+       Not
+        (Atom
+          (R ("=",
+            [Fn ("+", [Fn ("0", []); Fn ("*", [Var "y"; Fn ("1", [])])]);
+             Fn ("0", [])])))),
+     Not
+      (Atom
+        (R ("=",
+          [Fn ("+", [Fn ("0", []); Fn ("*", [Var "x"; Fn ("1", [])])]);
+           Fn ("0", [])]))));
+    Not
+     (And
+       (Atom
+         (R ("=",
+           [Fn ("+", [Fn ("0", []); Fn ("*", [Var "x"; Fn ("1", [])])]);
+            Fn ("0", [])])),
+       Or
+        (And
+          (Atom
+            (R ("=",
+              [Fn ("+", [Fn ("0", []); Fn ("*", [Var "x"; Fn ("2", [])])]);
+               Fn ("0", [])])),
+          And
+           (Atom
+             (R ("=",
+               [Fn ("+", [Fn ("0", []); Fn ("*", [Var "y"; Fn ("1", [])])]);
+                Fn ("0", [])])),
+           Not
+            (Atom
+              (R ("=",
+                [Fn ("+",
+                  [Fn ("0", []); Fn ("*", [Var "z"; Fn ("1", [])])]);
+                 Fn ("0", [])]))))),
+        And
+         (Not
+           (Atom
+             (R ("=",
+               [Fn ("+", [Fn ("0", []); Fn ("*", [Var "x"; Fn ("2", [])])]);
+                Fn ("0", [])]))),
+         Not
+          (Atom
+            (R ("=",
+              [Fn ("+",
+                [Fn ("0", []);
+                 Fn ("*",
+                  [Var "x";
+                   Fn ("+",
+                    [Fn ("+",
+                      [Fn ("0", []);
+                       Fn ("*",
+                        [Var "y";
+                         Fn ("+",
+                          [Fn ("0", []);
+                           Fn ("*", [Var "y"; Fn ("-1", [])])])])]);
+                     Fn ("*",
+                      [Var "x";
+                       Fn ("+",
+                        [Fn ("0", []); Fn ("*", [Var "z"; Fn ("4", [])])])])])])]);
+               Fn ("0", [])])))))));
+    |]
+
+[<TestCase("exists z. x * z^87 + y * z^44 + 1 = 0", 0)>]
+[<TestCase("forall u. exists v. x * (u + v^2)^2 + y * (u + v^2) + z = 0", 1)>]
+let ``examples 7`` (f, idx) =
+    parse f
+    |> complex_qelim
+    |> should equal example_results_7.[idx]
+
+
+(* ------------------------------------------------------------------------- *)
+(* Actually prove simple equivalences.                                       *)
+(* ------------------------------------------------------------------------- *)
+
+let private example_results_8 : formula<fol>[] = [|
+    True;
+    True;
+    |]
+
+[<TestCase("forall x y. (exists z. x * z^87 + y * z^44 + 1 = 0)
+                  <=> ~(x = 0) \/ ~(y = 0)", 0)>]
+[<TestCase("forall x y z. (forall u. exists v.
+                         x * (u + v^2)^2 + y * (u + v^2) + z = 0)
+                    <=> ~(x = 0) \/ ~(y = 0) \/ z = 0", 1)>]
+let ``examples 8`` (f, idx) =
+    parse f
+    |> complex_qelim
+    |> should equal example_results_8.[idx]
+
+
+(* ------------------------------------------------------------------------- *)
+(* Invertibility of 2x2 matrix in terms of nonzero determinant.              *)
+(* ------------------------------------------------------------------------- *)
+
+// TODO : These tests will be implemented later -- the output is truncated by
+// ocamltop so we can't determine the expected results for the test cases.
+
+(*
+let private example_results_9 : formula<fol>[] = [|
+    // TODO
+    |]
+
+[<TestCase("exists w x y z. (a * w + b * y = 1) /\
+                      (a * x + b * z = 0) /\
+                      (c * w + d * y = 0) /\
+                      (c * x + d * z = 1)", 0)>]
+[<TestCase("forall a b c d.
+        (exists w x y z. (a * w + b * y = 1) /\
+                         (a * x + b * z = 0) /\
+                         (c * w + d * y = 0) /\
+                         (c * x + d * z = 1))
+        <=> ~(a * d = b * c)", 1)>]
+let ``examples 9`` (f, idx) =
+    parse f
+    |> complex_qelim
+    |> should equal example_results_9.[idx]
+*)
+
+
+(* ------------------------------------------------------------------------- *)
+(* Inspired by Cardano's formula for a cubic. Not all complex cbrts work.    *)
+(* ------------------------------------------------------------------------- *)
+
+let private example_results_10 : formula<fol>[] = [|
+    False;
+    True;
+    |]
+
+[<TestCase("forall m n x u t cu ct.
+   t - u = n /\ 27 * t * u = m^3 /\
+   ct^3 = t /\ cu^3 = u /\
+   x = ct - cu
+   ==> x^3 + m * x = n", 0)>]
+[<TestCase("forall m n x u t.
+   t - u = n /\ 27 * t * u = m^3
+   ==> exists ct cu. ct^3 = t /\ cu^3 = u /\
+                     (x = ct - cu ==> x^3 + m * x = n)", 1)>]
+let ``examples 10`` (f, idx) =
+    parse f
+    |> complex_qelim
+    |> should equal example_results_10.[idx]
+
+
+(* ------------------------------------------------------------------------- *)
+(* SOS in rational functions for Motzkin polynomial (dehomogenized).         *)
+(* Of course these are just trivial normalization, nothing deep.             *)
+(* ------------------------------------------------------------------------- *)
+
+let private example_results_11 : formula<fol>[] = [|
+    True;
+    True;
+    True;
+    True;
+    |]
+
+[<TestCase("forall x y z.
+    (x^2 + y^2)^2 * (1 + x^4 * y^2 + x^2 * y^4 - 3 * x^2 * y^2) =
+     x^2 * y^2 * (x^2 + y^2 + 1) * (x^2 + y^2 - 2)^2 + (x^2 - y^2)^2", 0)>]
+[<TestCase("forall x y z.
+    (x^2 + y^2)^2 * (1 + x^4 * y^2 + x^2 * y^4 - 3 * x^2 * y^2) =
+    x^2 * y^2 * x^2  * (x^2 + y^2 - 2)^2 +
+    x^2 * y^2 * y^2 * (x^2 + y^2 - 2)^2 +
+    x^2 * y^2 * (x^2 + y^2 - 2)^2 +
+    (x^2 - y^2)^2", 1)>]
+[<TestCase("forall x y z.
+    (x^2 + y^2)^2 * (1 + x^4 * y^2 + x^2 * y^4 - 3 * x^2 * y^2) =
+    x^4 * y^2 * (x^2 + y^2 - 2)^2 +
+    x^2 * y^4 * (x^2 + y^2 - 2)^2 +
+    x^2 * y^2 * (x^2 + y^2 - 2)^2 +
+    (x^2 - y^2)^2", 2)>]
+[<TestCase("forall x y z.
+    (x^2 + y^2)^2 * (1 + x^4 * y^2 + x^2 * y^4 - 3 * x^2 * y^2) =
+    (x^2 * y * (x^2 + y^2 - 2))^2 +
+    (x * y^2 * (x^2 + y^2 - 2))^2 +
+    (x * y * (x^2 + y^2 - 2))^2 +
+    (x^2 - y^2)^2", 3)>]
+let ``examples 11`` (f, idx) =
+    parse f
+    |> complex_qelim
+    |> should equal example_results_11.[idx]
+
+
+(* ------------------------------------------------------------------------- *)
+(* A cute bilinear identity -- see ch14 of Rajwade's "Squares" for more.     *)
+(* ------------------------------------------------------------------------- *)
+
+[<Test>]
+let ``examples 12``() =
+    "(x_1^2 + x_2^2 + x_3^2 + x_4^2 + x_5^2 + x_6^2 + x_7^2 + x_8^2 + x_9^2) *
+    (y_1^2 + y_2^2 + y_3^2 + y_4^2 + y_5^2 + y_6^2 + y_7^2 + y_8^2 +
+    y_9^2 + y_10^2 + y_11^2 + y_12^2 + y_13^2 + y_14^2 + y_15^2 + y_16^2) -
+    ((0 + x_1 * y_1 + x_2 * y_2 + x_3 * y_3 + x_4 * y_4 + x_5 * y_5 + x_6 * y_6 + x_7 * y_7 + x_8 * y_8 + x_9 * y_9)^2 +
+    (0 - x_2 * y_1 + x_1 * y_2 + x_4 * y_3 - x_3 * y_4 + x_6 * y_5 - x_5 * y_6 - x_8 * y_7 + x_7 * y_8 + x_9 * y_10)^2 +
+    (0 - x_3 * y_1 - x_4 * y_2 + x_1 * y_3 + x_2 * y_4 + x_7 * y_5 + x_8 * y_6 - x_5 * y_7 - x_6 * y_8 + x_9 * y_11)^2 +
+    (0 - x_4 * y_1 + x_3 * y_2 - x_2 * y_3 + x_1 * y_4 + x_8 * y_5 - x_7 * y_6 + x_6 * y_7 - x_5 * y_8 + x_9 * y_12)^2 +
+    (0 - x_5 * y_1 - x_6 * y_2 - x_7 * y_3 - x_8 * y_4 + x_1 * y_5 + x_2 * y_6 + x_3 * y_7 + x_4 * y_8 + x_9 * y_13)^2 +
+    (0 - x_6 * y_1 + x_5 * y_2 - x_8 * y_3 + x_7 * y_4 - x_2 * y_5 + x_1 * y_6 - x_4 * y_7 + x_3 * y_8 + x_9 * y_14)^2 +
+    (0 - x_7 * y_1 + x_8 * y_2 + x_5 * y_3 - x_6 * y_4 - x_3 * y_5 + x_4 * y_6 + x_1 * y_7 - x_2 * y_8 + x_9 * y_15)^2 +
+    (0 - x_8 * y_1 - x_7 * y_2 + x_6 * y_3 + x_5 * y_4 - x_4 * y_5 - x_3 * y_6 + x_2 * y_7 + x_1 * y_8 + x_9 * y_16)^2 +
+    (0 - x_9 * y_1 + x_1 * y_9 - x_2 * y_10 - x_3 * y_11 - x_4 * y_12 - x_5 * y_13 - x_6 * y_14 - x_7 * y_15 - x_8 * y_16)^2 +
+    (0 - x_9 * y_2 + x_2 * y_9 + x_1 * y_10 - x_4 * y_11 + x_3 * y_12 - x_6 * y_13 + x_5 * y_14 + x_8 * y_15 - x_7 * y_16)^2 +
+    (0 - x_9 * y_3 + x_3 * y_9 + x_4 * y_10 + x_1 * y_11 - x_2 * y_12 - x_7 * y_13 - x_8 * y_14 + x_5 * y_15 + x_6 * y_16)^2 +
+    (0 - x_9 * y_4 + x_4 * y_9 - x_3 * y_10 + x_2 * y_11 + x_1 * y_12 - x_8 * y_13 + x_7 * y_14 - x_6 * y_15 + x_5 * y_16)^2 +
+    (0 - x_9 * y_5 + x_5 * y_9 + x_6 * y_10 + x_7 * y_11 + x_8 * y_12 + x_1 * y_13 - x_2 * y_14 - x_3 * y_15 - x_4 * y_16)^2 +
+    (0 - x_9 * y_6 + x_6 * y_9 - x_5 * y_10 + x_8 * y_11 - x_7 * y_12 + x_2 * y_13 + x_1 * y_14 + x_4 * y_15 - x_3 * y_16)^2 +
+    (0 - x_9 * y_7 + x_7 * y_9 - x_8 * y_10 - x_5 * y_11 + x_6 * y_12 + x_3 * y_13 - x_4 * y_14 + x_1 * y_15 + x_2 * y_16)^2 +
+    (0 - x_9 * y_8 + x_8 * y_9 + x_7 * y_10 - x_6 * y_11 - x_5 * y_12 + x_4 * y_13 + x_3 * y_14 - x_2 * y_15 + x_1 * y_16)^2)"
+    |> parset
+    |> polytest
+    |> should equal
+    <| Fn ("0", [])
+
+(* ------------------------------------------------------------------------- *)
+(* This is essentially the Cauchy-Riemann conditions for a differential.     *)
+(* ------------------------------------------------------------------------- *)
+
+// TODO : These tests will be implemented later -- the output is truncated by
+// ocamltop so we can't determine the expected results for the test cases.
+(*
+let private example_results_13 : formula<fol>[] = [|
+    // TODO
+    |]
+
+[<TestCase("forall x y. (a * x + b * y = u * x - v * y) /\
+                (c * x + d * y = u * y + v * x)
+                ==> (a = d)", 0)>]
+[<TestCase("forall a b c d.
+      (forall x y. (a * x + b * y = u * x - v * y) /\
+                   (c * x + d * y = u * y + v * x))
+                   ==> (a = d) /\ (b = -(c))", 1)>]
+[<TestCase("forall a b c d.
+        (exists u v. forall x y. (a * x + b * y = u * x - v * y) /\
+                                 (c * x + d * y = u * y + v * x))
+        <=> (a = d) /\ (b = -(c))", 2)>]
+let ``examples 13`` (f, idx) =
+    parse f
+    |> complex_qelim
+    |> should equal example_results_13.[idx]
+*)
+
+(* ------------------------------------------------------------------------- *)
+(* Finding non-trivial perpendiculars to lines.                              *)
+(* ------------------------------------------------------------------------- *)
+
+let ``examples 14``() =
+    "forall x1 y1 x2 y2. exists a b.
+      ~(a = 0 /\ b = 0) /\ a * x1 + b * y1 = 0 /\ a * x2 + b * y2 = 0"
+    |> parse
+    |> complex_qelim
+    |> should equal False
 
