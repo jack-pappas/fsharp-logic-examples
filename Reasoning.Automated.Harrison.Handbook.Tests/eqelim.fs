@@ -38,7 +38,7 @@ let ``Lemma for equivalence elimination``() =
               <=> (forall x y. R(x,y) <=> (forall z. R(x,z) <=> R(y,z)))")
     |> should equal [4; 3; 9; 3; 2; 7]
 
-[<Test>]
+[<Test; Category("LongRunning")>]
 let ``examples 1``() =
     bmeson 
       (parse "(exists x. x = f(g(x)) /\ forall x'. x' = f(g(x')) ==> x = x') <=>
@@ -52,9 +52,7 @@ let ``examples 2``() =
               (exists y. y = g(f(y)) /\ forall y'. y' = g(f(y')) ==> y = y')")
     |> should equal [16; 16]
 
-// NOTE : This test currently passes, but it takes a
-// *long* time to run (approx. 10-15 minutes).
-[<Test>]
+[<Test; Category("LongRunning")>]
 let ``examples 3``() =
     bmeson 
         (parse "(forall x y z. x * (y * z) = (x * y) * z) /\ (forall x. e * x = x) /\ (forall x. i(x) * x = e) ==> forall x. x * i(x) = e")

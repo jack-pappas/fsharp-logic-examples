@@ -181,6 +181,7 @@ module folMod = // TODO : Change this back to 'fol'?
 
     // Actual function for printing
     let inline print_atom prec arg = fprint_atom stdout prec arg
+    let inline sprint_atom prec arg = writeToString (fun sw -> fprint_atom sw prec arg)
 
     let fprint_fol_formula tw =
         fprint_qformula tw (fprint_atom tw)

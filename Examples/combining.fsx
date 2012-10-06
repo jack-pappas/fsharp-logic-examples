@@ -59,7 +59,6 @@ ccvalid (parse
 // Check that our example works.                                             //
 // ------------------------------------------------------------------------- //
 
-// System.Collections.Generic.KeyNotFoundException: Exception of type 'System.Collections.Generic.KeyNotFoundException' was thrown.
 nelop001 (add_default [int_lang]) (parse
     "f(v - 1) - 1 = v + 1 /\ f(u) + 1 = u - 1 /\ u + 1 = v ==> false");;
      
@@ -77,24 +76,22 @@ List.map bell (1 -- 10);;
 // Some additional examples (from ICS paper and Shostak's "A practical..."   //
 // ------------------------------------------------------------------------- //
 
-// System.Collections.Generic.KeyNotFoundException: Exception of type 'System.Collections.Generic.KeyNotFoundException' was thrown.
 nelop (add_default [int_lang]) (parse
     "y <= x /\ y >= x + z /\ z >= 0 ==> f(f(x) - f(y)) = f(z)");;
 
-// System.Collections.Generic.KeyNotFoundException: Exception of type 'System.Collections.Generic.KeyNotFoundException' was thrown.
 nelop (add_default [int_lang]) (parse
     "x = y /\ y >= z /\ z >= x ==> f(z) = f(x)");;
 
-// System.Collections.Generic.KeyNotFoundException: Exception of type 'System.Collections.Generic.KeyNotFoundException' was thrown.
-nelop (add_default [int_lang]) (parse
-    "a <= b /\ b <= f(a) /\ f(a) <= 1 ==> a + b <= 1 \/ b + f(b) <= 1 \/ f(f(b)) <= f(a)");;
+// TODO: Fix this - too slow
+//nelop (add_default [int_lang]) (parse
+//    "a <= b /\ b <= f(a) /\ f(a) <= 1 ==> a + b <= 1 \/ b + f(b) <= 1 \/ f(f(b)) <= f(a)");;
 
 // pg. 447
 // ------------------------------------------------------------------------- //
 // Confirmation of non-convexity.                                            //
 // ------------------------------------------------------------------------- //
 
-// System.Collections.Generic.KeyNotFoundException: Exception of type 'System.Collections.Generic.KeyNotFoundException' was thrown.
+// TODO: Fix this - Exception occurs
 List.map (real_qelim >>|> generalize) [
     parse "x * y = 0 /\ z = 0 ==> x = z \/ y = z";
     parse "x * y = 0 /\ z = 0 ==> x = z";
@@ -113,13 +110,11 @@ List.map (integer_qelim >>|> generalize) [
 // Failures of original Shostak procedure.                                   //
 // ------------------------------------------------------------------------- //
 
-// System.Collections.Generic.KeyNotFoundException: Exception of type 'System.Collections.Generic.KeyNotFoundException' was thrown.
 nelop (add_default [int_lang]) (parse
     "f(v - 1) - 1 = v + 1 /\ f(u) + 1 = u - 1 /\ u + 1 = v ==> false");;
 
 // ** And this one is where the original procedure loops **//
 
-// System.Collections.Generic.KeyNotFoundException: Exception of type 'System.Collections.Generic.KeyNotFoundException' was thrown.
 nelop (add_default [int_lang]) (parse
     "f(v) = v /\ f(u) = u - 1 /\ u = v ==> false");;
 
@@ -129,8 +124,6 @@ nelop (add_default [int_lang]) (parse
 
 //** This is on p. 8 of Shostak's "Deciding combinations" paper
 
-// System.Collections.Generic.KeyNotFoundException: Exception of type 'System.Collections.Generic.KeyNotFoundException' was thrown.
-// TODO: Fix bug causing KeyNotFoundException
 time (nelop (add_default [int_lang])) (parse
     "z = f(x - y) /\ x = z + y /\ ~(-(y) = -(x - f(f(z)))) ==> false");;
 
@@ -183,6 +176,7 @@ time (nelop (add_default [int_lang])) (parse
 // ** My former running example in the text; seems too slow.
 // *** Anyway this also needs extra predicates in CC
 
+// TODO: Exception occurs
 time (nelop (add_default [real_lang])) (parse
     "x^2 = y^2 /\ x < y /\ z^2 = z /\ x < x * z /\ P(f(1 + z)) ==> P(f(x + y) - f(0))");;
 

@@ -7,8 +7,19 @@
 module Reasoning.Automated.Harrison.Handbook.Tests.lcfprop
 
 open Reasoning.Automated.Harrison.Handbook.folMod
+open Reasoning.Automated.Harrison.Handbook.lcf
 open Reasoning.Automated.Harrison.Handbook.lcfprop
 open NUnit.Framework
 open FsUnit
 
-// TODO : Implement tests.
+// pg. 488
+// ------------------------------------------------------------------------- //
+// The examples in the text.                                                 //
+// ------------------------------------------------------------------------- //
+
+[<TestCase("(p ==> q) \/ (q ==> p)", Result="|- (p ==> q) \/ (q ==> p)")>]
+[<TestCase("p /\ q <=> ((p <=> q) <=> p \/ q)", Result="|- p /\ q <=> (p <=> q) <=> p \/ q")>]
+[<TestCase("((p <=> q) <=> r) <=> (p <=> (q <=> r))", Result="|- ((p <=> q) <=> r) <=> p <=> q <=> r")>]
+let ``test lcftaut`` f =
+    lcftaut (parse f)
+    |> sprint_thm

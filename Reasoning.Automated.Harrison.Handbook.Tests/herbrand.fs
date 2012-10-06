@@ -40,3 +40,24 @@ let ``test gilmore quick``() =
         /\ (forall x. Q(x) 
         /\ R(x) ==> U(x)) ==> (exists x. P(x) /\ R(x))")
     |> should equal 1
+
+[<Test>]
+let ``test davisputnam``() =
+    davisputnam (parse "(forall x y. exists z. forall w. P(x) /\ Q(y) ==> R(z) /\ U(w))
+        ==> (exists x y. P(x) /\ Q(y)) ==> (exists z. R(z))")
+    |> should equal 19
+
+[<Test>]
+let ``test davisputnam'``() =
+    davisputnam' (parse "(forall x. exists y. P(x,y)) 
+        /\ (forall x. exists y. G(x,y)) 
+        /\ (forall x y. P(x,y) \/ G(x,y) ==> (forall z. P(y,z) \/ G(y,z) ==> H(x,z)))
+        ==> (forall x. exists y. H(x,y))")
+    |> should equal 3
+
+[<Test; Category("LongRunning")>]
+let ``test davisputnam' slow``() =
+    davisputnam' (parse "(exists x. P(x)) /\ (exists x. G(x)) ==>
+        ((forall x. P(x) ==> H(x)) /\ (forall x. G(x) ==> J(x)) <=>
+        (forall x y. P(x) /\ G(y) ==> H(x) /\ J(y)))")
+    |> should equal 5

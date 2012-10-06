@@ -48,16 +48,25 @@ module prop =
 
     // OCaml: val print_propvar : 'a -> prop -> unit = <fun>
     // F#:    val print_propvar : 'a -> prop -> unit
-    let print_propvar prec p =
-        printf "%O" (pname p)
+    let fprint_propvar sw prec p =
+        fprintf sw "%O" (pname p)
+
+    let inline print_propvar prec p = fprint_propvar stdout prec p
+    let inline sprint_propvar prec p = writeToString (fun sw -> fprint_propvar sw prec p)
         
     // OCaml: val print_prop_formula : prop formula -> unit = <fun>
     // F#:    val print_prop_formula : (prop formula -> unit)
-    let print_prop_formula : (prop formula -> unit) = 
-        print_qformula print_propvar
+    let fprint_prop_formula sw = 
+        fprint_qformula sw (fprint_propvar sw)
 
-    // Added by EGT
-    let print_prop_list xs = List.iter print_prop_formula xs
+    let inline print_prop_formula f = fprint_prop_formula stdout f
+    let inline sprint_prop_formula f = writeToString (fun sw -> fprint_prop_formula sw f)
+
+    // Added by EGT, updated by Phan
+    let inline fprint_prop_list sw xs = List.iter (fprint_prop_formula sw) xs
+
+    let inline print_prop_list fs = fprint_prop_list stdout fs
+    let inline sprint_prop_list fs = writeToString (fun sw -> fprint_prop_list sw fs)
 
 // pg. 32
 // ------------------------------------------------------------------------- //

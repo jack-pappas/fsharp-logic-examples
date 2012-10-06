@@ -35,29 +35,29 @@ let ``test unify_and_apply 3``() =
                         (parset "x_1"),(parset "f(x_2,x_2)");
                         (parset "x_2"),(parset "f(x_3,x_3)")]
     |> should equal [(Fn
-                            ("f",
+                          ("f",
                             [Fn
                                 ("f",
                                 [Fn ("f",[Var "x_3"; Var "x_3"]);
                                 Fn ("f",[Var "x_3"; Var "x_3"])]);
                             Fn
                                 ("f",
-                                [Fn ("f",[Var "x_3"; Var "x_3"]);
-                                Fn ("f",[Var "x_3"; Var "x_3"])])]),
+                                    [Fn ("f",[Var "x_3"; Var "x_3"]);
+                                    Fn ("f",[Var "x_3"; Var "x_3"])])]),
                         Fn
                             ("f",
                             [Fn
                                 ("f",
-                                [Fn ("f",[Var "x_3"; Var "x_3"]);
-                                Fn ("f",[Var "x_3"; Var "x_3"])]);
+                                    [Fn ("f",[Var "x_3"; Var "x_3"]);
+                                    Fn ("f",[Var "x_3"; Var "x_3"])]);
                             Fn
                                 ("f",
-                                [Fn ("f",[Var "x_3"; Var "x_3"]);
-                                Fn ("f",[Var "x_3"; Var "x_3"])])]));
+                                    [Fn ("f",[Var "x_3"; Var "x_3"]);
+                                    Fn ("f",[Var "x_3"; Var "x_3"])])]));
                         (Fn
                             ("f",
-                            [Fn ("f",[Var "x_3"; Var "x_3"]); Fn ("f",[Var "x_3"; Var "x_3"])]),
+                                [Fn ("f",[Var "x_3"; Var "x_3"]); Fn ("f",[Var "x_3"; Var "x_3"])]),
                          Fn
                             ("f",
-                            [Fn ("f",[Var "x_3"; Var "x_3"]); Fn ("f",[Var "x_3"; Var "x_3"])]));
+                                [Fn ("f",[Var "x_3"; Var "x_3"]); Fn ("f",[Var "x_3"; Var "x_3"])]));
                         (Fn ("f",[Var "x_3"; Var "x_3"]), Fn ("f",[Var "x_3"; Var "x_3"]))]

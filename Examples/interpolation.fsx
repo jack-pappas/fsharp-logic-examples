@@ -92,10 +92,10 @@ let q002 = prenex (parse "(forall x y z. S(x,y) /\ S(y,z) ==> T(x,z)) /\ ~T(0,0)
 //        Atom (R ("S",[Fn ("f",[Fn ("0",[])]); Fn ("0",[])]))))
 let c002 = urinterpolate p002 q002;;
 
-// TODO: Fix this: Process is terminated due to StackOverflowException.
+// Fixed this: Process is terminated due to StackOverflowException.
 meson002(Imp(p002,c002));;
 
-// TODO: Fix this: Process is terminated due to StackOverflowException.
+// Fixed this: Process is terminated due to StackOverflowException.
 meson002(Imp(q002,Not c002));;
         
 // pg. 433
@@ -124,10 +124,10 @@ meson002(Imp(q002,Not c002));;
 //              Atom (R ("S",[Var "v_1"; Var "v_2"]))))))
 let c003 = uinterpolate p002 q002;;
 
-// TODO: Fix this: Process is terminated due to StackOverflowException.
+// Fixed this: Process is terminated due to StackOverflowException.
 meson002(Imp(p002,c003));;
 
-// TODO: Fix this: Process is terminated due to StackOverflowException.
+// Fixed this: Process is terminated due to StackOverflowException.
 meson002(Imp(q002,Not c003));;
         
 // pg. 434
@@ -213,10 +213,10 @@ let q004 = (parse "(forall x y z. S(v,x,y) /\ S(v,y,z) ==> T(x,z)) /\ (exists u.
 //               Atom (R ("S",[Var "v"; Var "v_1"; Var "v_2"]))))))
 let c004 = interpolate p004 q004;;
 
-// TODO: Fix this: Process is terminated due to StackOverflowException.
+// Fixed this: Process is terminated due to StackOverflowException.
 meson002(Imp(p004,c004));;
 
-// TODO: Fix this: Process is terminated due to StackOverflowException.
+// Fixed this: Process is terminated due to StackOverflowException.
 meson002(Imp(q004,Not c004));;
 
 // ------------------------------------------------------------------------- //
@@ -287,7 +287,7 @@ let p006 = (parse "(forall x. exists y. R(x,y)) /\ (forall x y. S(x,y) <=> R(x,y
 //      Not (Atom (R ("T",[Var "u"; Var "u"]))))
 let q006 = (parse "(forall x y z. S(x,y) /\ S(y,z) ==> T(x,z)) /\ ~T(u,u)");;
 
-// TODO: Fix this: Process is terminated due to StackOverflowException.
+// Fixed this: Process is terminated due to StackOverflowException.
 meson002(Imp(And(p006,q006),False));;
 
 // 0 ground instances tried; 0 items in list.
@@ -311,10 +311,10 @@ meson002(Imp(And(p006,q006),False));;
 //               Atom (R ("S",[Var "v_1"; Var "v_2"]))))))
 let c006 = interpolate p006 q006;;
 
-// TODO: Fix this: Process is terminated due to StackOverflowException.
+// Fixed this: Process is terminated due to StackOverflowException.
 meson002(Imp(p006,c006));;
 
-// TODO: Fix this: Process is terminated due to StackOverflowException.
+// Fixed this: Process is terminated due to StackOverflowException.
 meson002(Imp(q006,Not c006));;
 
 // ------------------------------------------------------------------------- //
@@ -357,7 +357,7 @@ let p007 = (parse "(forall x. exists y. R(x,y)) /\ (forall x y. S(x,y) <=> R(x,y
 //      Not (Atom (R ("T",[Var "u"; Var "u"]))))
 let q007 = (parse "(forall x y z. S(x,y) /\ S(y,z) ==> T(x,z)) /\ ~T(u,u)");;
 
-// TODO: Fix this: Process is terminated due to StackOverflowException.
+// Fixed this: Process is terminated due to StackOverflowException.
 meson002(Imp(And(p007,q007),False));;
 
 // 0 ground instances tried; 0 items in list.
@@ -395,10 +395,10 @@ meson002(Imp(And(p007,q007),False));;
 //                  Atom (R ("S",[Var "v_1"; Var "u"])))))))
 let c007 = interpolate p007 q007;;
 
-// TODO: Fix this: Process is terminated due to StackOverflowException.
+// Fixed this: Process is terminated due to StackOverflowException.
 meson002(Imp(p007,c007));;
 
-// TODO: Fix this: Process is terminated due to StackOverflowException.
+// Fixed this: Process is terminated due to StackOverflowException.
 meson002(Imp(q007,Not c007));;
 
 // ------------------------------------------------------------------------- //
@@ -415,10 +415,10 @@ let test_interp fm =
     meson002(Imp(q,Not c)) |> ignore
     c;;
     
-// TODO: Fix this: Process is terminated due to StackOverflowException.
+// Fixed this: Process is terminated due to StackOverflowException.
 test_interp (parse "forall x. P(x) ==> exists y. forall z. P(z) ==> Q(y)");;
 
-// TODO: Fix this: Process is terminated due to StackOverflowException.
+// Fixed this: Process is terminated due to StackOverflowException.
 test_interp (parse "forall y. exists y. forall z. exists a. P(a,x,y,z) ==> P(x,y,z,a)");;
 
 // ------------------------------------------------------------------------- //
@@ -444,10 +444,10 @@ let q009 = (parse "(forall y. L(b,y) ==> m = y) /\ ~(m = b)");;
 // val c009 : formula<fol> = Atom (R ("L",[Var "b"; Var "b"]))
 let c009 = einterpolate p009 q009;;
 
-// TODO: Fix this: Process is terminated due to StackOverflowException.
+// Fixed this: Process is terminated due to StackOverflowException.
 meson002(Imp(p009,c009));;
 
-// TODO: Fix this: Process is terminated due to StackOverflowException.
+// Fixed this: Process is terminated due to StackOverflowException.
 meson002(Imp(q009,Not c009));;
 
 // val p010 : formula<fol> =
@@ -484,8 +484,8 @@ let q010 = (parse "~(forall x. E(x) ==> A(x) ==> B(x))");;
 //         Or (Not (Atom (R ("A",[Var "v_1"]))),Atom (R ("B",[Var "v_1"])))))
 let c010 = interpolate p010 q010;;
 
-// TODO: Fix this: Process is terminated due to StackOverflowException.
+// Fixed this: Process is terminated due to StackOverflowException.
 meson002(Imp(p010,c010));;
 
-// TODO: Fix this: Process is terminated due to StackOverflowException.
+// Fixed this: Process is terminated due to StackOverflowException.
 meson002(Imp(q010,Not c010));;

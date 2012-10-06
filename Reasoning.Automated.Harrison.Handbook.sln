@@ -6,12 +6,10 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Examples", "Examples", "{F3B5AF8C-FE04-4366-B04F-290C5F5519EB}"
 	ProjectSection(SolutionItems) = preProject
 		Examples\bdd.fsx = Examples\bdd.fsx
-		Examples\combining.fsx = Examples\combining.fsx
 		Examples\completion.fsx = Examples\completion.fsx
 		Examples\complex.fsx = Examples\complex.fsx
 		Examples\cong.fsx = Examples\cong.fsx
 		Examples\cooper.fsx = Examples\cooper.fsx
-		Examples\decidable.fsx = Examples\decidable.fsx
 		Examples\defcnf.fsx = Examples\defcnf.fsx
 		Examples\dp.fsx = Examples\dp.fsx
 		Examples\eqelim.fsx = Examples\eqelim.fsx
