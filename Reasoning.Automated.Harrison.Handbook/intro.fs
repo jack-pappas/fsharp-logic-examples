@@ -170,17 +170,27 @@ module intro =
     // OCaml: val make_parser : (string list -> 'a * 'b list) -> string -> 'a = <fun>
     // F#:    val make_parser : (string list -> 'a * 'b list) -> string -> 'a
     let make_parser pfn (s : string) =
-        let expr, rest =
-            // Replace "\r\n" with "\n" so the lexer works correctly
-            // on multi-line strings, no matter what OS we're using.
-            s.Replace ("\r\n", "\n")
-            |> explode |> lex |> pfn
+        let tokens =
+            // Replace newlines with spaces so the lexer and parser
+            // work correctly on multi-line strings.
+            // TODO : This could probably be optimized to make the replacements
+            // in a single pass using a Regex.
+            s.Replace('\r', ' ')
+                .Replace('\n', ' ')
+            // Reduce multiple spaces to single spaces to help the parser.
+                .Replace("  ", " ")
+            |> explode
+            |> lex
 
-        match rest with
-        | [] -> expr
-        | _ -> failwith "Unparsed input"
+        match pfn tokens with
+        | expr, [] ->
+            expr
+        | _, rest ->
+            failwithf "Unparsed input: %i tokens remaining in buffer."
+                <| List.length rest
 
-    let parse_exp = make_parser parse_expression
+    let parse_exp =
+        make_parser parse_expression
     
 // pg. 21
 // ------------------------------------------------------------------------- //
