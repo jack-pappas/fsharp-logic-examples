@@ -56,19 +56,19 @@ let results = ResizeArray()
 // Shadow time function to record test cases
 let time fn input =
     let result = time fn (parse input)
-    let testCase = sprintf "[<TestCase(\"%s\", %i)>]" input !count
+    let testCase = sprintf "[<TestCase(@\"%s\", %i)>]" input !count
     buffer.Add(testCase) |> ignore
     results.Add(result) |> ignore
     incr count
     result
 
 // Content is only written to files here
-let flush_buffer () =
+let  flush_buffer () =
     let path = __SOURCE_DIRECTORY__ + "\\__tests__.fsx"
     System.IO.File.WriteAllLines(path, buffer)
     let sb = System.Text.StringBuilder()
     sb.AppendLine "[|" |> ignore
-    results |> Seq.iter (fun xs -> sprintf "\t%A;" xs |> sb.AppendLine |> ignore) // %A might not work with long lists
+    results |> Seq.iteri (fun i xs -> sprintf "%A; // %i" xs i |> sb.AppendLine |> ignore) // %A might not work with long lists
     sb.AppendLine "|]" |> ignore
     System.IO.File.AppendAllText(path, sb.ToString())
 

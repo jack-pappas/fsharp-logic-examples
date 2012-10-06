@@ -50,69 +50,68 @@ let ``meson002 small``() =
     |> should equal [8] // There is also an equal function in meson module
 
 let private results = [|
-                            [8];
-                            [];
-                            [];
-                            [];
-                            [];
-                            [];
-                            [];
-                            [];
-                            [];
-                            [];
-                            [];
-                            [];
-                            [];
-                            [];
-                            [];
-                            [];
-                            [];
-                            [];
-                            [1];
-                            [2];
-                            [3];
-                            [2; 3; 2];
-                            [2; 2];
-                            [2; 1];
-                            [4];
-                            [2; 3];
-                            [5; 5; 1; 1];
-                            [5];
-                            [1; 2; 2; 2];
-                            [3; 2; 2; 3];
-                            [4];
-                            [4];
-                            [7];
-                            [3; 3; 3];
-                            [3; 3; 3; 1; 2; 2; 2; 1; 3; 2; 2; 1; 3; 2; 2; 1; 2; 1; 2; 1; 3; 1; 2; 1; 2; 1; 2;
-                            1; 1; 1; 1; 1];
-                            [1];
-                            [3];
-                            [1; 3];
-                            [12; 12; 9; 9];
-                            [4];
-                            [6];
-                            [6];
-                            [12];
-                            [11; 11];
-                            [6];
-                            [24];
-                            [12; 2];
-                            [8; 3];
-                            [3];
-                            [3];
-                            [6];
-                            [2; 3];
-                            [4];
-                            [8];
-                            [4];
-                            [2];
-                            [8];
-                            [4];
-                            [7];
-                            [8];
-                            [];
-                         |]
+                        [8]; // 0
+                        []; // 1
+                        []; // 2
+                        []; // 3
+                        []; // 4
+                        []; // 5
+                        []; // 6
+                        []; // 7
+                        []; // 8
+                        []; // 9
+                        []; // 10
+                        []; // 11
+                        []; // 12
+                        []; // 13
+                        []; // 14
+                        []; // 15
+                        []; // 16
+                        []; // 17
+                        [1]; // 18
+                        [2]; // 19
+                        [3]; // 20
+                        [2; 3; 2]; // 21
+                        [2; 2]; // 22
+                        [2; 1]; // 23
+                        [4]; // 24
+                        [2; 3]; // 25
+                        [5; 5; 1; 1]; // 26
+                        [5]; // 27
+                        [1; 2; 2; 2]; // 28
+                        [3; 2; 2; 3]; // 29
+                        [4]; // 30
+                        [4]; // 31
+                        [7]; // 32
+                        [3; 3; 3]; // 33
+                        [3; 3; 3; 1; 2; 2; 2; 1; 3; 2; 2; 1; 3; 2; 2; 1; 2; 1; 2; 1; 3; 1; 2; 1; 2; 1; 2; 1; 1; 1; 1; 1]; // 34
+                        [1]; // 35
+                        [3]; // 36
+                        [1; 3]; // 37
+                        [12; 12; 9; 9]; // 38
+                        [4]; // 39
+                        [6]; // 40
+                        [6]; // 41
+                        [12]; // 42
+                        [11; 11]; // 43
+                        [6]; // 44
+                        [24]; // 45
+                        [12; 2]; // 46
+                        [8; 3]; // 47
+                        [3]; // 48
+                        [3]; // 49
+                        [6]; // 50
+                        [2; 3]; // 51
+                        [4]; // 52
+                        [8]; // 53
+                        [4]; // 54
+                        [2]; // 55
+                        [8]; // 56
+                        [4]; // 57
+                        [7]; // 58
+                        [8]; // 59
+                        []; // 60
+                            |]
 
 [<TestCase(@"
     exists x. exists y. forall z. 
@@ -243,30 +242,10 @@ let private results = [|
     (forall z. exists y. forall x. P(x,y) <=> P(x,z) /\ ~P(x,x)) 
     ==> ~(exists z. forall x. P(x,z))", 41)>]
 [<TestCase(@"
-    ~(exists y. forall x. P(x,y) <=> ~(exists z. P(x,z) /\ P(z,x)))", 42)>]
-[<TestCase(@"
-    (forall x y. Q(x,y) <=> forall z. P(z,x) <=> P(z,y)) 
-    ==> forall x y. Q(x,y) <=> Q(y,x)", 43)>]
-[<TestCase(@"
     (forall x. P(x) ==> (exists y. G(y) /\ H(x,y)) /\ 
     (exists y. G(y) /\ ~H(x,y))) /\ 
     (exists x. J(x) /\ (forall y. G(y) ==> H(x,y))) ==> 
     (exists x. J(x) /\ ~P(x))", 44)>]
-[<TestCase(@"
-    (forall x. 
-        P(x) /\ (forall y. G(y) /\ H(x,y) ==> J(x,y)) ==> 
-            (forall y. G(y) /\ H(x,y) ==> R(y))) /\ 
-    ~(exists y. L(y) /\ R(y)) /\ 
-        (exists x. P(x) /\ (forall y. H(x,y) ==> 
-            L(y)) /\ (forall y. G(y) /\ H(x,y) ==> J(x,y))) ==> 
-    (exists x. P(x) /\ ~(exists y. G(y) /\ H(x,y)))", 45)>]
-[<TestCase(@"
-    (forall x. P(x) /\ (forall y. P(y) /\ H(y,x) ==> G(y)) ==> G(x)) /\ 
-    ((exists x. P(x) /\ ~G(x)) ==> 
-        (exists x. P(x) /\ ~G(x) /\ 
-            (forall y. P(y) /\ ~G(y) ==> J(x,y)))) /\ 
-    (forall x y. P(x) /\ P(y) /\ H(x,y) ==> ~J(y,x)) ==> 
-    (forall x. P(x) ==> G(x))", 46)>]
 [<TestCase(@"
     lives(agatha) /\ lives(butler) /\ lives(charles) /\ 
     (killed(agatha,agatha) \/ killed(butler,agatha) \/ 
@@ -337,5 +316,29 @@ let private results = [|
         (~r \/ ~t) /\ (~r \/ ~u) /\ (~q \/ v \/ w) /\ 
         (~s \/ ~v) /\ (~s \/ ~w) ==> false", 60)>]
 let ``meson002 all`` (f, idx) =
+    meson002 (parse f)
+    |> should equal results.[idx]
+
+[<TestCase(@"
+    ~(exists y. forall x. P(x,y) <=> ~(exists z. P(x,z) /\ P(z,x)))", 42); Category("LongRunning")>]
+[<TestCase(@"
+    (forall x y. Q(x,y) <=> forall z. P(z,x) <=> P(z,y)) 
+    ==> forall x y. Q(x,y) <=> Q(y,x)", 43)>]
+[<TestCase(@"
+    (forall x. 
+        P(x) /\ (forall y. G(y) /\ H(x,y) ==> J(x,y)) ==> 
+            (forall y. G(y) /\ H(x,y) ==> R(y))) /\ 
+    ~(exists y. L(y) /\ R(y)) /\ 
+        (exists x. P(x) /\ (forall y. H(x,y) ==> 
+            L(y)) /\ (forall y. G(y) /\ H(x,y) ==> J(x,y))) ==> 
+    (exists x. P(x) /\ ~(exists y. G(y) /\ H(x,y)))", 45)>]
+[<TestCase(@"
+    (forall x. P(x) /\ (forall y. P(y) /\ H(y,x) ==> G(y)) ==> G(x)) /\ 
+    ((exists x. P(x) /\ ~G(x)) ==> 
+        (exists x. P(x) /\ ~G(x) /\ 
+            (forall y. P(y) /\ ~G(y) ==> J(x,y)))) /\ 
+    (forall x y. P(x) /\ P(y) /\ H(x,y) ==> ~J(y,x)) ==> 
+    (forall x. P(x) ==> G(x))", 46)>]
+let ``meson002 slow`` (f, idx) =
     meson002 (parse f)
     |> should equal results.[idx]

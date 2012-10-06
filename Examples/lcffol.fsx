@@ -60,9 +60,9 @@ lcfrefute (parse "(exists x. ~p(x)) /\ (forall x. p(x))") 1 simpcont;;
 // Shadow time function to record test cases
 let time fn input =
     let result = time (sprint_thm << fn) (parse input)
-    let testCase = sprintf "[<TestCase(\"%s\", 
+    let testCase = sprintf "[<TestCase(@\"%s\", 
                 Result=\"%s\")>]\n" input result
-    System.IO.File.AppendAllText(__SOURCE_DIRECTORY__ + "\\__tests__.fsx", testCase)
+    System.IO.File.WriteAllText(__SOURCE_DIRECTORY__ + "\\__tests__.fsx", testCase)
     result
 
 let p58 = time lcffol ("forall x. exists v. exists w. forall y. forall z. ((P(x) /\ Q(y)) ==> ((P(v) \/ R(w))  /\ (R(z) ==> Q(v))))");;
