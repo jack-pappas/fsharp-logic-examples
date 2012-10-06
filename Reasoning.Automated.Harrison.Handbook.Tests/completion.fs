@@ -27,7 +27,7 @@ open FsUnit
 
 [<Test>]
 let ``critical_pairs``() =
-    let eq = (parse "f(f(x)) = g(x)")
+    let eq = (parse @"f(f(x)) = g(x)")
     sprint_fol_formula_list (critical_pairs eq eq)
     |> should equal "<<f(g(x0)) =g(f(x0))>>
 <<g(x1) =g(x1)>>
@@ -40,7 +40,7 @@ let ``critical_pairs``() =
 
 [<Test>]
 let ``complete_and_simplify``() =
-    sprint_fol_formula_list (complete_and_simplify ["1"; "*"; "i"] [parse "i(a) * (a * b) = b"])
+    sprint_fol_formula_list (complete_and_simplify ["1"; "*"; "i"] [parse @"i(a) * (a * b) = b"])
     |> should equal "<<x0 *i(x0) *x3 =x3>>
 <<i(i(x0)) *x1 =x0 *x1>>
 <<i(a) *a *b =b>>
@@ -53,14 +53,14 @@ let ``complete_and_simplify``() =
 
 [<Test>]
 let ``meson002 and equalitize``() =
-    (meson002 >>|> equalitize) (parse "
+    (meson002 >>|> equalitize) (parse @"
         (forall x y z. x * y = x * z ==> y = z) <=> 
         (forall x z. exists w. forall y. z = x * y ==> w = y)")
     |> should equal [5; 4]
 
 [<Test>]
 let ``skolemize again``() =
-    sprint_fol_formula (skolemize (parse "
+    sprint_fol_formula (skolemize (parse @"
         forall x z. exists w. forall y. z = x * y ==> w = y"))
     |> should equal "<<~z =x *y \/ f_w(x,z) =y>>
 "

@@ -29,9 +29,9 @@ open FsUnit
 // Unfortuntely this gets hammered by normalization first...                 //
 // ------------------------------------------------------------------------- //
 
-[<TestCase("forall a. ~(P(a) /\ (forall y z. Q(y) \/ R(z)) /\ ~P(a))", Result=2)>]
-[<TestCase("forall a. ~(P(a) /\ ~P(a) /\ (forall y z. Q(y) \/ R(z)))", Result=0)>]
-[<TestCase("~p /\ (p \/ q) /\ (r \/ s) /\ (~q \/ t \/ u) /\ 
+[<TestCase(@"forall a. ~(P(a) /\ (forall y z. Q(y) \/ R(z)) /\ ~P(a))", Result=2)>]
+[<TestCase(@"forall a. ~(P(a) /\ ~P(a) /\ (forall y z. Q(y) \/ R(z)))", Result=0)>]
+[<TestCase(@"~p /\ (p \/ q) /\ (r \/ s) /\ (~q \/ t \/ u) /\ 
             (~r \/ ~t) /\ (~r \/ ~u) /\ (~q \/ v \/ w) /\ 
             (~s \/ ~v) /\ (~s \/ ~w) ==> false", Result=0)>]
 let ``tab`` f =
@@ -44,28 +44,28 @@ let ``tab`` f =
 
 [<Test>]
 let ``meson002 all``() =
-    meson002 (parse "exists x. exists y. forall z. 
+    meson002 (parse @"exists x. exists y. forall z. 
                         (F(x,y) ==> (F(y,z) /\ F(z,z))) /\ 
                         ((F(x,y) /\ G(x,y)) ==> (G(x,z) /\ G(z,z)))")
     |> should equal [8] // There is also an equal in meson module
 
-[<TestCase("p ==> q <=> ~q ==> ~p")>]    
-[<TestCase("~ ~p <=> p")>]
-[<TestCase("~(p ==> q) ==> q ==> p")>]
-[<TestCase("~p ==> q <=> ~q ==> p")>]
-[<TestCase("(p \/ q ==> p \/ r) ==> p \/ (q ==> r)")>]
-[<TestCase("p \/ ~p")>]
-[<TestCase("p \/ ~ ~ ~p")>]
-[<TestCase("((p ==> q) ==> p) ==> p")>]    
-[<TestCase("(p \/ q) /\ (~p \/ q) /\ (p \/ ~q) ==> ~(~q \/ ~q)")>]
-[<TestCase("(q ==> r) /\ (r ==> p /\ q) /\ (p ==> q /\ r) ==> (p <=> q)")>]
-[<TestCase("p <=> p")>]
-[<TestCase("((p <=> q) <=> r) <=> (p <=> (q <=> r))")>]
-[<TestCase("p \/ q /\ r <=> (p \/ q) /\ (p \/ r)")>]
-[<TestCase("(p <=> q) <=> (q \/ ~p) /\ (~q \/ p)")>]
-[<TestCase("p ==> q <=> ~p \/ q")>]
-[<TestCase("(p ==> q) \/ (q ==> p)")>]
-[<TestCase("p /\ (q ==> r) ==> s <=> (~p \/ q \/ s) /\ (~p \/ ~r \/ s)")>]
+[<TestCase(@"p ==> q <=> ~q ==> ~p")>]    
+[<TestCase(@"~ ~p <=> p")>]
+[<TestCase(@"~(p ==> q) ==> q ==> p")>]
+[<TestCase(@"~p ==> q <=> ~q ==> p")>]
+[<TestCase(@"(p \/ q ==> p \/ r) ==> p \/ (q ==> r)")>]
+[<TestCase(@"p \/ ~p")>]
+[<TestCase(@"p \/ ~ ~ ~p")>]
+[<TestCase(@"((p ==> q) ==> p) ==> p")>]    
+[<TestCase(@"(p \/ q) /\ (~p \/ q) /\ (p \/ ~q) ==> ~(~q \/ ~q)")>]
+[<TestCase(@"(q ==> r) /\ (r ==> p /\ q) /\ (p ==> q /\ r) ==> (p <=> q)")>]
+[<TestCase(@"p <=> p")>]
+[<TestCase(@"((p <=> q) <=> r) <=> (p <=> (q <=> r))")>]
+[<TestCase(@"p \/ q /\ r <=> (p \/ q) /\ (p \/ r)")>]
+[<TestCase(@"(p <=> q) <=> (q \/ ~p) /\ (~q \/ p)")>]
+[<TestCase(@"p ==> q <=> ~p \/ q")>]
+[<TestCase(@"(p ==> q) \/ (q ==> p)")>]
+[<TestCase(@"p /\ (q ==> r) ==> s <=> (~p \/ q \/ s) /\ (~p \/ ~r \/ s)")>]
 let ``meson002 returns empty`` f =
     meson002 (parse f)
     |> should equal []

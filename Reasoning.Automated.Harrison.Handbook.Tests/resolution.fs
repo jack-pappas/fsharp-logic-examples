@@ -25,7 +25,7 @@ open FsUnit
 
 [<Test>]
 let ``resolution001``() =
-    resolution001 (parse "
+    resolution001 (parse @"
         exists x. exists y. forall z. 
             (F(x,y) ==> (F(y,z) /\ F(z,z))) /\ 
             ((F(x,y) /\ G(x,y)) ==> (G(x,z) /\ G(z,z)))")
@@ -38,7 +38,7 @@ let ``resolution001``() =
 
 [<Test>]
 let ``resolution002``() =
-    resolution002 (parse "
+    resolution002 (parse @"
         exists x. exists y. forall z. 
             (F(x,y) ==> (F(y,z) /\ F(z,z))) /\ 
             ((F(x,y) /\ G(x,y)) ==> (G(x,z) /\ G(z,z)))")
@@ -51,7 +51,7 @@ let ``resolution002``() =
 
 [<Test>]
 let ``presolution all``() =
-    presolution (parse "
+    presolution (parse @"
     (forall x y z. P(x,y) ==> P(y,z) ==> P(x,z)) /\ 
     (forall x y z. Q(x,y) ==> Q(y,z) ==> Q(x,z)) /\ 
     (forall x y. Q(x,y) ==> Q(y,x)) /\ 
@@ -63,52 +63,52 @@ let ``presolution all``() =
 // The Pelletier examples again.                                             //
 // ------------------------------------------------------------------------- //
 
-[<TestCase("p ==> q <=> ~q ==> ~p")>]    
-[<TestCase("~ ~p <=> p")>]
-[<TestCase("~(p ==> q) ==> q ==> p")>]
-[<TestCase("~p ==> q <=> ~q ==> p")>]
-[<TestCase("(p \/ q ==> p \/ r) ==> p \/ (q ==> r)")>]
-[<TestCase("p \/ ~p")>]
-[<TestCase("p \/ ~ ~ ~p")>]
-[<TestCase("((p ==> q) ==> p) ==> p")>]    
-[<TestCase("(p \/ q) /\ (~p \/ q) /\ (p \/ ~q) ==> ~(~q \/ ~q)")>]
-[<TestCase("(q ==> r) /\ (r ==> p /\ q) /\ (p ==> q /\ r) ==> (p <=> q)")>]
-[<TestCase("p <=> p")>]
-[<TestCase("((p <=> q) <=> r) <=> (p <=> (q <=> r))")>]
-[<TestCase("p \/ q /\ r <=> (p \/ q) /\ (p \/ r)")>]
-[<TestCase("(p <=> q) <=> (q \/ ~p) /\ (~q \/ p)")>]
-[<TestCase("p ==> q <=> ~p \/ q")>]
-[<TestCase("(p ==> q) \/ (q ==> p)")>]
-[<TestCase("p /\ (q ==> r) ==> s <=> (~p \/ q \/ s) /\ (~p \/ ~r \/ s)")>]
+[<TestCase(@"p ==> q <=> ~q ==> ~p")>]    
+[<TestCase(@"~ ~p <=> p")>]
+[<TestCase(@"~(p ==> q) ==> q ==> p")>]
+[<TestCase(@"~p ==> q <=> ~q ==> p")>]
+[<TestCase(@"(p \/ q ==> p \/ r) ==> p \/ (q ==> r)")>]
+[<TestCase(@"p \/ ~p")>]
+[<TestCase(@"p \/ ~ ~ ~p")>]
+[<TestCase(@"((p ==> q) ==> p) ==> p")>]    
+[<TestCase(@"(p \/ q) /\ (~p \/ q) /\ (p \/ ~q) ==> ~(~q \/ ~q)")>]
+[<TestCase(@"(q ==> r) /\ (r ==> p /\ q) /\ (p ==> q /\ r) ==> (p <=> q)")>]
+[<TestCase(@"p <=> p")>]
+[<TestCase(@"((p <=> q) <=> r) <=> (p <=> (q <=> r))")>]
+[<TestCase(@"p \/ q /\ r <=> (p \/ q) /\ (p \/ r)")>]
+[<TestCase(@"(p <=> q) <=> (q \/ ~p) /\ (~q \/ p)")>]
+[<TestCase(@"p ==> q <=> ~p \/ q")>]
+[<TestCase(@"(p ==> q) \/ (q ==> p)")>]
+[<TestCase(@"p /\ (q ==> r) ==> s <=> (~p \/ q \/ s) /\ (~p \/ ~r \/ s)")>]
 let ``presolution returns empty list`` f =
     presolution (parse f)
     |> should equal []
 
 [<Test>]
 let ``resolution003 all``() =
-    resolution003 (parse "
+    resolution003 (parse @"
         exists x. exists y. forall z. 
             (F(x,y) ==> (F(y,z) /\ F(z,z))) /\ 
             ((F(x,y) /\ G(x,y)) ==> (G(x,z) /\ G(z,z)))")
     |> should equal [true]
 
-[<TestCase("p ==> q <=> ~q ==> ~p")>]    
-[<TestCase("~ ~p <=> p")>]
-[<TestCase("~(p ==> q) ==> q ==> p")>]
-[<TestCase("~p ==> q <=> ~q ==> p")>]
-[<TestCase("(p \/ q ==> p \/ r) ==> p \/ (q ==> r)")>]
-[<TestCase("p \/ ~p")>]
-[<TestCase("p \/ ~ ~ ~p")>]
-[<TestCase("((p ==> q) ==> p) ==> p")>]    
-[<TestCase("(p \/ q) /\ (~p \/ q) /\ (p \/ ~q) ==> ~(~q \/ ~q)")>]
-[<TestCase("(q ==> r) /\ (r ==> p /\ q) /\ (p ==> q /\ r) ==> (p <=> q)")>]
-[<TestCase("p <=> p")>]
-[<TestCase("((p <=> q) <=> r) <=> (p <=> (q <=> r))")>]
-[<TestCase("p \/ q /\ r <=> (p \/ q) /\ (p \/ r)")>]
-[<TestCase("(p <=> q) <=> (q \/ ~p) /\ (~q \/ p)")>]
-[<TestCase("p ==> q <=> ~p \/ q")>]
-[<TestCase("(p ==> q) \/ (q ==> p)")>]
-[<TestCase("p /\ (q ==> r) ==> s <=> (~p \/ q \/ s) /\ (~p \/ ~r \/ s)")>]
+[<TestCase(@"p ==> q <=> ~q ==> ~p")>]    
+[<TestCase(@"~ ~p <=> p")>]
+[<TestCase(@"~(p ==> q) ==> q ==> p")>]
+[<TestCase(@"~p ==> q <=> ~q ==> p")>]
+[<TestCase(@"(p \/ q ==> p \/ r) ==> p \/ (q ==> r)")>]
+[<TestCase(@"p \/ ~p")>]
+[<TestCase(@"p \/ ~ ~ ~p")>]
+[<TestCase(@"((p ==> q) ==> p) ==> p")>]    
+[<TestCase(@"(p \/ q) /\ (~p \/ q) /\ (p \/ ~q) ==> ~(~q \/ ~q)")>]
+[<TestCase(@"(q ==> r) /\ (r ==> p /\ q) /\ (p ==> q /\ r) ==> (p <=> q)")>]
+[<TestCase(@"p <=> p")>]
+[<TestCase(@"((p <=> q) <=> r) <=> (p <=> (q <=> r))")>]
+[<TestCase(@"p \/ q /\ r <=> (p \/ q) /\ (p \/ r)")>]
+[<TestCase(@"(p <=> q) <=> (q \/ ~p) /\ (~q \/ p)")>]
+[<TestCase(@"p ==> q <=> ~p \/ q")>]
+[<TestCase(@"(p ==> q) \/ (q ==> p)")>]
+[<TestCase(@"p /\ (q ==> r) ==> s <=> (~p \/ q \/ s) /\ (~p \/ ~r \/ s)")>]
 let ``resolution003 returns empty list`` f =
     resolution003 (parse f)
     |> should equal []

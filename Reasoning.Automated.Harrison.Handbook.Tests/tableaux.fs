@@ -24,28 +24,28 @@ open FsUnit
 
 [<Test>]
 let ``prawitz``() =
-    prawitz (parse "
+    prawitz (parse @"
         (forall x y. exists z. forall w. P(x) /\ Q(y) ==> R(z) /\ U(w)) 
         ==> (exists x y. P(x) /\ Q(y)) ==> (exists z. R(z))")
     |> should equal 2
 
-[<TestCase("exists x. forall y z. (P(y) ==> Q(z)) ==> P(x) ==> Q(x)", 3, 3)>]
-[<TestCase("(forall x y. exists z. forall w. P(x) /\ Q(y) 
+[<TestCase(@"exists x. forall y z. (P(y) ==> Q(z)) ==> P(x) ==> Q(x)", 3, 3)>]
+[<TestCase(@"(forall x y. exists z. forall w. P(x) /\ Q(y) 
             ==> R(z) /\ U(w)) ==> (exists x y. P(x) /\ Q(y)) ==> (exists z. R(z))", 2, 19)>]
-[<TestCase("~(exists x. U(x) /\ Q(x)) /\ 
+[<TestCase(@"~(exists x. U(x) /\ Q(x)) /\ 
             (forall x. P(x) ==> Q(x) \/ R(x)) /\ 
             ~(exists x. P(x) ==> (exists x. Q(x))) /\ 
             (forall x. Q(x) /\ R(x) ==> U(x)) 
             ==> (exists x. P(x) /\ R(x))", 1, 1)>]
-[<TestCase("~(exists x. forall y. P(y,x) <=> ~P(y,y))", 1, 1)>]
-[<TestCase("~(exists y. forall x. P(x,y) <=> ~(exists z. P(x,z) /\ P(z,x)))", 2, 3)>]
-[<TestCase("(forall x y. Q(x,y) <=> forall z. P(z,x) <=> P(z,y)) ==> forall x y. Q(x,y) <=> Q(y,x)", 2, 26)>]
-[<TestCase("(forall x. P(x) ==> (exists y. G(y) /\ H(x,y)) /\ 
+[<TestCase(@"~(exists x. forall y. P(y,x) <=> ~P(y,y))", 1, 1)>]
+[<TestCase(@"~(exists y. forall x. P(x,y) <=> ~(exists z. P(x,z) /\ P(z,x)))", 2, 3)>]
+[<TestCase(@"(forall x y. Q(x,y) <=> forall z. P(z,x) <=> P(z,y)) ==> forall x y. Q(x,y) <=> Q(y,x)", 2, 26)>]
+[<TestCase(@"(forall x. P(x) ==> (exists y. G(y) /\ H(x,y)) /\ 
             (exists y. G(y) /\ ~H(x,y))) /\ 
             (exists x. J(x) /\ (forall y. G(y) ==> H(x,y))) 
             ==> (exists x. J(x) /\ ~P(x))", 2, 3)>]
-[<TestCase("(forall x. P(x) <=> ~P(f(x))) ==> (exists x. P(x) /\ ~P(f(x)))", 2, 2)>]
-[<TestCase("forall x. P(x,f(x)) <=> 
+[<TestCase(@"(forall x. P(x) <=> ~P(f(x))) ==> (exists x. P(x) /\ ~P(f(x)))", 2, 2)>]
+[<TestCase(@"forall x. P(x,f(x)) <=> 
                 exists y. (forall z. P(z,y) ==> P(z,f(x))) /\ P(x,y)", 1, 13)>]
 let ``compare`` (f, x, y) =
     compare (parse f)
@@ -58,7 +58,7 @@ let ``compare`` (f, x, y) =
 
 [<Test>]
 let ``tab``() =
-    tab (parse "
+    tab (parse @"
 	    (forall x. 
             P(a) /\ (P(x) ==> (exists y. P(y) /\ R(x,y))) ==> 
             (exists z w. P(z) /\ R(x,w) /\ R(w,z))) <=> 
@@ -75,7 +75,7 @@ let ``tab``() =
 
 [<Test>]
 let ``splittab 1``() =
-    splittab (parse "
+    splittab (parse @"
 	    ((exists x. forall y. P(x) <=> P(y)) <=> 
             ((exists x. Q(x)) <=> (forall y. Q(y)))) <=> 
         ((exists x. forall y. Q(x) <=> Q(y)) <=> 
@@ -89,7 +89,7 @@ let ``splittab 1``() =
 
 [<Test>]
 let ``splittab 2``() =
-    splittab (parse "
+    splittab (parse @"
     (forall x. x <= x) /\ 
     (forall x y z. x <= y /\ y <= z ==> x <= z) /\ 
     (forall x y. f(x) <= y <=> x <= g(y)) 

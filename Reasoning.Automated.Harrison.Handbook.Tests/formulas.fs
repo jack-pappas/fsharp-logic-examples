@@ -29,9 +29,7 @@ let private parsed_formulas : formula<fol>[] = [|
          Atom (R ("=", [Var "a"; Var "b"])))))));
     |]
 
-// This case currently fails (raises exception) when the formula is
-// on two lines; if it's put on a single line, it parses just fine.
-[<TestCase("exists a b. a > 1 /\ b > 1 /\
+[<TestCase(@"exists a b. a > 1 /\ b > 1 /\
                ((2 * b = a) \/ (2 * b = 3 * a + 1)) /\ (a = b)", 0)>]
 let ``parse formulas`` (f, idx) =
     parse f

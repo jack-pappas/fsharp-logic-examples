@@ -17,9 +17,9 @@ open FsUnit
 // The examples in the text.                                                 //
 // ------------------------------------------------------------------------- //
 
-[<TestCase("(p ==> q) \/ (q ==> p)", Result="|- (p ==> q) \/ (q ==> p)")>]
-[<TestCase("p /\ q <=> ((p <=> q) <=> p \/ q)", Result="|- p /\ q <=> (p <=> q) <=> p \/ q")>]
-[<TestCase("((p <=> q) <=> r) <=> (p <=> (q <=> r))", Result="|- ((p <=> q) <=> r) <=> p <=> q <=> r")>]
+[<TestCase(@"(p ==> q) \/ (q ==> p)", Result="|- (p ==> q) \/ (q ==> p)")>]
+[<TestCase(@"p /\ q <=> ((p <=> q) <=> p \/ q)", Result="|- p /\ q <=> (p <=> q) <=> p \/ q")>]
+[<TestCase(@"((p <=> q) <=> r) <=> (p <=> (q <=> r))", Result="|- ((p <=> q) <=> r) <=> p <=> q <=> r")>]
 let ``lcftaut`` f =
     lcftaut (parse f)
     |> sprint_thm

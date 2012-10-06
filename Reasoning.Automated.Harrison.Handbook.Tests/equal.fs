@@ -23,7 +23,7 @@ open FsUnit
 
 [<Test>]
 let ``meson002 1``() =
-    equalitize (parse "
+    equalitize (parse @"
         (forall x. f(x) ==> g(x)) /\ 
         (exists x. f(x)) /\ 
         (forall x y. g(x) /\ g(y) ==> x = y) 
@@ -33,13 +33,13 @@ let ``meson002 1``() =
 
 [<Test>]
 let ``meson002 2``() =
-    equalitize (parse "forall c. f(f(f(f(f(c))))) = c /\ f(f(f(c))) = c ==> f(c) = c")
+    equalitize (parse @"forall c. f(f(f(f(f(c))))) = c /\ f(f(f(c))) = c ==> f(c) = c")
     |> meson002
     |> should equal [8]
 
 [<Test>]
 let ``meson002 3``() =
-    (parse "
+    (parse @"
     axiom(f(f(f(f(f(c))))),c) /\ 
     axiom(c,f(f(f(f(f(c)))))) /\ 
     axiom(f(f(f(c))),c) /\ 

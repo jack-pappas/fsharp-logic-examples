@@ -14,6 +14,6 @@ open FsUnit
 
 [<Test>]
 let ``paramodulation``() =
-    paramodulation (parse "(forall x. f(f(x)) = f(x)) /\ (forall x. exists y. f(y) = x)
+    paramodulation (parse @"(forall x. f(f(x)) = f(x)) /\ (forall x. exists y. f(y) = x)
                             ==> forall x. f(x) = x")
     |> should equal [true]

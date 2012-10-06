@@ -57,14 +57,14 @@ let ``holds with mod_interp 4``() =
 // Variant function and examples.                                            //
 // ------------------------------------------------------------------------- //
 
-[<TestCase("x", "y", "z", Result="x")>]
-[<TestCase("x", "x", "y", Result="x'")>]
-[<TestCase("x", "x", "x'", Result="x''")>]
+[<TestCase(@"x", "y", "z", Result="x")>]
+[<TestCase(@"x", "x", "y", Result="x'")>]
+[<TestCase(@"x", "x", "x'", Result="x''")>]
 let ``variant``(x, y, z) =
     variant x [y; z]
 
-[<TestCase("forall x. x = y", Result="<<forall x'. x' =x>>\r\n")>]
-[<TestCase("forall x x'. x = y ==> x = x'", Result="<<forall x' x''. x' =x ==> x' =x''>>\r\n")>]
+[<TestCase(@"forall x. x = y", Result="<<forall x'. x' =x>>\r\n")>]
+[<TestCase(@"forall x x'. x = y ==> x = x'", Result="<<forall x' x''. x' =x ==> x' =x''>>\r\n")>]
 let ``subst`` f =
     subst ("y" |=> Var "x") (parse f)
     |> sprint_fol_formula
