@@ -46,6 +46,7 @@
     <None Include="packages.config" />
     <Compile Include="lib.fs" />
     <Compile Include="intro.fs" />
+    <Compile Include="formulas.fs" />
     <Compile Include="prop.fs" />
     <Compile Include="propexamples.fs" />
     <Compile Include="dp.fs" />
