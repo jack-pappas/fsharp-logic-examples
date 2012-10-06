@@ -73,7 +73,6 @@
     <Compile Include="geom.fs" />
     <Compile Include="interpolation.fs" />
     <Compile Include="combining.fs" />
-    <Compile Include="lcf.fs" />
     <Compile Include="lcfprop.fs" />
     <Compile Include="folderived.fs" />
     <Compile Include="lcffol.fs" />

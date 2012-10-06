@@ -86,7 +86,7 @@ print_goal g2;;
 let g3 = funpow 2 (auto_tac by ["ant"]) g2;;
 print_goal g3;;
 
-extract_thm g3;;
+extract_thm g3 |> sprint_thm;;
     
 // pg. 514
 // ------------------------------------------------------------------------- //
@@ -145,10 +145,14 @@ prove
 // Alternative formulation with lemma construct.                             //
 // ------------------------------------------------------------------------- //
 
-let lemma (s,p) (Goals((asl,w)::gls,jfn) as gl) =
-    Goals((asl,p)::((s,p)::asl,w)::gls,
-        fun (thp::thw::oths) ->
-            jfn(imp_unduplicate(imp_trans thp (shunt thw)) :: oths))
+// Fixed incomplete pattern matching
+let lemma (s,p) = function
+        | (Goals((asl,w)::gls,jfn) as gl) ->
+            Goals((asl,p)::((s,p)::asl,w)::gls,
+                function (thp::thw::oths) ->
+                            jfn(imp_unduplicate(imp_trans thp (shunt thw)) :: oths)
+                       | _ -> failwith "malform input")
+        | _ -> failwith "malform lemma"
 prove
     (parse "(exists x. p(x)) ==> (forall x. p(x) ==> p(f(x))) ==> exists y. p(f(f(f(f(y)))))")
     [assume ["A",(parse "exists x. p(x)")];
@@ -257,7 +261,6 @@ prove (parse "(p(a) \/ p(b)) ==> q ==> exists y. p(y)")
         take (parset "a");
         so our thesis at once;
         qed;
-
         take (parset "b");
         so our thesis at once;
         qed] |> sprint_thm;;
