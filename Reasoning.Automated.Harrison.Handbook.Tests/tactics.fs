@@ -23,7 +23,7 @@ open FsUnit
 
 [<Test>]
 let ``goal``() = 
-    let g0 = set_goal (parse "(forall x. x <= x) /\ (forall x y z. x <= y /\ y <= z ==> x <= z) /\ (forall x y. f(x) <= y <=> x <= g(y)) ==> (forall x y. x <= y ==> f(x) <= f(y)) /\ (forall x y. x <= y ==> g(x) <= g(y))")
+    let g0 = set_goal (parse @"(forall x. x <= x) /\ (forall x y z. x <= y /\ y <= z ==> x <= z) /\ (forall x y. f(x) <= y <=> x <= g(y)) ==> (forall x y. x <= y ==> f(x) <= f(y)) /\ (forall x y. x <= y ==> g(x) <= g(y))")
     let g1 = imp_intro_tac "ant" g0
     let g2 = conj_intro_tac g1
     let g3 = funpow 2 (auto_tac by ["ant"]) g2
@@ -38,7 +38,7 @@ let ``goal``() =
 
 [<Test>]
 let ``prove tactics 01``() = 
-    prove (parse "(forall x. x <= x) /\(forall x y z. x <= y /\ y <= z ==> x <= z) /\(forall x y. f(x) <= y <=> x <= g(y))==> (forall x y. x <= y ==> f(x) <= f(y)) /\ (forall x y. x <= y ==> g(x) <= g(y))")
+    prove (parse @"(forall x. x <= x) /\(forall x y z. x <= y /\ y <= z ==> x <= z) /\(forall x y. f(x) <= y <=> x <= g(y))==> (forall x y. x <= y ==> f(x) <= f(y)) /\ (forall x y. x <= y ==> g(x) <= g(y))")
             [imp_intro_tac "ant";
             conj_intro_tac;
             auto_tac by ["ant"];
@@ -53,22 +53,22 @@ let ``prove tactics 01``() =
 
 [<Test>]
 let ``prove tactics 02``() = 
-    prove (parse "(forall x y. x <= y <=> x * y = x) /\ (forall x y. f(x * y) = f(x) * f(y)) ==> forall x y. x <= y ==> f(x) <= f(y)") [note("eq_sym",(parse "forall x y. x = y ==> y = x"))
+    prove (parse @"(forall x y. x <= y <=> x * y = x) /\ (forall x y. f(x * y) = f(x) * f(y)) ==> forall x y. x <= y ==> f(x) <= f(y)") [note("eq_sym",(parse @"forall x y. x = y ==> y = x"))
     using [eq_sym (parset "x") (parset "y")];
-    note("eq_trans",(parse "forall x y z. x = y /\ y = z ==> x = z"))
+    note("eq_trans",(parse @"forall x y z. x = y /\ y = z ==> x = z"))
     using [eq_trans (parset "x") (parset "y") (parset "z")];
-    note("eq_cong",(parse "forall x y. x = y ==> f(x) = f(y)"))
+    note("eq_cong",(parse @"forall x y. x = y ==> f(x) = f(y)"))
     using [axiom_funcong "f" [(parset "x")] [(parset "y")]];
-    assume ["le",(parse "forall x y. x <= y <=> x * y = x");
-            "hom",(parse "forall x y. f(x * y) = f(x) * f(y)")];
+    assume ["le",(parse @"forall x y. x <= y <=> x * y = x");
+            "hom",(parse @"forall x y. f(x * y) = f(x) * f(y)")];
     fix "x"; fix "y";
-    assume ["xy",(parse "x <= y")];
-    so have (parse "x * y = x") by ["le"];
-    so have (parse "f(x * y) = f(x)") by ["eq_cong"];
-    so have (parse "f(x) = f(x * y)") by ["eq_sym"];
-    so have (parse "f(x) = f(x) * f(y)") by ["eq_trans"; "hom"];
-    so have (parse "f(x) * f(y) = f(x)") by ["eq_sym"];
-    so conclude (parse "f(x) <= f(y)") by ["le"];
+    assume ["xy",(parse @"x <= y")];
+    so have (parse @"x * y = x") by ["le"];
+    so have (parse @"f(x * y) = f(x)") by ["eq_cong"];
+    so have (parse @"f(x) = f(x * y)") by ["eq_sym"];
+    so have (parse @"f(x) = f(x) * f(y)") by ["eq_trans"; "hom"];
+    so have (parse @"f(x) * f(y) = f(x)") by ["eq_sym"];
+    so conclude (parse @"f(x) <= f(y)") by ["le"];
     qed] 
     |> sprint_thm
     |> should equal "|- (forall x y. x <=y <=> x *y =x) /\ (forall x y. f(x *y) =f(x) *f(y)) ==> (forall x y. x <=y ==> f(x) <=f(y))"
@@ -80,17 +80,17 @@ let ``prove tactics 02``() =
 [<Test>]
 let ``prove tactics 03``() = 
     prove
-        (parse "(exists x. p(x)) ==> (forall x. p(x) ==> p(f(x))) ==> exists y. p(f(f(f(f(y)))))")
-        [assume ["A",(parse "exists x. p(x)")];
-        assume ["B",(parse "forall x. p(x) ==> p(f(x))")];
-        note ("C",(parse "forall x. p(x) ==> p(f(f(f(f(x)))))"))
+        (parse @"(exists x. p(x)) ==> (forall x. p(x) ==> p(f(x))) ==> exists y. p(f(f(f(f(y)))))")
+        [assume ["A",(parse @"exists x. p(x)")];
+        assume ["B",(parse @"forall x. p(x) ==> p(f(x))")];
+        note ("C",(parse @"forall x. p(x) ==> p(f(f(f(f(x)))))"))
         proof
-        [have (parse "forall x. p(x) ==> p(f(f(x)))") by ["B"];
-            so conclude (parse "forall x. p(x) ==> p(f(f(f(f(x)))))") at once;
+        [have (parse @"forall x. p(x) ==> p(f(f(x)))") by ["B"];
+            so conclude (parse @"forall x. p(x) ==> p(f(f(f(f(x)))))") at once;
             qed];
-        consider ("a",(parse "p(a)")) by ["A"];
+        consider ("a",(parse @"p(a)")) by ["A"];
         take (parset "a");
-        so conclude (parse "p(f(f(f(f(a)))))") by ["C"];
+        so conclude (parse @"p(f(f(f(f(a)))))") by ["C"];
         qed] 
     |> sprint_thm
     |> should equal "|- (exists x. p(x)) ==> (forall x. p(x) ==> p(f(x))) ==> (exists y. p(f(f(f(f(y))))))"
@@ -109,16 +109,16 @@ let ``prove using lemma``() =
                        | _ -> failwith "malform input")
         | _ -> failwith "malform lemma"
     prove
-        (parse "(exists x. p(x)) ==> (forall x. p(x) ==> p(f(x))) ==> exists y. p(f(f(f(f(y)))))")
-        [assume ["A",(parse "exists x. p(x)")];
-        assume ["B",(parse "forall x. p(x) ==> p(f(x))")];
-        lemma ("C",(parse "forall x. p(x) ==> p(f(f(f(f(x)))))"));
-            have (parse "forall x. p(x) ==> p(f(f(x)))") by ["B"];
-            so conclude (parse "forall x. p(x) ==> p(f(f(f(f(x)))))") at once;
+        (parse @"(exists x. p(x)) ==> (forall x. p(x) ==> p(f(x))) ==> exists y. p(f(f(f(f(y)))))")
+        [assume ["A",(parse @"exists x. p(x)")];
+        assume ["B",(parse @"forall x. p(x) ==> p(f(x))")];
+        lemma ("C",(parse @"forall x. p(x) ==> p(f(f(f(f(x)))))"));
+            have (parse @"forall x. p(x) ==> p(f(f(x)))") by ["B"];
+            so conclude (parse @"forall x. p(x) ==> p(f(f(f(f(x)))))") at once;
             qed;
-        consider ("a",(parse "p(a)")) by ["A"];
+        consider ("a",(parse @"p(a)")) by ["A"];
         take (parset "a");
-        so conclude (parse "p(f(f(f(f(a)))))") by ["C"];
+        so conclude (parse @"p(f(f(f(f(a)))))") by ["C"];
         qed] 
     |> sprint_thm
     |> should equal "|- (exists x. p(x)) ==> (forall x. p(x) ==> p(f(x))) ==> (exists y. p(f(f(f(f(y))))))"
@@ -129,7 +129,7 @@ let ``prove using lemma``() =
 
 [<Test>]
 let ``prove tactics 04``() = 
-    prove (parse "p(a) ==> (forall x. p(x) ==> p(f(x))) ==> exists y. p(y) /\ p(f(y))")
+    prove (parse @"p(a) ==> (forall x. p(x) ==> p(f(x))) ==> exists y. p(y) /\ p(f(y))")
             [our thesis at once;
             qed] 
     |> sprint_thm
@@ -138,14 +138,14 @@ let ``prove tactics 04``() =
 [<Test>]
 let ``prove tactics 05``() = 
     prove
-        (parse "(exists x. p(x)) ==> (forall x. p(x) ==> p(f(x))) ==> exists y. p(f(f(f(f(y)))))")
-        [assume ["A",(parse "exists x. p(x)")];
-        assume ["B",(parse "forall x. p(x) ==> p(f(x))")];
-        note ("C",(parse "forall x. p(x) ==> p(f(f(f(f(x)))))")) proof
-        [have (parse "forall x. p(x) ==> p(f(f(x)))") by ["B"];
+        (parse @"(exists x. p(x)) ==> (forall x. p(x) ==> p(f(x))) ==> exists y. p(f(f(f(f(y)))))")
+        [assume ["A",(parse @"exists x. p(x)")];
+        assume ["B",(parse @"forall x. p(x) ==> p(f(x))")];
+        note ("C",(parse @"forall x. p(x) ==> p(f(f(f(f(x)))))")) proof
+        [have (parse @"forall x. p(x) ==> p(f(f(x)))") by ["B"];
             so our thesis at once;
             qed];
-        consider ("a",(parse "p(a)")) by ["A"];
+        consider ("a",(parse @"p(a)")) by ["A"];
         take (parset "a");
         so our thesis by ["C"];
         qed] 
@@ -154,13 +154,13 @@ let ``prove tactics 05``() =
 
 [<Test>]
 let ``prove tactics 06``() = 
-    prove (parse "forall a. p(a) ==> (forall x. p(x) ==> p(f(x))) ==> exists y. p(y) /\ p(f(y))")
+    prove (parse @"forall a. p(a) ==> (forall x. p(x) ==> p(f(x))) ==> exists y. p(y) /\ p(f(y))")
             [fix "c";
-            assume ["A",(parse "p(c)")];
-            assume ["B",(parse "forall x. p(x) ==> p(f(x))")];
+            assume ["A",(parse @"p(c)")];
+            assume ["B",(parse @"forall x. p(x) ==> p(f(x))")];
             take (parset "c");
-            conclude (parse "p(c)") by ["A"];
-            note ("C",(parse "p(c) ==> p(f(c))")) by ["B"];
+            conclude (parse @"p(c)") by ["A"];
+            note ("C",(parse @"p(c) ==> p(f(c))")) by ["B"];
             so our thesis by ["C"; "A"];
             qed] 
     |> sprint_thm
@@ -168,11 +168,11 @@ let ``prove tactics 06``() =
 
 [<Test>]
 let ``prove tactics 07``() = 
-    prove (parse "p(c) ==> (forall x. p(x) ==> p(f(x))) ==> exists y. p(y) /\ p(f(y))")
-            [assume ["A",(parse "p(c)")];
-            assume ["B",(parse "forall x. p(x) ==> p(f(x))")];
+    prove (parse @"p(c) ==> (forall x. p(x) ==> p(f(x))) ==> exists y. p(y) /\ p(f(y))")
+            [assume ["A",(parse @"p(c)")];
+            assume ["B",(parse @"forall x. p(x) ==> p(f(x))")];
             take (parset "c");
-            conclude (parse "p(c)") by ["A"];
+            conclude (parse @"p(c)") by ["A"];
             our thesis by ["A"; "B"];
             qed] 
     |> sprint_thm
@@ -180,13 +180,13 @@ let ``prove tactics 07``() =
 
 [<Test>]
 let ``prove tactics 08``() = 
-    prove (parse "forall a. p(a) ==> (forall x. p(x) ==> p(f(x))) ==> exists y. p(y) /\ p(f(y))")
+    prove (parse @"forall a. p(a) ==> (forall x. p(x) ==> p(f(x))) ==> exists y. p(y) /\ p(f(y))")
             [fix "c";
-            assume ["A",(parse "p(c)")];
-            assume ["B",(parse "forall x. p(x) ==> p(f(x))")];
+            assume ["A",(parse @"p(c)")];
+            assume ["B",(parse @"forall x. p(x) ==> p(f(x))")];
             take (parset "c");
-            conclude (parse "p(c)") by ["A"];
-            note ("C",(parse "p(c) ==> p(f(c))")) by ["B"];
+            conclude (parse @"p(c)") by ["A"];
+            note ("C",(parse @"p(c) ==> p(f(c))")) by ["B"];
             our thesis by ["C"; "A"];
             qed] 
     |> sprint_thm
@@ -194,13 +194,13 @@ let ``prove tactics 08``() =
 
 [<Test>]
 let ``prove tactics 09``() = 
-    prove (parse "forall a. p(a) ==> (forall x. p(x) ==> p(f(x))) ==> exists y. p(y) /\ p(f(y))")
+    prove (parse @"forall a. p(a) ==> (forall x. p(x) ==> p(f(x))) ==> exists y. p(y) /\ p(f(y))")
             [fix "c";
-            assume ["A",(parse "p(c)")];
-            assume ["B",(parse "forall x. p(x) ==> p(f(x))")];
+            assume ["A",(parse @"p(c)")];
+            assume ["B",(parse @"forall x. p(x) ==> p(f(x))")];
             take (parset "c");
-            note ("D",(parse "p(c)")) by ["A"];
-            note ("C",(parse "p(c) ==> p(f(c))")) by ["B"];
+            note ("D",(parse @"p(c)")) by ["A"];
+            note ("C",(parse @"p(c) ==> p(f(c))")) by ["B"];
             our thesis by ["C"; "A"; "D"];
             qed] 
     |> sprint_thm
@@ -208,10 +208,10 @@ let ``prove tactics 09``() =
 
 [<Test>]
 let ``prove tactics 10``() = 
-    prove (parse "(p(a) \/ p(b)) ==> q ==> exists y. p(y)")
-        [assume ["A",(parse "p(a) \/ p(b)")];
-        assume ["",(parse "q")];
-        cases (parse "p(a) \/ p(b)") by ["A"];
+    prove (parse @"(p(a) \/ p(b)) ==> q ==> exists y. p(y)")
+        [assume ["A",(parse @"p(a) \/ p(b)")];
+        assume ["",(parse @"q")];
+        cases (parse @"p(a) \/ p(b)") by ["A"];
             take (parset "a");
             so our thesis at once;
             qed;
@@ -224,14 +224,14 @@ let ``prove tactics 10``() =
 [<Test>]
 let ``prove tactics 11``() = 
     let v1 = "A"
-    let v2 = (parse "p(a)")
+    let v2 = (parse @"p(a)")
     prove
-        (parse "(p(a) \/ p(b)) /\ (forall x. p(x) ==> p(f(x))) ==> exists y. p(f(y))")
-        [assume ["base",(parse "p(a) \/ p(b)");
-                "Step",(parse "forall x. p(x) ==> p(f(x))")];
-        cases (parse "p(a) \/ p(b)") by ["base"]; 
+        (parse @"(p(a) \/ p(b)) /\ (forall x. p(x) ==> p(f(x))) ==> exists y. p(f(y))")
+        [assume ["base",(parse @"p(a) \/ p(b)");
+                "Step",(parse @"forall x. p(x) ==> p(f(x))")];
+        cases (parse @"p(a) \/ p(b)") by ["base"]; 
             so note (v1, v2) at once; // use function app instead of value
-            note ("X",(parse "p(a) ==> p(f(a))")) by ["Step"];
+            note ("X",(parse @"p(a) ==> p(f(a))")) by ["Step"];
             take (parset "a");
             our thesis by ["A"; "X"];
             qed;
@@ -244,11 +244,11 @@ let ``prove tactics 11``() =
 [<Test>]
 let ``prove tactics 12``() = 
     prove
-        (parse "(exists x. p(x)) ==> (forall x. p(x) ==> p(f(x))) ==> exists y. p(f(y))")
-        [assume ["A",(parse "exists x. p(x)")];
-        assume ["B",(parse "forall x. p(x) ==> p(f(x))")];
-        consider ("a",(parse "p(a)")) by ["A"];
-        so note ("concl",(parse "p(f(a))")) by ["B"];
+        (parse @"(exists x. p(x)) ==> (forall x. p(x) ==> p(f(x))) ==> exists y. p(f(y))")
+        [assume ["A",(parse @"exists x. p(x)")];
+        assume ["B",(parse @"forall x. p(x) ==> p(f(x))")];
+        consider ("a",(parse @"p(a)")) by ["A"];
+        so note ("concl",(parse @"p(f(a))")) by ["B"];
         take (parset "a");
         our thesis by ["concl"];
         qed] 
@@ -257,12 +257,12 @@ let ``prove tactics 12``() =
 
 [<Test>]
 let ``prove tactics 13``() = 
-    prove (parse "(forall x. p(x) ==> q(x)) ==> (forall x. q(x) ==> p(x))
+    prove (parse @"(forall x. p(x) ==> q(x)) ==> (forall x. q(x) ==> p(x))
             ==> (p(a) <=> q(a))")
-        [assume ["A",(parse "forall x. p(x) ==> q(x)")];
-        assume ["B",(parse "forall x. q(x) ==> p(x)")];
-        note ("von",(parse "p(a) ==> q(a)")) by ["A"];
-        note ("bis",(parse "q(a) ==> p(a)")) by ["B"];
+        [assume ["A",(parse @"forall x. p(x) ==> q(x)")];
+        assume ["B",(parse @"forall x. q(x) ==> p(x)")];
+        note ("von",(parse @"p(a) ==> q(a)")) by ["A"];
+        note ("bis",(parse @"q(a) ==> p(a)")) by ["B"];
         our thesis by ["von"; "bis"];
         qed] 
     |> sprint_thm

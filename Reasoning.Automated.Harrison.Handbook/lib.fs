@@ -127,7 +127,7 @@ module lib =
     let (---) (m : num) (n : num) =
         // For compatibility with the original OCaml function,
         // return an empty list for invalid inputs.
-        if m > n then [] // NB: fix singleton range
+        if m > n then [] // NB: fix big with singleton range
         else
             [m .. n]
 
@@ -381,10 +381,7 @@ module lib =
     // pg. 619
     // OCaml: val index : 'a -> 'a list -> int = <fun>
     // F#:    val index : 'a -> ('a list -> int) when 'a : comparison
-    let inline index x xs =
-        match List.tryFindIndex ((=) x) xs with
-        | Some i -> i
-        | None -> failwith "index" // Preserve the same exception as OCaml's version
+    let inline index x xs = List.findIndex ((=) x) xs
         
     // pg. 619
     // OCaml: val unzip : ('a * 'b) list -> 'a list * 'b list = <fun>
