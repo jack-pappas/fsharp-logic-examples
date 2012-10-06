@@ -40,7 +40,7 @@ open Reasoning.Automated.Harrison.Handbook.folMod
 //open Reasoning.Automated.Harrison.Handbook.geom
 //open Reasoning.Automated.Harrison.Handbook.interpolation
 //open Reasoning.Automated.Harrison.Handbook.combining
-//open Reasoning.Automated.Harrison.Handbook.lcf
+open Reasoning.Automated.Harrison.Handbook.lcf
 open Reasoning.Automated.Harrison.Handbook.lcfprop
         
 // pg. 488
