@@ -371,8 +371,10 @@ module lib =
     // pg. 619
     // OCaml: val index : 'a -> 'a list -> int = <fun>
     // F#:    val index : 'a -> ('a list -> int) when 'a : comparison
-    let inline index x =
-        List.findIndex ((=) x)
+    let inline index x xs =
+        match List.tryFindIndex ((=) x) xs with
+        | Some i -> i
+        | None -> failwith "index" // Preserve the same exception as OCaml's version
         
     // pg. 619
     // OCaml: val unzip : ('a * 'b) list -> 'a list * 'b list = <fun>
