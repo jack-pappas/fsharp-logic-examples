@@ -252,3 +252,60 @@ module real =
     let real_qelim' =
         simplify004 >>|> evalc >>|>
         lift_qelim polyatom (dnf >>|> cnnf (fun x -> x) >>|> evalc) basic_real_qelim
+
+    // ------------------------------------------------------------------------- //
+    // Didn't seem worth it in the book, but monicization can help a lot.        //
+    // Now this is just set as an exercise.                                      //
+    // ------------------------------------------------------------------------- //
+    
+//    let rec casesplit vars dun pols cont sgns =
+//        match pols with
+//        | [] ->
+//            monicize vars dun cont sgns
+//        | p :: ops ->
+//            split_trichotomy sgns (head vars p)
+//                (if is_constant vars p then delconst vars dun p ops cont else casesplit vars dun (behead vars p :: ops) cont)
+//                (if is_constant vars p then delconst vars dun p ops cont else casesplit vars (dun @ [p]) ops cont)
+//
+//    and delconst vars dun p ops cont sgns =
+//        let cont' m = cont (List.map (insertat (List.length dun) (findsign sgns p)) m)
+//        casesplit vars dun ops cont' sgns
+//
+//    and matrix vars pols cont sgns =
+//        if pols = [] then
+//            try cont [[]]
+//            with Failure _ -> False
+//        else
+//            let p = List.head (sort (decreasing (degree vars)) pols)
+//            let rec p' = poly_diff vars p
+//            and i = index p pols in
+//            let qs =
+//                let p1, p2 = chop_list i pols
+//                p' :: p1 @ List.tail p2
+//            let gs = List.map (pdivide_pos vars sgns p) qs
+//            let cont' m = cont (List.map (fun l -> insertat i (List.head l) (List.tail l)) m)
+//            casesplit vars [] (qs @ gs) (dedmatrix cont') sgns
+//
+//    and monicize vars pols cont sgns =
+//        let mols,swaps = List.unzip (List.map monic pols)
+//        let sols = setify mols
+//        let indices = List.map (fun p -> index p sols) mols
+//        let transform m =
+//            List.map2 (fun sw i -> swap sw (List.nth m i)) swaps indices
+//        let cont' mat = cont (List.map transform mat)
+//        matrix vars sols cont' sgns
+//
+//    let basic_real_qelim vars (Exists (x, p)) =
+//        let pols = atom_union (function (R (a, [t; Fn ("0", [])])) -> [t] | _ -> []) p
+//        let cont mat =
+//            if List.exists (fun m -> testform (List.zip pols m) p) mat then True else False
+//        casesplit (x::vars) [] pols cont init_sgns
+//
+//    let real_qelim =
+//        simplify004 >>|> evalc >>|>
+//        lift_qelim polyatom (simplify004 >>|> evalc) basic_real_qelim
+//
+//    let real_qelim' =
+//        simplify004 >>|> evalc >>|>
+//        lift_qelim polyatom (dnf >>|> cnnf (fun x -> x) >>|> evalc) basic_real_qelim
+
