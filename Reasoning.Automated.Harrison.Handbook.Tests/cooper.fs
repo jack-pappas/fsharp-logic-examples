@@ -47,7 +47,7 @@ let ``integer_qelim examples 1`` (f, idx) =
 [<Test>]
 let ``natural_qelim examples 1``() =
     natural_qelim (parse "forall d. exists x y. 3 * x + 5 * y = d")
-    |> should equal False
+    |> should equal formula<fol>.False
 
 (* ------------------------------------------------------------------------- *)
 (* Natural number version.                                                   *)
@@ -56,7 +56,7 @@ let ``natural_qelim examples 1``() =
 [<Test>]
 let ``integer_qelim examples 2``() =
     integer_qelim (parse "forall d. exists x y. 3 * x + 5 * y = d")
-    |> should equal True
+    |> should equal formula<fol>.True
 
 let private natural_qelim_results2 = [|
     formula<fol>.True;
@@ -281,7 +281,7 @@ let ``integer_qelim examples other 6``() =
             divides(24,x-5) \/
             divides(24,x-11)"
     |> integer_qelim
-    |> should equal False
+    |> should equal formula<fol>.False
 
 (* ------------------------------------------------------------------------- *)
 (* Testing fix for an earlier version with negative result from formlcm.     *)
@@ -292,7 +292,7 @@ let ``integer_qelim examples other 7``() =
     parse "a + 2 = b /\ v_3 = b - a + 1 /\ v_2 = b - 2 /\ v_1 = 3 ==> false"
     |> generalize
     |> integer_qelim
-    |> should equal False
+    |> should equal formula<fol>.False
 
 
 (* ------------------------------------------------------------------------- *)
