@@ -81,6 +81,7 @@
     <Compile Include="limitations.fs" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="FSharp.PowerPack, Version=2.0.0.0, Culture=neutral, PublicKeyToken=a19089b1c74d0809" />
     <Reference Include="FSharpx.Compatibility.OCaml">
       <HintPath>..\packages\FSharpx.Compatibility.OCaml.0.1.0\lib\net40\FSharpx.Compatibility.OCaml.dll</HintPath>
       <Private>True</Private>
