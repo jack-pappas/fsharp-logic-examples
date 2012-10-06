@@ -22,7 +22,7 @@ open FsUnit
 // ------------------------------------------------------------------------- //
 
 [<Test>]
-let ``test goal``() = 
+let ``goal``() = 
     let g0 = set_goal (parse "(forall x. x <= x) /\ (forall x y z. x <= y /\ y <= z ==> x <= z) /\ (forall x y. f(x) <= y <=> x <= g(y)) ==> (forall x y. x <= y ==> f(x) <= f(y)) /\ (forall x y. x <= y ==> g(x) <= g(y))")
     let g1 = imp_intro_tac "ant" g0
     let g2 = conj_intro_tac g1
@@ -37,7 +37,7 @@ let ``test goal``() =
 // ------------------------------------------------------------------------- //
 
 [<Test>]
-let ``test prove tactics 1``() = 
+let ``prove tactics 01``() = 
     prove (parse "(forall x. x <= x) /\(forall x y z. x <= y /\ y <= z ==> x <= z) /\(forall x y. f(x) <= y <=> x <= g(y))==> (forall x y. x <= y ==> f(x) <= f(y)) /\ (forall x y. x <= y ==> g(x) <= g(y))")
             [imp_intro_tac "ant";
             conj_intro_tac;
@@ -52,7 +52,7 @@ let ``test prove tactics 1``() =
 // ------------------------------------------------------------------------- //
 
 [<Test>]
-let ``test prove tactics 2``() = 
+let ``prove tactics 02``() = 
     prove (parse "(forall x y. x <= y <=> x * y = x) /\ (forall x y. f(x * y) = f(x) * f(y)) ==> forall x y. x <= y ==> f(x) <= f(y)") [note("eq_sym",(parse "forall x y. x = y ==> y = x"))
     using [eq_sym (parset "x") (parset "y")];
     note("eq_trans",(parse "forall x y z. x = y /\ y = z ==> x = z"))
@@ -78,7 +78,7 @@ let ``test prove tactics 2``() =
 // ------------------------------------------------------------------------- //
 
 [<Test>]
-let ``test prove tactics 3``() = 
+let ``prove tactics 03``() = 
     prove
         (parse "(exists x. p(x)) ==> (forall x. p(x) ==> p(f(x))) ==> exists y. p(f(f(f(f(y)))))")
         [assume ["A",(parse "exists x. p(x)")];
@@ -100,7 +100,7 @@ let ``test prove tactics 3``() =
 // ------------------------------------------------------------------------- //
 
 [<Test>]
-let ``test prove using lemma``() = 
+let ``prove using lemma``() = 
     let lemma (s,p) = function
         | (Goals((asl,w)::gls,jfn) as gl) ->
             Goals((asl,p)::((s,p)::asl,w)::gls,
@@ -128,7 +128,7 @@ let ``test prove using lemma``() =
 // ------------------------------------------------------------------------- //
 
 [<Test>]
-let ``test prove tactics 4``() = 
+let ``prove tactics 04``() = 
     prove (parse "p(a) ==> (forall x. p(x) ==> p(f(x))) ==> exists y. p(y) /\ p(f(y))")
             [our thesis at once;
             qed] 
@@ -136,7 +136,7 @@ let ``test prove tactics 4``() =
     |> should equal "|- p(a) ==> (forall x. p(x) ==> p(f(x))) ==> (exists y. p(y) /\ p(f(y)))"
 
 [<Test>]
-let ``test prove tactics 5``() = 
+let ``prove tactics 05``() = 
     prove
         (parse "(exists x. p(x)) ==> (forall x. p(x) ==> p(f(x))) ==> exists y. p(f(f(f(f(y)))))")
         [assume ["A",(parse "exists x. p(x)")];
@@ -153,7 +153,7 @@ let ``test prove tactics 5``() =
     |> should equal "|- (exists x. p(x)) ==> (forall x. p(x) ==> p(f(x))) ==> (exists y. p(f(f(f(f(y))))))"
 
 [<Test>]
-let ``test prove tactics 6``() = 
+let ``prove tactics 06``() = 
     prove (parse "forall a. p(a) ==> (forall x. p(x) ==> p(f(x))) ==> exists y. p(y) /\ p(f(y))")
             [fix "c";
             assume ["A",(parse "p(c)")];
@@ -167,7 +167,7 @@ let ``test prove tactics 6``() =
     |> should equal "|- forall a. p(a) ==> (forall x. p(x) ==> p(f(x))) ==> (exists y. p(y) /\ p(f(y)))"
 
 [<Test>]
-let ``test prove tactics 7``() = 
+let ``prove tactics 07``() = 
     prove (parse "p(c) ==> (forall x. p(x) ==> p(f(x))) ==> exists y. p(y) /\ p(f(y))")
             [assume ["A",(parse "p(c)")];
             assume ["B",(parse "forall x. p(x) ==> p(f(x))")];
@@ -179,7 +179,7 @@ let ``test prove tactics 7``() =
     |> should equal "|- p(c) ==> (forall x. p(x) ==> p(f(x))) ==> (exists y. p(y) /\ p(f(y)))"
 
 [<Test>]
-let ``test prove tactics 8``() = 
+let ``prove tactics 08``() = 
     prove (parse "forall a. p(a) ==> (forall x. p(x) ==> p(f(x))) ==> exists y. p(y) /\ p(f(y))")
             [fix "c";
             assume ["A",(parse "p(c)")];
@@ -193,7 +193,7 @@ let ``test prove tactics 8``() =
     |> should equal "|- forall a. p(a) ==> (forall x. p(x) ==> p(f(x))) ==> (exists y. p(y) /\ p(f(y)))"
 
 [<Test>]
-let ``test prove tactics 9``() = 
+let ``prove tactics 09``() = 
     prove (parse "forall a. p(a) ==> (forall x. p(x) ==> p(f(x))) ==> exists y. p(y) /\ p(f(y))")
             [fix "c";
             assume ["A",(parse "p(c)")];
@@ -207,7 +207,7 @@ let ``test prove tactics 9``() =
     |> should equal "|- forall a. p(a) ==> (forall x. p(x) ==> p(f(x))) ==> (exists y. p(y) /\ p(f(y)))" 
 
 [<Test>]
-let ``test prove tactics 10``() = 
+let ``prove tactics 10``() = 
     prove (parse "(p(a) \/ p(b)) ==> q ==> exists y. p(y)")
         [assume ["A",(parse "p(a) \/ p(b)")];
         assume ["",(parse "q")];
@@ -222,7 +222,7 @@ let ``test prove tactics 10``() =
     |> should equal "|- p(a) \/ p(b) ==> q ==> (exists y. p(y))"
         
 [<Test>]
-let ``test prove tactics 11``() = 
+let ``prove tactics 11``() = 
     let v1 = "A"
     let v2 = (parse "p(a)")
     prove
@@ -242,7 +242,7 @@ let ``test prove tactics 11``() =
     |> should equal "|- (p(a) \/ p(b)) /\ (forall x. p(x) ==> p(f(x))) ==> (exists y. p(f(y)))"
 
 [<Test>]
-let ``test prove tactics 12``() = 
+let ``prove tactics 12``() = 
     prove
         (parse "(exists x. p(x)) ==> (forall x. p(x) ==> p(f(x))) ==> exists y. p(f(y))")
         [assume ["A",(parse "exists x. p(x)")];
@@ -256,7 +256,7 @@ let ``test prove tactics 12``() =
     |> should equal "|- (exists x. p(x)) ==> (forall x. p(x) ==> p(f(x))) ==> (exists y. p(f(y)))"
 
 [<Test>]
-let ``test prove tactics 13``() = 
+let ``prove tactics 13``() = 
     prove (parse "(forall x. p(x) ==> q(x)) ==> (forall x. q(x) ==> p(x))
             ==> (p(a) <=> q(a))")
         [assume ["A",(parse "forall x. p(x) ==> q(x)")];

@@ -23,7 +23,7 @@ open FsUnit
 // ------------------------------------------------------------------------- //
 
 [<Test>]
-let ``test prawitz``() =
+let ``prawitz``() =
     prawitz (parse "
         (forall x y. exists z. forall w. P(x) /\ Q(y) ==> R(z) /\ U(w)) 
         ==> (exists x y. P(x) /\ Q(y)) ==> (exists z. R(z))")
@@ -47,7 +47,7 @@ let ``test prawitz``() =
 [<TestCase("(forall x. P(x) <=> ~P(f(x))) ==> (exists x. P(x) /\ ~P(f(x)))", 2, 2)>]
 [<TestCase("forall x. P(x,f(x)) <=> 
                 exists y. (forall z. P(z,y) ==> P(z,f(x))) /\ P(x,y)", 1, 13)>]
-let ``test compare`` (f, x, y) =
+let ``compare`` (f, x, y) =
     compare (parse f)
     |> should equal (x, y)
 
@@ -57,7 +57,7 @@ let ``test compare`` (f, x, y) =
 // ------------------------------------------------------------------------- //
 
 [<Test>]
-let ``test tab``() =
+let ``tab``() =
     tab (parse "
 	    (forall x. 
             P(a) /\ (P(x) ==> (exists y. P(y) /\ R(x,y))) ==> 
@@ -74,7 +74,7 @@ let ``test tab``() =
 // ------------------------------------------------------------------------- //
 
 [<Test>]
-let ``test splittab 1``() =
+let ``splittab 1``() =
     splittab (parse "
 	    ((exists x. forall y. P(x) <=> P(y)) <=> 
             ((exists x. Q(x)) <=> (forall y. Q(y)))) <=> 
@@ -88,7 +88,7 @@ let ``test splittab 1``() =
 // ------------------------------------------------------------------------- //
 
 [<Test>]
-let ``test splittab 2``() =
+let ``splittab 2``() =
     splittab (parse "
     (forall x. x <= x) /\ 
     (forall x y z. x <= y /\ y <= z ==> x <= z) /\ 

@@ -20,6 +20,6 @@ open FsUnit
 [<TestCase("(p ==> q) \/ (q ==> p)", Result="|- (p ==> q) \/ (q ==> p)")>]
 [<TestCase("p /\ q <=> ((p <=> q) <=> p \/ q)", Result="|- p /\ q <=> (p <=> q) <=> p \/ q")>]
 [<TestCase("((p <=> q) <=> r) <=> (p <=> (q <=> r))", Result="|- ((p <=> q) <=> r) <=> p <=> q <=> r")>]
-let ``test lcftaut`` f =
+let ``lcftaut`` f =
     lcftaut (parse f)
     |> sprint_thm

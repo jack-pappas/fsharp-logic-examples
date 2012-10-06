@@ -22,13 +22,13 @@ open FsUnit
 // ------------------------------------------------------------------------- //
     
 [<Test>]
-let ``test integer_qelim``() = 
+let ``integer qelim``() = 
     (integer_qelim >>|> generalize) (parse
         "(u + 1 = v /\ v_1 + 1 = u - 1 /\ v_2 - 1 = v + 1 /\ v_3 = v - 1) ==> u = v_3 /\ ~(v_1 = v_2)")
     |> should equal formula<fol>.True // be careful with generic True
 
 [<Test>]
-let ``test ccvalid``() = 
+let ``ccvalid``() = 
     ccvalid (parse
         "(v_2 = f(v_3) /\ v_1 = f(u)) ==> ~(u = v_3 /\ ~(v_1 = v_2))")
     |> should be True
@@ -39,7 +39,7 @@ let ``test ccvalid``() =
 // ------------------------------------------------------------------------- //
 
 [<Test>]
-let ``test nelop001``() =
+let ``nelop001``() =
     nelop001 (add_default [int_lang]) (parse
         "f(v - 1) - 1 = v + 1 /\ f(u) + 1 = u - 1 /\ u + 1 = v ==> false")
     |> should be True
@@ -54,11 +54,11 @@ let ``test nelop001``() =
 [<TestCase("x <= g(x) /\ x >= g(x) ==> x = g(g(g(g(x))))", Result=true)>]
 [<TestCase("2 * f(x + y) = 3 * y /\ 2 * x = y ==> f(f(x + y)) = 3 * x", Result=true)>]
 [<TestCase("4 * x = 2 * x + 2 * y /\ x = f(2 * x - y) /\ f(2 * y - x) = 3 /\ f(x) = 4 ==> false", Result=true)>]
-let ``test nelop`` f = 
+let ``nelop int_lang`` f = 
     nelop (add_default [int_lang]) (parse f)
 
 [<TestCase("x^2 =  1 ==> (f(x) = f(-(x)))  ==> (f(x) = f(1))", Result=true)>]
-let ``test nelop real_lang`` f = 
+let ``nelop real_lang`` f = 
     nelop (add_default [real_lang]) (parse f)
 
 // pg. 447
@@ -67,7 +67,7 @@ let ``test nelop real_lang`` f =
 // ------------------------------------------------------------------------- //
 
 [<Test>]
-let ``test non-convexity 1``() = 
+let ``non-convexity 1``() = 
     List.map (real_qelim >>|> generalize) [
         parse "x * y = 0 /\ z = 0 ==> x = z \/ y = z";
         parse "x * y = 0 /\ z = 0 ==> x = z";
@@ -75,7 +75,7 @@ let ``test non-convexity 1``() =
     |> should equal [formula<fol>.True; formula<fol>.False; formula<fol>.False]
 
 [<Test>]
-let ``test non-convexity 2``() = 
+let ``non-convexity 2``() = 
     List.map (integer_qelim >>|> generalize) [
         parse "0 <= x /\ x < 2 /\ y = 0 /\ z = 1 ==> x = y \/ x = z";
         parse "0 <= x /\ x < 2 /\ y = 0 /\ z = 1 ==> x = y";

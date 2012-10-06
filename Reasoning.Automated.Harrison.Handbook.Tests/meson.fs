@@ -34,7 +34,7 @@ open FsUnit
 [<TestCase("~p /\ (p \/ q) /\ (r \/ s) /\ (~q \/ t \/ u) /\ 
             (~r \/ ~t) /\ (~r \/ ~u) /\ (~q \/ v \/ w) /\ 
             (~s \/ ~v) /\ (~s \/ ~w) ==> false", Result=0)>]
-let ``test tab`` f =
+let ``tab`` f =
     tab (parse f)
 
 // pg. 220
@@ -43,7 +43,7 @@ let ``test tab`` f =
 // ------------------------------------------------------------------------- //
 
 [<Test>]
-let ``test meson002``() =
+let ``meson002 all``() =
     meson002 (parse "exists x. exists y. forall z. 
                         (F(x,y) ==> (F(y,z) /\ F(z,z))) /\ 
                         ((F(x,y) /\ G(x,y)) ==> (G(x,z) /\ G(z,z)))")
@@ -66,6 +66,6 @@ let ``test meson002``() =
 [<TestCase("p ==> q <=> ~p \/ q")>]
 [<TestCase("(p ==> q) \/ (q ==> p)")>]
 [<TestCase("p /\ (q ==> r) ==> s <=> (~p \/ q \/ s) /\ (~p \/ ~r \/ s)")>]
-let ``test meson002 returns empty`` f =
+let ``meson002 returns empty`` f =
     meson002 (parse f)
     |> should equal []

@@ -22,7 +22,7 @@ open FsUnit
 
 [<TestCase(3, 3, 5, Result=false)>]
 [<TestCase(3, 3, 6, Result=true)>]
-let ``test ramsey``(s, t, n) =
+let ``ramsey``(s, t, n) =
     tautology(ramsey s t n)
 
 // pg. 72
@@ -33,5 +33,5 @@ let ``test ramsey``(s, t, n) =
 [<TestCase(7, Result=true)>]
 [<TestCase(9, Result=false)>]
 [<TestCase(11, Result=true)>]
-let ``test prime`` p =
+let ``prime`` p =
     tautology(prime p)

@@ -26,7 +26,7 @@ open FsUnit
 // ------------------------------------------------------------------------- //
 
 [<Test>]
-let ``test hornprove``() =    
+let ``hornprove``() =    
     hornprove (parse " 
         (forall x. P(x) /\ (G(x) \/ H(x)) ==> Q(x)) /\ 
         (forall x. Q(x) /\ H(x) ==> J(x)) /\ 
@@ -49,7 +49,7 @@ let ``test hornprove``() =
 let lerules = ["0 <= X"; "S(X) <= S(Y) :- X <= Y"]
 
 [<Test>]
-let ``test simpleprolog``() =  
+let ``simple prolog``() =  
     simpleprolog lerules "S(S(0)) <= S(S(S(0)))"
     |> should equal (Branch
                         (47089,65536,
@@ -65,7 +65,7 @@ let ``test simpleprolog``() =
                             Leaf (-843597839,[("_3", Fn ("S",[Fn ("0",[])]))]))))
 
 [<Test>]
-let ``test apply``() = 
+let ``apply``() = 
     let env = simpleprolog lerules "S(S(0)) <= X"
     apply env "X"
     |> should equal (Fn ("S",[Var "_1"]))
@@ -76,7 +76,7 @@ let ``test apply``() =
 // ------------------------------------------------------------------------- //
    
 [<Test>]
-let ``test prolog``() = 
+let ``prolog all``() = 
     prolog lerules "S(S(0)) <= X"
     |> should equal [Atom (R ("=",[Var "X"; Fn ("S",[Fn ("S",[Var "_3"])])]))]
 
@@ -91,7 +91,7 @@ let appendrules = [
     "append(H::T,L,H::A) :- append(T,L,A)";]
 
 [<Test>]
-let ``test prolog appenedrules 1``() = 
+let ``prolog appenedrules 1``() = 
     prolog appendrules "append(1::2::nil,3::4::nil,Z)"
     |> should equal [Atom
                         (R ("=",
@@ -108,7 +108,7 @@ let ``test prolog appenedrules 1``() =
                                         Fn ("::",[Fn ("4",[]); Fn ("nil",[])])])])])]))]
 
 [<Test>]
-let ``test prolog appenedrules 2``() = 
+let ``prolog appenedrules 2``() = 
     prolog appendrules "append(1::2::nil,Y,1::2::3::4::nil)"
     |> should equal [Atom
                             (R ("=",
@@ -117,7 +117,7 @@ let ``test prolog appenedrules 2``() =
                                 ("::",[Fn ("3",[]); Fn ("::",[Fn ("4",[]); Fn ("nil",[])])])]))]
 
 [<Test>]
-let ``test prolog appenedrules 3``() = 
+let ``prolog appenedrules 3``() = 
     prolog appendrules "append(X,3::4::nil,1::2::3::4::nil)"
     |> should equal [Atom
                             (R ("=",
@@ -126,7 +126,7 @@ let ``test prolog appenedrules 3``() =
                                 ("::",[Fn ("1",[]); Fn ("::",[Fn ("2",[]); Fn ("nil",[])])])]))]
 
 [<Test>]
-let ``test prolog appenedrules 4``() = 
+let ``prolog appenedrules 4``() = 
     prolog appendrules "append(X,Y,1::2::3::4::nil)"
     |> should equal [Atom (R ("=",[Var "X"; Fn ("nil",[])]));
                             Atom

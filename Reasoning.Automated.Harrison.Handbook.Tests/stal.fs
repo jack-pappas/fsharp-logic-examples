@@ -24,7 +24,7 @@ open Num
 // ------------------------------------------------------------------------- //
 
 [<Test>]
-let ``test triggers``() =
+let ``triggers``() =
     triggers (parse_prop_formula "p <=> (q /\ r)")
     |> should equal [
         ((Atom (P "p"), True), [(Atom (P "q"), True); (Atom (P "r"), True)]); 
@@ -43,6 +43,6 @@ let ``test triggers``() =
 // ------------------------------------------------------------------------- //
 
 [<Test>]
-let ``test stalmarck``() =
+let ``stalmarck``() =
     stalmarck (mk_adder_test 2 1) // use small example (2, 1) instead of (6, 3)
     |> should be FsUnit.True

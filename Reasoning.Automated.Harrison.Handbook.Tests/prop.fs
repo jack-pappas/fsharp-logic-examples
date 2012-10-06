@@ -20,7 +20,7 @@ open FsUnit
 
 [<TestCase(true, false, true, Result=true)>]
 [<TestCase(true, true, false, Result=false)>]
-let ``test eval``(p, q, r) =
+let ``eval``(p, q, r) =
     function
         | P "p" -> p
         | P "q" -> q
@@ -34,7 +34,7 @@ let ``test eval``(p, q, r) =
 // ------------------------------------------------------------------------- //
 
 [<Test>]
-let ``test atoms``() =
+let ``atoms``() =
     atoms (parse_prop_formula "p /\ q \/ s ==> ~p \/ (r <=> s)")
     |> should equal [P "p"; P "q"; P "r"; P "s"]
 
@@ -47,7 +47,7 @@ let ``test atoms``() =
 [<TestCase("p \/ q ==> p", Result=false)>]
 [<TestCase("p \/ q ==> q \/ (p <=> q)", Result=false)>]
 [<TestCase("(p \/ q) /\ ~(p /\ q) ==> (~p <=> q)", Result=true)>]
-let ``test tautology`` formula  =
+let ``tautology all`` formula  =
     tautology (parse_prop_formula formula)
 
 // pg. 43
@@ -61,7 +61,7 @@ let ``test tautology`` formula  =
 [<TestCase("(p ==> q) <=> (~q ==> ~p)", Result=true)>]
 [<TestCase("(p ==> ~q) <=> (q ==> ~p)", Result=true)>]
 [<TestCase("(p ==> q) <=> (q ==> p)", Result=false)>]
-let ``test surprising tautology`` formula =
+let ``surprising tautology`` formula =
     tautology (parse_prop_formula formula)
 
 // pg. 47
@@ -70,7 +70,7 @@ let ``test surprising tautology`` formula =
 // ------------------------------------------------------------------------- //
 
 [<Test>]
-let ``test equivalences``() =
+let ``equivalences``() =
     List.forall tautology [
         parse_prop_formula "true <=> false ==> false";
         parse_prop_formula "~p <=> p ==> false";
@@ -85,7 +85,7 @@ let ``test equivalences``() =
 // ------------------------------------------------------------------------- //
 
 [<Test>]
-let ``test nnf``() =
+let ``nnf``() =
     let fm003 = (parse_prop_formula ("(p <=> q) <=> ~(r ==> s)"))
     let fm003' = nnf fm003
     tautology(Iff(fm003,fm003'))
@@ -98,7 +98,7 @@ let ``test nnf``() =
 
 [<TestCase("(p ==> p') /\ (q ==> q') ==> (p /\ q ==> p' /\ q')", Result=true)>]
 [<TestCase("(p ==> p') /\ (q ==> q') ==> (p \/ q ==> p' \/ q')", Result=true)>]
-let ``test remarked tautology`` formula  =
+let ``remarked tautology`` formula  =
     tautology (parse_prop_formula formula)
 
 // pg. 58
@@ -107,7 +107,7 @@ let ``test remarked tautology`` formula  =
 // ------------------------------------------------------------------------- //
 
 [<Test>]
-let ``test purednf``() =
+let ``purednf all``() =
     purednf (parse_prop_formula ("(p \/ q /\ r) /\ (~p \/ ~r)"))
     |> should equal [[Atom (P "p"); Not (Atom (P "p"))]; 
                         [Atom (P "p"); Not (Atom (P "r"))]; 
@@ -120,7 +120,7 @@ let ``test purednf``() =
 // ------------------------------------------------------------------------- //
 
 [<Test>]
-let ``test non-trivial purednf``() =
+let ``non-trivial purednf``() =
     List.filter (non trivial) (purednf (parse_prop_formula ("(p \/ q /\ r) /\ (~p \/ ~r)")))
     |> should equal [[Atom (P "p"); Not (Atom (P "r"))]; 
                         [Atom (P "q"); Atom (P "r"); Not (Atom (P "p"))]]
@@ -131,7 +131,7 @@ let ``test non-trivial purednf``() =
 // ------------------------------------------------------------------------- //
     
 [<Test>]
-let ``test dnf``() =
+let ``dnf``() =
     let fm005 = (parse_prop_formula ("(p \/ q /\ r) /\ (~p \/ ~r)"))
     tautology(Iff(fm005,dnf fm005))
     |> should be True
@@ -142,7 +142,7 @@ let ``test dnf``() =
 // ------------------------------------------------------------------------- //
     
 [<Test>]
-let ``test cnf``() =
+let ``cnf``() =
     let fm006 = (parse_prop_formula ("(p \/ q /\ r) /\ (~p \/ ~r)"))
     tautology(Iff(fm006,cnf fm006))
     |> should be True

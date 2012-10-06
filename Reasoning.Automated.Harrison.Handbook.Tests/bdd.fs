@@ -21,7 +21,7 @@ open FsUnit
 // ------------------------------------------------------------------------- //
 
 [<Test>]
-let ``test bddtaut``() =
+let ``bddtaut``() =
     bddtaut (mk_adder_test 4 2)
     |> should be True
 
@@ -31,12 +31,12 @@ let ``test bddtaut``() =
 // ------------------------------------------------------------------------- //
 
 [<Test>]
-let ``test ebddtaut with prime``() =
+let ``ebddtaut with prime``() =
     ebddtaut (prime 101)
     |> should be True
 
 [<Test>]
-let ``test ebddtaut with mk_adder_test``() =
+let ``ebddtaut with mk_adder_test``() =
     ebddtaut (mk_adder_test 9 5)
     |> should be True
 

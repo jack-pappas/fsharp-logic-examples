@@ -47,7 +47,7 @@ open Reasoning.Automated.Harrison.Handbook.qelim
 [<TestCase("forall a b. exists x. ~(x = a) \/ ~(x = b) \/ (a = b)", "true")>]
 [<TestCase("forall x y. x <= y \/ x > y", "true")>]
 [<TestCase("forall x y. x <= y \/ x < y", "false")>]
-let ``test quelim_dlo`` (input, expected) =
+let ``quelim_dlo`` (input, expected) =
     quelim_dlo (parse input)
     |> should equal (parse expected)
 

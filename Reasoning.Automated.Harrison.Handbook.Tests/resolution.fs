@@ -24,7 +24,7 @@ open FsUnit
 // ------------------------------------------------------------------------- //
 
 [<Test>]
-let ``test resolution001``() =
+let ``resolution001``() =
     resolution001 (parse "
         exists x. exists y. forall z. 
             (F(x,y) ==> (F(y,z) /\ F(z,z))) /\ 
@@ -37,7 +37,7 @@ let ``test resolution001``() =
 // ------------------------------------------------------------------------- //
 
 [<Test>]
-let ``test resolution002``() =
+let ``resolution002``() =
     resolution002 (parse "
         exists x. exists y. forall z. 
             (F(x,y) ==> (F(y,z) /\ F(z,z))) /\ 
@@ -50,7 +50,7 @@ let ``test resolution002``() =
 // ------------------------------------------------------------------------- //
 
 [<Test>]
-let ``test presolution``() =
+let ``presolution all``() =
     presolution (parse "
     (forall x y z. P(x,y) ==> P(y,z) ==> P(x,z)) /\ 
     (forall x y z. Q(x,y) ==> Q(y,z) ==> Q(x,z)) /\ 
@@ -80,12 +80,12 @@ let ``test presolution``() =
 [<TestCase("p ==> q <=> ~p \/ q")>]
 [<TestCase("(p ==> q) \/ (q ==> p)")>]
 [<TestCase("p /\ (q ==> r) ==> s <=> (~p \/ q \/ s) /\ (~p \/ ~r \/ s)")>]
-let ``test presolution returns empty`` f =
+let ``presolution returns empty list`` f =
     presolution (parse f)
     |> should equal []
 
 [<Test>]
-let ``test resolution003``() =
+let ``resolution003 all``() =
     resolution003 (parse "
         exists x. exists y. forall z. 
             (F(x,y) ==> (F(y,z) /\ F(z,z))) /\ 
@@ -109,7 +109,7 @@ let ``test resolution003``() =
 [<TestCase("p ==> q <=> ~p \/ q")>]
 [<TestCase("(p ==> q) \/ (q ==> p)")>]
 [<TestCase("p /\ (q ==> r) ==> s <=> (~p \/ q \/ s) /\ (~p \/ ~r \/ s)")>]
-let ``test resolution003 returns empty`` f =
+let ``resolution003 returns empty list`` f =
     resolution003 (parse f)
     |> should equal []
 

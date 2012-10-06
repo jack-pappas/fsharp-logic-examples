@@ -25,13 +25,13 @@ open FsUnit
 // ------------------------------------------------------------------------- //
 
 [<Test>]
-let ``test ccvalid 1``() =
+let ``ccvalid 1``() =
     ccvalid (parse "f(f(f(f(f(c))))) = c /\ f(f(f(c))) = c 
         ==> f(c) = c \/ f(g(c)) = g(f(c))")
     |> should be True
     
 [<Test>]
-let ``test ccvalid 2``() =
+let ``ccvalid 2``() =
     ccvalid (parse "f(f(f(f(c)))) = c /\ f(f(c)) = c ==> f(c) = c")
     |> should be False
 

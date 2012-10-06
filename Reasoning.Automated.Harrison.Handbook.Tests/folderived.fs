@@ -18,7 +18,7 @@ open FsUnit
 // ------------------------------------------------------------------------- //
 
 [<Test>]
-let ``test icongruence``() = 
+let ``icongruence``() = 
     icongruence (parset "s") (parset "t") (parset "f(s,g(s,t,s),u,h(h(s)))")
                             (parset "f(s,g(t,t,s),u,h(h(t)))")
     |> sprint_thm
@@ -51,7 +51,7 @@ let ``test icongruence``() =
                 Result="|- (forall x x' x''. x +x' +x'' =0) ==> (forall x''' x''''. (x +x' +x'') +x''' +x'''' =0)")>]
 [<TestCase("2 * x", "forall x x'. x + x' = x' + x", 
                 Result="|- (forall x x'. x +x' =x' +x) ==> (forall x'. 2 *x +x' =x' +2 *x)")>]
-let ``test ispec``(f, qf) = 
+let ``ispec``(f, qf) = 
     ispec (parset f) (parse qf)
     |> sprint_thm
 
@@ -66,7 +66,7 @@ let ``test ispec``(f, qf) =
 [<TestCase("x", "y", "(forall z. x = z) <=> (exists x. y < z) /\ (forall y. y < x)", 
                     "(forall z. y = z) <=> (exists x. y < z) /\ (forall y'. y' < y)",
                     Result="|- x =y ==> ((forall z. x =z) <=> (exists x. y <z) /\ (forall y. y <x)) ==> ((forall z. y =z) <=> (exists x. y <z) /\ (forall y'. y' <y))")>]
-let ``test isubst``(f1, f2, qf1, qf2) = 
+let ``isubst``(f1, f2, qf1, qf2) = 
     isubst (parset f1) (parset f2)
             (parse qf1) (parse qf2)
     |> sprint_thm

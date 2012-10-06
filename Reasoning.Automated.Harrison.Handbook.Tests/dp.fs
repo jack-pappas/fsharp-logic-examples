@@ -23,7 +23,7 @@ open FsUnit
 // ------------------------------------------------------------------------- //
 
 [<Test>]
-let ``test dptaut``() =
+let ``dptaut``() =
     dptaut(prime 11)
     |> should be True
 
@@ -33,7 +33,7 @@ let ``test dptaut``() =
 // ------------------------------------------------------------------------- //
 
 [<Test>]
-let ``test dplltaut``() =
+let ``dplltaut``() =
     dplltaut(prime 11)
     |> should be True
 
@@ -43,12 +43,12 @@ let ``test dplltaut``() =
 // ------------------------------------------------------------------------- //
 
 [<Test>]
-let ``test dplitaut``() =
+let ``dplitaut``() =
     dplitaut(prime 13) // Use 13 instead of 101 for fast response
     |> should be True
 
 [<Test>]
-let ``test dplbtaut``() =
+let ``dplbtaut``() =
     dplbtaut(prime 13)  // Use 13 instead of 101 for fast response
     |> should be True
 

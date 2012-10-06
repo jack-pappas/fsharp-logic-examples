@@ -24,7 +24,7 @@ let p002 = prenex (parse "(forall x. R(x,f(x))) /\ (forall x y. S(x,y) <=> R(x,y
 let q002 = prenex (parse "(forall x y z. S(x,y) /\ S(y,z) ==> T(x,z)) /\ ~T(0,0)")
     
 [<Test>]
-let ``test urinterpolate``() = 
+let ``urinterpolate``() = 
     let c002 = urinterpolate p002 q002
     meson002(Imp(p002,c002)) |> should equal [2; 2]
     meson002(Imp(q002,Not c002)) |> should equal [3]
@@ -35,13 +35,13 @@ let ``test urinterpolate``() =
 // ------------------------------------------------------------------------- //
 
 [<Test>]
-let ``test uinterpolate``() = 
+let ``uinterpolate``() = 
     let c003 = uinterpolate p002 q002
     meson002(Imp(p002,c003)) |> should equal [4]
     meson002(Imp(q002,Not c003)) |> should equal [3]
 
 [<Test>]
-let ``test interpolate 1``() = 
+let ``interpolate 1``() = 
     let p004 = (parse "(forall x. exists y. R(x,y)) /\ (forall x y. S(v,x,y) <=> R(x,y) \/ R(y,x))")
     let q004 = (parse "(forall x y z. S(v,x,y) /\ S(v,y,z) ==> T(x,z)) /\ (exists u. ~T(u,u))")
     let c004 = interpolate p004 q004
@@ -53,7 +53,7 @@ let ``test interpolate 1``() =
 // ------------------------------------------------------------------------- //
 
 [<Test>]
-let ``test interpolate 2``() = 
+let ``interpolate 2``() = 
     let p005 = (parse "(p ==> q /\ r)")
     let q005 = (parse "~((q ==> p) ==> s ==> (p <=> q))")
     let c005 = interpolate p005 q005
@@ -66,7 +66,7 @@ let ``test interpolate 2``() =
 // ------------------------------------------------------------------------- //
 
 [<Test>]
-let ``test interpolate 3``() = 
+let ``interpolate 3``() = 
     let p006 = (parse "(forall x. exists y. R(x,y)) /\ (forall x y. S(x,y) <=> R(x,y) \/ R(y,x))")
     let q006 = (parse "(forall x y z. S(x,y) /\ S(y,z) ==> T(x,z)) /\ ~T(u,u)")
     meson002(Imp(And(p006,q006), formula.False)) |> should equal [5]
@@ -78,7 +78,7 @@ let ``test interpolate 3``() =
 // A variant where u is free in both parts.                                  //
 // ------------------------------------------------------------------------- //
 [<Test>]
-let ``test interpolate 4``() = 
+let ``interpolate 4``() = 
     let p007 = (parse "(forall x. exists y. R(x,y)) /\ (forall x y. S(x,y) <=> R(x,y) \/ R(y,x)) /\ (forall v. R(u,v) ==> Q(v,u))")
     let q007 = (parse "(forall x y z. S(x,y) /\ S(y,z) ==> T(x,z)) /\ ~T(u,u)")
     meson002(Imp(And(p007,q007),formula.False)) |> should equal [5]
@@ -99,7 +99,7 @@ let test_interp fm =
     meson002(Imp(q,Not c)) |> ignore
     c
 [<Test>]
-let ``test test_interp``() =   
+let ``test interp``() =   
     test_interp (parse "forall x. P(x) ==> exists y. forall z. P(z) ==> Q(y)")
     |> sprint_fol_formula
     |> should equal "<<forall v_2. exists v_1. (~P(v_2) \/ ~P(v_2) \/ Q(v_1)) \/ (~P(v_2) \/ ~P(v_2) \/ Q(v_1)) /\ (~P(v_2) \/ Q(v_1))>>
@@ -110,7 +110,7 @@ let ``test test_interp``() =
 // ------------------------------------------------------------------------- //
 
 [<Test>]
-let ``test interpolate 5``() = 
+let ``interpolate 5``() = 
     let p009 = (parse "forall x. L(x,b)")
     let q009 = (parse "(forall y. L(b,y) ==> m = y) /\ ~(m = b)")
     let c009 = einterpolate p009 q009
@@ -118,7 +118,7 @@ let ``test interpolate 5``() =
     meson002(Imp(q009,Not c009)) |> should equal [2]
 
 [<Test>]
-let ``test interpolate 6``() = 
+let ``interpolate 6``() = 
     let p010 = (parse "(forall x. A(x) /\ C(x) ==> B(x)) /\ (forall x. D(x) \/ ~D(x) ==> C(x))")
     let q010 = (parse "~(forall x. E(x) ==> A(x) ==> B(x))")
     let c010 = interpolate p010 q010
