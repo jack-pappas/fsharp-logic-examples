@@ -21,7 +21,7 @@ module skolem =
 // Routine simplification. Like "psimplify" but with quantifier clauses.     //
 // ------------------------------------------------------------------------- //
 
-    // OCaml:  val simplify003 : expression  -> expression = <fun>
+    // OCaml:  val simplify1 : expression  -> expression = <fun>
     // F#:     val simplify003 : fol formula -> fol formula
     let simplify003 fm =
         match fm with
@@ -32,7 +32,7 @@ module skolem =
         | _ ->
             psimplify1 fm
 
-    // OCaml: val simplify004 : expression  -> expression = <fun>
+    // OCaml: val simplify : expression  -> expression = <fun>
     // F#:    val simplify004 : fol formula -> fol formula
     let rec simplify004 fm =
         match fm with
