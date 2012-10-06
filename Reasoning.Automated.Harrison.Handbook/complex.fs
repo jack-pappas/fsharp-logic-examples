@@ -371,5 +371,10 @@ module complex =
     let complex_qelim =
       simplify004 >>|> evalc >>|> lift_qelim polyatom (dnf >>|> cnnf id >>|> evalc) basic_complex_qelim
 
+    // Not in the text, but part of the additional tests in the code.
+    let polytest tm =
+        //time (polynate (fvt tm)) tm
+        polynate (fvt tm) tm
+
 
 
