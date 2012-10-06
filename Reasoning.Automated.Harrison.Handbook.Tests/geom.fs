@@ -100,7 +100,7 @@ let ``examples 5``() =
 (* ------------------------------------------------------------------------- *)
 
 [<Test>]
-let ``examples 6``() =
+let ``examples 7``() =
     "is_midpoint(m,a,c) /\ perpendicular(a,c,m,b)
         ==> lengths_eq(a,b,b,c)"
     |> parse
@@ -113,7 +113,7 @@ let ``examples 6``() =
 (* ------------------------------------------------------------------------- *)
 
 [<Test>]
-let ``examples 7``() =
+let ``examples 8``() =
     "parallel(a,b,d,c) /\ parallel(a,d,b,c) /\
        is_intersection(e,a,c,b,d)
        ==> lengths_eq(a,e,e,c)"
@@ -122,7 +122,7 @@ let ``examples 7``() =
     |> should equal false
 
 [<Test>]
-let ``examples 8``() =
+let ``examples 9``() =
     "parallel(a,b,d,c) /\ parallel(a,d,b,c) /\
        is_intersection(e,a,c,b,d) /\ ~collinear(a,b,c)
        ==> lengths_eq(a,e,e,c)"
@@ -158,7 +158,7 @@ and private simson_zeros =
 // TODO : Determine the expected result of this test;
 // ocamltop truncates it so we can't tell what it should be.
 //[<Test>]
-//let ``examples 9``() =
+//let ``examples 10``() =
 //    wu simson simson_vars simson_zeros
 //    |> should equal (* ??? *)
 
@@ -170,7 +170,7 @@ and private simson_zeros =
 // TODO : Determine the expected result of this test;
 // ocamltop truncates it so we can't tell what it should be.
 //[<Test>]
-//let ``examples 10``() =
+//let ``examples 11``() =
 //    wu simson (simson_vars @ simson_zeros) []
 //    |> should equal (* ??? *)
 
@@ -197,7 +197,7 @@ and private pappus_zeros =
     ["a1_y"; "a2_y"; "a3_y"; "b1_x"; "b2_x"; "b3_x"]
 
 [<Test>]
-let ``examples 11``() =
+let ``examples 12``() =
     wu pappus pappus_vars pappus_zeros
     |> should equal
     <| [Not
@@ -282,7 +282,7 @@ and private butterfly_zeros =
 // TODO : This test needs to be run in the OCaml version of the code
 // to determine the expected result value.
 //[<Test; Category("LongRunning")>]
-//let ``examples 12``() =
+//let ``examples 13``() =
 //    wu butterfly butterfly_vars butterfly_zeros
 //    |> should equal (* ??? *)
 
