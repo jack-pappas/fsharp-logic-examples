@@ -264,8 +264,8 @@ module real =
     // ------------------------------------------------------------------------- //
 
     let real_qelim' =
-        simplify004 >>|> evalc >>|>
-        lift_qelim polyatom (dnf >>|> cnnf (fun x -> x) >>|> evalc) basic_real_qelim
+        simplify004 << evalc <<
+        lift_qelim polyatom (dnf << cnnf id << evalc) basic_real_qelim
 
     // ------------------------------------------------------------------------- //
     // Didn't seem worth it in the book, but monicization can help a lot.        //
@@ -316,9 +316,9 @@ module real =
 //        casesplit (x::vars) [] pols cont init_sgns
 //
 //    let real_qelim =
-//        simplify004 >>|> evalc >>|>
-//        lift_qelim polyatom (simplify004 >>|> evalc) basic_real_qelim
+//        simplify004 << evalc <<
+//        lift_qelim polyatom (simplify004 << evalc) basic_real_qelim
 //
 //    let real_qelim' =
-//        simplify004 >>|> evalc >>|>
-//        lift_qelim polyatom (dnf >>|> cnnf (fun x -> x) >>|> evalc) basic_real_qelim
+//        simplify004 << evalc <<
+//        lift_qelim polyatom (dnf << cnnf (fun x -> x) << evalc) basic_real_qelim
