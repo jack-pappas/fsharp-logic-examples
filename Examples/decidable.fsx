@@ -40,10 +40,10 @@ open Reasoning.Automated.Harrison.Handbook.decidable
 
 //pg. 309
 // Process is terminated due to StackOverflowException.
-meson002 (parse "forall x. p(x)")
+meson002 (parse @"forall x. p(x)")
 
 // Process is terminated due to StackOverflowException.
-tab (parse "forall x. p(x)") 
+tab (parse @"forall x. p(x)") 
 
 // pg. 309
 // ------------------------------------------------------------------------- //
@@ -52,14 +52,14 @@ tab (parse "forall x. p(x)")
 
 // 0 used; 1 unused.
 // System.Exception: No proof found
-resolution001 (parse "forall x. p(x)")
+resolution001 (parse @"forall x. p(x)")
 
 // pg. 309
 // ------------------------------------------------------------------------- //
 // The Los example; see how Skolemized form has no non-nullary functions.    //
 // ------------------------------------------------------------------------- //
 
-let los = (parse "(forall x y z. P(x,y) /\ P(y,z) ==> P(x,z)) /\ (forall x y z. Q(x,y) /\ Q(y,z) ==> Q(x,z)) /\  (forall x y. P(x,y) ==> P(y,x)) /\ (forall x y. P(x,y) \/ Q(x,y)) ==> (forall x y. P(x,y)) \/ (forall x y. Q(x,y))")
+let los = (parse @"(forall x y z. P(x,y) /\ P(y,z) ==> P(x,z)) /\ (forall x y z. Q(x,y) /\ Q(y,z) ==> Q(x,z)) /\  (forall x y. P(x,y) ==> P(y,x)) /\ (forall x y. P(x,y) \/ Q(x,y)) ==> (forall x y. P(x,y)) \/ (forall x y. Q(x,y))")
 
 // <<(forall x y z. P(x,y) /\ P(y,z) ==> P(x,z)) /\ (forall x y z. Q(x,y) /\ Q(y,z) ==> Q(x,z)) /\ (forall x y. P(x,y) ==> P(y,x)) /\ (forall x y. P(x,y) \/ Q(x,y)) ==> (forall x y. P(x,y)) \/ (forall x y. Q(x,y))>>
 // val it : unit = ()
@@ -138,7 +138,7 @@ aedecide los
 // Show how we need to do PNF transformation with care.                      //
 // ------------------------------------------------------------------------- //
 
-let fm001 = (parse "(forall x. p(x)) \/ (exists y. p(y))")
+let fm001 = (parse @"(forall x. p(x)) \/ (exists y. p(y))")
 
 // <<(forall x. p(x)) \/ (exists y. p(y))>>
 // val it : unit = ()
@@ -156,10 +156,10 @@ print_fol_formula (pnf fm001)
 // ------------------------------------------------------------------------- //
 
 // Process is terminated due to StackOverflowException.
-aedecide (parse "(forall x. P(1,x,x)) /\ (forall x. P(x,x,1)) /\ (forall u v w x y z. P(x,y,u) /\ P(y,z,w) ==> (P(x,w,v) <=> P(u,z,v))) ==> forall a b c. P(a,b,c) ==> P(b,a,c)")
+aedecide (parse @"(forall x. P(1,x,x)) /\ (forall x. P(x,x,1)) /\ (forall u v w x y z. P(x,y,u) /\ P(y,z,w) ==> (P(x,w,v) <=> P(u,z,v))) ==> forall a b c. P(a,b,c) ==> P(b,a,c)")
 
 // Process is terminated due to StackOverflowException.
-aedecide (parse "(forall x. P(x,x,1)) /\ (forall u v w x y z. P(x,y,u) /\ P(y,z,w) ==> (P(x,w,v) <=> P(u,z,v))) ==> forall a b c. P(a,b,c) ==> P(b,a,c)")
+aedecide (parse @"(forall x. P(x,x,1)) /\ (forall u v w x y z. P(x,y,u) /\ P(y,z,w) ==> (P(x,w,v) <=> P(u,z,v))) ==> forall a b c. P(a,b,c) ==> P(b,a,c)")
    
 // pg. 313
 // ------------------------------------------------------------------------- //
@@ -168,7 +168,7 @@ aedecide (parse "(forall x. P(x,x,1)) /\ (forall u v w x y z. P(x,y,u) /\ P(y,z,
 
 // Use 10MB stackframe
 // val it : bool = true
-Initialization.runWithStackFrame 10000000 (fun () -> aedecide (parse "(exists x. P(x)) /\ (exists x. G(x))
+Initialization.runWithStackFrame 10000000 (fun () -> aedecide (parse @"(exists x. P(x)) /\ (exists x. G(x))
    ==> ((forall x. P(x) ==> H(x)) /\ (forall x. G(x) ==> J(x)) <=>
         (forall x y. P(x) /\ G(y) ==> H(x) /\ J(y)))"))
 
@@ -180,27 +180,27 @@ Initialization.runWithStackFrame 10000000 (fun () -> aedecide (parse "(exists x.
 // This is p18
 
 // System.Exception: Not decidable
-aedecide (parse "exists y. forall x. P(y) ==> P(x)")
+aedecide (parse @"exists y. forall x. P(y) ==> P(x)")
 
 // 0 ground instances tried; 0 items in list
 // 0 ground instances tried; 0 items in list
 // 1 ground instances tried; 2 items in list
 // 1 ground instances tried; 2 items in list
 // val it : int = 2
-davisputnam (parse "exists y. forall x. P(y) ==> P(x)")
+davisputnam (parse @"exists y. forall x. P(y) ==> P(x)")
 
 // pg. 315
 // ------------------------------------------------------------------------- //
 // Examples.                                                                 //
 // ------------------------------------------------------------------------- //
 
-miniscope(nnf (parse "exists y. forall x. P(y) ==> P(x)"))
+miniscope(nnf (parse @"exists y. forall x. P(y) ==> P(x)"))
 
 // <<(exists y. ~P(y)) \/ (forall x. P(x))>>
 // val it : unit = ()
-print_fol_formula (miniscope(nnf (parse "exists y. forall x. P(y) ==> P(x)")))
+print_fol_formula (miniscope(nnf (parse @"exists y. forall x. P(y) ==> P(x)")))
 
-let fm002 = miniscope(nnf (parse "(forall x y. exists z. forall w. P(x) /\ Q(y) ==> R(z) /\ U(w))
+let fm002 = miniscope(nnf (parse @"(forall x y. exists z. forall w. P(x) /\ Q(y) ==> R(z) /\ U(w))
    ==> (exists x y. P(x) /\ Q(y)) ==> (exists z. R(z))"))
    
 // <<((exists x. P(x)) /\ (forall z. ~R(z)) /\ (exists w. ~U(w)) /\ (exists y. Q(y)) \/ (exists x. P(x)) /\ (forall z. ~R(z)) /\ (exists y. Q(y)) \/ (exists x. P(x)) /\ (exists w. ~U(w)) /\ (exists y. Q(y))) \/ ~((exists x. P(x)) /\ (exists y. Q(y))) \/ (exists z. R(z))>>
@@ -220,7 +220,7 @@ print_fol_formula (pnf(nnf fm002))
 
 // val it : bool = true
 wang
- (parse "(forall x y. exists z. forall w. P(x) /\ Q(y) ==> R(z) /\ U(w))
+ (parse @"(forall x y. exists z. forall w. P(x) /\ Q(y) ==> R(z) /\ U(w))
    ==> (exists x y. P(x) /\ Q(y)) ==> (exists z. R(z))")
    
 // pg. 316
@@ -229,7 +229,7 @@ wang
 // ------------------------------------------------------------------------- //
 
 // Note: This works, but the output is huge.
-let fm003 = pnf(nnf(miniscope(nnf (parse "((exists x. forall y. P(x) <=> P(y)) <=>
+let fm003 = pnf(nnf(miniscope(nnf (parse @"((exists x. forall y. P(x) <=> P(y)) <=>
     ((exists x. Q(x)) <=> (forall y. Q(y)))) <=>
    ((exists x. forall y. Q(x) <=> Q(y)) <=>
     ((exists x. P(x)) <=> (forall y. P(y))))"))))
@@ -331,15 +331,15 @@ List.map (anglicize_syllogism >>|> consequent) all_valid_syllogisms'
 
 // val it : bool = true
 decide_fmp
- (parse "(forall x y. R(x,y) \/ R(y,x)) ==> forall x. R(x,x)")
+ (parse @"(forall x y. R(x,y) \/ R(y,x)) ==> forall x. R(x,x)")
 
  // val it : bool = false
 decide_fmp
- (parse "(forall x y z. R(x,y) /\ R(y,z) ==> R(x,z)) ==> forall x. R(x,x)")
+ (parse @"(forall x y z. R(x,y) /\ R(y,z) ==> R(x,z)) ==> forall x. R(x,x)")
 
 //** This fails to terminate: has countermodels, but only infinite ones
 // Process is terminated due to StackOverflowException.
-decide_fmp (parse "~((forall x. ~R(x,x)) /\ (forall x. exists z. R(x,z)) /\ (forall x y z. R(x,y) /\ R(y,z) ==> R(x,z)))")
+decide_fmp (parse @"~((forall x. ~R(x,x)) /\ (forall x. exists z. R(x,z)) /\ (forall x y z. R(x,y) /\ R(y,z) ==> R(x,z)))")
 
 // pg. 325
 // ------------------------------------------------------------------------- //
@@ -348,7 +348,7 @@ decide_fmp (parse "~((forall x. ~R(x,x)) /\ (forall x. exists z. R(x,z)) /\ (for
 
 // val it : bool = true
 decide_monadic
- (parse "((exists x. forall y. P(x) <=> P(y)) <=>
+ (parse @"((exists x. forall y. P(x) <=> P(y)) <=>
     ((exists x. Q(x)) <=> (forall y. Q(y)))) <=>
     ((exists x. forall y. Q(x) <=> Q(y)) <=>
    ((exists x. P(x)) <=> (forall y. P(y))))")
@@ -356,7 +356,7 @@ decide_monadic
 // This is not feasible
 // Process is terminated due to StackOverflowException.
 decide_monadic
- (parse "(forall x y. exists z. forall w. P(x) /\ Q(y) ==> R(z) /\ U(w))
+ (parse @"(forall x y. exists z. forall w. P(x) /\ Q(y) ==> R(z) /\ U(w))
    ==> (exists x y. P(x) /\ Q(y)) ==> (exists z. R(z))")
 
 // pg. 326
@@ -385,7 +385,7 @@ decide_monadic
 // Searching with depth limit 0
 // Searching with depth limit 1
 // val it : int list = [1; 3; 9; 1]
-meson002 (parse "(exists x y z. forall u. R(x,x) \/ ~R(x,u) \/ (R(x,y) /\ R(y,z) /\ ~R(x,z))) <=> ~((forall x. ~R(x,x)) /\ (forall x. exists z. R(x,z)) /\ (forall x y z. R(x,y) /\ R(y,z) ==> R(x,z)))")
+meson002 (parse @"(exists x y z. forall u. R(x,x) \/ ~R(x,u) \/ (R(x,y) /\ R(y,z) /\ ~R(x,z))) <=> ~((forall x. ~R(x,x)) /\ (forall x. exists z. R(x,z)) /\ (forall x y z. R(x,y) /\ R(y,z) ==> R(x,z)))")
 
 // Searching with depth limit 0
 // Searching with depth limit 1
@@ -402,7 +402,7 @@ meson002 (parse "(exists x y z. forall u. R(x,x) \/ ~R(x,u) \/ (R(x,y) /\ R(y,z)
 // Searching with depth limit 3
 // Searching with depth limit 4
 // val it : int list = [1; 6; 4]
-meson002 (parse "(exists x. forall y. exists z. R(x,x) \/ ~R(x,y) \/ (R(y,z) /\ ~R(x,z))) <=> ~((forall x. ~R(x,x)) /\  (forall x. exists y. R(x,y) /\ forall z. R(y,z) ==> R(x,z)))")
+meson002 (parse @"(exists x. forall y. exists z. R(x,x) \/ ~R(x,y) \/ (R(y,z) /\ ~R(x,z))) <=> ~((forall x. ~R(x,x)) /\  (forall x. exists y. R(x,y) /\ forall z. R(y,z) ==> R(x,z)))")
 
 //** The second formula implies the first **//
 
@@ -415,5 +415,5 @@ meson002 (parse "(exists x. forall y. exists z. R(x,x) \/ ~R(x,y) \/ (R(y,z) /\ 
 // Searching with depth limit 4
 // Searching with depth limit 5
 // val it : int list = [1; 5]
-meson002 (parse "~((forall x. ~R(x,x)) /\ (forall x. exists y. R(x,y) /\ forall z. R(y,z) ==> R(x,z))) ==> ~((forall x. ~R(x,x)) /\ (forall x. exists z. R(x,z)) /\ (forall x y z. R(x,y) /\ R(y,z) ==> R(x,z)))")
+meson002 (parse @"~((forall x. ~R(x,x)) /\ (forall x. exists y. R(x,y) /\ forall z. R(y,z) ==> R(x,z))) ==> ~((forall x. ~R(x,x)) /\ (forall x. exists z. R(x,z)) /\ (forall x y z. R(x,y) /\ R(y,z) ==> R(x,z)))")
 

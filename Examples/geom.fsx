@@ -66,7 +66,7 @@ open Reasoning.Automated.Harrison.Handbook.geom
 //               ("*",
 //                [Fn ("-",[Var "b_y"; Var "a_y"]);
 //                 Fn ("-",[Var "a_x"; Var "c_x"])])])))
-coordinate (parse "collinear(a,b,c) ==> collinear(b,a,c)");;
+coordinate (parse @"collinear(a,b,c) ==> collinear(b,a,c)");;
         
 // 2 basis elements and 1 pairs
 // 2 basis elements and 1 pairs
@@ -255,7 +255,7 @@ List.forall (grobner_decide >>|> invariant_under_rotation) coordinations;;
 //  ------------------------------------------------------------------------- // 
 
 // TODO: Fix these. Incorrect result, returns: System.Exception: pdivide_pos: zero head coefficient
-real_qelim (parse "forall x y. exists s c. s^2 + c^2 = 1 /\ s * x + c * y = 0");;
+real_qelim (parse @"forall x y. exists s c. s^2 + c^2 = 1 /\ s * x + c * y = 0");;
 
 // 3 basis elements and 3 pairs
 // 3 basis elements and 2 pairs
@@ -651,7 +651,7 @@ List.partition (grobner_decide >>|> invariant_under_shearing) coordinations;;
 //  ------------------------------------------------------------------------- // 
 
 // TODO: Fix this: System.DivideByZeroException: Attempted to divide by zero.
-(grobner_decide >>|> originate) (parse "is_midpoint(m,a,c) /\ perpendicular(a,c,m,b) ==> lengths_eq(a,b,b,c)");;
+(grobner_decide >>|> originate) (parse @"is_midpoint(m,a,c) /\ perpendicular(a,c,m,b) ==> lengths_eq(a,b,b,c)");;
        
 // pg. 418
 //  ------------------------------------------------------------------------- // 
@@ -659,10 +659,10 @@ List.partition (grobner_decide >>|> invariant_under_shearing) coordinations;;
 //  ------------------------------------------------------------------------- // 
 
 // TODO: Fix this: System.DivideByZeroException: Attempted to divide by zero.
-(grobner_decide >>|> originate) (parse "parallel(a,b,d,c) /\ parallel(a,d,b,c) /\ is_intersection(e,a,c,b,d) ==> lengths_eq(a,e,e,c)");;
+(grobner_decide >>|> originate) (parse @"parallel(a,b,d,c) /\ parallel(a,d,b,c) /\ is_intersection(e,a,c,b,d) ==> lengths_eq(a,e,e,c)");;
 
 // TODO: Fix this: System.DivideByZeroException: Attempted to divide by zero.
-(grobner_decide >>|> originate) (parse "parallel(a,b,d,c) /\ parallel(a,d,b,c) /\ is_intersection(e,a,c,b,d) /\ ~collinear(a,b,c) ==> lengths_eq(a,e,e,c)");;
+(grobner_decide >>|> originate) (parse @"parallel(a,b,d,c) /\ parallel(a,d,b,c) /\ is_intersection(e,a,c,b,d) /\ ~collinear(a,b,c) ==> lengths_eq(a,e,e,c)");;
         
 // pg. 421
 //  ------------------------------------------------------------------------- // 
@@ -697,7 +697,7 @@ List.partition (grobner_decide >>|> invariant_under_shearing) coordinations;;
 //                                (R ("perpendicular",
 //                                    [Var "a"; Var "b"; Var "d"; Var "g"])))))))))),
 //      Atom (R ("collinear",[Var "e"; Var "f"; Var "g"])))
-let simson = (parse "lengths_eq(o,a,o,b) /\ lengths_eq(o,a,o,c) /\ lengths_eq(o,a,o,d) /\ collinear(e,b,c) /\ collinear(f,a,c) /\ collinear(g,a,b) /\ perpendicular(b,c,d,e) /\ perpendicular(a,c,d,f) /\ perpendicular(a,b,d,g) ==> collinear(e,f,g)");;
+let simson = (parse @"lengths_eq(o,a,o,b) /\ lengths_eq(o,a,o,c) /\ lengths_eq(o,a,o,d) /\ collinear(e,b,c) /\ collinear(f,a,c) /\ collinear(g,a,b) /\ perpendicular(b,c,d,e) /\ perpendicular(a,c,d,f) /\ perpendicular(a,b,d,g) ==> collinear(e,f,g)");;
 
 // val vars001 : string list =
 //   ["g_y"; "g_x"; "f_y"; "f_x"; "e_y"; "e_x"; "d_y"; "d_x"; "c_y"; "c_x";
@@ -1017,7 +1017,7 @@ wu simson (vars001 @ zeros001) [];;
 //                    (Atom (R ("collinear",[Var "a1"; Var "b3"; Var "f"])),
 //                     Atom (R ("collinear",[Var "a3"; Var "b1"; Var "f"]))))))),
 //      Atom (R ("collinear",[Var "d"; Var "e"; Var "f"])))
-let pappus = (parse "collinear(a1,b2,d) /\ collinear(a2,b1,d) /\ collinear(a2,b3,e) /\ collinear(a3,b2,e) /\ collinear(a1,b3,f) /\ collinear(a3,b1,f) ==> collinear(d,e,f)");;
+let pappus = (parse @"collinear(a1,b2,d) /\ collinear(a2,b1,d) /\ collinear(a2,b3,e) /\ collinear(a3,b2,e) /\ collinear(a1,b3,f) /\ collinear(a3,b1,f) ==> collinear(d,e,f)");;
 
 // val vars002 : string list =
 //   ["f_y"; "f_x"; "e_y"; "e_x"; "d_y"; "d_x"; "b3_y"; "b2_y"; "b1_y";
@@ -1142,7 +1142,7 @@ wu pappus vars002 zeros002;;
 //                                (R ("collinear",
 //                                    [Var "b"; Var "c"; Var "g"])))))))))),
 //      Atom (R ("is_midpoint",[Var "e"; Var "f"; Var "g"])))
-let butterfly = (parse "lengths_eq(b,o,a,o) /\ lengths_eq(c,o,a,o) /\ lengths_eq(d,o,a,o) /\ collinear(a,e,c) /\ collinear(d,e,b) /\  perpendicular(e,f,o,e) /\ collinear(a,f,d) /\ collinear(f,e,g) /\ collinear(b,c,g) ==> is_midpoint(e,f,g)");;
+let butterfly = (parse @"lengths_eq(b,o,a,o) /\ lengths_eq(c,o,a,o) /\ lengths_eq(d,o,a,o) /\ collinear(a,e,c) /\ collinear(d,e,b) /\  perpendicular(e,f,o,e) /\ collinear(a,f,d) /\ collinear(f,e,g) /\ collinear(b,c,g) ==> is_midpoint(e,f,g)");;
 
 // val vars003 : string list =
 //   ["g_y"; "g_x"; "f_y"; "f_x"; "e_y"; "e_x"; "d_y"; "c_y"; "b_y"; "d_x";
@@ -1308,4 +1308,4 @@ wu butterfly vars003 zeros003;;
 //  ------------------------------------------------------------------------- // 
 
 // TODO: Fix this: System.DivideByZeroException: Attempted to divide by zero.
-(grobner_decide >>|> originate) (parse "is_midpoint(d,b,c) /\ is_midpoint(e,a,c) /\ is_midpoint(f,a,b) /\ is_intersection(m,b,e,a,d) ==> collinear(c,f,m)");;
+(grobner_decide >>|> originate) (parse @"is_midpoint(d,b,c) /\ is_midpoint(e,a,c) /\ is_midpoint(f,a,b) /\ is_intersection(m,b,e,a,d) ==> collinear(c,f,m)");;

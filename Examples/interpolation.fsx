@@ -57,7 +57,7 @@ open Reasoning.Automated.Harrison.Handbook.interpolation
 //              Or
 //                (Atom (R ("R",[Var "x"; Var "y"])),
 //                 Atom (R ("R",[Var "y"; Var "x"])))))))
-let p002 = prenex (parse "(forall x. R(x,f(x))) /\ (forall x y. S(x,y) <=> R(x,y) \/ R(y,x))");;
+let p002 = prenex (parse @"(forall x. R(x,f(x))) /\ (forall x y. S(x,y) <=> R(x,y) \/ R(y,x))");;
 
 //val q002 : formula<fol> =
 //  Forall
@@ -73,7 +73,7 @@ let p002 = prenex (parse "(forall x. R(x,f(x))) /\ (forall x y. S(x,y) <=> R(x,y
 //                    Atom (R ("S",[Var "y"; Var "z"]))),
 //                 Atom (R ("T",[Var "x"; Var "z"]))),
 //              Not (Atom (R ("T",[Fn ("0",[]); Fn ("0",[])])))))))
-let q002 = prenex (parse "(forall x y z. S(x,y) /\ S(y,z) ==> T(x,z)) /\ ~T(0,0)");;
+let q002 = prenex (parse @"(forall x y z. S(x,y) /\ S(y,z) ==> T(x,z)) /\ ~T(0,0)");;
 
 //0 ground instances tried; 0 items in list.
 //0 ground instances tried; 0 items in list.
@@ -147,7 +147,7 @@ meson002(Imp(q002,Not c003));;
 //               Or
 //                 (Atom (R ("R",[Var "x"; Var "y"])),
 //                  Atom (R ("R",[Var "y"; Var "x"])))))))
-let p004 = (parse "(forall x. exists y. R(x,y)) /\ (forall x y. S(v,x,y) <=> R(x,y) \/ R(y,x))");;
+let p004 = (parse @"(forall x. exists y. R(x,y)) /\ (forall x y. S(v,x,y) <=> R(x,y) \/ R(y,x))");;
 
 // val q004 : formula<fol> =
 //   And
@@ -163,7 +163,7 @@ let p004 = (parse "(forall x. exists y. R(x,y)) /\ (forall x y. S(v,x,y) <=> R(x
 //                     Atom (R ("S",[Var "v"; Var "y"; Var "z"]))),
 //                  Atom (R ("T",[Var "x"; Var "z"])))))),
 //      Exists ("u",Not (Atom (R ("T",[Var "u"; Var "u"])))))
-let q004 = (parse "(forall x y z. S(v,x,y) /\ S(v,y,z) ==> T(x,z)) /\ (exists u. ~T(u,u))");;
+let q004 = (parse @"(forall x y z. S(v,x,y) /\ S(v,y,z) ==> T(x,z)) /\ (exists u. ~T(u,u))");;
 
 // 0 ground instances tried; 0 items in list.
 // 0 ground instances tried; 0 items in list.
@@ -225,7 +225,7 @@ meson002(Imp(q004,Not c004));;
 
 // val p005 : formula<fol> =
 //   Imp (Atom (R ("p",[])),And (Atom (R ("q",[])),Atom (R ("r",[]))))
-let p005 = (parse "(p ==> q /\ r)");;
+let p005 = (parse @"(p ==> q /\ r)");;
 
 // val q005 : formula<fol> =
 //   Not
@@ -233,7 +233,7 @@ let p005 = (parse "(p ==> q /\ r)");;
 //        (Imp (Atom (R ("q",[])),Atom (R ("p",[]))),
 //         Imp
 //           (Atom (R ("s",[])),Iff (Atom (R ("p",[])),Atom (R ("q",[]))))))
-let q005 = (parse "~((q ==> p) ==> s ==> (p <=> q))");;
+let q005 = (parse @"~((q ==> p) ==> s ==> (p <=> q))");;
 
 // 0 ground instances tried; 0 items in list.
 // 0 ground instances tried; 0 items in list.
@@ -269,7 +269,7 @@ tautology(Imp(q005,Not c005));;
 //               Or
 //                 (Atom (R ("R",[Var "x"; Var "y"])),
 //                  Atom (R ("R",[Var "y"; Var "x"])))))))
-let p006 = (parse "(forall x. exists y. R(x,y)) /\ (forall x y. S(x,y) <=> R(x,y) \/ R(y,x))");;
+let p006 = (parse @"(forall x. exists y. R(x,y)) /\ (forall x y. S(x,y) <=> R(x,y) \/ R(y,x))");;
 
 // val q006 : formula<fol> =
 //   And
@@ -285,7 +285,7 @@ let p006 = (parse "(forall x. exists y. R(x,y)) /\ (forall x y. S(x,y) <=> R(x,y
 //                     Atom (R ("S",[Var "y"; Var "z"]))),
 //                  Atom (R ("T",[Var "x"; Var "z"])))))),
 //      Not (Atom (R ("T",[Var "u"; Var "u"]))))
-let q006 = (parse "(forall x y z. S(x,y) /\ S(y,z) ==> T(x,z)) /\ ~T(u,u)");;
+let q006 = (parse @"(forall x y z. S(x,y) /\ S(y,z) ==> T(x,z)) /\ ~T(u,u)");;
 
 // Fixed this: Process is terminated due to StackOverflowException.
 meson002(Imp(And(p006,q006),False));;
@@ -339,7 +339,7 @@ meson002(Imp(q006,Not c006));;
 //            Imp
 //              (Atom (R ("R",[Var "u"; Var "v"])),
 //               Atom (R ("Q",[Var "v"; Var "u"]))))))
-let p007 = (parse "(forall x. exists y. R(x,y)) /\ (forall x y. S(x,y) <=> R(x,y) \/ R(y,x)) /\ (forall v. R(u,v) ==> Q(v,u))");;
+let p007 = (parse @"(forall x. exists y. R(x,y)) /\ (forall x y. S(x,y) <=> R(x,y) \/ R(y,x)) /\ (forall v. R(u,v) ==> Q(v,u))");;
 
 // val q007 : formula<fol> =
 //   And
@@ -355,7 +355,7 @@ let p007 = (parse "(forall x. exists y. R(x,y)) /\ (forall x y. S(x,y) <=> R(x,y
 //                     Atom (R ("S",[Var "y"; Var "z"]))),
 //                  Atom (R ("T",[Var "x"; Var "z"])))))),
 //      Not (Atom (R ("T",[Var "u"; Var "u"]))))
-let q007 = (parse "(forall x y z. S(x,y) /\ S(y,z) ==> T(x,z)) /\ ~T(u,u)");;
+let q007 = (parse @"(forall x y z. S(x,y) /\ S(y,z) ==> T(x,z)) /\ ~T(u,u)");;
 
 // Fixed this: Process is terminated due to StackOverflowException.
 meson002(Imp(And(p007,q007),False));;
@@ -416,17 +416,17 @@ let test_interp fm =
     c;;
     
 // Fixed this: Process is terminated due to StackOverflowException.
-test_interp (parse "forall x. P(x) ==> exists y. forall z. P(z) ==> Q(y)");;
+test_interp (parse @"forall x. P(x) ==> exists y. forall z. P(z) ==> Q(y)");;
 
 // Fixed this: Process is terminated due to StackOverflowException.
-test_interp (parse "forall y. exists y. forall z. exists a. P(a,x,y,z) ==> P(x,y,z,a)");;
+test_interp (parse @"forall y. exists y. forall z. exists a. P(a,x,y,z) ==> P(x,y,z,a)");;
 
 // ------------------------------------------------------------------------- //
 // Hintikka's examples.                                                      //
 // ------------------------------------------------------------------------- //
 
 // val p009 : formula<fol> = Forall ("x",Atom (R ("L",[Var "x"; Var "b"])))
-let p009 = (parse "forall x. L(x,b)");;
+let p009 = (parse @"forall x. L(x,b)");;
 
 // val q009 : formula<fol> =
 //   And
@@ -436,7 +436,7 @@ let p009 = (parse "forall x. L(x,b)");;
 //           (Atom (R ("L",[Var "b"; Var "y"])),
 //            Atom (R ("=",[Var "m"; Var "y"])))),
 //      Not (Atom (R ("=",[Var "m"; Var "b"]))))
-let q009 = (parse "(forall y. L(b,y) ==> m = y) /\ ~(m = b)");;
+let q009 = (parse @"(forall y. L(b,y) ==> m = y) /\ ~(m = b)");;
 
 // 0 ground instances tried; 0 items in list.
 // 0 ground instances tried; 0 items in list.
@@ -462,7 +462,7 @@ meson002(Imp(q009,Not c009));;
 //         Imp
 //           (Or (Atom (R ("D",[Var "x"])),Not (Atom (R ("D",[Var "x"])))),
 //            Atom (R ("C",[Var "x"])))))
-let p010 = (parse "(forall x. A(x) /\ C(x) ==> B(x)) /\ (forall x. D(x) \/ ~D(x) ==> C(x))");;
+let p010 = (parse @"(forall x. A(x) /\ C(x) ==> B(x)) /\ (forall x. D(x) \/ ~D(x) ==> C(x))");;
 
 // val q010 : formula<fol> =
 //   Not
@@ -471,7 +471,7 @@ let p010 = (parse "(forall x. A(x) /\ C(x) ==> B(x)) /\ (forall x. D(x) \/ ~D(x)
 //         Imp
 //           (Atom (R ("E",[Var "x"])),
 //            Imp (Atom (R ("A",[Var "x"])),Atom (R ("B",[Var "x"]))))))
-let q010 = (parse "~(forall x. E(x) ==> A(x) ==> B(x))");;
+let q010 = (parse @"~(forall x. E(x) ==> A(x) ==> B(x))");;
 
 // 0 ground instances tried; 0 items in list.
 // 0 ground instances tried; 0 items in list.

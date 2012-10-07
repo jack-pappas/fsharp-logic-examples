@@ -30,29 +30,29 @@ open Reasoning.Automated.Harrison.Handbook.skolem
 // Example.                                                                  //
 // ------------------------------------------------------------------------- //
 
-print_fol_formula (simplify004 (parse "(forall x y. P(x) \/ (P(y) /\ false)) ==> exists z. Q"));;
+print_fol_formula (simplify004 (parse @"(forall x y. P(x) \/ (P(y) /\ false)) ==> exists z. Q"));;
 
 // pg. 141
 // ------------------------------------------------------------------------- //
 // Example of NNF function in action.                                        //
 // ------------------------------------------------------------------------- //
 
-print_fol_formula (nnf (parse "(forall x. P(x)) ==> ((exists y. Q(y)) <=> exists z. P(z) /\ Q(z))"));;
+print_fol_formula (nnf (parse @"(forall x. P(x)) ==> ((exists y. Q(y)) <=> exists z. P(z) /\ Q(z))"));;
 
 // pg. 144
 // ------------------------------------------------------------------------- //
 // Example.                                                                  //
 // ------------------------------------------------------------------------- //
 
-print_fol_formula (pnf (parse "(forall x. P(x) \/ R(y)) ==> exists y z. Q(y) \/ ~(exists z. P(z) /\ Q(z))"));;
+print_fol_formula (pnf (parse @"(forall x. P(x) \/ R(y)) ==> exists y z. Q(y) \/ ~(exists z. P(z) /\ Q(z))"));;
 
 // pg. 150
 // ------------------------------------------------------------------------- //
 // Example.                                                                  //
 // ------------------------------------------------------------------------- //
 
-print_fol_formula (skolemize (parse "exists y. x < y ==> forall u. exists v. x * u < y * v"));;
+print_fol_formula (skolemize (parse @"exists y. x < y ==> forall u. exists v. x * u < y * v"));;
 
 print_fol_formula (skolemize
- (parse "forall x. P(x)
+ (parse @"forall x. P(x)
              ==> (exists y z. Q(y) \/ ~(exists z. P(z) /\ Q(z)))"));;

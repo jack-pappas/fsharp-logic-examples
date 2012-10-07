@@ -38,27 +38,27 @@ Atom(R("<",[Fn("+",[Var "x"; Var "y"]); Var "z"]));;
 // Example.                                                                  //
 // ------------------------------------------------------------------------- //
 
-print_fol_formula (parse "forall x y. exists z. x < z /\ y < z");;
+print_fol_formula (parse @"forall x y. exists z. x < z /\ y < z");;
 
-print_fol_formula (parse "~(forall x. P(x)) <=> exists y. ~P(y)");;
+print_fol_formula (parse @"~(forall x. P(x)) <=> exists y. ~P(y)");;
 
 // pg. 126
 
-holds bool_interp undefined (parse "forall x. (x = 0) \/ (x = 1)");;
+holds bool_interp undefined (parse @"forall x. (x = 0) \/ (x = 1)");;
 
-holds (mod_interp 2) undefined (parse "forall x. (x = 0) \/ (x = 1)");;
+holds (mod_interp 2) undefined (parse @"forall x. (x = 0) \/ (x = 1)");;
 
-holds (mod_interp 3) undefined (parse "forall x. (x = 0) \/ (x = 1)");;
+holds (mod_interp 3) undefined (parse @"forall x. (x = 0) \/ (x = 1)");;
 
-let fm = (parse "forall x. ~(x = 0) ==> exists y. x * y = 1");;
+let fm = (parse @"forall x. ~(x = 0) ==> exists y. x * y = 1");;
 print_fol_formula fm;;
 
 List.filter (fun n -> holds (mod_interp n) undefined fm) (1--45);;
 
 // pg. 129
-holds (mod_interp 3) undefined (parse "(forall x. x = 0) ==> 1 = 0");;
+holds (mod_interp 3) undefined (parse @"(forall x. x = 0) ==> 1 = 0");;
 
-holds (mod_interp 3) undefined (parse "forall x. x = 0 ==> 1 = 0");;
+holds (mod_interp 3) undefined (parse @"forall x. x = 0 ==> 1 = 0");;
 
 // pg. 133
 // ------------------------------------------------------------------------- //
@@ -76,6 +76,6 @@ variant "x" ["x"; "x'"];;
 // Examples.                                                                 //
 // ------------------------------------------------------------------------- //
 
-print_fol_formula (subst ("y" |=> Var "x") (parse "forall x. x = y"));;
+print_fol_formula (subst ("y" |=> Var "x") (parse @"forall x. x = y"));;
 
-print_fol_formula (subst ("y" |=> Var "x") (parse "forall x x'. x = y ==> x = x'"));;
+print_fol_formula (subst ("y" |=> Var "x") (parse @"forall x x'. x = y ==> x = x'"));;

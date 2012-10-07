@@ -38,6 +38,6 @@ open Reasoning.Automated.Harrison.Handbook.paramodulation
 // ------------------------------------------------------------------------- //
 
 paramodulation 
-    (parse "
+    (parse @"
     (forall x. f(f(x)) = f(x)) /\ (forall x. exists y. f(y) = x)
     ==> forall x. f(x) = x");;

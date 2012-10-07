@@ -29,7 +29,7 @@ open Reasoning.Automated.Harrison.Handbook.prolog
 // ------------------------------------------------------------------------- //
 
 let p32 =
-    hornprove (parse " 
+    hornprove (parse @" 
         (forall x. P(x) /\ (G(x) \/ H(x)) ==> Q(x)) /\ 
         (forall x. Q(x) /\ H(x) ==> J(x)) /\ 
         (forall x. R(x) ==> H(x)) 
@@ -41,7 +41,7 @@ let p32 =
 // ------------------------------------------------------------------------- //
 
 // System.Exception: non-Horn clause. - This is the expected result.
-hornprove (parse "(p \/ q) /\ (~p \/ q) /\ (p \/ ~q) ==> ~(~q \/ ~q)");;
+hornprove (parse @"(p \/ q) /\ (~p \/ q) /\ (p \/ ~q) ==> ~(~q \/ ~q)");;
 
 // pg. 210
 // ------------------------------------------------------------------------- //
@@ -51,12 +51,12 @@ hornprove (parse "(p \/ q) /\ (~p \/ q) /\ (p \/ ~q) ==> ~(~q \/ ~q)");;
 // val lerules : string list = ["0 <= X"; "S(X) <= S(Y) :- X <= Y"]
 let lerules = ["0 <= X"; "S(X) <= S(Y) :- X <= Y"];;
 
-simpleprolog lerules "S(S(0)) <= S(S(S(0)))";;
+simpleprolog lerules @"S(S(0)) <= S(S(S(0)))";;
 
 // System.Exception: tryfind - This is the expected result.
-simpleprolog lerules "S(S(0)) <= S(0)";;
+simpleprolog lerules @"S(S(0)) <= S(0)";;
 
-let env = simpleprolog lerules "S(S(0)) <= X";;
+let env = simpleprolog lerules @"S(S(0)) <= X";;
 apply env "X";;
 
 // pg. 211
@@ -66,7 +66,7 @@ apply env "X";;
    
 // val it : fol formula list =
 //   [Atom (R ("=",[Var "X"; Fn ("S",[Fn ("S",[Var "_3"])])]))]
-prolog lerules "S(S(0)) <= X";;
+prolog lerules @"S(S(0)) <= X";;
 
 // pg. 211
 // ------------------------------------------------------------------------- //
@@ -74,16 +74,16 @@ prolog lerules "S(S(0)) <= X";;
 // ------------------------------------------------------------------------- //
 
 let appendrules = [
-    "append(nil,L,L)";
-    "append(H::T,L,H::A) :- append(T,L,A)";];;
+    @"append(nil,L,L)";
+    @"append(H::T,L,H::A) :- append(T,L,A)";];;
 
-prolog appendrules "append(1::2::nil,3::4::nil,Z)";;
+prolog appendrules @"append(1::2::nil,3::4::nil,Z)";;
 
-prolog appendrules "append(1::2::nil,Y,1::2::3::4::nil)";;
+prolog appendrules @"append(1::2::nil,Y,1::2::3::4::nil)";;
 
-prolog appendrules "append(X,3::4::nil,1::2::3::4::nil)";;
+prolog appendrules @"append(X,3::4::nil,1::2::3::4::nil)";;
 
-prolog appendrules "append(X,Y,1::2::3::4::nil)";;
+prolog appendrules @"append(X,Y,1::2::3::4::nil)";;
 
 // pg. 211
 // ------------------------------------------------------------------------- //
@@ -99,19 +99,19 @@ prolog appendrules "append(X,Y,1::2::3::4::nil)";;
 // ------------------------------------------------------------------------- //
 
 let sortrules = [
-    "sort(X,Y) :- perm(X,Y),sorted(Y)";
-    "sorted(nil)";
-    "sorted(X::nil)";
-    "sorted(X::Y::Z) :- X <= Y, sorted(Y::Z)";
-    "perm(nil,nil)";
-    "perm(X::Y,U::V) :- delete(U,X::Y,Z), perm(Z,V)";
-    "delete(X,X::Y,Y)";
-    "delete(X,Y::Z,Y::W) :- delete(X,Z,W)";
-    "0 <= X";
-    "S(X) <= S(Y) :- X <= Y"; ];;
+    @"sort(X,Y) :- perm(X,Y),sorted(Y)";
+    @"sorted(nil)";
+    @"sorted(X::nil)";
+    @"sorted(X::Y::Z) :- X <= Y, sorted(Y::Z)";
+    @"perm(nil,nil)";
+    @"perm(X::Y,U::V) :- delete(U,X::Y,Z), perm(Z,V)";
+    @"delete(X,X::Y,Y)";
+    @"delete(X,Y::Z,Y::W) :- delete(X,Z,W)";
+    @"0 <= X";
+    @"S(X) <= S(Y) :- X <= Y"; ];;
 
 prolog sortrules
-  "sort(S(S(S(S(0))))::S(0)::0::S(S(0))::S(0)::nil,X)";;
+  @"sort(S(S(S(S(0))))::S(0)::0::S(S(0))::S(0)::nil,X)";;
 
 // Not it book
 // ------------------------------------------------------------------------- //
@@ -119,20 +119,20 @@ prolog sortrules
 // ------------------------------------------------------------------------- //
 
 let badrules = [
-    "sort(X,Y) :- sorted(Y), perm(X,Y)";
-    "sorted(nil)";
-    "sorted(X::nil)";
-    "sorted(X::Y::Z) :- X <= Y, sorted(Y::Z)";
-    "perm(nil,nil)";
-    "perm(X::Y,U::V) :- delete(U,X::Y,Z), perm(Z,V)";
-    "delete(X,X::Y,Y)";
-    "delete(X,Y::Z,Y::W) :- delete(X,Z,W)";
-    "0 <= X";
-    "S(X) <= S(Y) :- X <= Y"; ];;
+    @"sort(X,Y) :- sorted(Y), perm(X,Y)";
+    @"sorted(nil)";
+    @"sorted(X::nil)";
+    @"sorted(X::Y::Z) :- X <= Y, sorted(Y::Z)";
+    @"perm(nil,nil)";
+    @"perm(X::Y,U::V) :- delete(U,X::Y,Z), perm(Z,V)";
+    @"delete(X,X::Y,Y)";
+    @"delete(X,Y::Z,Y::W) :- delete(X,Z,W)";
+    @"0 <= X";
+    @"S(X) <= S(Y) :- X <= Y"; ];;
 
 //** This no longer works
 
 // Process is terminated due to StackOverflowException. - This is the expected result.
 //prolog badrules
-//  "sort(S(S(S(S(0))))::S(0)::0::S(S(0))::S(0)::nil,X)";;
+//  @"sort(S(S(S(S(0))))::S(0)::0::S(S(0))::S(0)::nil,X)";;
 

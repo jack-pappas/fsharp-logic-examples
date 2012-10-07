@@ -24,9 +24,9 @@ open Reasoning.Automated.Harrison.Handbook.herbrand
 // First example and a little tracing.                                       //
 // ------------------------------------------------------------------------- //
 
-gilmore (parse "exists x. forall y. P(x) ==> P(y)");;
+gilmore (parse @"exists x. forall y. P(x) ==> P(y)");;
 
-let sfm = skolemize(Not (parse "exists x. forall y. P(x) ==> P(y)"));;
+let sfm = skolemize(Not (parse @"exists x. forall y. P(x) ==> P(y)"));;
 print_fol_formula sfm;;
 
 // pg. 161
@@ -34,7 +34,7 @@ print_fol_formula sfm;;
 // Quick example.                                                            //
 // ------------------------------------------------------------------------- //
 
-let p24 = gilmore (parse "~(exists x. U(x) /\ Q(x)) 
+let p24 = gilmore (parse @"~(exists x. U(x) /\ Q(x)) 
 /\ (forall x. P(x) ==> Q(x) \/ R(x)) 
 /\ ~(exists x. P(x) ==> (exists x. Q(x))) 
 /\ (forall x. Q(x) 
@@ -46,7 +46,7 @@ let p24 = gilmore (parse "~(exists x. U(x) /\ Q(x))
 // ------------------------------------------------------------------------- //
 
 // Run the example with 10MB stack size.
-let p45 = Initialization.runWithStackFrame 10000000 (fun () -> gilmore (parse "(forall x. P(x) 
+let p45 = Initialization.runWithStackFrame 10000000 (fun () -> gilmore (parse @"(forall x. P(x) 
                             /\ (forall y. G(y) /\ H(x,y) ==> J(x,y)) ==> (forall y. G(y) /\ H(x,y) ==> R(y))) 
                             /\ ~(exists y. L(y) /\ R(y)) 
                             /\ (exists x. P(x) /\ (forall y. H(x,y) ==> L(y)) 
@@ -57,7 +57,7 @@ let p45 = Initialization.runWithStackFrame 10000000 (fun () -> gilmore (parse "(
 // Apparently intractable example.                                           //
 // ------------------------------------------------------------------------- //
 
-//let p20 = gilmore (parse "(forall x y. exists z. forall w. P(x) /\ Q(y) ==> R(z) /\ U(w))
+//let p20 = gilmore (parse @"(forall x y. exists z. forall w. P(x) /\ Q(y) ==> R(z) /\ U(w))
 //                           ==> (exists x y. P(x) /\ Q(y)) ==> (exists z. R(z))");;
 
 // pg. 163
@@ -65,14 +65,14 @@ let p45 = Initialization.runWithStackFrame 10000000 (fun () -> gilmore (parse "(
 // Show how much better than the Gilmore procedure this can be.              //
 // ------------------------------------------------------------------------- //
 
-let p20dp = davisputnam (parse "(forall x y. exists z. forall w. P(x) /\ Q(y) ==> R(z) /\ U(w))
+let p20dp = davisputnam (parse @"(forall x y. exists z. forall w. P(x) /\ Q(y) ==> R(z) /\ U(w))
 ==> (exists x y. P(x) /\ Q(y)) ==> (exists z. R(z))");;
 
-let p36 = davisputnam' (parse "(forall x. exists y. P(x,y)) 
+let p36 = davisputnam' (parse @"(forall x. exists y. P(x,y)) 
 /\ (forall x. exists y. G(x,y)) 
 /\ (forall x y. P(x,y) \/ G(x,y) ==> (forall z. P(y,z) \/ G(y,z) ==> H(x,z)))
 ==> (forall x. exists y. H(x,y))");;
 
-let p29 = davisputnam' (parse "(exists x. P(x)) /\ (exists x. G(x)) ==>
+let p29 = davisputnam' (parse @"(exists x. P(x)) /\ (exists x. G(x)) ==>
 ((forall x. P(x) ==> H(x)) /\ (forall x. G(x) ==> J(x)) <=>
 (forall x y. P(x) /\ G(y) ==> H(x) /\ J(y)))");;

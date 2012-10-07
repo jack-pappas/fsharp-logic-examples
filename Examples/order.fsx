@@ -33,14 +33,14 @@ open Reasoning.Automated.Harrison.Handbook.order
 // This fails the rewrite properties.                                        //
 // ------------------------------------------------------------------------- //
 
-let s = parset "f(x,x,x)";;
+let s = parset @"f(x,x,x)";;
 print_term 0 s;;
 
-let t = parset "g(x,y)";;
+let t = parset @"g(x,y)";;
 print_term 0 t;;
 
 termsize s > termsize t;;
 
-let i = "y" |=> parset "f(x,x,x)";;
+let i = "y" |=> parset @"f(x,x,x)";;
 
 termsize (tsubst i s) > termsize (tsubst i t);;

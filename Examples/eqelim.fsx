@@ -37,7 +37,7 @@ open Reasoning.Automated.Harrison.Handbook.eqelim
 // ------------------------------------------------------------------------- //
 
 meson002 
-    (parse "
+    (parse @"
     (forall x. P(1,x,x)) /\ 
     (forall x. P(x,x,1)) /\ 
     (forall u v w x y z. P(x,y,u) /\  P(y,z,w) 
@@ -50,7 +50,7 @@ meson002
 // ------------------------------------------------------------------------- //
 
 meson002 
-    (parse "
+    (parse @"
     (forall x. R(x,x)) /\ 
     (forall x y. R(x,y) ==>  R(y,x)) /\ 
     (forall x y z. R(x,y) /\ R(y,z) ==> R(x,z))
@@ -61,17 +61,17 @@ meson002
 // ------------------------------------------------------------------------- //
 
 time bmeson 
-    (parse "
+    (parse @"
     (exists x. x = f(g(x)) /\ forall x'. x' = f(g(x')) ==> x = x') <=>
     (exists y. y = g(f(y)) /\ forall y'. y' = g(f(y')) ==> y = y')");;          
                                                        
 time emeson 
-    (parse "
+    (parse @"
     (exists x. x = f(g(x)) /\ forall x'. x' = f(g(x')) ==> x = x') <=>
     (exists y. y = g(f(y)) /\ forall y'. y' = g(f(y')) ==> y = y')");;        
                                                      
 time bmeson 
-    (parse "
+    (parse @"
     (forall x y z. x * (y * z) = (x * y) * z) /\ 
     (forall x. e * x = x) /\ 
     (forall x. i(x) * x = e)                                
@@ -82,7 +82,7 @@ time bmeson
 // ------------------------------------------------------------------------- //
 
 let ewd = 
-    parse "
+    parse @"
     (forall x. f(x) ==> g(x)) /\ 
     (exists x. f(x)) /\ 
     (forall x y. g(x) /\ g(y) ==> x = y) 
@@ -90,13 +90,13 @@ let ewd =
 print_fol_formula ewd;;
 
 let wishnu = 
-    (parse "
+    (parse @"
     (exists x. x = f(g(x)) /\ forall x'. x' = f(g(x')) ==> x = x') <=> 
     (exists y. y = g(f(y)) /\ forall y'. y' = g(f(y')) ==> y = y')");;
 print_fol_formula wishnu;;
 
 let group1 =
-    (parse "
+    (parse @"
     (forall x y z. x * (y * z) = (x * y) * z) /\ 
     (forall x. e * x = x) /\ 
     (forall x. i(x) * x = e) 
@@ -104,7 +104,7 @@ let group1 =
 print_fol_formula wishnu;;
 
 let group2 =
-    (parse "
+    (parse @"
     (forall x y z. x * (y * z) = (x * y) * z) /\ 
     (forall x. e * x = x) /\ 
     (forall x. i(x) * x = e) 
@@ -131,7 +131,7 @@ time bmeson group1;;
 // ------------------------------------------------------------------------- //
 
 let fm = 
-    parse "
+    parse @"
     (forall x y z. x * (y * z) = (x * y) * z) /\ p * q * p = p 
     ==> exists q'. p * q' * p = p /\ q' * p * q' = q'";;
 print_fol_formula fm;;
@@ -144,13 +144,13 @@ print_fol_formula fm;;
 
 //*** Some other predicate formulations no longer in the main text
 
-meson002 (parse "
+meson002 (parse @"
     (forall x. P(1,x,x)) /\ 
     (forall x. P(i(x),x,1)) /\ 
     (forall u v w x y z. P(x,y,u) /\ P(y,z,w) ==> (P(x,w,v) <=> P(u,z,v))) 
     ==> forall x. P(x,1,x)");;
 
-meson002 (parse "
+meson002 (parse @"
     (forall x. P(1,x,x)) /\ 
     (forall x. P(i(x),x,1)) /\ 
     (forall u v w x y z. P(x,y,u) /\ P(y,z,w) ==> (P(x,w,v) <=> P(u,z,v))) 
@@ -160,7 +160,7 @@ meson002 (parse "
 // See how efficiency drops when we assert completeness.                     //
 // ------------------------------------------------------------------------- //
 
-meson002 (parse "
+meson002 (parse @"
     (forall x. P(1,x,x)) /\ 
     (forall x. P(x,x,1)) /\ 
     (forall x y. exists z. P(x,y,z)) /\ 
@@ -169,12 +169,12 @@ meson002 (parse "
 
 //** More reductions, not now explicitly in the text.
 
-meson002 (parse "
+meson002 (parse @"
     (forall x. R(x,x)) /\ 
     (forall x y z. R(x,y) /\ R(y,z) ==> R(x,z)) 
     <=> (forall x y. R(x,y) <=> (forall z. R(y,z) ==> R(x,z)))");;
 
-meson002 (parse "
+meson002 (parse @"
     (forall x y. R(x,y) ==>  R(y,x)) <=> 
     (forall x y. R(x,y) <=> R(x,y) /\ R(y,x))");;
 
@@ -182,7 +182,7 @@ meson002 (parse "
 // Show how Equiv' reduces to triviality.                                    //
 // ------------------------------------------------------------------------- //
 
-meson002 (parse "
+meson002 (parse @"
     (forall x. (forall w. R'(x,w) <=> R'(x,w))) /\ 
     (forall x y. (forall w. R'(x,w) <=> R'(y,w)) 
         ==> (forall w. R'(y,w) <=> R'(x,w))) /\ 
@@ -194,16 +194,16 @@ meson002 (parse "
 // More auxiliary proofs for Brand's S and T modification.                   //
 // ------------------------------------------------------------------------- //
 
-meson002 (parse "
+meson002 (parse @"
     (forall x y. R(x,y) <=> (forall z. R'(x,z) <=> R'(y,z))) /\ 
     (forall x. R'(x,x)) 
     ==> forall x y. ~R'(x,y) ==> ~R(x,y)");;
 
-meson002 (parse "
+meson002 (parse @"
     (forall x y. R(x,y) <=> (forall z. R'(y,z) ==> R'(x,z))) /\ 
     (forall x. R'(x,x)) 
     ==> forall x y. ~R'(x,y) ==> ~R(x,y)");;
 
-meson002 (parse "
+meson002 (parse @"
     (forall x y. R(x,y) <=> R'(x,y) /\ R'(y,x)) 
     ==> forall x y. ~R'(x,y) ==> ~R(x,y)");;

@@ -42,7 +42,7 @@ print_fol_formula_list (function_congruence ("+", 2));;
 // ------------------------------------------------------------------------- //
 
 let ewd = 
-    equalitize (parse "
+    equalitize (parse @"
     (forall x. f(x) ==> g(x)) /\ 
     (exists x. f(x)) /\ 
     (forall x y. g(x) /\ g(y) ==> x = y) 
@@ -57,7 +57,7 @@ meson002 ewd;;
 // ------------------------------------------------------------------------- //
 
 let wishnu =
-    equalitize (parse "
+    equalitize (parse @"
         (exists x. x = f(g(x)) /\ forall x'. x' = f(g(x')) ==> x = x') <=>
         (exists y. y = g(f(y)) /\ forall y'. y' = g(f(y')) ==> y = y')");;
 print_fol_formula wishnu;;
@@ -71,7 +71,7 @@ time meson002 wishnu;;
 
 // long running
 //(meson002 >>|> equalitize) 
-//    (parse "
+//    (parse @"
 //    (forall x y z. x * (y * z) = (x * y) * z) /\ 
 //    (forall x. 1 * x = x) /\ 
 //    (forall x. i(x) * x = 1) 
@@ -83,7 +83,7 @@ time meson002 wishnu;;
 
 // long running
 //(meson002 >>|> equalitize)
-//    (parse "
+//    (parse @"
 //    (forall x y z. x * (y * z) = (x * y) * z) /\ 
 //    (forall x. 1 * x = x) /\ 
 //    (forall x. x * 1 = x) /\ 
@@ -96,7 +96,7 @@ time meson002 wishnu;;
 
 // long running
 //let fm001 =
-//    (parse "
+//    (parse @"
 //    (forall x. x = x) /\ 
 //    (forall x y z. x * (y * z) = (x * y) * z) /\ 
 //    (forall x y z. =((x * y) * z,x * (y * z))) /\ 
@@ -118,7 +118,7 @@ time meson002 wishnu;;
 
 // long running
 //let fm002 =
-//    (parse "
+//    (parse @"
 //    (forall x y z. axiom(x * (y * z),(x * y) * z)) /\ 
 //    (forall x y z. axiom((x * y) * z,x * (y * z)) /\ 
 //    (forall x. axiom(1 * x,x)) /\ 
@@ -141,7 +141,7 @@ time meson002 wishnu;;
 
 // long running
 //let fm003 =
-//    (parse "
+//    (parse @"
 //    (forall x y z. axiom(x * (y * z),(x * y) * z)) /\ 
 //    (forall x y z. axiom((x * y) * z,x * (y * z)) /\ 
 //    (forall x. axiom(1 * x,x)) /\ 
@@ -166,13 +166,13 @@ time meson002 wishnu;;
 // ------------------------------------------------------------------------- //
 
 let fm004 =
-    equalitize (parse "
+    equalitize (parse @"
     forall c. f(f(f(f(f(c))))) = c /\ f(f(f(c))) = c ==> f(c) = c");;
 
 time meson002 fm004;;
 
 let fm005 =
-    (parse "
+    (parse @"
     axiom(f(f(f(f(f(c))))),c) /\ 
     axiom(c,f(f(f(f(f(c)))))) /\ 
     axiom(f(f(f(c))),c) /\ 
@@ -195,7 +195,7 @@ time meson002 fm005;;
 
 // long running
 //let fm006 =
-//    (parse "
+//    (parse @"
 //    (forall x y z. eqA (x * (y * z),(x * y) * z)) /\ 
 //    (forall x y z. eqA ((x * y) * z)) /\ 
 //    (forall x. eqA (1 * x,x)) /\ 
@@ -230,7 +230,7 @@ time meson002 fm005;;
 
 // long running
 //let fm007 =
-//    (parse "
+//    (parse @"
 //    (forall x y z. eqA (x * (y * z),(x * y) * z)) /\ 
 //    (forall x y z. eqA ((x * y) * z)) /\ 
 //    (forall x. eqA (1 * x,x)) /\ 
@@ -259,7 +259,7 @@ time meson002 fm005;;
 
 // long running
 //let fm008 =
-// (parse "
+// (parse @"
 //    (forall x y z. eq1(x * (y * z),(x * y) * z)) /\ 
 //    (forall x y z. eq1((x * y) * z,x * (y * z))) /\ 
 //    (forall x. eq1(1 * x,x)) /\ 

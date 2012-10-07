@@ -21,18 +21,18 @@ open FSharpx.Compatibility.OCaml.Num
 // Example.                                                                  //
 // ------------------------------------------------------------------------- //
 
-print_prop_formula (cnf (parse_prop_formula "p <=> (q <=> r)"));;
+print_prop_formula (cnf (parse_prop_formula @"p <=> (q <=> r)"));;
 
 // pg. 77
 // ------------------------------------------------------------------------- //
 // Example.                                                                  //
 // ------------------------------------------------------------------------- //
 
-print_prop_formula (defcnfOrig (parse_prop_formula "(p \/ (q /\ ~r)) /\ s"));;
+print_prop_formula (defcnfOrig (parse_prop_formula @"(p \/ (q /\ ~r)) /\ s"));;
 
 // pg. 78
 // ------------------------------------------------------------------------- //
 // Examples.                                                                 //
 // ------------------------------------------------------------------------- //
 
-print_prop_formula (defcnf (parse_prop_formula "(p \/ (q /\ ~r)) /\ s"));;
+print_prop_formula (defcnf (parse_prop_formula @"(p \/ (q /\ ~r)) /\ s"));;

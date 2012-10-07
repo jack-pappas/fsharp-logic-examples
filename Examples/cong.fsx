@@ -33,11 +33,11 @@ open Reasoning.Automated.Harrison.Handbook.cong
 // ------------------------------------------------------------------------- //
 
 ccvalid (parse
-    "f(f(f(f(f(c))))) = c /\ f(f(f(c))) = c 
+    @"f(f(f(f(f(c))))) = c /\ f(f(f(c))) = c 
     ==> f(c) = c \/ f(g(c)) = g(f(c))");;
 
 ccvalid (parse
-    "f(f(f(f(c)))) = c /\ f(f(c)) = c ==> f(c) = c");;
+    @"f(f(f(f(c)))) = c /\ f(f(c)) = c ==> f(c) = c");;
 
 // ------------------------------------------------------------------------- //
 // For debugging. Maybe I will incorporate into a prettyprinter one day.     //
