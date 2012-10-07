@@ -54,13 +54,13 @@ let ``examples 1``() =
 [<Test>]
 let ``examples 2``() =
     coordinations
-    |> List.forall (grobner_decide >>|> invariant_under_translation)
+    |> List.forall (grobner_decide << invariant_under_translation)
     |> should equal true
 
 [<Test>]
 let ``examples 3``() =
     coordinations
-    |> List.forall (grobner_decide >>|> invariant_under_rotation)
+    |> List.forall (grobner_decide << invariant_under_rotation)
     |> should equal true
 
 
@@ -83,7 +83,7 @@ let ``examples 4``() =
 [<Test>]
 let ``examples 5``() =
     coordinations
-    |> List.forall (grobner_decide >>|> invariant_under_scaling)
+    |> List.forall (grobner_decide << invariant_under_scaling)
     |> should equal true
 
 // TODO : Determine the expected result of this test; it's output is truncated
@@ -91,7 +91,7 @@ let ``examples 5``() =
 //[<Test>]
 //let ``examples 6``() =
 //    coordinations
-//    |> List.partition (grobner_decide >>|> invariant_under_shearing)
+//    |> List.partition (grobner_decide << invariant_under_shearing)
 //    |> should equal (* ??? *)
 
 
@@ -104,7 +104,7 @@ let ``examples 7``() =
     @"is_midpoint(m,a,c) /\ perpendicular(a,c,m,b)
         ==> lengths_eq(a,b,b,c)"
     |> parse
-    |> (grobner_decide >>|> originate)
+    |> (grobner_decide << originate)
     |> should equal true
 
 
@@ -118,7 +118,7 @@ let ``examples 8``() =
        is_intersection(e,a,c,b,d)
        ==> lengths_eq(a,e,e,c)"
     |> parse
-    |> (grobner_decide >>|> originate)
+    |> (grobner_decide << originate)
     |> should equal false
 
 [<Test>]
@@ -127,7 +127,7 @@ let ``examples 9``() =
        is_intersection(e,a,c,b,d) /\ ~collinear(a,b,c)
        ==> lengths_eq(a,e,e,c)"
     |> parse
-    |> (grobner_decide >>|> originate)
+    |> (grobner_decide << originate)
     |> should equal true
 
 

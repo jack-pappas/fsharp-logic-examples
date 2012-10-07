@@ -53,7 +53,7 @@ let ``complete_and_simplify``() =
 
 [<Test>]
 let ``meson002 and equalitize``() =
-    (meson002 >>|> equalitize) (parse @"
+    (meson002 << equalitize) (parse @"
         (forall x y z. x * y = x * z ==> y = z) <=> 
         (forall x z. exists w. forall y. z = x * y ==> w = y)")
     |> should equal [5; 4]
