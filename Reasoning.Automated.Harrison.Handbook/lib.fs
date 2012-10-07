@@ -183,11 +183,16 @@ module lib =
     // Takes the first n items from a list. Returns those items as a list,
     // along with any items remaining in the original list.
     let chop_list n l =
-        if n > List.length l then
+        let len = List.length l
+        if n > len then
             failwith "chop_list"
         elif n = 0 then
             // Optimized case for n = 0.
             [], l
+        elif n = len then
+            // Optimized case for when the entire
+            // list is chopped.
+            l, []
         else
             // Holds the chopped items.
             let choppedItems = Array.zeroCreate n
@@ -201,25 +206,13 @@ module lib =
 
             chopRec 0 l
 
-    /// Private, recursive implementation of 'butlast' which
-    /// improves performance by using continuation-passing-style.
-    let rec private butlastImpl lst cont =
-        match lst with
-        | [] ->
-            failwith "butlastImpl"
-        | [_] ->
-            cont []
-        | hd :: tl ->
-            butlastImpl tl <| fun lst' ->
-                cont (hd :: lst')
-
     // pg. 619
     // OCaml: val butlast : 'a list -> 'a list = <fun>
     // F#:    val butlast : 'a list -> 'a list
     // val butlast : 'a list -> 'a list
     let butlast l =
-        // OPTIMIZE : Re-implement 'butlast' using 'chop_list'.
-        butlastImpl l id
+        chop_list (List.length l - 1) l
+        |> fst
     
     // pg. 619
     // OCaml: val insertat : int -> 'a -> 'a list -> 'a list = <fun>
