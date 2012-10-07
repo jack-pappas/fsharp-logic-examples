@@ -17,7 +17,7 @@ let s = parset "f(x,x,x)"
 let t = parset "g(x,y)"
 
 [<Test>]
-let ``test termsize 1``() =
+let ``termsize 1``() =
     termsize s > termsize t
     |> should be True
 
@@ -28,7 +28,7 @@ let ``test termsize 1``() =
 let i = "y" |=> parset "f(x,x,x)"
 
 [<Test>]
-let ``test termsize 2``() =
+let ``termsize 2``() =
     termsize (tsubst i s) > termsize (tsubst i t)
     |> should be False
 

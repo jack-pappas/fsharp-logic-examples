@@ -13,7 +13,7 @@ open NUnit.Framework
 open FsUnit
 
 [<Test>]
-let ``test paramodulation``() =
-    paramodulation (parse "(forall x. f(f(x)) = f(x)) /\ (forall x. exists y. f(y) = x)
+let ``paramodulation``() =
+    paramodulation (parse @"(forall x. f(f(x)) = f(x)) /\ (forall x. exists y. f(y) = x)
                             ==> forall x. f(x) = x")
     |> should equal [true]

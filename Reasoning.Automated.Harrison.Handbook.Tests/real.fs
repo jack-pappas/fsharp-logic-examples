@@ -36,16 +36,16 @@ let private example_results_1 : formula<fol>[] = [|
     True;
     |]
 
-[<TestCase("exists x. x^4 + x^2 + 1 = 0", 0)>]
-[<TestCase("exists x. x^3 - x^2 + x - 1 = 0", 1)>]
-[<TestCase("exists x y. x^3 - x^2 + x - 1 = 0 /\
+[<TestCase(@"exists x. x^4 + x^2 + 1 = 0", 0)>]
+[<TestCase(@"exists x. x^3 - x^2 + x - 1 = 0", 1)>]
+[<TestCase(@"exists x y. x^3 - x^2 + x - 1 = 0 /\
                          y^3 - y^2 + y - 1 = 0 /\ ~(x = y)", 2)>]
-[<TestCase("exists x. x^2 - 3 * x + 2 = 0 /\ 2 * x - 3 = 0", 3)>]
-[<TestCase("forall a f k. (forall e. k < e ==> f < a * e) ==> f <= a * k", 4)>]
-[<TestCase("exists x. a * x^2 + b * x + c = 0", 5)>]
-[<TestCase("forall a b c. (exists x. a * x^2 + b * x + c = 0) <=>
+[<TestCase(@"exists x. x^2 - 3 * x + 2 = 0 /\ 2 * x - 3 = 0", 3)>]
+[<TestCase(@"forall a f k. (forall e. k < e ==> f < a * e) ==> f <= a * k", 4)>]
+[<TestCase(@"exists x. a * x^2 + b * x + c = 0", 5)>]
+[<TestCase(@"forall a b c. (exists x. a * x^2 + b * x + c = 0) <=>
                            b^2 >= 4 * a * c", 6)>]
-[<TestCase("forall a b c. (exists x. a * x^2 + b * x + c = 0) <=>
+[<TestCase(@"forall a b c. (exists x. a * x^2 + b * x + c = 0) <=>
                            a = 0 /\ (b = 0 ==> c = 0) \/
                            ~(a = 0) /\ b^2 >= 4 * a * c", 7)>]
 let ``examples 1`` (f, idx) =
@@ -60,7 +60,7 @@ let ``examples 1`` (f, idx) =
 
 [<Test>]
 let ``examples 2``() =
-    "1 < 2 /\ (forall x. 1 < x ==> 1 < x^2) /\
+    @"1 < 2 /\ (forall x. 1 < x ==> 1 < x^2) /\
              (forall x y. 1 < x /\ 1 < y ==> 1 < x * (1 + 2 * y))"
     |> parse
     |> real_qelim
@@ -77,7 +77,7 @@ let ``examples 2``() =
 
 [<Test>]
 let ``examples 3``() =
-    "forall d.
+    @"forall d.
      (exists c. forall a b. (a = d /\ b = c) \/ (a = c /\ b = 1)
                             ==> a^2 = b)
      <=> d^4 = 1"

@@ -25,7 +25,7 @@ open Reasoning.Automated.Harrison.Handbook.geom
 
 [<Test>]
 let ``examples 1``() =
-    "collinear(a,b,c) ==> collinear(b,a,c)"
+    @"collinear(a,b,c) ==> collinear(b,a,c)"
     |> parse
     |> coordinate
     |> should equal
@@ -70,7 +70,7 @@ let ``examples 3``() =
 
 [<Test; Category("LongRunning")>]
 let ``examples 4``() =
-    "forall x y. exists s c. s^2 + c^2 = 1 /\ s * x + c * y = 0"
+    @"forall x y. exists s c. s^2 + c^2 = 1 /\ s * x + c * y = 0"
     |> parse
     |> real_qelim
     |> should equal True
@@ -101,7 +101,7 @@ let ``examples 5``() =
 
 [<Test>]
 let ``examples 7``() =
-    "is_midpoint(m,a,c) /\ perpendicular(a,c,m,b)
+    @"is_midpoint(m,a,c) /\ perpendicular(a,c,m,b)
         ==> lengths_eq(a,b,b,c)"
     |> parse
     |> (grobner_decide >>|> originate)
@@ -114,7 +114,7 @@ let ``examples 7``() =
 
 [<Test>]
 let ``examples 8``() =
-    "parallel(a,b,d,c) /\ parallel(a,d,b,c) /\
+    @"parallel(a,b,d,c) /\ parallel(a,d,b,c) /\
        is_intersection(e,a,c,b,d)
        ==> lengths_eq(a,e,e,c)"
     |> parse
@@ -123,7 +123,7 @@ let ``examples 8``() =
 
 [<Test>]
 let ``examples 9``() =
-    "parallel(a,b,d,c) /\ parallel(a,d,b,c) /\
+    @"parallel(a,b,d,c) /\ parallel(a,d,b,c) /\
        is_intersection(e,a,c,b,d) /\ ~collinear(a,b,c)
        ==> lengths_eq(a,e,e,c)"
     |> parse
@@ -136,7 +136,7 @@ let ``examples 9``() =
 (* ------------------------------------------------------------------------- *)
 
 let private simson =
-    "lengths_eq(o,a,o,b) /\
+    @"lengths_eq(o,a,o,b) /\
     lengths_eq(o,a,o,c) /\
     lengths_eq(o,a,o,d) /\
     collinear(e,b,c) /\
@@ -180,7 +180,7 @@ and private simson_zeros =
 (* ------------------------------------------------------------------------- *)
 
 let private pappus =
-    "collinear(a1,b2,d) /\
+    @"collinear(a1,b2,d) /\
     collinear(a2,b1,d) /\
     collinear(a2,b3,e) /\
     collinear(a3,b2,e) /\
@@ -262,7 +262,7 @@ let ``examples 12``() =
 (* ------------------------------------------------------------------------- *)
 
 let private butterfly =
-    "lengths_eq(b,o,a,o) /\ lengths_eq(c,o,a,o) /\ lengths_eq(d,o,a,o) /\
+    @"lengths_eq(b,o,a,o) /\ lengths_eq(c,o,a,o) /\ lengths_eq(d,o,a,o) /\
     collinear(a,e,c) /\ collinear(d,e,b) /\
     perpendicular(e,f,o,e) /\
     collinear(a,f,d) /\ collinear(f,e,g) /\ collinear(b,c,g)

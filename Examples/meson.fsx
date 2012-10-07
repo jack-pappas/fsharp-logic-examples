@@ -49,7 +49,30 @@ tab (parse "
 // Example.                                                                  //
 // ------------------------------------------------------------------------- //
 
-let davis_putnam_example = meson002 (parse "
+let count = ref 0
+let buffer = ResizeArray()
+let results = ResizeArray()
+
+// Shadow time function to record test cases
+let time fn input =
+    let result = time fn (parse input)
+    let testCase = sprintf "[<TestCase(@\"%s\", %i)>]" input !count
+    buffer.Add(testCase) |> ignore
+    results.Add(result) |> ignore
+    incr count
+    result
+
+// Content is only written to files here
+let  flush_buffer () =
+    let path = __SOURCE_DIRECTORY__ + "\\__tests__.fsx"
+    System.IO.File.WriteAllLines(path, buffer)
+    let sb = System.Text.StringBuilder()
+    sb.AppendLine "[|" |> ignore
+    results |> Seq.iteri (fun i xs -> sprintf "%A; // %i" xs i |> sb.AppendLine |> ignore) // %A might not work with long lists
+    sb.AppendLine "|]" |> ignore
+    System.IO.File.AppendAllText(path, sb.ToString())
+
+let davis_putnam_example = time meson002 ("
     exists x. exists y. forall z. 
     (F(x,y) ==> (F(y,z) /\ F(z,z))) /\ 
     ((F(x,y) /\ G(x,y)) ==> (G(x,z) /\ G(z,z)))");;
@@ -60,105 +83,105 @@ let davis_putnam_example = meson002 (parse "
 // The Los problem (depth 20) and the Steamroller (depth 53) --- lengthier.  //
 // ------------------------------------------------------------------------- //
 
-let los = meson002 (parse "
-    (forall x y z. P(x,y) ==> P(y,z) ==> P(x,z)) /\ 
-    (forall x y z. Q(x,y) ==> Q(y,z) ==> Q(x,z)) /\ 
-    (forall x y. Q(x,y) ==> Q(y,x)) /\ 
-    (forall x y. P(x,y) \/ Q(x,y)) 
-    ==> (forall x y. P(x,y)) \/ (forall x y. Q(x,y))");;
-
-let steamroller = meson002 (parse "
-    ((forall x. P1(x) ==> P0(x)) /\ (exists x. P1(x))) /\ 
-    ((forall x. P2(x) ==> P0(x)) /\ (exists x. P2(x))) /\ 
-    ((forall x. P3(x) ==> P0(x)) /\ (exists x. P3(x))) /\ 
-    ((forall x. P4(x) ==> P0(x)) /\ (exists x. P4(x))) /\ 
-    ((forall x. P5(x) ==> P0(x)) /\ (exists x. P5(x))) /\ 
-    ((exists x. Q1(x)) /\ (forall x. Q1(x) ==> Q0(x))) /\ 
-    (forall x. P0(x) 
-                ==> (forall y. Q0(y) ==> R(x,y)) \/ 
-                    ((forall y. P0(y) /\ S0(y,x) /\ 
-                            (exists z. Q0(z) /\ R(y,z)) 
-                                ==> R(x,y)))) /\ 
-    (forall x y. P3(y) /\ (P5(x) \/ P4(x)) ==> S0(x,y)) /\ 
-    (forall x y. P3(x) /\ P2(y) ==> S0(x,y)) /\ 
-    (forall x y. P2(x) /\ P1(y) ==> S0(x,y)) /\ 
-    (forall x y. P1(x) /\ (P2(y) \/ Q1(y)) ==> ~(R(x,y))) /\ 
-    (forall x y. P3(x) /\ P4(y) ==> R(x,y)) /\ 
-    (forall x y. P3(x) /\ P5(y) ==> ~(R(x,y))) /\ 
-    (forall x. (P4(x) \/ P5(x)) ==> exists y. Q0(y) /\ R(x,y)) 
-    ==> exists x y. P0(x) /\ P0(y) /\ 
-                exists z. Q1(z) /\ R(y,z) /\ R(x,y)");;
+//let los = time meson002 ("
+//    (forall x y z. P(x,y) ==> P(y,z) ==> P(x,z)) /\ 
+//    (forall x y z. Q(x,y) ==> Q(y,z) ==> Q(x,z)) /\ 
+//    (forall x y. Q(x,y) ==> Q(y,x)) /\ 
+//    (forall x y. P(x,y) \/ Q(x,y)) 
+//    ==> (forall x y. P(x,y)) \/ (forall x y. Q(x,y))");;
+//
+//let steamroller = time meson002 ("
+//    ((forall x. P1(x) ==> P0(x)) /\ (exists x. P1(x))) /\ 
+//    ((forall x. P2(x) ==> P0(x)) /\ (exists x. P2(x))) /\ 
+//    ((forall x. P3(x) ==> P0(x)) /\ (exists x. P3(x))) /\ 
+//    ((forall x. P4(x) ==> P0(x)) /\ (exists x. P4(x))) /\ 
+//    ((forall x. P5(x) ==> P0(x)) /\ (exists x. P5(x))) /\ 
+//    ((exists x. Q1(x)) /\ (forall x. Q1(x) ==> Q0(x))) /\ 
+//    (forall x. P0(x) 
+//                ==> (forall y. Q0(y) ==> R(x,y)) \/ 
+//                    ((forall y. P0(y) /\ S0(y,x) /\ 
+//                            (exists z. Q0(z) /\ R(y,z)) 
+//                                ==> R(x,y)))) /\ 
+//    (forall x y. P3(y) /\ (P5(x) \/ P4(x)) ==> S0(x,y)) /\ 
+//    (forall x y. P3(x) /\ P2(y) ==> S0(x,y)) /\ 
+//    (forall x y. P2(x) /\ P1(y) ==> S0(x,y)) /\ 
+//    (forall x y. P1(x) /\ (P2(y) \/ Q1(y)) ==> ~(R(x,y))) /\ 
+//    (forall x y. P3(x) /\ P4(y) ==> R(x,y)) /\ 
+//    (forall x y. P3(x) /\ P5(y) ==> ~(R(x,y))) /\ 
+//    (forall x. (P4(x) \/ P5(x)) ==> exists y. Q0(y) /\ R(x,y)) 
+//    ==> exists x y. P0(x) /\ P0(y) /\ 
+//                exists z. Q1(z) /\ R(y,z) /\ R(x,y)");;
 
 // ------------------------------------------------------------------------- //
 // Test it.                                                                  //
 // ------------------------------------------------------------------------- //
 
 let prop_1 =
-     time meson002 (parse "
+     time meson002 ("
     p ==> q <=> ~q ==> ~p");;
 
 let prop_2 =
-    time meson002 (parse "
+    time meson002 ("
     ~ ~p <=> p");;
 
 let prop_3 =
-    time meson002 (parse "
+    time meson002 ("
     ~(p ==> q) ==> q ==> p");;
 
 let prop_4 =
-    time meson002 (parse "
+    time meson002 ("
     ~p ==> q <=> ~q ==> p");;
 
 let prop_5 =
-    time meson002 (parse "
+    time meson002 ("
     (p \/ q ==> p \/ r) ==> p \/ (q ==> r)");;
 
 let prop_6 =
-    time meson002 (parse "
+    time meson002 ("
     p \/ ~p");;
 
 let prop_7 =
-    time meson002 (parse "
+    time meson002 ("
     p \/ ~ ~ ~p");;
 
 let prop_8 =
-    time meson002 (parse "
+    time meson002 ("
     ((p ==> q) ==> p) ==> p");;
 
 let prop_9 =
-    time meson002 (parse "
+    time meson002 ("
     (p \/ q) /\ (~p \/ q) /\ (p \/ ~q) ==> ~(~q \/ ~q)");;
 
 let prop_10 =
-    time meson002 (parse "
+    time meson002 ("
     (q ==> r) /\ (r ==> p /\ q) /\ (p ==> q /\ r) ==> (p <=> q)");;
 
 let prop_11 =
-    time meson002 (parse "
+    time meson002 ("
     p <=> p");;
 
 let prop_12 =
-    time meson002 (parse "
+    time meson002 ("
     ((p <=> q) <=> r) <=> (p <=> (q <=> r))");;
 
 let prop_13 =
-    time meson002 (parse "
+    time meson002 ("
     p \/ q /\ r <=> (p \/ q) /\ (p \/ r)");;
 
 let prop_14 =
-    time meson002 (parse "
+    time meson002 ("
     (p <=> q) <=> (q \/ ~p) /\ (~q \/ p)");;
 
 let prop_15 =
-    time meson002 (parse "
+    time meson002 ("
     p ==> q <=> ~p \/ q");;
 
 let prop_16 =
-    time meson002 (parse "
+    time meson002 ("
     (p ==> q) \/ (q ==> p)");;
 
 let prop_17 =
-    time meson002 (parse "
+    time meson002 ("
     p /\ (q ==> r) ==> s <=> (~p \/ q \/ s) /\ (~p \/ ~r \/ s)");;
 
 // ------------------------------------------------------------------------- //
@@ -166,50 +189,50 @@ let prop_17 =
 // ------------------------------------------------------------------------- //
 
 let p18 = 
-    time meson002 (parse "
+    time meson002 ("
     exists y. forall x. P(y) ==> P(x)");;
 
 let p19 = 
-    time meson002 (parse "
+    time meson002 ("
     exists x. forall y z. (P(y) ==> Q(z)) ==> P(x) ==> Q(x)");;
 
 let p20 =
-    time meson002 (parse "
+    time meson002 ("
     (forall x y. exists z. forall w. P(x) /\ Q(y) ==> R(z) /\ U(w)) ==> 
     (exists x y. P(x) /\ Q(y)) ==> 
     (exists z. R(z))");;
 
 let p21 = 
-    time meson002 (parse "(exists x. P ==> Q(x)) /\ (exists x. Q(x) ==> P)
+    time meson002 ("(exists x. P ==> Q(x)) /\ (exists x. Q(x) ==> P)
    ==> (exists x. P <=> Q(x))");;
 
 let p22 = 
-    time meson002 (parse "(forall x. P <=> Q(x)) ==> (P <=> (forall x. Q(x)))");;
+    time meson002 ("(forall x. P <=> Q(x)) ==> (P <=> (forall x. Q(x)))");;
 
 let p23 = 
-    time meson002 (parse "(forall x. P \/ Q(x)) <=> P \/ (forall x. Q(x))");;
+    time meson002 ("(forall x. P \/ Q(x)) <=> P \/ (forall x. Q(x))");;
 
 let p24 = 
-    time meson002 (parse "~(exists x. U(x) /\ Q(x)) /\ 
+    time meson002 ("~(exists x. U(x) /\ Q(x)) /\ 
     (forall x. P(x) ==> Q(x) \/ R(x)) /\ 
     ~(exists x. P(x) ==> (exists x. Q(x))) /\ 
     (forall x. Q(x) /\ R(x) ==> U(x)) ==> 
     (exists x. P(x) /\ R(x))");;
 
 let p25 = 
-    time meson002 (parse "(exists x. P(x)) /\ 
+    time meson002 ("(exists x. P(x)) /\ 
     (forall x. U(x) ==> ~G(x) /\ R(x)) /\ 
     (forall x. P(x) ==> G(x) /\ U(x)) /\ 
     ((forall x. P(x) ==> Q(x)) \/ (exists x. Q(x) /\ P(x))) ==> 
     (exists x. Q(x) /\ P(x))");;
 
 let p26 = 
-    time meson002 (parse "((exists x. P(x)) <=> (exists x. Q(x))) /\ 
+    time meson002 ("((exists x. P(x)) <=> (exists x. Q(x))) /\ 
     (forall x y. P(x) /\ Q(y) ==> (R(x) <=> U(y))) ==> 
     ((forall x. P(x) ==> R(x)) <=> (forall x. Q(x) ==> U(x)))");;
 
 let p27 = 
-    time meson002 (parse "(exists x. P(x) /\ ~Q(x)) /\ 
+    time meson002 ("(exists x. P(x) /\ ~Q(x)) /\ 
     (forall x. P(x) ==> R(x)) /\ 
     (forall x. U(x) /\ V(x) ==> P(x)) /\ 
     (exists x. R(x) /\ ~Q(x)) ==> 
@@ -217,49 +240,49 @@ let p27 =
     (forall x. U(x) ==> ~V(x))");;
 
 let p28 = 
-    time meson002 (parse "(forall x. P(x) ==> (forall x. Q(x))) /\ 
+    time meson002 ("(forall x. P(x) ==> (forall x. Q(x))) /\ 
     ((forall x. Q(x) \/ R(x)) ==> (exists x. Q(x) /\ R(x))) /\ 
     ((exists x. R(x)) ==> (forall x. L(x) ==> M(x))) ==> 
     (forall x. P(x) /\ L(x) ==> M(x))");;
 
 let p29 = 
-    time meson002 (parse "(exists x. P(x)) /\ (exists x. G(x)) ==>
+    time meson002 ("(exists x. P(x)) /\ (exists x. G(x)) ==>
     ((forall x. P(x) ==> H(x)) /\ (forall x. G(x) ==> J(x)) <=>
     (forall x y. P(x) /\ G(y) ==> H(x) /\ J(y)))");;
 
 let p30 = 
-    time meson002 (parse "
+    time meson002 ("
     (forall x. P(x) \/ G(x) ==> ~H(x)) /\ (forall x. (G(x) ==> ~U(x)) ==> 
     P(x) /\ H(x)) ==> 
     (forall x. U(x))");;
 
 let p31 = 
-    time meson002 (parse "
+    time meson002 ("
     ~(exists x. P(x) /\ (G(x) \/ H(x))) /\ (exists x. Q(x) /\ P(x)) /\ 
     (forall x. ~H(x) ==> J(x)) ==> 
     (exists x. Q(x) /\ J(x))");;
 
 let p32 = 
-    time meson002 (parse "
+    time meson002 ("
     (forall x. P(x) /\ (G(x) \/ H(x)) ==> Q(x)) /\ 
     (forall x. Q(x) /\ H(x) ==> J(x)) /\ 
     (forall x. R(x) ==> H(x)) ==> 
     (forall x. P(x) /\ R(x) ==> J(x))");;
 
 let p33 = 
-    time meson002 (parse "
+    time meson002 ("
     (forall x. P(a) /\ (P(x) ==> P(b)) ==> P(c)) <=> 
     (forall x. P(a) ==> P(x) \/ P(c)) /\ (P(a) ==> P(b) ==> P(c))");;
 
 let p34 = 
-    time meson002 (parse "
+    time meson002 ("
     ((exists x. forall y. P(x) <=> P(y)) <=> 
     ((exists x. Q(x)) <=> (forall y. Q(y)))) <=> 
     ((exists x. forall y. Q(x) <=> Q(y)) <=> 
     ((exists x. P(x)) <=> (forall y. P(y))))");;
 
 let p35 = 
-    time meson002 (parse "
+    time meson002 ("
     exists x y. P(x,y) ==> (forall x y. P(x,y))");;
 
 // ------------------------------------------------------------------------- //
@@ -267,7 +290,7 @@ let p35 =
 // ------------------------------------------------------------------------- //
 
 let p36 = 
-    time meson002 (parse "
+    time meson002 ("
     (forall x. exists y. P(x,y)) /\ 
     (forall x. exists y. G(x,y)) /\ 
     (forall x y. P(x,y) \/ G(x,y) 
@@ -275,7 +298,7 @@ let p36 =
         ==> (forall x. exists y. H(x,y))");;
 
 let p37 = 
-    time meson002 (parse "
+    time meson002 ("
     (forall z. 
         exists w. forall x. exists y. (P(x,z) ==> P(y,w)) /\ P(y,z) /\ 
         (P(y,w) ==> (exists u. Q(u,w)))) /\ 
@@ -284,7 +307,7 @@ let p37 =
     (forall x. exists y. R(x,y))");;
 
 let p38 = 
-    time meson002 (parse "
+    time meson002 ("
     (forall x. 
         P(a) /\ (P(x) ==> (exists y. P(y) /\ R(x,y))) ==> 
         (exists z w. P(z) /\ R(x,w) /\ R(w,z))) <=> 
@@ -294,37 +317,37 @@ let p38 =
         (exists z w. P(z) /\ R(x,w) /\ R(w,z))))");;
 
 let p39 = 
-    time meson002 (parse "
+    time meson002 ("
     ~(exists x. forall y. P(y,x) <=> ~P(y,y))");;
 
 let p40 = 
-    time meson002 (parse "
+    time meson002 ("
     (exists y. forall x. P(x,y) <=> P(x,x)) 
     ==> ~(forall x. exists y. forall z. P(z,y) <=> ~P(z,x))");;
 
 let p41 = 
-    time meson002 (parse "
+    time meson002 ("
     (forall z. exists y. forall x. P(x,y) <=> P(x,z) /\ ~P(x,x)) 
     ==> ~(exists z. forall x. P(x,z))");;
 
 let p42 = 
-    time meson002 (parse "
+    time meson002 ("
     ~(exists y. forall x. P(x,y) <=> ~(exists z. P(x,z) /\ P(z,x)))");;
 
 let p43 = 
-    time meson002 (parse "
+    time meson002 ("
     (forall x y. Q(x,y) <=> forall z. P(z,x) <=> P(z,y)) 
     ==> forall x y. Q(x,y) <=> Q(y,x)");;
 
 let p44 = 
-    time meson002 (parse "
+    time meson002 ("
     (forall x. P(x) ==> (exists y. G(y) /\ H(x,y)) /\ 
     (exists y. G(y) /\ ~H(x,y))) /\ 
     (exists x. J(x) /\ (forall y. G(y) ==> H(x,y))) ==> 
     (exists x. J(x) /\ ~P(x))");;
 
 let p45 = 
-    time meson002 (parse "
+    time meson002 ("
     (forall x. 
         P(x) /\ (forall y. G(y) /\ H(x,y) ==> J(x,y)) ==> 
             (forall y. G(y) /\ H(x,y) ==> R(y))) /\ 
@@ -334,7 +357,7 @@ let p45 =
     (exists x. P(x) /\ ~(exists y. G(y) /\ H(x,y)))");;
 
 let p46 = 
-    time meson002 (parse "
+    time meson002 ("
     (forall x. P(x) /\ (forall y. P(y) /\ H(y,x) ==> G(y)) ==> G(x)) /\ 
     ((exists x. P(x) /\ ~G(x)) ==> 
         (exists x. P(x) /\ ~G(x) /\ 
@@ -347,7 +370,7 @@ let p46 =
 // ------------------------------------------------------------------------- //
 
 let p55 = 
-    time meson002 (parse "
+    time meson002 ("
     lives(agatha) /\ lives(butler) /\ lives(charles) /\ 
     (killed(agatha,agatha) \/ killed(butler,agatha) \/ 
         killed(charles,agatha)) /\ 
@@ -362,7 +385,7 @@ let p55 =
         ~killed(charles,agatha)");;
 
 let p57 = 
-    time meson002 (parse "
+    time meson002 ("
     P(f((a),b),f(b,c)) /\ 
     P(f(b,c),f(a,c)) /\ 
     (forall (x) y z. P(x,y) /\ P(y,z) ==> P(x,z)) 
@@ -373,16 +396,16 @@ let p57 =
 // ------------------------------------------------------------------------- //
 
 let p58 = 
-    time meson002 (parse "
+    time meson002 ("
     forall P Q R. forall x. exists v. exists w. forall y. forall z. 
     ((P(x) /\ Q(y)) ==> ((P(v) \/ R(w))  /\ (R(z) ==> Q(v))))");;
 
 let p59 = 
-    time meson002 (parse "
+    time meson002 ("
     (forall x. P(x) <=> ~P(f(x))) ==> (exists x. P(x) /\ ~P(f(x)))");;
 
 let p60 = 
-    time meson002 (parse "
+    time meson002 ("
     forall x. P(x,f(x)) <=> 
         exists y. (forall z. P(z,y) ==> P(z,f(x))) /\ P(x,y)");;
 
@@ -393,7 +416,7 @@ let p60 =
 // long running
 //** Amazingly, this still seems non-trivial... in HOL it works at depth 45!
 //let gilmore_1 = 
-//    time meson002 (parse "
+//    time meson002 ("
 //    exists x. forall y z. 
 //        ((F(y) ==> G(y)) <=> F(x)) /\ 
 //        ((F(y) ==> H(y)) <=> G(x)) /\ 
@@ -403,13 +426,13 @@ let p60 =
 // long running
 //** This is not valid, according to Gilmore
 //let gilmore_2 = 
-//    time meson002 (parse "
+//    time meson002 ("
 //    exists x y. forall z. 
 //        (F(x,z) <=> F(z,y)) /\ (F(z,y) <=> F(z,z)) /\ (F(x,y) <=> F(y,x)) 
 //        ==> (F(x,y) <=> F(x,z))");;
 
 let gilmore_3 = 
-    time meson002 (parse "
+    time meson002 ("
     exists x. forall y z. 
         ((F(y,z) ==> (G(y) ==> H(x))) ==> F(x,x)) /\ 
         ((F(z,x) ==> G(x)) ==> H(z)) /\ 
@@ -417,32 +440,32 @@ let gilmore_3 =
         ==> F(z,z)");;
 
 let gilmore_4 = 
-    time meson002 (parse "
+    time meson002 ("
     exists x y. forall z. 
         (F(x,y) ==> F(y,z) /\ F(z,z)) /\ 
         (F(x,y) /\ G(x,y) ==> G(x,z) /\ G(z,z))");;
 
 let gilmore_5 = 
-    time meson002 (parse "
+    time meson002 ("
     (forall x. exists y. F(x,y) \/ F(y,x)) /\ 
     (forall x y. F(y,x) ==> F(y,y)) 
     ==> exists z. F(z,z)");;
 
 let gilmore_6 = 
-    time meson002 (parse "
+    time meson002 ("
     forall x. exists y. 
         (exists u. forall v. F(u,x) ==> G(v,u) /\ G(u,x)) 
         ==> (exists u. forall v. F(u,y) ==> G(v,u) /\ G(u,y)) \/ 
             (forall u v. exists w. G(v,u) \/ H(w,y,u) ==> G(u,w))");;
 
 let gilmore_7 = 
-    time meson002 (parse "
+    time meson002 ("
     (forall x. K(x) ==> exists y. L(y) /\ (F(x,y) ==> G(x,y))) /\ 
     (exists z. K(z) /\ forall u. L(u) ==> F(z,u)) 
     ==> exists v w. K(v) /\ L(w) /\ G(v,w)");;
 
 let gilmore_8 = 
-    time meson002 (parse "
+    time meson002 ("
     exists x. forall y z. 
         ((F(y,z) ==> (G(y) ==> (forall u. exists v. H(u,v,x)))) ==> F(x,x)) /\ 
         ((F(z,x) ==> G(x)) ==> (forall u. exists v. H(u,v,z))) /\ 
@@ -452,7 +475,7 @@ let gilmore_8 =
 // long running
 //** This is still a very hard problem
 //let gilmore_9 = 
-//    time meson002 (parse "
+//    time meson002 ("
 //    forall x. exists y. forall z. 
 //        ((forall u. exists v. F(y,u,v) /\ G(y,u) /\ ~H(y,x)) 
 //            ==> (forall u. exists v. F(x,u,v) /\ G(z,u) /\ ~H(x,z)) 
@@ -467,7 +490,7 @@ let gilmore_8 =
 // ------------------------------------------------------------------------- //
 
 let gilmore_9a = 
-    time meson002 (parse "
+    time meson002 ("
     (forall x y. P(x,y) <=> 
         forall u. exists v. F(x,u,v) /\ G(y,u) /\ ~H(x,y)) 
     ==> forall x. exists y. forall z. 
@@ -479,7 +502,7 @@ let gilmore_9a =
 // ------------------------------------------------------------------------- //
 
 let davis_putnam_example_t = 
-    time meson002 (parse "
+    time meson002 ("
     exists x. exists y. forall z. 
     (F(x,y) ==> (F(y,z) /\ F(z,z))) /\ 
     ((F(x,y) /\ G(x,y)) ==> (G(x,z) /\ G(z,z)))");;
@@ -488,7 +511,9 @@ let davis_putnam_example_t =
 // The "connections make things worse" example once again.                   //
 // ------------------------------------------------------------------------- //
 
-meson002 (parse " 
+time meson002 (" 
     ~p /\ (p \/ q) /\ (r \/ s) /\ (~q \/ t \/ u) /\ 
         (~r \/ ~t) /\ (~r \/ ~u) /\ (~q \/ v \/ w) /\ 
         (~s \/ ~v) /\ (~s \/ ~w) ==> false");;
+
+flush_buffer();;

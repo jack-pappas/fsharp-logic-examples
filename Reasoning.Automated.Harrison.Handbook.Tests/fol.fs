@@ -19,23 +19,23 @@ open FsUnit
 // pg. 126
 
 [<Test>]
-let ``test holds with bool_interp``() =
+let ``holds with bool_interp``() =
     holds bool_interp undefined (parse "forall x. (x = 0) \/ (x = 1)")
     |> should be True
 
 [<Test>]
-let ``test holds with mod_interp 1``() =
+let ``holds with mod_interp 1``() =
     holds (mod_interp 2) undefined (parse "forall x. (x = 0) \/ (x = 1)")
     |> should be True
 
 [<Test>]
-let ``test holds with mod_interp 2``() =
+let ``holds with mod_interp 2``() =
     holds (mod_interp 3) undefined (parse "forall x. (x = 0) \/ (x = 1)")
     |> should be False    
 
     
 [<Test>]
-let ``test holds with a range of mod_interp``() =
+let ``holds with a range of mod_interp``() =
     let fm = (parse "forall x. ~(x = 0) ==> exists y. x * y = 1")
     List.filter (fun n -> holds (mod_interp n) undefined fm) [1..45]
     |> should equal [1; 2; 3; 5; 7; 11; 13; 17; 19; 23; 29; 31; 37; 41; 43]
@@ -43,12 +43,12 @@ let ``test holds with a range of mod_interp``() =
 // pg. 129
 
 [<Test>]
-let ``test holds with mod_interp 3``() =
+let ``holds with mod_interp 3``() =
     holds (mod_interp 3) undefined (parse "(forall x. x = 0) ==> 1 = 0")
     |> should be True
 
 [<Test>]
-let ``test holds with mod_interp 4``() =
+let ``holds with mod_interp 4``() =
     holds (mod_interp 3) undefined (parse "forall x. x = 0 ==> 1 = 0")
     |> should be False    
 
@@ -57,14 +57,14 @@ let ``test holds with mod_interp 4``() =
 // Variant function and examples.                                            //
 // ------------------------------------------------------------------------- //
 
-[<TestCase("x", "y", "z", Result="x")>]
-[<TestCase("x", "x", "y", Result="x'")>]
-[<TestCase("x", "x", "x'", Result="x''")>]
-let ``test variant``(x, y, z) =
+[<TestCase(@"x", "y", "z", Result="x")>]
+[<TestCase(@"x", "x", "y", Result="x'")>]
+[<TestCase(@"x", "x", "x'", Result="x''")>]
+let ``variant``(x, y, z) =
     variant x [y; z]
 
-[<TestCase("forall x. x = y", Result="<<forall x'. x' =x>>\r\n")>]
-[<TestCase("forall x x'. x = y ==> x = x'", Result="<<forall x' x''. x' =x ==> x' =x''>>\r\n")>]
-let ``test subst`` f =
+[<TestCase(@"forall x. x = y", Result="<<forall x'. x' =x>>\r\n")>]
+[<TestCase(@"forall x x'. x = y ==> x = x'", Result="<<forall x' x''. x' =x ==> x' =x''>>\r\n")>]
+let ``subst`` f =
     subst ("y" |=> Var "x") (parse f)
     |> sprint_fol_formula
