@@ -703,7 +703,7 @@ let ``examples 5``() =
     @"forall x y. x^2 + y^2 = 1 ==> (2 * y^2 - 1)^2 + (2 * x * y)^2 = 1"
     |> parse
     |> complex_qelim
-    |> should equal True
+    |> should equal formula<fol>.True
 
 
 (* ------------------------------------------------------------------------- *)
