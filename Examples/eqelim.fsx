@@ -36,315 +36,174 @@ open Reasoning.Automated.Harrison.Handbook.eqelim
 // The x^2 = 1 implies Abelian problem.                                      //
 // ------------------------------------------------------------------------- //
 
-// Searching with depth limit 0
-// Searching with depth limit 1
-// Searching with depth limit 2
-// Searching with depth limit 3
-// Searching with depth limit 4
-// Searching with depth limit 5
-// Searching with depth limit 6
-// Searching with depth limit 7
-// Searching with depth limit 8
-// Searching with depth limit 9
-// Searching with depth limit 10
-// Searching with depth limit 11
-// Searching with depth limit 12
-// Searching with depth limit 13
-// val it : int list = [13]
 meson002 
-  (parse "(forall x. P(1,x,x)) /\ 
-          (forall x. P(x,x,1)) /\ 
-          (forall u v w x y z. P(x,y,u) /\ 
-          P(y,z,w) ==> (P(x,w,v) <=> P(u,z,v)))
-              ==> forall a b c. P(a,b,c) 
-          ==> P(b,a,c)");;
+    (parse "
+    (forall x. P(1,x,x)) /\ 
+    (forall x. P(x,x,1)) /\ 
+    (forall u v w x y z. P(x,y,u) /\  P(y,z,w) 
+        ==> (P(x,w,v) <=> P(u,z,v)))
+    ==> forall a b c. P(a,b,c) ==> P(b,a,c)");;
 
 // pg. 288
 // ------------------------------------------------------------------------- //
 // Lemma for equivalence elimination.                                        //
 // ------------------------------------------------------------------------- //
 
-// Searching with depth limit 0
-// Searching with depth limit 1
-// Searching with depth limit 2
-// Searching with depth limit 3
-// Searching with depth limit 4
-// Searching with depth limit 0
-// Searching with depth limit 1
-// Searching with depth limit 2
-// Searching with depth limit 3
-// Searching with depth limit 0
-// Searching with depth limit 1
-// Searching with depth limit 2
-// Searching with depth limit 3
-// Searching with depth limit 4
-// Searching with depth limit 5
-// Searching with depth limit 6
-// Searching with depth limit 7
-// Searching with depth limit 8
-// Searching with depth limit 9
-// Searching with depth limit 0
-// Searching with depth limit 1
-// Searching with depth limit 2
-// Searching with depth limit 3
-// Searching with depth limit 0
-// Searching with depth limit 1
-// Searching with depth limit 2
-// Searching with depth limit 0
-// Searching with depth limit 1
-// Searching with depth limit 2
-// Searching with depth limit 3
-// Searching with depth limit 4
-// Searching with depth limit 5
-// Searching with depth limit 6
-// Searching with depth limit 7
-// val it : int list = [4; 3; 9; 3; 2; 7]
 meson002 
-  (parse "(forall x. R(x,x)) /\ 
-          (forall x y. R(x,y) ==>  R(y,x)) /\ 
-          (forall x y z. R(x,y) /\ R(y,z) ==> R(x,z))
-          <=> (forall x y. R(x,y) <=> (forall z. R(x,z) <=> R(y,z)))");;
+    (parse "
+    (forall x. R(x,x)) /\ 
+    (forall x y. R(x,y) ==>  R(y,x)) /\ 
+    (forall x y z. R(x,y) /\ R(y,z) ==> R(x,z))
+    <=> (forall x y. R(x,y) <=> (forall z. R(x,z) <=> R(y,z)))");;
    
 // ------------------------------------------------------------------------- //
 // Examples.                                                                 //
 // ------------------------------------------------------------------------- //
 
-// Searching with depth limit 0
-// Searching with depth limit 1
-// Searching with depth limit 2
-// Searching with depth limit 3
-// Searching with depth limit 4
-// Searching with depth limit 5
-// Searching with depth limit 6
-// Searching with depth limit 7
-// Searching with depth limit 8
-// Searching with depth limit 9
-// Searching with depth limit 10
-// Searching with depth limit 11
-// Searching with depth limit 12
-// Searching with depth limit 13
-// Searching with depth limit 14
-// Searching with depth limit 15
-// Searching with depth limit 16
-// Searching with depth limit 17
-// Searching with depth limit 18
-// Searching with depth limit 19
-// Searching with depth limit 20
-// Searching with depth limit 21
-// Searching with depth limit 22
-// Searching with depth limit 23
-// Searching with depth limit 24
-// Searching with depth limit 25
-// Searching with depth limit 0
-// Searching with depth limit 1
-// Searching with depth limit 2
-// Searching with depth limit 3
-// Searching with depth limit 4
-// Searching with depth limit 5
-// Searching with depth limit 6
-// Searching with depth limit 7
-// Searching with depth limit 8
-// Searching with depth limit 9
-// Searching with depth limit 10
-// Searching with depth limit 11
-// Searching with depth limit 12
-// Searching with depth limit 13
-// Searching with depth limit 14
-// Searching with depth limit 15
-// Searching with depth limit 16
-// Searching with depth limit 17
-// Searching with depth limit 18
-// Searching with depth limit 19
-// Searching with depth limit 20
-// Searching with depth limit 21
-// Searching with depth limit 22
-// Searching with depth limit 23
-// Searching with depth limit 24
-// Searching with depth limit 25
-// CPU time (user): 136.218750
-// val it : int list = [25; 25]
 time bmeson 
-  (parse "(exists x. x = f(g(x)) /\ forall x'. x' = f(g(x')) ==> x = x') <=>
-          (exists y. y = g(f(y)) /\ forall y'. y' = g(f(y')) ==> y = y')");;          
-
-// Searching with depth limit 0
-// Searching with depth limit 1
-// Searching with depth limit 2
-// Searching with depth limit 3
-// Searching with depth limit 4
-// Searching with depth limit 5
-// Searching with depth limit 6
-// Searching with depth limit 7
-// Searching with depth limit 8
-// Searching with depth limit 9
-// Searching with depth limit 10
-// Searching with depth limit 11
-// Searching with depth limit 12
-// Searching with depth limit 13
-// Searching with depth limit 14
-// Searching with depth limit 15
-// Searching with depth limit 16
-// Searching with depth limit 0
-// Searching with depth limit 1
-// Searching with depth limit 2
-// Searching with depth limit 3
-// Searching with depth limit 4
-// Searching with depth limit 5
-// Searching with depth limit 6
-// Searching with depth limit 7
-// Searching with depth limit 8
-// Searching with depth limit 9
-// Searching with depth limit 10
-// Searching with depth limit 11
-// Searching with depth limit 12
-// Searching with depth limit 13
-// Searching with depth limit 14
-// Searching with depth limit 15
-// Searching with depth limit 16
-// CPU time (user): 18.515625
-// val it : int list = [16; 16]                                                           
+    (parse "
+    (exists x. x = f(g(x)) /\ forall x'. x' = f(g(x')) ==> x = x') <=>
+    (exists y. y = g(f(y)) /\ forall y'. y' = g(f(y')) ==> y = y')");;          
+                                                       
 time emeson 
-  (parse "(exists x. x = f(g(x)) /\ forall x'. x' = f(g(x')) ==> x = x') <=>
-          (exists y. y = g(f(y)) /\ forall y'. y' = g(f(y')) ==> y = y')");;        
+    (parse "
+    (exists x. x = f(g(x)) /\ forall x'. x' = f(g(x')) ==> x = x') <=>
+    (exists y. y = g(f(y)) /\ forall y'. y' = g(f(y')) ==> y = y')");;        
                                                      
-// Searching with depth limit 0
-// Searching with depth limit 1
-// Searching with depth limit 2
-// Searching with depth limit 3
-// Searching with depth limit 4
-// Searching with depth limit 5
-// Searching with depth limit 6
-// Searching with depth limit 7
-// Searching with depth limit 8
-// Searching with depth limit 9
-// Searching with depth limit 10
-// Searching with depth limit 11
-// Searching with depth limit 12
-// Searching with depth limit 13
-// Searching with depth limit 14
-// Searching with depth limit 15
-// Searching with depth limit 16
-// Searching with depth limit 17
-// Searching with depth limit 18
-// Searching with depth limit 19
-// CPU time (user): 1007.703125
-// val it : int list = [19]
 time bmeson 
-  (parse "(forall x y z. x * (y * z) = (x * y) * z) /\ (forall x. e * x = x) /\ (forall x. i(x) * x = e) ==> forall x. x * i(x) = e");;
+    (parse "
+    (forall x y z. x * (y * z) = (x * y) * z) /\ 
+    (forall x. e * x = x) /\ 
+    (forall x. i(x) * x = e)                                
+    ==> forall x. x * i(x) = e");;
 
-//// ------------------------------------------------------------------------- //
-//// Older stuff not now in the text.                                          //
-//// ------------------------------------------------------------------------- //
-//
-//let ewd = (parse "(forall x. f(x) ==> g(x)) /\ (exists x. f(x)) /\ (forall x y. g(x) /\ g(y) ==> x = y) ==> forall y. g(y) ==> f(y)");;
-//
-//let wishnu = (parse "(exists x. x = f(g(x)) /\ forall x'. x' = f(g(x')) ==> x = x') <=> (exists y. y = g(f(y)) /\ forall y'. y' = g(f(y')) ==> y = y')");;
-//
-//let group1 =
-// (parse "(forall x y z. x * (y * z) = (x * y) * z) /\ 
-//   (forall x. e * x = x) /\ 
-//   (forall x. i(x) * x = e)
-//   ==> forall x. x * e = x");;
-//
-//let group2 =
-// (parse "(forall x y z. x * (y * z) = (x * y) * z) /\ 
-//   (forall x. e * x = x) /\ 
-//   (forall x. i(x) * x = e)
-//   ==> forall x. x * i(x) = e");;
-//
-//time bmeson ewd;;
-//time emeson ewd;;
-//
-//(***********
-//
-//time bmeson wishnu;;
-//time emeson wishnu;;
-//
-//time bmeson group1;;
+// ------------------------------------------------------------------------- //
+// Older stuff not now in the text.                                          //
+// ------------------------------------------------------------------------- //
+
+let ewd = 
+    parse "
+    (forall x. f(x) ==> g(x)) /\ 
+    (exists x. f(x)) /\ 
+    (forall x y. g(x) /\ g(y) ==> x = y) 
+    ==> forall y. g(y) ==> f(y)";;
+print_fol_formula ewd;;
+
+let wishnu = 
+    (parse "
+    (exists x. x = f(g(x)) /\ forall x'. x' = f(g(x')) ==> x = x') <=> 
+    (exists y. y = g(f(y)) /\ forall y'. y' = g(f(y')) ==> y = y')");;
+print_fol_formula wishnu;;
+
+let group1 =
+    (parse "
+    (forall x y z. x * (y * z) = (x * y) * z) /\ 
+    (forall x. e * x = x) /\ 
+    (forall x. i(x) * x = e) 
+    ==> forall x. x * e = x");;
+print_fol_formula wishnu;;
+
+let group2 =
+    (parse "
+    (forall x y z. x * (y * z) = (x * y) * z) /\ 
+    (forall x. e * x = x) /\ 
+    (forall x. i(x) * x = e) 
+    ==> forall x. x * i(x) = e");;
+print_fol_formula wishnu;;
+
+time bmeson ewd;;
+time emeson ewd;;
+
+time bmeson wishnu;;
+time emeson wishnu;;
+
+time bmeson group1;;
+// long running
 //time emeson group1;;
-//
+
+// long running
 //time bmeson group2;;
+// long running
 //time emeson group2;;
-// *************)
-//
-//// ------------------------------------------------------------------------- //
-//// Nice function composition exercise from "Conceptual Mathematics".         //
-//// ------------------------------------------------------------------------- //
-//
-//(***********
-//
-//let fm = parse
-//  "(forall x y z. x * (y * z) = (x * y) * z) /\ p * q * p = p
-//    ==> exists q'. p * q' * p = p /\ q' * p * q' = q'";;
-//
+
+// ------------------------------------------------------------------------- //
+// Nice function composition exercise from "Conceptual Mathematics".         //
+// ------------------------------------------------------------------------- //
+
+let fm = 
+    parse "
+    (forall x y z. x * (y * z) = (x * y) * z) /\ p * q * p = p 
+    ==> exists q'. p * q' * p = p /\ q' * p * q' = q'";;
+print_fol_formula fm;;
+
+// long running
 //time bmeson fm;;        //* Seems to take a bit longer than below version  *//
-//
+
+// long running
 //time emeson fm;;        //* Works in 64275 seconds(!), depth 30, on laptop *//
-//
-// *************)
-//
-////*** Some other predicate formulations no longer in the main text
-//
-//meson002 (parse
-//    "(forall x. P(1,x,x)) /\ 
-//   (forall x. P(i(x),x,1)) /\ 
-//   (forall u v w x y z. P(x,y,u) /\ P(y,z,w) ==> (P(x,w,v) <=> P(u,z,v)))
-//   ==> forall x. P(x,1,x)");;
-//
-//meson002 (parse
-//    "(forall x. P(1,x,x)) /\ 
-//   (forall x. P(i(x),x,1)) /\ 
-//   (forall u v w x y z. P(x,y,u) /\ P(y,z,w) ==> (P(x,w,v) <=> P(u,z,v)))
-//   ==> forall x. P(x,i(x),1)");;
-//
-//// ------------------------------------------------------------------------- //
-//// See how efficiency drops when we assert completeness.                     //
-//// ------------------------------------------------------------------------- //
-//
-//meson002 (parse
-//    "(forall x. P(1,x,x)) /\ 
-//   (forall x. P(x,x,1)) /\ 
-//   (forall x y. exists z. P(x,y,z)) /\ 
-//   (forall u v w x y z. P(x,y,u) /\ P(y,z,w) ==> (P(x,w,v) <=> P(u,z,v)))
-//   ==> forall a b c. P(a,b,c) ==> P(b,a,c)");;
-//
-////** More reductions, not now explicitly in the text.
-//
-//meson002 (parse
-//    "(forall x. R(x,x)) /\ 
-//   (forall x y z. R(x,y) /\ R(y,z) ==> R(x,z))
-//   <=> (forall x y. R(x,y) <=> (forall z. R(y,z) ==> R(x,z)))");;
-//
-//meson002 (parse
-//    "(forall x y. R(x,y) ==>  R(y,x)) <=>
-//   (forall x y. R(x,y) <=> R(x,y) /\ R(y,x))");;
-//
-//// ------------------------------------------------------------------------- //
-//// Show how Equiv' reduces to triviality.                                    //
-//// ------------------------------------------------------------------------- //
-//
-//meson002 (parse
-//    "(forall x. (forall w. R'(x,w) <=> R'(x,w))) /\ 
-//   (forall x y. (forall w. R'(x,w) <=> R'(y,w))
-//                ==> (forall w. R'(y,w) <=> R'(x,w))) /\ 
-//   (forall x y z. (forall w. R'(x,w) <=> R'(y,w)) /\ 
-//                  (forall w. R'(y,w) <=> R'(z,w))
-//                  ==> (forall w. R'(x,w) <=> R'(z,w)))");;
-//
-//// ------------------------------------------------------------------------- //
-//// More auxiliary proofs for Brand's S and T modification.                   //
-//// ------------------------------------------------------------------------- //
-//
-//meson002 (parse
-//    "(forall x y. R(x,y) <=> (forall z. R'(x,z) <=> R'(y,z))) /\ 
-//   (forall x. R'(x,x))
-//   ==> forall x y. ~R'(x,y) ==> ~R(x,y)");;
-//
-//meson002 (parse
-//    "(forall x y. R(x,y) <=> (forall z. R'(y,z) ==> R'(x,z))) /\ 
-//   (forall x. R'(x,x))
-//   ==> forall x y. ~R'(x,y) ==> ~R(x,y)");;
-//
-//meson002 (parse
-//    "(forall x y. R(x,y) <=> R'(x,y) /\ R'(y,x))
-//   ==> forall x y. ~R'(x,y) ==> ~R(x,y)");;
+
+//*** Some other predicate formulations no longer in the main text
+
+meson002 (parse "
+    (forall x. P(1,x,x)) /\ 
+    (forall x. P(i(x),x,1)) /\ 
+    (forall u v w x y z. P(x,y,u) /\ P(y,z,w) ==> (P(x,w,v) <=> P(u,z,v))) 
+    ==> forall x. P(x,1,x)");;
+
+meson002 (parse "
+    (forall x. P(1,x,x)) /\ 
+    (forall x. P(i(x),x,1)) /\ 
+    (forall u v w x y z. P(x,y,u) /\ P(y,z,w) ==> (P(x,w,v) <=> P(u,z,v))) 
+    ==> forall x. P(x,i(x),1)");;
+
+// ------------------------------------------------------------------------- //
+// See how efficiency drops when we assert completeness.                     //
+// ------------------------------------------------------------------------- //
+
+meson002 (parse "
+    (forall x. P(1,x,x)) /\ 
+    (forall x. P(x,x,1)) /\ 
+    (forall x y. exists z. P(x,y,z)) /\ 
+    (forall u v w x y z. P(x,y,u) /\ P(y,z,w) ==> (P(x,w,v) <=> P(u,z,v))) 
+    ==> forall a b c. P(a,b,c) ==> P(b,a,c)");;
+
+//** More reductions, not now explicitly in the text.
+
+meson002 (parse "
+    (forall x. R(x,x)) /\ 
+    (forall x y z. R(x,y) /\ R(y,z) ==> R(x,z)) 
+    <=> (forall x y. R(x,y) <=> (forall z. R(y,z) ==> R(x,z)))");;
+
+meson002 (parse "
+    (forall x y. R(x,y) ==>  R(y,x)) <=> 
+    (forall x y. R(x,y) <=> R(x,y) /\ R(y,x))");;
+
+// ------------------------------------------------------------------------- //
+// Show how Equiv' reduces to triviality.                                    //
+// ------------------------------------------------------------------------- //
+
+meson002 (parse "
+    (forall x. (forall w. R'(x,w) <=> R'(x,w))) /\ 
+    (forall x y. (forall w. R'(x,w) <=> R'(y,w)) 
+        ==> (forall w. R'(y,w) <=> R'(x,w))) /\ 
+    (forall x y z. (forall w. R'(x,w) <=> R'(y,w)) /\ 
+        (forall w. R'(y,w) <=> R'(z,w)) 
+            ==> (forall w. R'(x,w) <=> R'(z,w)))");;
+
+// ------------------------------------------------------------------------- //
+// More auxiliary proofs for Brand's S and T modification.                   //
+// ------------------------------------------------------------------------- //
+
+meson002 (parse "
+    (forall x y. R(x,y) <=> (forall z. R'(x,z) <=> R'(y,z))) /\ 
+    (forall x. R'(x,x)) 
+    ==> forall x y. ~R'(x,y) ==> ~R(x,y)");;
+
+meson002 (parse "
+    (forall x y. R(x,y) <=> (forall z. R'(y,z) ==> R'(x,z))) /\ 
+    (forall x. R'(x,x)) 
+    ==> forall x y. ~R'(x,y) ==> ~R(x,y)");;
+
+meson002 (parse "
+    (forall x y. R(x,y) <=> R'(x,y) /\ R'(y,x)) 
+    ==> forall x y. ~R'(x,y) ==> ~R(x,y)");;
