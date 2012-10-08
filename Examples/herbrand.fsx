@@ -45,8 +45,7 @@ let p24 = gilmore (parse @"~(exists x. U(x) /\ Q(x))
 // Slightly less easy example.                                               //
 // ------------------------------------------------------------------------- //
 
-// Run the example with 10MB stack size.
-let p45 = Initialization.runWithStackFrame 10000000 (fun () -> gilmore (parse @"(forall x. P(x) 
+let p45 = Initialization.runWith16MBStack (fun () -> gilmore (parse @"(forall x. P(x) 
                             /\ (forall y. G(y) /\ H(x,y) ==> J(x,y)) ==> (forall y. G(y) /\ H(x,y) ==> R(y))) 
                             /\ ~(exists y. L(y) /\ R(y)) 
                             /\ (exists x. P(x) /\ (forall y. H(x,y) ==> L(y)) 

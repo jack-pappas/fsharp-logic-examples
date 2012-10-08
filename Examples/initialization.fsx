@@ -22,6 +22,8 @@ open FSharpx.Compatibility.OCaml.Num;;
 let print_num (n : Num) = n.ToString ();;                (* Avoid range limit  *)
 fsi.AddPrinter print_num;;                               (* when printing nums *)
 
+let STACK_LIMIT = 16777216 // 16MB
+
 /// Run a function with custom stack size in byte
 let runWithStackFrame stackSize fn =
     let result = ref Unchecked.defaultof<'T> // ref cell to hold return value
@@ -29,3 +31,5 @@ let runWithStackFrame stackSize fn =
     thread.Start()
     thread.Join() // thread finishes
     !result
+
+let inline runWith16MBStack fn = runWithStackFrame STACK_LIMIT fn
