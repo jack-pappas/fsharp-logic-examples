@@ -4,9 +4,8 @@
 // (See "LICENSE.txt" for details.)                                          //
 // ========================================================================= //
 
-namespace Reasoning.Automated.Harrison.Handbook
+module Reasoning.Automated.Harrison.Handbook.meson
 
-module meson =
     open formulas
     open prop
     open folMod

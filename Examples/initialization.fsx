@@ -22,14 +22,17 @@ open FSharpx.Compatibility.OCaml.Num;;
 let print_num (n : Num) = n.ToString ();;                (* Avoid range limit  *)
 fsi.AddPrinter print_num;;                               (* when printing nums *)
 
+let STACK_LIMIT = 16777216 // 16MB
+
 /// Run a function with custom stack size in byte
 let runWithStackFrame stackSize fn =
     let result = ref Unchecked.defaultof<'T> // ref cell to hold return value
     let thread = System.Threading.Thread((fun () -> result := fn()), stackSize)
     thread.Start()
     thread.Join() // thread finishes
-    !result;;
+    !result
 
+let inline runWith16MBStack fn = runWithStackFrame STACK_LIMIT fn
 
 (* TEMP :   These operators were removed from the 'lib' module.
             Eventually, they should be replaced in the example code
@@ -65,5 +68,4 @@ let inline maximize f l =
 // F#:    val minimize : ('a -> 'b) -> 'a list -> 'a when 'b : comparison
 let inline minimize f l =
     List.minBy f l
-
 

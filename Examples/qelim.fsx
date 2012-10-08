@@ -39,81 +39,131 @@ open Reasoning.Automated.Harrison.Handbook.qelim
 //  Examples.                                                                 // 
 //  ------------------------------------------------------------------------- // 
 
-// val it : fol formula = True
-quelim_dlo (parse "forall x y. exists z. z < x /\ z < y");;
+quelim_dlo (parse @"
+    forall x y. exists z. z < x /\ z < y") 
+    |> print_fol_formula;;
 
-// val it : fol formula = True
-quelim_dlo (parse "exists z. z < x /\ z < y");;
+quelim_dlo (parse @"
+    exists z. z < x /\ z < y")
+    |> print_fol_formula;;
 
-// val it : fol formula = Atom (R ("<",[Var "x"; Var "y"]))
-quelim_dlo (parse "exists z. x < z /\ z < y");;
+quelim_dlo (parse @"
+    exists z. x < z /\ z < y")
+    |> print_fol_formula;;
 
-// val it : fol formula =
-//   Not
-//     (Or (Atom (R ("<",[Var "b"; Var "a"])),Atom (R ("<",[Var "b"; Var "a"]))))
-quelim_dlo (parse "(forall x. x < a ==> x < b)");;
+quelim_dlo (parse @"
+    (forall x. x < a ==> x < b)")
+    |> print_fol_formula;;
 
-// val it : fol formula = True
-quelim_dlo (parse "forall a b. (forall x. x < a ==> x < b) <=> a <= b");;
+quelim_dlo (parse @"
+    forall a b. (forall x. x < a ==> x < b) <=> a <= b")
+    |> print_fol_formula;;
 
-// val it : fol formula = True
-quelim_dlo (parse "forall a b. (forall x. x < a <=> x < b) <=> a = b");;
+quelim_dlo (parse @"
+    forall a b. (forall x. x < a <=> x < b) <=> a = b")
+    |> print_fol_formula;;
 
-// val it : fol formula = False
-quelim_dlo (parse "exists x y z. forall u.
-                 x < x \/ ~x < u \/ (x < y /\ y < z /\ ~x < z)");;
+quelim_dlo (parse @"
+    exists x y z. forall u.
+        x < x \/ ~x < u \/ (x < y /\ y < z /\ ~x < z)")
+    |> print_fol_formula;;
 
 //  ------------------------------------------------------------------------- // 
 //  More tests (not in the text).                                             // 
 //  ------------------------------------------------------------------------- // 
 
-// CPU time (user): 0.000000
-// val it : fol formula = True
-time quelim_dlo (parse "forall x. exists y. x < y");;
+time quelim_dlo (parse @"
+    forall x. exists y. x < y")
+    |> print_fol_formula;;
 
-time quelim_dlo (parse "forall x y z. x < y /\ y < z ==> x < z");;
+time quelim_dlo (parse @"
+    forall x y z. x < y /\ y < z ==> x < z")
+    |> print_fol_formula;;
 
-time quelim_dlo (parse "forall x y. x < y \/ (x = y) \/ y < x");;
+time quelim_dlo (parse @"
+    forall x y. x < y \/ (x = y) \/ y < x")
+    |> print_fol_formula;;
 
-time quelim_dlo (parse "exists x y. x < y /\ y < x");;
+time quelim_dlo (parse @"
+    exists x y. x < y /\ y < x")
+    |> print_fol_formula;;
 
-time quelim_dlo (parse "forall x y. exists z. z < x /\ x < y");;
+time quelim_dlo (parse @"
+    forall x y. exists z. z < x /\ x < y")
+    |> print_fol_formula;;
 
-time quelim_dlo (parse "exists z. z < x /\ x < y");;
+time quelim_dlo (parse @"
+    exists z. z < x /\ x < y")
+    |> print_fol_formula;;
 
-time quelim_dlo (parse "forall x y. exists z. z < x /\ z < y");;
+time quelim_dlo (parse @"
+    forall x y. exists z. z < x /\ z < y")
+    |> print_fol_formula;;
 
-time quelim_dlo (parse "forall x y. x < y ==> exists z. x < z /\ z < y");;
+time quelim_dlo (parse @"
+    forall x y. x < y ==> exists z. x < z /\ z < y")
+    |> print_fol_formula;;
 
-time quelim_dlo
-  (parse "forall x y. ~(x = y) ==> exists u. u < x /\ (y < u \/ x < y)");;
+time quelim_dlo (parse @"
+    forall x y. ~(x = y) ==> exists u. u < x /\ (y < u \/ x < y)")
+    |> print_fol_formula;;
 
-time quelim_dlo (parse "exists x. x = x");;
+time quelim_dlo (parse @"
+    exists x. x = x")
+    |> print_fol_formula;;
 
-time quelim_dlo (parse "exists x. x = x /\ x = y");;
+time quelim_dlo (parse @"
+    exists x. x = x /\ x = y")
+    |> print_fol_formula;;
 
-time quelim_dlo (parse "exists z. x < z /\ z < y");;
+time quelim_dlo (parse @"
+    exists z. x < z /\ z < y")
+    |> print_fol_formula;;
 
-time quelim_dlo (parse "exists z. x <= z /\ z <= y");;
+time quelim_dlo (parse @"
+    exists z. x <= z /\ z <= y")
+    |> print_fol_formula;;
 
-time quelim_dlo (parse "exists z. x < z /\ z <= y");;
+time quelim_dlo (parse @"
+    exists z. x < z /\ z <= y")
+    |> print_fol_formula;;
 
-time quelim_dlo (parse "forall x y z. exists u. u < x /\ u < y /\ u < z");;
+time quelim_dlo (parse @"
+    forall x y z. exists u. u < x /\ u < y /\ u < z")
+    |> print_fol_formula;;
 
-time quelim_dlo (parse "forall y. x < y /\ y < z ==> w < z");;
+time quelim_dlo (parse @"
+    forall y. x < y /\ y < z ==> w < z")
+    |> print_fol_formula;;
 
-time quelim_dlo (parse "forall x y. x < y");;
+time quelim_dlo (parse @"
+    forall x y. x < y")
+    |> print_fol_formula;;
 
-time quelim_dlo (parse "exists z. z < x /\ x < y");;
+time quelim_dlo (parse @"
+    exists z. z < x /\ x < y")
+    |> print_fol_formula;;
 
-time quelim_dlo (parse "forall a b. (forall x. x < a ==> x < b) <=> a <= b");;
+time quelim_dlo (parse @"
+    forall a b. (forall x. x < a ==> x < b) <=> a <= b")
+    |> print_fol_formula;;
 
-time quelim_dlo (parse "forall x. x < a ==> x < b");;
+time quelim_dlo (parse @"
+    forall x. x < a ==> x < b")
+    |> print_fol_formula;;
 
-time quelim_dlo (parse "forall x. x < a ==> x <= b");;
+time quelim_dlo (parse @"
+    forall x. x < a ==> x <= b")
+    |> print_fol_formula;;
 
-time quelim_dlo (parse "forall a b. exists x. ~(x = a) \/ ~(x = b) \/ (a = b)");;
+time quelim_dlo (parse @"
+    forall a b. exists x. ~(x = a) \/ ~(x = b) \/ (a = b)")
+    |> print_fol_formula;;
 
-time quelim_dlo (parse "forall x y. x <= y \/ x > y");;
+time quelim_dlo (parse @"
+    forall x y. x <= y \/ x > y")
+    |> print_fol_formula;;
 
-time quelim_dlo (parse "forall x y. x <= y \/ x < y");;
+time quelim_dlo (parse @"
+    forall x y. x <= y \/ x < y")
+    |> print_fol_formula;;

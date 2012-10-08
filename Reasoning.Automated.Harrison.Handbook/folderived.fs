@@ -8,9 +8,8 @@
 // First-order derived rules in the LCF setup.                               //
 // ========================================================================= //
 
-namespace Reasoning.Automated.Harrison.Handbook
+module Reasoning.Automated.Harrison.Handbook.folderived
 
-module folderived =
     open intro
     open formulas
     open prop

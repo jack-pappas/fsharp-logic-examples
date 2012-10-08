@@ -4,9 +4,8 @@
 // (See "LICENSE.txt" for details.)                                          //
 // ========================================================================= //
 
-namespace Reasoning.Automated.Harrison.Handbook
+module Reasoning.Automated.Harrison.Handbook.intro
 
-module intro =
     open System
 
 // pg.14

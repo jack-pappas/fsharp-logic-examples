@@ -4,11 +4,10 @@
 // (See "LICENSE.txt" for details.)                                          //
 // ========================================================================= //
 
-namespace Reasoning.Automated.Harrison.Handbook
+module Reasoning.Automated.Harrison.Handbook.complex
 
-open LanguagePrimitives
+    open LanguagePrimitives
 
-module complex =
     open intro
     open formulas
     open prop

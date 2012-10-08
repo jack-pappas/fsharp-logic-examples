@@ -4,11 +4,10 @@
 // (See "LICENSE.txt" for details.)                                          //
 // ========================================================================= //
 
-namespace Reasoning.Automated.Harrison.Handbook
-
 /// Misc library functions to set up a nice environment.
 [<AutoOpen>]
-module lib =
+module Reasoning.Automated.Harrison.Handbook.lib
+
     open LanguagePrimitives
     open OptimizedClosures
     open FSharpx.Compatibility.OCaml

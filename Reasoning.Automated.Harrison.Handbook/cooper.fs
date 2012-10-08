@@ -4,12 +4,10 @@
 // (See "LICENSE.txt" for details.)                                          //
 // ========================================================================= //
 
-namespace Reasoning.Automated.Harrison.Handbook
+module Reasoning.Automated.Harrison.Handbook.cooper
 
-module cooper =
     open LanguagePrimitives
-    open FSharpx.Compatibility.OCaml
-    open Num
+    open FSharpx.Compatibility.OCaml.Num
 
     open intro
     open formulas
@@ -407,7 +405,7 @@ module cooper =
                       ">", (>);
                       "<=", (<=);
                       ">=", (>=);
-                      "divides", divides; ]
+                      "divides", (fun x y -> y % x = Int 0); ] // NB: Fixed bug with order of arguments. Not sure the above remark is correct; OCaml also throws division by zero exception
 
 //    // OCaml: val evalc : fol formula -> fol formula = <fun>
 //    // F#:    val evalc : (fol formula -> fol formula)

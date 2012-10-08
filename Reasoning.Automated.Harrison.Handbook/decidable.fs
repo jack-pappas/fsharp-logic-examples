@@ -4,9 +4,8 @@
 // (See "LICENSE.txt" for details.)                                          //
 // ========================================================================= //
 
-namespace Reasoning.Automated.Harrison.Handbook
+module Reasoning.Automated.Harrison.Handbook.decidable
 
-module decidable =
     open intro
     open formulas
     open prop

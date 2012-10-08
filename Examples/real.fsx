@@ -43,36 +43,36 @@ open Reasoning.Automated.Harrison.Handbook.real
 // ------------------------------------------------------------------------- //
 
 // TODO: Fix these. Incorrect result, returns: System.Exception: pdivide_pos: zero head coefficient
-real_qelim (parse "exists x. x^4 + x^2 + 1 = 0");;
+real_qelim (parse @"exists x. x^4 + x^2 + 1 = 0");;
 
-real_qelim (parse "exists x. x^3 - x^2 + x - 1 = 0");;
+real_qelim (parse @"exists x. x^3 - x^2 + x - 1 = 0");;
 
-real_qelim (parse "exists x y. x^3 - x^2 + x - 1 = 0 /\ y^3 - y^2 + y - 1 = 0 /\ ~(x = y)");;
+real_qelim (parse @"exists x y. x^3 - x^2 + x - 1 = 0 /\ y^3 - y^2 + y - 1 = 0 /\ ~(x = y)");;
 
 //#trace testform;;
-real_qelim (parse "exists x. x^2 - 3 * x + 2 = 0 /\ 2 * x - 3 = 0");;
+real_qelim (parse @"exists x. x^2 - 3 * x + 2 = 0 /\ 2 * x - 3 = 0");;
 //#untrace testform;;
 
-real_qelim (parse "forall a f k. (forall e. k < e ==> f < a * e) ==> f <= a * k");;
+real_qelim (parse @"forall a f k. (forall e. k < e ==> f < a * e) ==> f <= a * k");;
 
-real_qelim (parse "exists x. a * x^2 + b * x + c = 0");;
+real_qelim (parse @"exists x. a * x^2 + b * x + c = 0");;
 
-real_qelim (parse "forall a b c. (exists x. a * x^2 + b * x + c = 0) <=> b^2 >= 4 * a * c");;
+real_qelim (parse @"forall a b c. (exists x. a * x^2 + b * x + c = 0) <=> b^2 >= 4 * a * c");;
 
-real_qelim (parse "forall a b c. (exists x. a * x^2 + b * x + c = 0) <=> a = 0 /\ (b = 0 ==> c = 0) \/ ~(a = 0) /\ b^2 >= 4 * a * c");;
+real_qelim (parse @"forall a b c. (exists x. a * x^2 + b * x + c = 0) <=> a = 0 /\ (b = 0 ==> c = 0) \/ ~(a = 0) /\ b^2 >= 4 * a * c");;
 
 // pg. 377
 // ------------------------------------------------------------------------- //
 // Termination ordering for group theory completion.                         //
 // ------------------------------------------------------------------------- //
 
-real_qelim (parse "1 < 2 /\ (forall x. 1 < x ==> 1 < x^2) /\ (forall x y. 1 < x /\ 1 < y ==> 1 < x * (1 + 2 * y))");;
+real_qelim (parse @"1 < 2 /\ (forall x. 1 < x ==> 1 < x^2) /\ (forall x y. 1 < x /\ 1 < y ==> 1 < x * (1 + 2 * y))");;
 
-let eqs = complete_and_simplify ["1"; "*"; "i"] [(parse "1 * x = x"); (parse "i(x) * x = 1"); (parse "(x * y) * z = x * y * z")];;
+let eqs = complete_and_simplify ["1"; "*"; "i"] [(parse @"1 * x = x"); (parse @"i(x) * x = 1"); (parse @"(x * y) * z = x * y * z")];;
 let fm = list_conj (List.map grpform eqs);;
 real_qelim fm;;
 
-real_qelim' (parse "forall d. (exists c. forall a b. (a = d /\ b = c) \/ (a = c /\ b = 1) ==> a^2 = b) <=> d^4 = 1");;
+real_qelim' (parse @"forall d. (exists c. forall a b. (a = d /\ b = c) \/ (a = c /\ b = 1) ==> a^2 = b) <=> d^4 = 1");;
 
 // Not in book.
 // ------------------------------------------------------------------------- //

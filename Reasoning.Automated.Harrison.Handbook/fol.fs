@@ -4,10 +4,9 @@
 // (See "LICENSE.txt" for details.)                                          //
 // ========================================================================= //
 
-namespace Reasoning.Automated.Harrison.Handbook
-
 [<CompilationRepresentation(CompilationRepresentationFlags.ModuleSuffix)>]
-module folMod = // TODO : Change this back to 'fol'?
+module Reasoning.Automated.Harrison.Handbook.folMod // TODO : Change this back to 'fol'?
+ 
     open intro
     open formulas
 

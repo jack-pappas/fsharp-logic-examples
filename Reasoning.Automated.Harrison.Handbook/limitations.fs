@@ -4,11 +4,9 @@
 // (See "LICENSE.txt" for details.)                                          //
 // ========================================================================= //
 
-namespace Reasoning.Automated.Harrison.Handbook
+module Reasoning.Automated.Harrison.Handbook.limitations
 
-module limitations =
-    open FSharpx.Compatibility.OCaml
-    open Num
+    open FSharpx.Compatibility.OCaml.Num
 
     open lib
     open intro

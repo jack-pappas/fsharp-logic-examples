@@ -36,3 +36,58 @@ let ``parse formulas`` (f, idx) =
     |> should equal parsed_formulas.[idx]
 
 
+[<Test>]
+let ``sanity check parsing``() =
+    parse @"((w + x)^4 + (w + y)^4 + (w + z)^4 +
+             (x + y)^4 + (x + z)^4 + (y + z)^4 +
+             (w - x)^4 + (w - y)^4 + (w - z)^4 +
+             (x - y)^4 + (x - z)^4 + (y - z)^4) / 6 =
+            (w^2 + x^2 + y^2 + z^2)^2"
+    |> should equal
+    <| Atom
+         (R ("=",
+           [Fn ("/",
+             [Fn ("+",
+               [Fn ("^", [Fn ("+", [Var "w"; Var "x"]); Fn ("4", [])]);
+                Fn ("+",
+                 [Fn ("^", [Fn ("+", [Var "w"; Var "y"]); Fn ("4", [])]);
+                  Fn ("+",
+                   [Fn ("^", [Fn ("+", [Var "w"; Var "z"]); Fn ("4", [])]);
+                    Fn ("+",
+                     [Fn ("^", [Fn ("+", [Var "x"; Var "y"]); Fn ("4", [])]);
+                      Fn ("+",
+                       [Fn ("^", [Fn ("+", [Var "x"; Var "z"]); Fn ("4", [])]);
+                        Fn ("+",
+                         [Fn ("^",
+                           [Fn ("+", [Var "y"; Var "z"]); Fn ("4", [])]);
+                          Fn ("+",
+                           [Fn ("^",
+                             [Fn ("-", [Var "w"; Var "x"]); Fn ("4", [])]);
+                            Fn ("+",
+                             [Fn ("^",
+                               [Fn ("-", [Var "w"; Var "y"]); Fn ("4", [])]);
+                              Fn ("+",
+                               [Fn ("^",
+                                 [Fn ("-", [Var "w"; Var "z"]); Fn ("4", [])]);
+                                Fn ("+",
+                                 [Fn ("^",
+                                   [Fn ("-", [Var "x"; Var "y"]); Fn ("4", [])]);
+                                  Fn ("+",
+                                   [Fn ("^",
+                                     [Fn ("-", [Var "x"; Var "z"]);
+                                      Fn ("4", [])]);
+                                    Fn ("^",
+                                     [Fn ("-", [Var "y"; Var "z"]);
+                                      Fn ("4", [])])])])])])])])])])])])]);
+              Fn ("6", [])]);
+            Fn ("^",
+             [Fn ("+",
+               [Fn ("^", [Var "w"; Fn ("2", [])]);
+                Fn ("+",
+                 [Fn ("^", [Var "x"; Fn ("2", [])]);
+                  Fn ("+",
+                   [Fn ("^", [Var "y"; Fn ("2", [])]);
+                    Fn ("^", [Var "z"; Fn ("2", [])])])])]);
+              Fn ("2", [])])]))
+
+

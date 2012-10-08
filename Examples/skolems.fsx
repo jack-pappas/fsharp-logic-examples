@@ -27,5 +27,5 @@ open Reasoning.Automated.Harrison.Handbook.skolems
 
 print_fol_formula_list 
     (skolemizes [
-        parse "exists x y. x + y = 2";
-        parse "forall x. exists y. x + 1 = y"; ]);;
+        parse @"exists x y. x + y = 2";
+        parse @"forall x. exists y. x + 1 = y"; ]);;

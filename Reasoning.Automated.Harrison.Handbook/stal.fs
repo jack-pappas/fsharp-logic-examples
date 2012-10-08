@@ -5,11 +5,9 @@
 // Stalmarck's method is protected by patents covering commercial use.       //
 // ========================================================================= //
 
-namespace Reasoning.Automated.Harrison.Handbook
+module Reasoning.Automated.Harrison.Handbook.stal
 
-module stal =
-    open FSharpx.Compatibility.OCaml
-    open Num
+    open FSharpx.Compatibility.OCaml.Num
 
     open intro
     open formulas

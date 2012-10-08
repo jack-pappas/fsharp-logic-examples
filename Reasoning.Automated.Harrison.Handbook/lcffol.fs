@@ -8,9 +8,8 @@
 //  First order tableau procedure using LCF setup.                            // 
 //  ========================================================================= // 
 
-namespace Reasoning.Automated.Harrison.Handbook
+module Reasoning.Automated.Harrison.Handbook.lcffol
 
-module lcffol =
     open intro
     open formulas
     open prop

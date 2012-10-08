@@ -8,12 +8,10 @@
 // Grobner basis algorithm.                                                  //
 // ========================================================================= //
 
-namespace Reasoning.Automated.Harrison.Handbook
+module Reasoning.Automated.Harrison.Handbook.grobner
 
-module grobner =
+    open FSharpx.Compatibility.OCaml.Num
     open LanguagePrimitives
-    open FSharpx.Compatibility.OCaml
-    open Num
 
     open intro
     open formulas

@@ -11,11 +11,9 @@
 // in our context.                                                           //
 // ========================================================================= //
 
-namespace Reasoning.Automated.Harrison.Handbook
+module Reasoning.Automated.Harrison.Handbook.interpolation
 
-module interpolation =
-    open FSharpx.Compatibility.OCaml
-    open Num
+    open FSharpx.Compatibility.OCaml.Num
 
     open intro
     open formulas

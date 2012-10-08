@@ -25,7 +25,6 @@ let ``sanity check``() =
              (w - x)^4 + (w - y)^4 + (w - z)^4 +
              (x - y)^4 + (x - z)^4 + (y - z)^4) / 6 =
             (w^2 + x^2 + y^2 + z^2)^2"
-    |> fun f -> print_fol_formula f; f
     |> polyatom ["w"; "x"; "y"; "z"]
     |> should equal
     <| Atom (R ("=", [Fn ("0", []); Fn ("0", [])]))
@@ -76,7 +75,6 @@ let ``examples 1`` (f, idx) =
 
 // Helper function
 let private polytest tm =
-    //time (polynate (fvt tm)) tm
     polynate (fvt tm) tm
 
 
@@ -703,7 +701,7 @@ let ``examples 5``() =
     @"forall x y. x^2 + y^2 = 1 ==> (2 * y^2 - 1)^2 + (2 * x * y)^2 = 1"
     |> parse
     |> complex_qelim
-    |> should equal True
+    |> should equal formula<fol>.True
 
 
 (* ------------------------------------------------------------------------- *)
