@@ -326,14 +326,6 @@ module Reasoning.Automated.Harrison.Handbook.cooper
 // Evaluation of constant expressions.                                       //
 // ------------------------------------------------------------------------- //
 
-    /// <summary>Determines if one number is evenly divisible by another number,
-    /// based on the semantics of the OCaml mod (%) operator.</summary>
-    /// <remarks>The standard mod (%) operator in .NET (and in F#) throws a DivideByZeroException
-    /// when 'y' is zero (0); however, the operation x % 0 simply returns zero (0) in OCaml, so
-    /// that is the behavior preserved by this method.</remarks>
-    let private divides (x : num) (y : num) : bool =
-        (y = Int 0) || x % y = (Int 0)
-
     let operations = ["=", (=);
                       "<", (<); 
                       ">", (>);
