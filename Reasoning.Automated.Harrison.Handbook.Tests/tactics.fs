@@ -28,9 +28,12 @@ let ``goal``() =
     let g2 = conj_intro_tac g1
     let g3 = funpow 2 (auto_tac by ["ant"]) g2
     extract_thm g3
-    |> sprint_thm
-    |> should equal "|- (forall x. x <=x) /\ (forall x y z. x <=y /\ y <=z ==> x <=z) /\ (forall x y. f(x) <=y <=> x <=g(y)) ==> (forall x y. x <=y ==> f(x) <=f(y)) /\ (forall x y. x <=y ==> g(x) <=g(y))"
-    
+    |> should equal (parse @"(forall x. x <= x) /\
+                                (forall x y z. x <= y /\ y <= z ==> x <= z) /\
+                                (forall x y. f(x) <= y <=> x <= g(y)) ==>
+                                (forall x y. x <= y ==> f(x) <= f(y)) /\
+                                (forall x y. x <= y ==> g(x) <= g(y))")
+
 // pg. 514
 // ------------------------------------------------------------------------- //
 // All packaged up together.                                                 //
@@ -43,9 +46,11 @@ let ``prove tactics 01``() =
             conj_intro_tac;
             auto_tac by ["ant"];
             auto_tac by ["ant"]] 
-    |> sprint_thm
-    |> should equal "|- (forall x. x <=x) /\ (forall x y z. x <=y /\ y <=z ==> x <=z) /\ (forall x y. f(x) <=y <=> x <=g(y)) ==> (forall x y. x <=y ==> f(x) <=f(y)) /\ (forall x y. x <=y ==> g(x) <=g(y))"
-      
+    |> should equal (parse @"(forall x. x <= x) /\
+                                (forall x y z. x <= y /\ y <= z ==> x <= z) /\
+                                (forall x y. f(x) <= y <=> x <= g(y)) ==>
+                                (forall x y. x <= y ==> f(x) <= f(y)) /\
+                                (forall x y. x <= y ==> g(x) <= g(y))")
 // pg. 518
 // ------------------------------------------------------------------------- //
 // A simple example.                                                         //
@@ -70,8 +75,9 @@ let ``prove tactics 02``() =
     so have (parse @"f(x) * f(y) = f(x)") by ["eq_sym"];
     so conclude (parse @"f(x) <= f(y)") by ["le"];
     qed] 
-    |> sprint_thm
-    |> should equal "|- (forall x y. x <=y <=> x *y =x) /\ (forall x y. f(x *y) =f(x) *f(y)) ==> (forall x y. x <=y ==> f(x) <=f(y))"
+    |> should equal (parse @"(forall x y. x <= y <=> x * y = x) /\
+                                (forall x y. f(x * y) = f(x) * f(y)) ==>
+                                (forall x y. x <= y ==> f(x) <= f(y))")
 
 // ------------------------------------------------------------------------- //
 // More examples not in the main text.                                       //
@@ -92,8 +98,8 @@ let ``prove tactics 03``() =
         take (parset "a");
         so conclude (parse @"p(f(f(f(f(a)))))") by ["C"];
         qed] 
-    |> sprint_thm
-    |> should equal "|- (exists x. p(x)) ==> (forall x. p(x) ==> p(f(x))) ==> (exists y. p(f(f(f(f(y))))))"
+    |> should equal (parse @"(exists x. p(x)) ==>
+                                (forall x. p(x) ==> p(f(x))) ==> (exists y. p(f(f(f(f(y))))))")
 
 // ------------------------------------------------------------------------- //
 // Alternative formulation with lemma construct.                             //
@@ -120,8 +126,8 @@ let ``prove using lemma``() =
         take (parset "a");
         so conclude (parse @"p(f(f(f(f(a)))))") by ["C"];
         qed] 
-    |> sprint_thm
-    |> should equal "|- (exists x. p(x)) ==> (forall x. p(x) ==> p(f(x))) ==> (exists y. p(f(f(f(f(y))))))"
+    |> should equal (parse @"(exists x. p(x)) ==>
+                                (forall x. p(x) ==> p(f(x))) ==> (exists y. p(f(f(f(f(y))))))")
 
 // ------------------------------------------------------------------------- //
 // Examples.                                                                 //
@@ -132,8 +138,7 @@ let ``prove tactics 04``() =
     prove (parse @"p(a) ==> (forall x. p(x) ==> p(f(x))) ==> exists y. p(y) /\ p(f(y))")
             [our thesis at once;
             qed] 
-    |> sprint_thm
-    |> should equal "|- p(a) ==> (forall x. p(x) ==> p(f(x))) ==> (exists y. p(y) /\ p(f(y)))"
+    |> should equal (parse @"p(a) ==> (forall x. p(x) ==> p(f(x))) ==> (exists y. p(y) /\ p(f(y)))")
 
 [<Test>]
 let ``prove tactics 05``() = 
@@ -149,8 +154,8 @@ let ``prove tactics 05``() =
         take (parset "a");
         so our thesis by ["C"];
         qed] 
-    |> sprint_thm
-    |> should equal "|- (exists x. p(x)) ==> (forall x. p(x) ==> p(f(x))) ==> (exists y. p(f(f(f(f(y))))))"
+    |> should equal (parse @"(exists x. p(x)) ==>
+                                (forall x. p(x) ==> p(f(x))) ==> (exists y. p(f(f(f(f(y))))))")
 
 [<Test>]
 let ``prove tactics 06``() = 
@@ -163,8 +168,8 @@ let ``prove tactics 06``() =
             note ("C",(parse @"p(c) ==> p(f(c))")) by ["B"];
             so our thesis by ["C"; "A"];
             qed] 
-    |> sprint_thm
-    |> should equal "|- forall a. p(a) ==> (forall x. p(x) ==> p(f(x))) ==> (exists y. p(y) /\ p(f(y)))"
+    |> should equal (parse @"forall a.
+                                p(a) ==> (forall x. p(x) ==> p(f(x))) ==> (exists y. p(y) /\ p(f(y)))")
 
 [<Test>]
 let ``prove tactics 07``() = 
@@ -175,8 +180,7 @@ let ``prove tactics 07``() =
             conclude (parse @"p(c)") by ["A"];
             our thesis by ["A"; "B"];
             qed] 
-    |> sprint_thm
-    |> should equal "|- p(c) ==> (forall x. p(x) ==> p(f(x))) ==> (exists y. p(y) /\ p(f(y)))"
+    |> should equal (parse @"p(c) ==> (forall x. p(x) ==> p(f(x))) ==> (exists y. p(y) /\ p(f(y)))")
 
 [<Test>]
 let ``prove tactics 08``() = 
@@ -189,8 +193,8 @@ let ``prove tactics 08``() =
             note ("C",(parse @"p(c) ==> p(f(c))")) by ["B"];
             our thesis by ["C"; "A"];
             qed] 
-    |> sprint_thm
-    |> should equal "|- forall a. p(a) ==> (forall x. p(x) ==> p(f(x))) ==> (exists y. p(y) /\ p(f(y)))"
+    |> should equal (parse @"forall a.
+                                p(a) ==> (forall x. p(x) ==> p(f(x))) ==> (exists y. p(y) /\ p(f(y)))")
 
 [<Test>]
 let ``prove tactics 09``() = 
@@ -203,8 +207,8 @@ let ``prove tactics 09``() =
             note ("C",(parse @"p(c) ==> p(f(c))")) by ["B"];
             our thesis by ["C"; "A"; "D"];
             qed] 
-    |> sprint_thm
-    |> should equal "|- forall a. p(a) ==> (forall x. p(x) ==> p(f(x))) ==> (exists y. p(y) /\ p(f(y)))" 
+    |> should equal (parse @"forall a.
+                                p(a) ==> (forall x. p(x) ==> p(f(x))) ==> (exists y. p(y) /\ p(f(y)))")
 
 [<Test>]
 let ``prove tactics 10``() = 
@@ -218,8 +222,7 @@ let ``prove tactics 10``() =
             take (parset "b");
             so our thesis at once;
             qed] 
-    |> sprint_thm
-    |> should equal "|- p(a) \/ p(b) ==> q ==> (exists y. p(y))"
+    |> should equal (parse @"p(a) \/ p(b) ==> q ==> (exists y. p(y))")
         
 [<Test>]
 let ``prove tactics 11``() = 
@@ -238,8 +241,7 @@ let ``prove tactics 11``() =
             take (parset "b");
             so our thesis by ["Step"];
             qed] 
-    |> sprint_thm
-    |> should equal "|- (p(a) \/ p(b)) /\ (forall x. p(x) ==> p(f(x))) ==> (exists y. p(f(y)))"
+    |> should equal (parse @"(p(a) \/ p(b)) /\ (forall x. p(x) ==> p(f(x))) ==> (exists y. p(f(y)))")
 
 [<Test>]
 let ``prove tactics 12``() = 
@@ -252,8 +254,8 @@ let ``prove tactics 12``() =
         take (parset "a");
         our thesis by ["concl"];
         qed] 
-    |> sprint_thm
-    |> should equal "|- (exists x. p(x)) ==> (forall x. p(x) ==> p(f(x))) ==> (exists y. p(f(y)))"
+    |> should equal (parse @"(exists x. p(x)) ==>
+                                (forall x. p(x) ==> p(f(x))) ==> (exists y. p(f(y)))")
 
 [<Test>]
 let ``prove tactics 13``() = 
@@ -265,5 +267,5 @@ let ``prove tactics 13``() =
         note ("bis",(parse @"q(a) ==> p(a)")) by ["B"];
         our thesis by ["von"; "bis"];
         qed] 
-    |> sprint_thm
-    |> should equal "|- (forall x. p(x) ==> q(x)) ==> (forall x. q(x) ==> p(x)) ==> (p(a) <=> q(a))"
+    |> should equal (parse @"(forall x. p(x) ==> q(x)) ==>
+                                (forall x. q(x) ==> p(x)) ==> (p(a) <=> q(a))")
