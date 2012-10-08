@@ -155,24 +155,300 @@ let rec private simson_vars =
 and private simson_zeros =
     ["a_x"; "a_y"; "o_y"]
 
-// TODO : Determine the expected result of this test;
-// ocamltop truncates it so we can't tell what it should be.
-//[<Test>]
-//let ``examples 10``() =
-//    wu simson simson_vars simson_zeros
-//    |> should equal (* ??? *)
+[<Test>]
+let ``examples 10``() =
+    wu simson simson_vars simson_zeros
+    |> should equal
+    <| [Not
+          (Atom
+             (R ("=",
+                 [Fn
+                    ("+",
+                     [Fn
+                        ("+",
+                         [Fn
+                            ("+",
+                             [Fn
+                                ("+",
+                                 [Fn ("0",[]);
+                                  Fn
+                                    ("*",
+                                     [Var "b_x";
+                                      Fn
+                                        ("+",
+                                         [Fn ("0",[]);
+                                          Fn ("*",[Var "b_x"; Fn ("1",[])])])])]);
+                              Fn
+                                ("*",
+                                 [Var "b_y";
+                                  Fn
+                                    ("+",
+                                     [Fn ("0",[]);
+                                      Fn ("*",[Var "b_y"; Fn ("1",[])])])])]);
+                          Fn
+                            ("*",
+                             [Var "c_x";
+                              Fn
+                                ("+",
+                                 [Fn
+                                    ("+",
+                                     [Fn ("0",[]);
+                                      Fn ("*",[Var "b_x"; Fn ("-2",[])])]);
+                                  Fn ("*",[Var "c_x"; Fn ("1",[])])])])]);
+                      Fn
+                        ("*",
+                         [Var "c_y";
+                          Fn
+                            ("+",
+                             [Fn
+                                ("+",
+                                 [Fn ("0",[]);
+                                  Fn ("*",[Var "b_y"; Fn ("-2",[])])]);
+                              Fn ("*",[Var "c_y"; Fn ("1",[])])])])]);
+                  Fn ("0",[])])));
+        Not
+          (Atom
+             (R ("=",
+                 [Fn
+                    ("+",
+                     [Fn
+                        ("+",
+                         [Fn ("0",[]);
+                          Fn
+                            ("*",
+                             [Var "b_x";
+                              Fn
+                                ("+",
+                                 [Fn ("0",[]);
+                                  Fn ("*",[Var "b_x"; Fn ("1",[])])])])]);
+                      Fn
+                        ("*",
+                         [Var "b_y";
+                          Fn
+                            ("+",
+                             [Fn ("0",[]); Fn ("*",[Var "b_y"; Fn ("1",[])])])])]);
+                  Fn ("0",[])])));
+        Not
+          (Atom
+             (R ("=",
+                 [Fn
+                    ("+",
+                     [Fn
+                        ("+",
+                         [Fn ("0",[]); Fn ("*",[Var "b_x"; Fn ("-1",[])])]);
+                      Fn ("*",[Var "c_x"; Fn ("1",[])])]); Fn ("0",[])])));
+        Not
+          (Atom
+             (R ("=",
+                 [Fn
+                    ("+",
+                     [Fn
+                        ("+",
+                         [Fn ("0",[]);
+                          Fn
+                            ("*",
+                             [Var "c_x";
+                              Fn
+                                ("+",
+                                 [Fn ("0",[]);
+                                  Fn ("*",[Var "c_x"; Fn ("1",[])])])])]);
+                      Fn
+                        ("*",
+                         [Var "c_y";
+                          Fn
+                            ("+",
+                             [Fn ("0",[]); Fn ("*",[Var "c_y"; Fn ("1",[])])])])]);
+                  Fn ("0",[])])));
+        Not
+          (Atom
+             (R ("=",
+                 [Fn ("+",[Fn ("0",[]); Fn ("*",[Var "b_x"; Fn ("1",[])])]);
+                  Fn ("0",[])])));
+        Not
+          (Atom
+             (R ("=",
+                 [Fn ("+",[Fn ("0",[]); Fn ("*",[Var "c_x"; Fn ("1",[])])]);
+                  Fn ("0",[])])));
+        Not (Atom (R ("=",[Fn ("-1",[]); Fn ("0",[])])))]
 
 
 (* ------------------------------------------------------------------------- *)
 (* Try without special coordinates.                                          *)
 (* ------------------------------------------------------------------------- *)
 
-// TODO : Determine the expected result of this test;
-// ocamltop truncates it so we can't tell what it should be.
-//[<Test>]
-//let ``examples 11``() =
-//    wu simson (simson_vars @ simson_zeros) []
-//    |> should equal (* ??? *)
+[<Test>]
+let ``examples 11``() =
+    wu simson (simson_vars @ simson_zeros) []
+    |> should equal
+    <| [Not
+          (Atom
+             (R ("=",
+                 [Fn
+                    ("+",
+                     [Fn
+                        ("+",
+                         [Fn
+                            ("+",
+                             [Fn
+                                ("+",
+                                 [Fn ("0",[]);
+                                  Fn
+                                    ("*",
+                                     [Var "a_y";
+                                      Fn
+                                        ("+",
+                                         [Fn ("0",[]);
+                                          Fn ("*",[Var "a_y"; Fn ("1",[])])])])]);
+                              Fn
+                                ("*",
+                                 [Var "a_x";
+                                  Fn
+                                    ("+",
+                                     [Fn ("0",[]);
+                                      Fn ("*",[Var "a_x"; Fn ("1",[])])])])]);
+                          Fn
+                            ("*",
+                             [Var "b_x";
+                              Fn
+                                ("+",
+                                 [Fn
+                                    ("+",
+                                     [Fn ("0",[]);
+                                      Fn ("*",[Var "a_x"; Fn ("-2",[])])]);
+                                  Fn ("*",[Var "b_x"; Fn ("1",[])])])])]);
+                      Fn
+                        ("*",
+                         [Var "b_y";
+                          Fn
+                            ("+",
+                             [Fn
+                                ("+",
+                                 [Fn ("0",[]);
+                                  Fn ("*",[Var "a_y"; Fn ("-2",[])])]);
+                              Fn ("*",[Var "b_y"; Fn ("1",[])])])])]);
+                  Fn ("0",[])])));
+        Not
+          (Atom
+             (R ("=",
+                 [Fn
+                    ("+",
+                     [Fn
+                        ("+",
+                         [Fn
+                            ("+",
+                             [Fn
+                                ("+",
+                                 [Fn ("0",[]);
+                                  Fn
+                                    ("*",
+                                     [Var "a_y";
+                                      Fn
+                                        ("+",
+                                         [Fn ("0",[]);
+                                          Fn ("*",[Var "a_y"; Fn ("1",[])])])])]);
+                              Fn
+                                ("*",
+                                 [Var "a_x";
+                                  Fn
+                                    ("+",
+                                     [Fn ("0",[]);
+                                      Fn ("*",[Var "a_x"; Fn ("1",[])])])])]);
+                          Fn
+                            ("*",
+                             [Var "c_x";
+                              Fn
+                                ("+",
+                                 [Fn
+                                    ("+",
+                                     [Fn ("0",[]);
+                                      Fn ("*",[Var "a_x"; Fn ("-2",[])])]);
+                                  Fn ("*",[Var "c_x"; Fn ("1",[])])])])]);
+                      Fn
+                        ("*",
+                         [Var "c_y";
+                          Fn
+                            ("+",
+                             [Fn
+                                ("+",
+                                 [Fn ("0",[]);
+                                  Fn ("*",[Var "a_y"; Fn ("-2",[])])]);
+                              Fn ("*",[Var "c_y"; Fn ("1",[])])])])]);
+                  Fn ("0",[])])));
+        Not
+          (Atom
+             (R ("=",
+                 [Fn
+                    ("+",
+                     [Fn
+                        ("+",
+                         [Fn
+                            ("+",
+                             [Fn
+                                ("+",
+                                 [Fn ("0",[]);
+                                  Fn
+                                    ("*",
+                                     [Var "b_x";
+                                      Fn
+                                        ("+",
+                                         [Fn ("0",[]);
+                                          Fn ("*",[Var "b_x"; Fn ("1",[])])])])]);
+                              Fn
+                                ("*",
+                                 [Var "b_y";
+                                  Fn
+                                    ("+",
+                                     [Fn ("0",[]);
+                                      Fn ("*",[Var "b_y"; Fn ("1",[])])])])]);
+                          Fn
+                            ("*",
+                             [Var "c_x";
+                              Fn
+                                ("+",
+                                 [Fn
+                                    ("+",
+                                     [Fn ("0",[]);
+                                      Fn ("*",[Var "b_x"; Fn ("-2",[])])]);
+                                  Fn ("*",[Var "c_x"; Fn ("1",[])])])])]);
+                      Fn
+                        ("*",
+                         [Var "c_y";
+                          Fn
+                            ("+",
+                             [Fn
+                                ("+",
+                                 [Fn ("0",[]);
+                                  Fn ("*",[Var "b_y"; Fn ("-2",[])])]);
+                              Fn ("*",[Var "c_y"; Fn ("1",[])])])])]);
+                  Fn ("0",[])])));
+        Not
+          (Atom
+             (R ("=",
+                 [Fn
+                    ("+",
+                     [Fn
+                        ("+",
+                         [Fn ("0",[]); Fn ("*",[Var "a_x"; Fn ("-1",[])])]);
+                      Fn ("*",[Var "b_x"; Fn ("1",[])])]); Fn ("0",[])])));
+        Not
+          (Atom
+             (R ("=",
+                 [Fn
+                    ("+",
+                     [Fn
+                        ("+",
+                         [Fn ("0",[]); Fn ("*",[Var "a_x"; Fn ("-1",[])])]);
+                      Fn ("*",[Var "c_x"; Fn ("1",[])])]); Fn ("0",[])])));
+        Not
+          (Atom
+             (R ("=",
+                 [Fn
+                    ("+",
+                     [Fn
+                        ("+",
+                         [Fn ("0",[]); Fn ("*",[Var "b_x"; Fn ("-1",[])])]);
+                      Fn ("*",[Var "c_x"; Fn ("1",[])])]); Fn ("0",[])])));
+        Not (Atom (R ("=",[Fn ("-1",[]); Fn ("0",[])])))]
 
 
 (* ------------------------------------------------------------------------- *)
@@ -279,10 +555,150 @@ and private butterfly_zeros =
  // This one is costly (too big for laptop, but doable in about 300M)
  // However, it gives exactly the same degenerate conditions as Chou
 
-// TODO : This test needs to be run in the OCaml version of the code
-// to determine the expected result value.
-//[<Test; Category("LongRunning")>]
-//let ``examples 13``() =
-//    wu butterfly butterfly_vars butterfly_zeros
-//    |> should equal (* ??? *)
+[<Test; Category("LongRunning")>]
+let ``examples 13``() =
+    wu butterfly butterfly_vars butterfly_zeros
+    |> should equal
+    <| [Not
+         (Atom
+            (R ("=",
+                [Fn
+                   ("+",
+                    [Fn
+                       ("+",
+                        [Fn
+                           ("+",
+                            [Fn
+                               ("+",
+                                [Fn ("0",[]);
+                                 Fn
+                                   ("*",
+                                    [Var "e_x";
+                                     Fn
+                                       ("+",
+                                        [Fn
+                                           ("+",
+                                            [Fn ("0",[]);
+                                             Fn
+                                               ("*",[Var "b_y"; Fn ("1",[])])]);
+                                         Fn ("*",[Var "c_y"; Fn ("-1",[])])])])]);
+                             Fn
+                               ("*",
+                                [Var "e_y";
+                                 Fn
+                                   ("+",
+                                    [Fn
+                                       ("+",
+                                        [Fn ("0",[]);
+                                         Fn ("*",[Var "b_x"; Fn ("-1",[])])]);
+                                     Fn ("*",[Var "c_x"; Fn ("1",[])])])])]);
+                         Fn
+                           ("*",
+                            [Var "f_x";
+                             Fn
+                               ("+",
+                                [Fn
+                                   ("+",
+                                    [Fn ("0",[]);
+                                     Fn ("*",[Var "b_y"; Fn ("-1",[])])]);
+                                 Fn ("*",[Var "c_y"; Fn ("1",[])])])])]);
+                     Fn
+                       ("*",
+                        [Var "f_y";
+                         Fn
+                           ("+",
+                            [Fn
+                               ("+",
+                                [Fn ("0",[]);
+                                 Fn ("*",[Var "b_x"; Fn ("1",[])])]);
+                             Fn ("*",[Var "c_x"; Fn ("-1",[])])])])]);
+                 Fn ("0",[])])));
+       Not
+         (Atom
+            (R ("=",
+                [Fn
+                   ("+",
+                    [Fn
+                       ("+",
+                        [Fn
+                           ("+",
+                            [Fn ("0",[]);
+                             Fn
+                               ("*",
+                                [Var "b_y";
+                                 Fn
+                                   ("+",
+                                    [Fn
+                                       ("+",
+                                        [Fn ("0",[]);
+                                         Fn ("*",[Var "a_x"; Fn ("1",[])])]);
+                                     Fn ("*",[Var "c_x"; Fn ("-1",[])])])])]);
+                         Fn
+                           ("*",
+                            [Var "c_y";
+                             Fn
+                               ("+",
+                                [Fn
+                                   ("+",
+                                    [Fn ("0",[]);
+                                     Fn ("*",[Var "b_x"; Fn ("1",[])])]);
+                                 Fn ("*",[Var "d_x"; Fn ("-1",[])])])])]);
+                     Fn
+                       ("*",
+                        [Var "d_y";
+                         Fn
+                           ("+",
+                            [Fn
+                               ("+",
+                                [Fn ("0",[]);
+                                 Fn ("*",[Var "a_x"; Fn ("-1",[])])]);
+                             Fn ("*",[Var "c_x"; Fn ("1",[])])])])]);
+                 Fn ("0",[])])));
+       Not
+         (Atom
+            (R ("=",
+                [Fn
+                   ("+",
+                    [Fn
+                       ("+",[Fn ("0",[]); Fn ("*",[Var "a_x"; Fn ("1",[])])]);
+                     Fn ("*",[Var "c_x"; Fn ("-1",[])])]); Fn ("0",[])])));
+       Not
+         (Atom
+            (R ("=",
+                [Fn
+                   ("+",
+                    [Fn
+                       ("+",
+                        [Fn ("0",[]);
+                         Fn
+                           ("*",
+                            [Var "e_x";
+                             Fn
+                               ("+",
+                                [Fn
+                                   ("+",
+                                    [Fn ("0",[]);
+                                     Fn ("*",[Var "a_x"; Fn ("-1",[])])]);
+                                 Fn ("*",[Var "d_x"; Fn ("1",[])])])])]);
+                     Fn
+                       ("*",
+                        [Var "e_y";
+                         Fn
+                           ("+",
+                            [Fn ("0",[]); Fn ("*",[Var "d_y"; Fn ("1",[])])])])]);
+                 Fn ("0",[])])));
+       Not
+         (Atom
+            (R ("=",
+                [Fn
+                   ("+",
+                    [Fn
+                       ("+",[Fn ("0",[]); Fn ("*",[Var "e_x"; Fn ("1",[])])]);
+                     Fn ("*",[Var "f_x"; Fn ("-1",[])])]); Fn ("0",[])])));
+       Not
+         (Atom
+            (R ("=",
+                [Fn ("+",[Fn ("0",[]); Fn ("*",[Var "e_y"; Fn ("1",[])])]);
+                 Fn ("0",[])])));
+       Not (Atom (R ("=",[Fn ("1",[]); Fn ("0",[])])))]
 
