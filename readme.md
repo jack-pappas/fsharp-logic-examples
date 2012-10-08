@@ -4,6 +4,16 @@ Logic Programming in F#
 
 ---
 
+### Needed for Installation ###
+
+This is a [Microsoft Visual Studio] (http://www.microsoft.com/visualstudio/eng/products/visual-studio-overview) 2010 Solution using F#, NUnit and NuGet.
+
+You will need to install [NuGet] (http://nuget.codeplex.com/)to get additional required libraries.
+You will need to install [NUnit] (http://www.nunit.org/
+) to run the unit test.
+You will need to build the application once you have NuGet installed and the solution open in Visual Studio.
+
+
 ### Interesting changes from OCaml to F# ###
 
 - OCaml exceptions changed to F# `'T option`.
