@@ -39,10 +39,10 @@ open Reasoning.Automated.Harrison.Handbook.decidable
 // ------------------------------------------------------------------------- //
 
 //pg. 309
-// Process is terminated due to StackOverflowException, even with 10MB stack
+// Process is terminated due to StackOverflowException, even with 16MB stack
 meson002 (parse @"forall x. p(x)")
 
-// Process is terminated due to StackOverflowException, even with 10MB stack
+// Process is terminated due to StackOverflowException, even with 16MB stack
 tab (parse @"forall x. p(x)") 
 
 // pg. 309
@@ -100,7 +100,7 @@ print_fol_formula (pnf fm001)
 // ------------------------------------------------------------------------- //
 
 // Real: 00:03:13.533, CPU: 00:05:45.906, GC gen0: 35, gen1: 20, gen2: 0
-Initialization.runWithStackFrame 10000000 (fun () ->
+Initialization.runWith16MBStack (fun () ->
     aedecide (parse @"
     (forall x. P(1,x,x)) /\ (forall x. P(x,x,1)) /\
     (forall u v w x y z.
@@ -108,7 +108,7 @@ Initialization.runWithStackFrame 10000000 (fun () ->
     ==> forall a b c. P(a,b,c) ==> P(b,a,c)"))
   
 // Real: 00:11:45.855, CPU: 00:11:43.421, GC gen0: 55, gen1: 19, gen2: 1
-Initialization.runWithStackFrame 10000000 (fun () ->
+Initialization.runWith16MBStack (fun () ->
     aedecide (parse @"
     (forall x. P(x,x,1)) /\
     (forall u v w x y z.
@@ -120,7 +120,7 @@ Initialization.runWithStackFrame 10000000 (fun () ->
 // A bigger example.                                                         //
 // ------------------------------------------------------------------------- //
 
-Initialization.runWithStackFrame 10000000 (fun () -> 
+Initialization.runWith16MBStack (fun () -> 
     aedecide (parse @"
     (exists x. P(x)) /\ (exists x. G(x))
     ==> ((forall x. P(x) ==> H(x)) /\ (forall x. G(x) ==> J(x)) <=>
@@ -215,8 +215,8 @@ decide_fmp
     (forall x y z. R(x,y) /\ R(y,z) ==> R(x,z)) ==> forall x. R(x,x)")
 
 //** This fails to terminate: has countermodels, but only infinite ones
-// Process is terminated due to StackOverflowException, even with 10MB stack
-Initialization.runWithStackFrame 10000000 (fun () -> 
+// Process is terminated due to StackOverflowException, even with 16MB stack
+Initialization.runWith16MBStack (fun () -> 
     decide_fmp (parse @"
     ~((forall x. ~R(x,x)) /\ 
     (forall x. exists z. R(x,z)) /\ 
