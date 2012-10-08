@@ -101,9 +101,10 @@ let test_interp fm =
 [<Test>]
 let ``test interp``() =   
     test_interp (parse @"forall x. P(x) ==> exists y. forall z. P(z) ==> Q(y)")
-    |> sprint_fol_formula
-    |> should equal "<<forall v_2. exists v_1. (~P(v_2) \/ ~P(v_2) \/ Q(v_1)) \/ (~P(v_2) \/ ~P(v_2) \/ Q(v_1)) /\ (~P(v_2) \/ Q(v_1))>>
-"
+    |> should equal (parse @"forall v_2.
+                                exists v_1.
+                                  (~P(v_2) \/ ~P(v_2) \/ Q(v_1)) \/
+                                  (~P(v_2) \/ ~P(v_2) \/ Q(v_1)) /\ (~P(v_2) \/ Q(v_1))")
 
 // ------------------------------------------------------------------------- //
 // Hintikka's examples.                                                      //
