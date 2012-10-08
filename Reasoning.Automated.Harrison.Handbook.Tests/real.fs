@@ -64,7 +64,7 @@ let ``examples 2``() =
              (forall x y. 1 < x /\ 1 < y ==> 1 < x * (1 + 2 * y))"
     |> parse
     |> real_qelim
-    |> should equal True
+    |> should equal formula<fol>.True
 
 
 // TODO : Add the other test in this section; ocamltop truncates the
@@ -83,6 +83,6 @@ let ``examples 3``() =
      <=> d^4 = 1"
     |> parse
     |> real_qelim'
-    |> should equal True
+    |> should equal formula<fol>.True
 
 
