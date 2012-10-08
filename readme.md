@@ -6,12 +6,14 @@ Logic Programming in F#
 
 ### Needed for Installation ###
 
-This is a [Microsoft Visual Studio] (http://www.microsoft.com/visualstudio/eng/products/visual-studio-overview) 2010 Solution using F#, NUnit and NuGet.
+The solution uses F# 2.0 and .NET framework 4.0 inside [Visual Studio 2010] (http://www.microsoft.com/visualstudio/eng/products/visual-studio-overview).
 
-You will need to install [NuGet] (http://nuget.codeplex.com/) to get additional required libraries.
-You will need to install [NUnit] (http://www.nunit.org/
-) to run the unit test.
-You will need to build the application once you have NuGet installed and the solution open in Visual Studio.
+You will need to install [NuGet] (http://nuget.codeplex.com/) to get additional required libraries. 
+After installing NuGet, make sure to enable "Allow NuGet to download missing packages during build". 
+[This setting](http://docs.nuget.org/docs/workflows/using-nuget-without-committing-packages) is under Options -> Package Manager -> General.
+You will have to build the application once you have NuGet installed and the solution open in Visual Studio.
+
+[NUnit] (http://www.nunit.org/) is recommended to run the unit tests.
 
 
 ### Interesting changes from OCaml to F# ###
@@ -32,7 +34,7 @@ You will need to build the application once you have NuGet installed and the sol
 
 ### F# porting notes ###
  - Turned off the F# compiler warning `FS0025` (about incomplete pattern matches). These matches are found throughout the original OCaml code and eliminating them *correctly* would require extensive changes to the code; so, for compatibility purposes, the code has been left as-is and the warning disabled to promote readability.
- - Run a few examples with 10MB stack using `runWithStackFrame` in `initialization.fsx`. These examples result in stackoverflow exception in F# on Windows due to small 1MB stack (see extensive discussion [here](http://stackoverflow.com/questions/7947446/why-does-f-impose-a-low-limit-on-stack-size)).
+ - Run a few examples with 16MB stack (the default limit set by OCaml version) using `runWith16MBStack` in `initialization.fsx`. These examples result in `StackOverflowException` in F# on Windows due to small 1MB stack (see extensive discussion [here](http://stackoverflow.com/questions/7947446/why-does-f-impose-a-low-limit-on-stack-size)).
  - Redefined `Failure` active patterns to accommodate `KeyNotFoundException`, `ArgumentException`, etc. The OCaml version makes use of `Failure` as a control flow; the F# version throws different kinds of exceptions which weren't caught by default `Failure`. The active pattern might be updated to handle other exceptions later (see the detailed function in the beginning of `lib.fs`).
  
 ### Unit tests ###
