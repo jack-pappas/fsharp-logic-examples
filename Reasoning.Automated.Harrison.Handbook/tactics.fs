@@ -329,7 +329,7 @@ module Reasoning.Automated.Harrison.Handbook.tactics
         imp_swap (funpow (i - 1) (unshunt << imp_front 2) th1)
 
     let assume lps (Goals((asl, Imp (p, q)) :: gls, jfn)) =
-        if end_itlist mk_and (List.map snd lps) <> p then
+        if List.reduceBack mk_and (List.map snd lps) <> p then
             failwith "assume"
         else
             let jfn' th =
