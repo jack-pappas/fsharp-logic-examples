@@ -85,7 +85,7 @@
       <HintPath>D:\Program Files (x86)\FSharpPowerPack-2.0.0.0\bin\FSharp.PowerPack.dll</HintPath>
     </Reference>
     <Reference Include="FSharpx.Compatibility.OCaml">
-      <HintPath>..\packages\FSharpx.Compatibility.OCaml.0.1.0\lib\net40\FSharpx.Compatibility.OCaml.dll</HintPath>
+      <HintPath>..\packages\FSharpx.Compatibility.OCaml.0.1.1\lib\net40\FSharpx.Compatibility.OCaml.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="mscorlib" />
