@@ -81,10 +81,10 @@ let private polytest tm =
 [<Test>]
 let ``lagrange_4``() =
     parset @"((w + x)^4 + (w + y)^4 + (w + z)^4 +
-             (x + y)^4 + (x + z)^4 + (y + z)^4 +
-             (w - x)^4 + (w - y)^4 + (w - z)^4 +
-             (x - y)^4 + (x - z)^4 + (y - z)^4) / 6 =
-            (w^2 + x^2 + y^2 + z^2)^2"
+              (x + y)^4 + (x + z)^4 + (y + z)^4 +
+              (w - x)^4 + (w - y)^4 + (w - z)^4 +
+              (x - y)^4 + (x - z)^4 + (y - z)^4) / 6 -
+              (w^2 + x^2 + y^2 + z^2)^2"
     |> polytest
     |> should equal
     <| Fn ("0", [])

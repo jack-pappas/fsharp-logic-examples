@@ -389,7 +389,7 @@ module Reasoning.Automated.Harrison.Handbook.cooper
                       ">", (>);
                       "<=", (<=);
                       ">=", (>=);
-                      "divides", (fun x y -> y % x = Int 0); ] // NB: Fixed bug with order of arguments. Not sure the above remark is correct; OCaml also throws division by zero exception
+                      "divides", (fun x y -> y % x = GenericZero); ] // NB: Fixed bug with order of arguments. Not sure the above remark is correct; OCaml also throws division by zero exception
 
 //    // OCaml: val evalc : fol formula -> fol formula = <fun>
 //    // F#:    val evalc : (fol formula -> fol formula)
