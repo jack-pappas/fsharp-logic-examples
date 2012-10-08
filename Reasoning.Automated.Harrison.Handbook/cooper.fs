@@ -40,7 +40,6 @@ module Reasoning.Automated.Harrison.Handbook.cooper
 // Cooper's algorithm for Presburger arithmetic.                             //
 // ========================================================================= //
 
-    // OCaml: val zero : term = <<|0|>>
     let zero = Fn ("0",[])
 
 // pg.338
@@ -48,35 +47,22 @@ module Reasoning.Automated.Harrison.Handbook.cooper
 // Lift operations up to numerals.                                           //
 // ------------------------------------------------------------------------- //
 
-    // TODO: is (string n) faster or more accurate then (n.ToString()) ?
-  
-    // OCaml: val mk_numeral : num -> term = <fun>
-    // F#:    val mk_numeral : num -> term
     let mk_numeral (n : num) =
         Fn (n.ToString(), [])
 
-    // Convert a term to a F# BigIntenger, i.e. OCaml Num
-    // OCaml: val dest_numeral : term -> num        = <fun>
-    // F#:    val dest_numeral : term -> num
     let dest_numeral = function
         | Fn (ns, []) ->
             num_of_string ns
         | _ ->
             failwith "dest_numeral"
 
-    // OCaml: val is_numeral :  term -> bool = <fun>
-    // F#:    val is_numeral : (term -> bool)
     let inline is_numeral tm =
         can dest_numeral tm
 
-    // OCaml: val numeral1 : (num -> num) -> term -> term = <fun>
-    // F#:    val numeral1 : (num -> num) -> term -> term
     let numeral1 fn n =
         fn (dest_numeral n)
         |> mk_numeral
 
-    // OCaml: val numeral2 : (num -> num -> num) -> term -> term -> term = <fun>
-    // F#:    val numeral2 : (num -> num -> num) -> term -> term -> term
     let numeral2 fn m n =
         fn (dest_numeral m) (dest_numeral n)
         |> mk_numeral
@@ -90,8 +76,6 @@ module Reasoning.Automated.Harrison.Handbook.cooper
 // even if it's zero. Thus, it's a constant iff not an addition term.        //
 // ------------------------------------------------------------------------- //
 
-    // OCaml: val linear_cmul : num        -> term -> term = <fun>
-    // F#:    val linear_cmul : num        -> term -> term
     let rec linear_cmul (n : num) tm =
         if n = GenericZero then zero
         else
@@ -100,8 +84,6 @@ module Reasoning.Automated.Harrison.Handbook.cooper
                 Fn ("+", [Fn("*", [numeral1 ((*) n) c; x]); linear_cmul n r])
             | k -> numeral1 ((*) n) k
 
-    // OCaml: val linear_add : string list -> term -> term -> term = <fun>
-    // F#:    val linear_add : string list -> term -> term -> term
     let rec linear_add vars tm1 tm2 =
         match tm1, tm2 with
         | Fn ("+", [Fn ("*", [c1; Var x1]); r1]), Fn ("+", [Fn ("*", [c2; Var x2]); r2]) ->
@@ -123,19 +105,13 @@ module Reasoning.Automated.Harrison.Handbook.cooper
         | _ ->
             numeral2 (+) tm1 tm2
 
-    // OCaml: val linear_neg : term -> term = <fun>
-    // F#:    val linear_neg : term -> term 
     let inline linear_neg tm =
         linear_cmul -GenericOne tm
 
-    // OCaml: val linear_sub : string list -> term -> term -> term = <fun>
-    // F#:    val linear_sub : string list -> term -> term -> term
     let inline linear_sub vars tm1 tm2 =
         linear_neg tm2
         |> linear_add vars tm1
 
-    // OCaml: val linear_mul : term -> term -> term = <fun>
-    // F#:    val linear_mul : term -> term -> term
     let linear_mul tm1 tm2 =
         if is_numeral tm1 then
             linear_cmul (dest_numeral tm1) tm2
@@ -149,8 +125,6 @@ module Reasoning.Automated.Harrison.Handbook.cooper
 // Linearize a term.                                                         //
 // ------------------------------------------------------------------------- //
 
-    // OCaml: val lint : string list -> term -> term = <fun>
-    // F#:    val lint : string list -> term -> term
     let rec lint vars tm =
         match tm with
         | Var _ ->
@@ -172,13 +146,9 @@ module Reasoning.Automated.Harrison.Handbook.cooper
 // Linearize the atoms in a formula, and eliminate non-strict inequalities.  //
 // ------------------------------------------------------------------------- //
 
-    // OCaml: val mkatom : string list -> string -> term -> fol formula
-    // F#:    val mkatom : string list -> string -> term -> fol formula
     let mkatom vars p t =
         Atom (R (p, [zero; lint vars t]))
 
-    // OCaml: val linform : string list -> fol formula -> fol formula = <fun>
-    // F#:    val linform : string list -> fol formula -> fol formula
     let linform vars fm =
         match fm with
         | Atom (R ("divides", [c; t])) ->
@@ -200,8 +170,6 @@ module Reasoning.Automated.Harrison.Handbook.cooper
 // Post-NNF transformation eliminating negated inequalities.                 //
 // ------------------------------------------------------------------------- //
     
-    // OCaml: val posineq : fol formula -> fol formula = <fun>
-    // F#:    val posineq : fol formula -> fol formula
     let rec posineq = function
         | Not (Atom (R ("<", [Fn ("0", []); t]))) ->
             Atom (R ("<", [zero; linear_sub [] (Fn ("1", [])) t]))
@@ -213,8 +181,6 @@ module Reasoning.Automated.Harrison.Handbook.cooper
 // Find the LCM of the coefficients of x.                                    //
 // ------------------------------------------------------------------------- //
 
-    // OCaml: val formlcm : term -> fol formula -> num        = <fun>
-    // F#:    val formlcm : term -> fol formula -> num
     let rec formlcm x fm : num =
         match fm with
         | Atom (R (p, [_; Fn ("+", [Fn ("*", [c; y]); z])]))
@@ -233,8 +199,6 @@ module Reasoning.Automated.Harrison.Handbook.cooper
 // Adjust all coefficients of x in formula; fold in reduction to +/- 1.      //
 // ------------------------------------------------------------------------- //
 
-    // OCaml: val adjustcoeff : term -> num        -> fol formula -> fol formula = <fun>
-    // F#:    val adjustcoeff : term -> num        -> fol formula -> fol formula
     let rec adjustcoeff x l fm =
         match fm with
         | Atom (R (p, [d; Fn ("+", [Fn ("*", [c; y]); z])]))
@@ -256,8 +220,6 @@ module Reasoning.Automated.Harrison.Handbook.cooper
 // Hence make coefficient of x one in existential formula.                   //
 // ------------------------------------------------------------------------- //
 
-    // OCaml: val unitycoeff : term -> fol formula -> fol formula = <fun>
-    // F#:    val unitycoeff : term -> fol formula -> fol formula
     let unitycoeff x fm =
         let l = formlcm x fm
         let fm' = adjustcoeff x l fm
@@ -271,8 +233,6 @@ module Reasoning.Automated.Harrison.Handbook.cooper
 // The "minus infinity" version.                                             //
 // ------------------------------------------------------------------------- //
 
-    // OCaml: val minusinf : term -> fol formula -> fol formula = <fun>
-    // F#:    val minusinf : term -> fol formula -> fol formula
     let rec minusinf x fm =
         match fm with
         | Atom (R ("=", [Fn ("0", []); Fn ("+", [Fn ("*", [Fn ("1", []); y]); a])]))
@@ -294,8 +254,6 @@ module Reasoning.Automated.Harrison.Handbook.cooper
 // The LCM of all the divisors that involve x.                               //
 // ------------------------------------------------------------------------- //
 
-    // OCaml: val divlcm : term -> fol formula -> num        = <fun>
-    // F#:    val divlcm : term -> fol formula -> num
     let rec divlcm x fm : num =
         match fm with
         | Atom (R ("divides", [d; Fn ("+", [Fn ("*", [c; y]); a])]))
@@ -314,8 +272,6 @@ module Reasoning.Automated.Harrison.Handbook.cooper
 // Construct the B-set.                                                      //
 // ------------------------------------------------------------------------- //
 
-    // OCaml: val bset : term -> fol formula -> term list = <fun>
-    // F#:    val bset : term -> fol formula -> term list
     let rec bset x fm =
         match fm with
         | Not (Atom (R ("=", [Fn ("0", []); Fn ("+", [Fn ("*", [Fn ("1", []); y]); a])])))
@@ -340,8 +296,6 @@ module Reasoning.Automated.Harrison.Handbook.cooper
 // Replace top variable with another linear form, retaining canonicality.    //
 // ------------------------------------------------------------------------- //
 
-    // OCaml: val linrep : string list -> term -> term -> fol formula -> fol formula = <fun>
-    // F#:    val linrep : string list -> term -> term -> fol formula -> fol formula
     let rec linrep vars x t fm =
         match fm with
         | Atom (R (p, [d; Fn ("+", [Fn ("*", [c; y]); a])]))
@@ -361,8 +315,6 @@ module Reasoning.Automated.Harrison.Handbook.cooper
 // Hence the core quantifier elimination procedure.                          //
 // ------------------------------------------------------------------------- //
 
-    // OCaml: val cooper : string list -> fol formula -> fol formula = <fun>
-    // F#:    val cooper : string list -> fol formula -> fol formula
     let cooper vars fm =
         match fm with
         | Exists (x0, p0) ->
@@ -398,28 +350,13 @@ module Reasoning.Automated.Harrison.Handbook.cooper
     let private divides (x : num) (y : num) : bool =
         (y = Int 0) || x % y = (Int 0)
 
-    // OCaml: val operations : (string * (num        -> num        -> bool)) list = [("=", <fun>);                ("<", <fun>);                  (">", <fun>);                  ("<=", <fun>);                  (">=", <fun>);                  ("divides", <fun>)]
-    // F#:    val operations : (string * (num        -> num        -> bool)) list = [("=", <fun:operations@401>); ("<", <fun:operations@402-1>); (">", <fun:operations@403-2>); ("<=", <fun:operations@404-3>); (">=", <fun:operations@405-4>); ("divides", <fun:operations@406-5>)]
     let operations = ["=", (=);
                       "<", (<); 
                       ">", (>);
                       "<=", (<=);
                       ">=", (>=);
-                      "divides", (fun x y -> y % x = Int 0); ] // NB: Fixed bug with order of arguments. Not sure the above remark is correct; OCaml also throws division by zero exception
+                      "divides", (fun x y -> y % x = GenericZero); ] // NB: Fixed bug with order of arguments. Not sure the above remark is correct; OCaml also throws division by zero exception
 
-//    // OCaml: val evalc : fol formula -> fol formula = <fun>
-//    // F#:    val evalc : (fol formula -> fol formula)
-//    let evalc = 
-//        onatoms (fun (R(p,[s;t]) as at) ->
-//            try 
-//              if assoc p operations (dest_numeral s) (dest_numeral t)
-//              then True 
-//              else False
-//            with 
-//            | Failure _ -> Atom at)
-
-    // OCaml: val evalc : fol formula -> fol formula = <fun>
-    // F#:    val evalc : (fol formula -> fol formula)
     let evalc = 
         let v1 = (fun (R(p,[s;t]) as at) ->
             try 
@@ -435,8 +372,6 @@ module Reasoning.Automated.Harrison.Handbook.cooper
 // Overall function.                                                         //
 // ------------------------------------------------------------------------- //
 
-    // OCaml: val integer_qelim : fol formula -> fol formula = <fun>
-    // F#:    val integer_qelim : (fol formula -> fol formula)
     let integer_qelim = 
         simplify004
         << evalc
@@ -447,7 +382,6 @@ module Reasoning.Automated.Harrison.Handbook.cooper
 // Natural number version.                                                   //
 // ------------------------------------------------------------------------- //
 
-    // F#: val relativize : (string -> 'a formula) -> 'a formula -> 'a formula
     let rec relativize r fm =
         match fm with
         | Not p ->
@@ -466,7 +400,6 @@ module Reasoning.Automated.Harrison.Handbook.cooper
             Exists (x, And (r x, relativize r p))
         | _ -> fm
 
-    // F#: val natural_qelim : (fol formula -> fol formula)
     let natural_qelim =
         integer_qelim
         << relativize (fun x ->
