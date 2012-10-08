@@ -6,9 +6,9 @@
 
 module Reasoning.Automated.Harrison.Handbook.rewrite
 
-    open formulas
-    open folMod
-    open resolution
+open formulas
+open folMod
+open resolution
 
 //
 // ========================================================================= //
@@ -20,29 +20,29 @@ module Reasoning.Automated.Harrison.Handbook.rewrite
 // Rewriting at the top level with first of list of equations.               //
 // ------------------------------------------------------------------------- //
 
-    let rec rewrite1 eqs t =
-        match eqs with
-        | Atom (R ("=", [l; r])) :: oeqs -> 
-            try 
-                tsubst (term_match undefined [l, t]) r
-            with _ ->
-                rewrite1 oeqs t
-        | _ -> failwith "rewrite1"
+let rec rewrite1 eqs t =
+    match eqs with
+    | Atom (R ("=", [l; r])) :: oeqs -> 
+        try 
+            tsubst (term_match undefined [l, t]) r
+        with _ ->
+            rewrite1 oeqs t
+    | _ -> failwith "rewrite1"
 
 // pg. 263
 // ------------------------------------------------------------------------- //
 // Rewriting repeatedly and at depth (top-down).                             //
 // ------------------------------------------------------------------------- //
 
-    let rec rewrite eqs tm =
-        try rewrite eqs (rewrite1 eqs tm)
-        with _ ->
-            match tm with
-            | Var x -> tm
-            | Fn (f, args) -> 
-                let tm' = Fn (f, List.map (rewrite eqs) args)
-                if tm' = tm then tm 
-                else rewrite eqs tm'
+let rec rewrite eqs tm =
+    try rewrite eqs (rewrite1 eqs tm)
+    with _ ->
+        match tm with
+        | Var x -> tm
+        | Fn (f, args) -> 
+            let tm' = Fn (f, List.map (rewrite eqs) args)
+            if tm' = tm then tm 
+            else rewrite eqs tm'
                 
 // ------------------------------------------------------------------------- //
 // Note that ML doesn't accept nonlinear patterns.                           //
