@@ -131,28 +131,48 @@ let ``prog_suc 3``() =
 [<Test>]
 let ``robeval``() =
     robeval (parset "S(0) + (S(S(0)) * ((S(0) + S(S(0)) + S(0))))") 
-    |> sprint_thm
-    |> should equal "|- (forall m n. S(m) =S(n) ==> m =n) /\ (forall n. ~n =0 <=> (exists m. n =S(m))) /\ (forall n. 0 +n =n) /\ (forall m n. S(m) +n =S(m +n)) /\ (forall n. 0 *n =0) /\ (forall m n. S(m) *n =n +m *n) /\ (forall m n. m <=n <=> (exists d. m +d =n)) /\ (forall m n. m <n <=> S(m) <=n) ==> S(0) +S(S(0)) *(S(0) +S(S(0)) +S(0)) =S(S(S(S(S(S(S(S(S(0)))))))))"
-        
+    |> should equal (parse @"(forall m n. S(m) = S(n) ==> m = n) /\
+                                (forall n. ~n = 0 <=> (exists m. n = S(m))) /\
+                                (forall n. 0 + n = n) /\
+                                (forall m n. S(m) + n = S(m + n)) /\
+                                (forall n. 0 * n = 0) /\
+                                (forall m n. S(m) * n = n + m * n) /\
+                                (forall m n. m <= n <=> (exists d. m + d = n)) /\ (forall m n. m < n <=> S(m) <= n) ==> S(0) + S(S(0)) *
+                                (S(0) + S(S(0)) + S(0)) = S(S(S(S(S(S(S(S(S(0)))))))))")
+
 // pg. 570
 [<Test>]
 let ``rob_ne 1``() =
     rob_ne (parset "S(0) + S(0) + S(0)") (parset "S(S(0)) * S(S(0))") 
-    |> sprint_thm
-    |> should equal "|- (forall m n. S(m) =S(n) ==> m =n) /\ (forall n. ~n =0 <=> (exists m. n =S(m))) /\ (forall n. 0 +n =n) /\ (forall m n. S(m) +n =S(m +n)) /\ (forall n. 0 *n =0) /\ (forall m n. S(m) *n =n +m *n) /\ (forall m n. m <=n <=> (exists d. m +d =n)) /\ (forall m n. m <n <=> S(m) <=n) ==> S(0) +S(0) +S(0) =S(S(0)) *S(S(0)) ==> false"
+    |> should equal (parse @"(forall m n. S(m) = S(n) ==> m = n) /\
+                                (forall n. ~n = 0 <=> (exists m. n = S(m))) /\ (forall n. 0 + n = n) /\
+                                (forall m n. S(m) + n = S(m + n)) /\
+                                (forall n. 0 * n = 0) /\
+                                (forall m n. S(m) * n = n + m * n) /\
+                                (forall m n. m <= n <=> (exists d. m + d = n)) /\ (forall m n. m < n <=> S(m) <= n) ==>
+                                S(0) + S(0) + S(0) = S(S(0)) * S(S(0)) ==> false")
 
 [<Test>]
 let ``rob_ne 2``() =
     rob_ne (parset "0 + 0 * S(0)") (parset "S(S(0)) + 0") 
-    |> sprint_thm
-    |> should equal "|- (forall m n. S(m) =S(n) ==> m =n) /\ (forall n. ~n =0 <=> (exists m. n =S(m))) /\ (forall n. 0 +n =n) /\ (forall m n. S(m) +n =S(m +n)) /\ (forall n. 0 *n =0) /\ (forall m n. S(m) *n =n +m *n) /\ (forall m n. m <=n <=> (exists d. m +d =n)) /\ (forall m n. m <n <=> S(m) <=n) ==> 0 +0 *S(0) =S(S(0)) +0 ==> false"
+    |> should equal (parse @"(forall m n. S(m) = S(n) ==> m = n) /\
+                                (forall n. ~n = 0 <=> (exists m. n = S(m))) /\ (forall n. 0 + n = n) /\
+                                (forall m n. S(m) + n = S(m + n)) /\
+                                (forall n. 0 * n = 0) /\
+                                (forall m n. S(m) * n = n + m * n) /\
+                                (forall m n. m <= n <=> (exists d. m + d = n)) /\ (forall m n. m < n <=> S(m) <= n) ==>
+                                0 + 0 * S(0) = S(S(0)) + 0 ==> false")
 
 [<Test>]
 let ``rob_ne 3``() =
     rob_ne (parset "S(S(0)) + 0") (parset "0 + 0 + 0 * 0") 
-    |> sprint_thm
-    |> should equal "|- (forall m n. S(m) =S(n) ==> m =n) /\ (forall n. ~n =0 <=> (exists m. n =S(m))) /\ (forall n. 0 +n =n) /\ (forall m n. S(m) +n =S(m +n)) /\ (forall n. 0 *n =0) /\ (forall m n. S(m) *n =n +m *n) /\ (forall m n. m <=n <=> (exists d. m +d =n)) /\ (forall m n. m <n <=> S(m) <=n) ==> S(S(0)) +0 =0 +0 +0 *0 ==> false"
-
+    |> should equal (parse @"(forall m n. S(m) = S(n) ==> m = n) /\
+                                (forall n. ~n = 0 <=> (exists m. n = S(m))) /\ (forall n. 0 + n = n) /\
+                                (forall m n. S(m) + n = S(m + n)) /\
+                                (forall n. 0 * n = 0) /\
+                                (forall m n. S(m) * n = n + m * n) /\
+                                (forall m n. m <= n <=> (exists d. m + d = n)) /\ (forall m n. m < n <=> S(m) <= n) ==>
+                                S(S(0)) + 0 = 0 + 0 + 0 * 0 ==> false")
 // pg. 573
 // ------------------------------------------------------------------------- //
 // Example in the text.                                                      //
@@ -160,10 +180,16 @@ let ``rob_ne 3``() =
 
 [<Test>]
 let ``sigma_prove``() =
-    sigma_prove (parse @"exists p. S(S(0)) <= p /\ forall n. n < p ==> (exists x. x <= p /\ p = n * x) ==> n = S(0)") 
-    |> sprint_thm
-    |> should equal "|- (forall m n. S(m) =S(n) ==> m =n) /\ (forall n. ~n =0 <=> (exists m. n =S(m))) /\ (forall n. 0 +n =n) /\ (forall m n. S(m) +n =S(m +n)) /\ (forall n. 0 *n =0) /\ (forall m n. S(m) *n =n +m *n) /\ (forall m n. m <=n <=> (exists d. m +d =n)) /\ (forall m n. m <n <=> S(m) <=n) ==> (exists p. S(S(0)) <=p /\ (forall n. n <p ==> (exists x. x <=p /\ p =n *x) ==> n =S(0)))"
-    
+    sigma_prove (parse @"exists p. S(S(0)) <= p /\ forall n. n < p ==> (exists x. x <= p /\ p = n * x) ==> n = S(0)")
+    |> should equal (parse @"(forall m n. S(m) = S(n) ==> m = n) /\
+                            (forall n. ~n = 0 <=> (exists m. n = S(m))) /\ (forall n. 0 + n = n) /\
+                            (forall m n. S(m) + n = S(m + n)) /\
+                            (forall n. 0 * n = 0) /\
+                            (forall m n. S(m) * n = n + m * n) /\
+                            (forall m n. m <= n <=> (exists d. m + d = n)) /\ (forall m n. m < n <=> S(m) <= n) ==>
+                            (exists p.
+                                S(S(0)) <= p /\
+                            (forall n. n < p ==> (exists x. x <= p /\ p = n * x) ==> n = S(0)))")
 // pg. 576
 // ------------------------------------------------------------------------- //
 // The essence of Goedel's first theorem.                                    //
@@ -182,25 +208,25 @@ let ``meson002``() =
 let ``Godel theorem``() =
     prove (parse @"(forall p. |--(p) ==> |--(Pr(p))) /\ (forall p q. |--(imp(Pr(imp(p,q)),imp(Pr(p),Pr(q))))) /\ (forall p. |--(imp(Pr(p),Pr(Pr(p))))) ==> (forall p q. |--(imp(p,q)) /\ |--(p) ==> |--(q)) /\ (forall p q. |--(imp(q,imp(p,q)))) /\ (forall p q r. |--(imp(imp(p,imp(q,r)),imp(imp(p,q),imp(p,r))))) ==> |--(imp(G,imp(Pr(G),F))) /\ |--(imp(imp(Pr(G),F),G)) ==> |--(imp(Pr(F),F)) ==> |--(F)") 
         [assume
-            ["lob1",(parse @"forall p. |--(p) ==> |--(Pr(p))"); "lob2",(parse @"forall p q. |--(imp(Pr(imp(p,q)),imp(Pr(p),Pr(q))))");
-            "lob3",(parse @"forall p. |--(imp(Pr(p),Pr(Pr(p))))")]; 
+            ["lob1",(parse @"forall p. |--(p) ==> |--(Pr(p))"); 
+             "lob2",(parse @"forall p q. |--(imp(Pr(imp(p,q)),imp(Pr(p),Pr(q))))");
+             "lob3",(parse @"forall p. |--(imp(Pr(p),Pr(Pr(p))))")]; 
          assume ["logic",(parse @"(forall p q. |--(imp(p,q)) /\ |--(p) ==> |--(q)) /\ (forall p q. |--(imp(q,imp(p,q)))) /\  (forall p q r. |--(imp(imp(p,imp(q,r)), imp(imp(p,q),imp(p,r)))))")];
-         assume ["fix1",(parse @"--(imp(G,imp(Pr(G),F)))"); "fix2",(parse @"--(imp(imp(Pr(G),F),G))")]; 
-         assume ["consistency",(parse @"--(imp(Pr(F),F))")]; 
-         have (parse @"--(Pr(imp(G,imp(Pr(G),F))))") by ["lob1"; "fix1"];
-         so have (parse @"--(imp(Pr(G),Pr(imp(Pr(G),F))))") by ["lob2"; "logic"];
-         so have (parse @"--(imp(Pr(G),imp(Pr(Pr(G)),Pr(F))))") by ["lob2"; "logic"];
-         so have (parse @"--(imp(Pr(G),Pr(F)))") by ["lob3"; "logic"]; 
-         so note ("L", (parse @"--(imp(Pr(G),F))") ) by ["consistency"; "logic"]; 
-         so have (parse @"--(G)") by ["fix2"; "logic"]; 
-         so have (parse @"--(Pr(G))") by ["lob1"; "logic"]; 
-         so conclude (parse @"--(F)") by ["L"; "logic"]; 
-         qed] 
-     |> sprint_thm
-     |> should equal "|-
-(forall p. |--(p) ==> |--(Pr(p))) /\
-(forall p q. |--(imp(Pr(imp(p,q)),imp(Pr(p),Pr(q))))) /\
-(forall p. |--(imp(Pr(p),Pr(Pr(p))))) ==>
-(forall p q. |--(imp(p,q)) /\ |--(p) ==> |--(q)) /\
-(forall p q. |--(imp(q,imp(p,q)))) /\
-(forall p q r. |--(imp(imp(p,imp(q,r)),imp(imp(p,q),imp(p,r))))) ==> |--(imp(G,imp(Pr(G),F))) /\ |--(imp(imp(Pr(G),F),G)) ==> |--(imp(Pr(F),F)) ==> |--(F)"
+         assume ["fix1",(parse @"|--(imp(G,imp(Pr(G),F)))"); 
+                 "fix2",(parse @"|--(imp(imp(Pr(G),F),G))")]; 
+         assume ["consistency",(parse @"|--(imp(Pr(F),F))")]; 
+         have (parse @"|--(Pr(imp(G,imp(Pr(G),F))))") by ["lob1"; "fix1"];
+         so have (parse @"|--(imp(Pr(G),Pr(imp(Pr(G),F))))") by ["lob2"; "logic"];
+         so have (parse @"|--(imp(Pr(G),imp(Pr(Pr(G)),Pr(F))))") by ["lob2"; "logic"];
+         so have (parse @"|--(imp(Pr(G),Pr(F)))") by ["lob3"; "logic"]; 
+         so note ("L", (parse @"|--(imp(Pr(G),F))") ) by ["consistency"; "logic"]; 
+         so have (parse @"|--(G)") by ["fix2"; "logic"]; 
+         so have (parse @"|--(Pr(G))") by ["lob1"; "logic"]; 
+         so conclude (parse @"|--(F)") by ["L"; "logic"]; 
+         qed]
+     |> should equal (parse @"(forall p. |--(p) ==> |--(Pr(p))) /\
+                                (forall p q. |--(imp(Pr(imp(p,q)),imp(Pr(p),Pr(q))))) /\
+                                (forall p. |--(imp(Pr(p),Pr(Pr(p))))) ==>
+                                (forall p q. |--(imp(p,q)) /\ |--(p) ==> |--(q)) /\
+                                (forall p q. |--(imp(q,imp(p,q)))) /\
+                                (forall p q r. |--(imp(imp(p,imp(q,r)),imp(imp(p,q),imp(p,r))))) ==> |--(imp(G,imp(Pr(G),F))) /\ |--(imp(imp(Pr(G),F),G)) ==> |--(imp(Pr(F),F)) ==> |--(F)")
