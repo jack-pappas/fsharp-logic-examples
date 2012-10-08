@@ -8,9 +8,8 @@
 // Goals, LCF-like tactics and Mizar-like proofs.                            //
 // ========================================================================= //
 
-namespace Reasoning.Automated.Harrison.Handbook
+module Reasoning.Automated.Harrison.Handbook.tactics
 
-module tactics =
     open intro
     open formulas
     open prop
@@ -330,11 +329,13 @@ module tactics =
         imp_swap (funpow (i - 1) (unshunt >>|> imp_front 2) th1)
 
     let assume lps (Goals((asl, Imp (p, q)) :: gls, jfn)) =
-        if end_itlist mk_and (List.map snd lps) <> p then failwith "assume" else
-        let jfn' th =
-            if asl = [] then add_assum True th
-            else multishunt (List.length lps) th
-        Goals ((lps @ asl, q) :: gls, jmodify jfn jfn')
+        if end_itlist mk_and (List.map snd lps) <> p then
+            failwith "assume"
+        else
+            let jfn' th =
+                if asl = [] then add_assum True th
+                else multishunt (List.length lps) th
+            Goals ((lps @ asl, q) :: gls, jmodify jfn jfn')
 
     let note (l, p) = lemma_tac l p
 

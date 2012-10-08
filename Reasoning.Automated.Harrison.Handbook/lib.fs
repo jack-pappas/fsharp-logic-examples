@@ -4,14 +4,12 @@
 // (See "LICENSE.txt" for details.)                                          //
 // ========================================================================= //
 
-namespace Reasoning.Automated.Harrison.Handbook
-
 /// Misc library functions to set up a nice environment.
 [<AutoOpen>]
-module lib =
+module Reasoning.Automated.Harrison.Handbook.lib
+
     open LanguagePrimitives
-    open FSharpx.Compatibility.OCaml
-    open Num
+    open FSharpx.Compatibility.OCaml.Num
 
     // The exception fired by failwith is used as a control flow.
     // KeyNotFoundException is not recognized in many cases, so we have to use redefine Failure for compatibility.

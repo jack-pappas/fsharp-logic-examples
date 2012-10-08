@@ -8,9 +8,8 @@
 // Propositional reasoning by derived rules atop the LCF core.               //
 // ========================================================================= //
 
-namespace Reasoning.Automated.Harrison.Handbook
+module Reasoning.Automated.Harrison.Handbook.lcfprop
 
-module lcfprop =
     open intro
     open formulas
     open prop

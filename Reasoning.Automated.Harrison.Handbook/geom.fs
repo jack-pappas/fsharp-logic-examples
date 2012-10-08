@@ -8,9 +8,8 @@
 //  Geometry theorem proving.                                                 // 
 //  ========================================================================= // 
 
-namespace Reasoning.Automated.Harrison.Handbook
+module Reasoning.Automated.Harrison.Handbook.geom
 
-module geom =
     open intro
     open formulas
     open prop
