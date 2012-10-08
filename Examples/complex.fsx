@@ -36,6 +36,9 @@ open Reasoning.Automated.Harrison.Handbook.equal
 //open Reasoning.Automated.Harrison.Handbook.cooper
 open Reasoning.Automated.Harrison.Handbook.complex
 
+fsi.AddPrinter sprint_term
+fsi.AddPrinter sprint_fol_formula
+
 //  pg. 355
 //  ------------------------------------------------------------------------- //
 //  Sanity check.                                                             //
@@ -43,7 +46,11 @@ open Reasoning.Automated.Harrison.Handbook.complex
 
 // complex.p001
 polyatom ["w"; "x"; "y"; "z"] (parse
-    @"((w + x)^4 + (w + y)^4 + (w + z)^4 + (x + y)^4 + (x + z)^4 + (y + z)^4 + (w - x)^4 + (w - y)^4 + (w - z)^4 + (x - y)^4 + (x - z)^4 + (y - z)^4) / 6 = (w^2 + x^2 + y^2 + z^2)^2");;
+    @"((w + x)^4 + (w + y)^4 + (w + z)^4 +
+    (x + y)^4 + (x + z)^4 + (y + z)^4 +
+    (w - x)^4 + (w - y)^4 + (w - z)^4 +
+    (x - y)^4 + (x - z)^4 + (y - z)^4) / 6 =
+    (w^2 + x^2 + y^2 + z^2)^2");;
 
 //  pg. 366
 //  ------------------------------------------------------------------------- //

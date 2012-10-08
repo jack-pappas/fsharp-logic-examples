@@ -34,10 +34,10 @@ open Reasoning.Automated.Harrison.Handbook.order
 // ------------------------------------------------------------------------- //
 
 let s = parset @"f(x,x,x)";;
-print_term 0 s;;
+//print_term 0 s;;
 
 let t = parset @"g(x,y)";;
-print_term 0 t;;
+//print_term 0 t;;
 
 termsize s > termsize t;;
 
