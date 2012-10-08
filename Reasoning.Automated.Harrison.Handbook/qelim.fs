@@ -42,8 +42,6 @@ module qelim =
 //  elimination procedure for existential formulas with conjunctive body.     // 
 //  ------------------------------------------------------------------------- // 
 
-    // OCaml : val qelim : (fol formula -> fol formula) -> string -> fol formula -> fol formula = <fun>
-    // F#:     val qelim : (fol formula -> fol formula) -> string -> fol formula -> fol formula
     let qelim bfn x p =
         let cjs = conjuncts p
         let ycjs, ncjs = List.partition (mem x >>|> fv) cjs
@@ -52,28 +50,6 @@ module qelim =
             let q = bfn (Exists (x, list_conj ycjs))
             List.foldBack mk_and ncjs q
 
-//    // OCaml : val lift_qelim : (string list -> fol formula -> fol formula) -> (fol formula -> fol formula) -> (string list -> fol formula -> fol formula) -> fol formula -> fol formula = <fun>
-//    // F# :    val lift_qelim : (string list -> fol formula -> fol formula) -> (fol formula -> fol formula) -> (string list -> fol formula -> fol formula) -> (fol formula -> fol formula)
-//    // pg. 332
-//    let lift_qelim afn nfn qfn =
-//      let rec qelift vars fm =
-//        match fm with
-//        | Atom(R(_,_)) -> afn vars fm
-//        | Not(p) -> Not(qelift vars p)
-//        | And(p,q) -> And(qelift vars p,qelift vars q)
-//        | Or(p,q) -> Or(qelift vars p,qelift vars q)
-//        | Imp(p,q) -> Imp(qelift vars p,qelift vars q)
-//        | Iff(p,q) -> Iff(qelift vars p,qelift vars q)
-//        | Forall(x,p) -> Not(qelift vars (Exists(x,Not p)))
-//        | Exists(x,p) ->
-//              let djs = disjuncts(nfn(qelift (x::vars) p))
-//              list_disj(List.map (qelim (qfn vars) x) djs)
-//        | _ -> fm
-//      fun fm -> simplify004(qelift (fv fm) (miniscope fm))
-
-    // OCaml : val lift_qelim : (string list -> fol formula -> fol formula) -> (fol formula -> fol formula) -> (string list -> fol formula -> fol formula) -> fol formula -> fol formula = <fun>
-    // F# :    val lift_qelim : (string list -> fol formula -> fol formula) -> (fol formula -> fol formula) -> (string list -> fol formula -> fol formula) -> (fol formula -> fol formula)
-    // pg. 332
     let lift_qelim afn nfn qfn =
         let rec qelift vars fm =
             match fm with
@@ -104,8 +80,6 @@ module qelim =
 //  Cleverer (proposisional) NNF with conditional and literal modification.   // 
 //  ------------------------------------------------------------------------- // 
 
-    // OCaml : val cnnf : (fol formula -> fol formula) -> fol formula -> fol formula = <fun>
-    // F# :    val cnnf : (fol formula -> fol formula) -> (fol formula -> fol formula)
     let cnnf lfn =
         let rec cnnf fm =
             match fm with
@@ -137,8 +111,6 @@ module qelim =
 //  Initial literal simplifier and intermediate literal modifier.             // 
 //  ------------------------------------------------------------------------- // 
 
-    // OCaml : val lfn_dlo : fol formula -> fol formula = <fun>
-    // F# :    val lfn_dlo : fol formula -> fol formula
     let lfn_dlo fm =
         match fm with
         | Not (Atom (R ("<", [s; t]))) ->
@@ -152,8 +124,6 @@ module qelim =
 //  Simple example of dense linear orderings; this is the base function.      // 
 //  ------------------------------------------------------------------------- // 
 
-    // OCaml : val dlobasic : fol formula -> fol formula = <fun>
-    // F# :    val dlobasic : fol formula -> fol formula
     // Note: List.find throws expcetion it does not return failure
     //       so "try with failure" will not work with List.find
     let dlobasic fm =
@@ -181,8 +151,6 @@ module qelim =
 //  Overall quelim procedure.                                                 // 
 //  ------------------------------------------------------------------------- // 
 
-    // OCaml : val afn_dlo : 'a -> fol formula -> fol formula = <fun>
-    // F# :    val afn_dlo : 'a -> fol formula -> fol formula
     let afn_dlo vars fm =
         match fm with
         | Atom (R ("<=", [s; t])) ->
@@ -193,9 +161,5 @@ module qelim =
             Atom (R ("<", [t; s]))
         | _ -> fm
 
-    // OCaml : val quelim_dlo : fol formula -> fol formula = <fun>
-    // F# :    val quelim_dlo : (fol formula -> fol formula)
     let quelim_dlo =
         lift_qelim afn_dlo (dnf >>|> cnnf lfn_dlo) (fun v -> dlobasic)
-
-
