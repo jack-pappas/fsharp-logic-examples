@@ -160,7 +160,9 @@ let pdivide_pos vars sgns s p =
     match findsign sgns a with
     | Zero ->
         failwith "pdivide_pos: zero head coefficient"
-    | Positive when k % 2 = 0 ->
+    | Positive ->
+        r
+    | _ when k % 2 = 0 ->
         r
     | Negative ->
         poly_neg r
