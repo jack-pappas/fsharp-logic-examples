@@ -10,38 +10,38 @@
 
 module Reasoning.Automated.Harrison.Handbook.lcf
 
-    open intro
-    open formulas
-    open prop
-    open defcnf
-    open dp
-    open stal
-    open bdd
-    open folMod
-    open skolem
-    open herbrand
-    open unif
-    open tableaux
-    open resolution
-    open prolog
-    open meson
-    open skolems
-    open equal
-    open cong
-    open rewrite
-    open order
-    open completion
-    open eqelim
-    open paramodulation
-    open decidable
-    open qelim
-    open cooper
-    open complex
-    open real
-    open grobner
-    open geom
-    open interpolation
-    open combining
+open intro
+open formulas
+open prop
+open defcnf
+open dp
+open stal
+open bdd
+open folMod
+open skolem
+open herbrand
+open unif
+open tableaux
+open resolution
+open prolog
+open meson
+open skolems
+open equal
+open cong
+open rewrite
+open order
+open completion
+open eqelim
+open paramodulation
+open decidable
+open qelim
+open cooper
+open complex
+open real
+open grobner
+open geom
+open interpolation
+open combining
 
 // pg. 474
 // ------------------------------------------------------------------------- //
@@ -73,36 +73,36 @@ module Reasoning.Automated.Harrison.Handbook.lcf
 //  |- (exists x. p) <=> ~(forall x. ~p)                                     //
 // ------------------------------------------------------------------------- //
     
-    // ------------------------------------------------------------------------- //
-    // Auxiliary functions.                                                      //
-    // ------------------------------------------------------------------------- //
+// ------------------------------------------------------------------------- //
+// Auxiliary functions.                                                      //
+// ------------------------------------------------------------------------- //
 
-    let rec occurs_in s t =
-        s = t ||
-        match t with
-        | Var y -> false
-        | Fn (f, args) ->
-            List.exists (occurs_in s) args
+let rec occurs_in s t =
+    s = t ||
+    match t with
+    | Var y -> false
+    | Fn (f, args) ->
+        List.exists (occurs_in s) args
 
-    let rec free_in t fm =
-        match fm with
-        | False
-        | True ->
-            false
-        | Not p ->
-            free_in t p
-        | And (p, q)
-        | Or (p, q)
-        | Imp (p, q)
-        | Iff (p, q) ->
-            free_in t p
-            || free_in t q
-        | Forall (y, p)
-        | Exists (y, p) ->
-            not (occurs_in (Var y) t)
-            && free_in t p
-        | Atom (R (p, args)) ->
-            List.exists (occurs_in t) args
+let rec free_in t fm =
+    match fm with
+    | False
+    | True ->
+        false
+    | Not p ->
+        free_in t p
+    | And (p, q)
+    | Or (p, q)
+    | Imp (p, q)
+    | Iff (p, q) ->
+        free_in t p
+        || free_in t q
+    | Forall (y, p)
+    | Exists (y, p) ->
+        not (occurs_in (Var y) t)
+        && free_in t p
+    | Atom (R (p, args)) ->
+        List.exists (occurs_in t) args
 
 
 (*
@@ -132,98 +132,98 @@ module type Proofsystem =
     end;;
 *)
 
-    // Implementation of the Proofsystem signature; this is done "manually"
-    // because F# doesn't allow for type-parameterized modules.
-    [<AutoOpen>]
-    module ProverOperators =
-        type thm = formula<fol>
+// Implementation of the Proofsystem signature; this is done "manually"
+// because F# doesn't allow for type-parameterized modules.
+[<AutoOpen>]
+module ProverOperators =
+    type thm = formula<fol>
 
-        let modusponens (pq : thm) (p : thm) : thm =
-            match pq with
-            | Imp (p', q) when p = p' -> q
-            | _ -> failwith "modusponens"
+    let modusponens (pq : thm) (p : thm) : thm =
+        match pq with
+        | Imp (p', q) when p = p' -> q
+        | _ -> failwith "modusponens"
 
-        let gen x (p : thm) : thm =
-            Forall (x, p)
+    let gen x (p : thm) : thm =
+        Forall (x, p)
 
-        let axiom_addimp p q : thm =
-            Imp (p,Imp (q, p))
+    let axiom_addimp p q : thm =
+        Imp (p,Imp (q, p))
 
-        let axiom_distribimp p q r : thm =
-            Imp (Imp (p, Imp (q, r)), Imp (Imp (p, q), Imp (p, r)))
+    let axiom_distribimp p q r : thm =
+        Imp (Imp (p, Imp (q, r)), Imp (Imp (p, q), Imp (p, r)))
 
-        let axiom_doubleneg p : thm =
-            Imp (Imp (Imp (p, False), False), p)
+    let axiom_doubleneg p : thm =
+        Imp (Imp (Imp (p, False), False), p)
 
-        let axiom_allimp x p q : thm =
-            Imp (Forall (x, Imp (p, q)), Imp (Forall (x, p), Forall (x, q)))
+    let axiom_allimp x p q : thm =
+        Imp (Forall (x, Imp (p, q)), Imp (Forall (x, p), Forall (x, q)))
 
-        let axiom_impall x p : thm =
-            if free_in (Var x) p then
-                failwith "axiom_impall: variable free in formula"
-            else
-                Imp (p, Forall (x, p))
+    let axiom_impall x p : thm =
+        if free_in (Var x) p then
+            failwith "axiom_impall: variable free in formula"
+        else
+            Imp (p, Forall (x, p))
 
-        let axiom_existseq x t : thm =
-            if occurs_in (Var x) t then
-                failwith "axiom_existseq: variable free in term"
-            else
-                Exists (x, mk_eq (Var x) t)
+    let axiom_existseq x t : thm =
+        if occurs_in (Var x) t then
+            failwith "axiom_existseq: variable free in term"
+        else
+            Exists (x, mk_eq (Var x) t)
                 
-        let axiom_eqrefl t : thm =
-            mk_eq t t
+    let axiom_eqrefl t : thm =
+        mk_eq t t
 
-        let axiom_funcong f lefts rights : thm =
-            List.foldBack2 (fun s t p -> Imp (mk_eq s t, p)) lefts rights
-                (mk_eq (Fn (f, lefts)) (Fn (f, rights)))
+    let axiom_funcong f lefts rights : thm =
+        List.foldBack2 (fun s t p -> Imp (mk_eq s t, p)) lefts rights
+            (mk_eq (Fn (f, lefts)) (Fn (f, rights)))
 
-        let axiom_predcong p lefts rights : thm =
-            List.foldBack2 (fun s t p -> Imp (mk_eq s t, p)) lefts rights
-                (Imp (Atom (R (p, lefts)), Atom (R (p, rights))))
+    let axiom_predcong p lefts rights : thm =
+        List.foldBack2 (fun s t p -> Imp (mk_eq s t, p)) lefts rights
+            (Imp (Atom (R (p, lefts)), Atom (R (p, rights))))
 
-        let axiom_iffimp1 p q : thm =
-            Imp (Iff (p, q), Imp (p, q))
+    let axiom_iffimp1 p q : thm =
+        Imp (Iff (p, q), Imp (p, q))
 
-        let axiom_iffimp2 p q : thm =
-            Imp (Iff (p, q), Imp (q, p))
+    let axiom_iffimp2 p q : thm =
+        Imp (Iff (p, q), Imp (q, p))
 
-        let axiom_impiff p q : thm =
-            Imp (Imp (p, q), Imp (Imp (q, p), Iff (p, q)))
+    let axiom_impiff p q : thm =
+        Imp (Imp (p, q), Imp (Imp (q, p), Iff (p, q)))
 
-        let axiom_true : thm =
-            Iff (True, Imp (False, False))
+    let axiom_true : thm =
+        Iff (True, Imp (False, False))
 
-        let axiom_not p : thm =
-            Iff (Not p, Imp (p, False))
+    let axiom_not p : thm =
+        Iff (Not p, Imp (p, False))
 
-        let axiom_and p q : thm =
-            Iff (And (p, q), Imp (Imp (p, Imp (q, False)), False))
+    let axiom_and p q : thm =
+        Iff (And (p, q), Imp (Imp (p, Imp (q, False)), False))
 
-        let axiom_or p q : thm =
-            Iff (Or (p, q), Not (And (Not p, Not q)))
+    let axiom_or p q : thm =
+        Iff (Or (p, q), Not (And (Not p, Not q)))
 
-        let axiom_exists x p : thm =
-            Iff (Exists (x, p), Not (Forall (x, Not p)))
+    let axiom_exists x p : thm =
+        Iff (Exists (x, p), Not (Forall (x, Not p)))
 
-        let concl (c : thm) : formula<fol> = c
+    let concl (c : thm) : formula<fol> = c
 
-    // ------------------------------------------------------------------------- //
-    // A printer for theorems.                                                   //
-    // ------------------------------------------------------------------------- //
+// ------------------------------------------------------------------------- //
+// A printer for theorems.                                                   //
+// ------------------------------------------------------------------------- //
 
 //    include Proven;;
 
-    let fprint_thm sw th =
-//        open_box 0
-        fprintf sw "|- " // write on the same line
-//        print_space ()
-//        open_box 0
-        fprint_formula sw (fprint_atom sw) (concl th)
-//        close_box ()
-//        close_box ()
+let fprint_thm sw th =
+//    open_box 0
+    fprintf sw "|- " // write on the same line
+//    print_space ()
+//    open_box 0
+    fprint_formula sw (fprint_atom sw) (concl th)
+//    close_box ()
+//    close_box ()
 
-    // Add printing facility
-    let inline print_thm th = fprint_thm stdout th
-    let inline sprint_thm th = writeToString (fun sw -> fprint_thm sw th)
+// Add printing facility
+let inline print_thm th = fprint_thm stdout th
+let inline sprint_thm th = writeToString (fun sw -> fprint_thm sw th)
 
-    //#install_printer print_thm;;
+//#install_printer print_thm;;

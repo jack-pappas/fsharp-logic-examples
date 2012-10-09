@@ -6,12 +6,12 @@
 
 module Reasoning.Automated.Harrison.Handbook.meson
 
-    open formulas
-    open prop
-    open folMod
-    open skolem
-    open tableaux
-    open prolog
+open formulas
+open prop
+open folMod
+open skolem
+open tableaux
+open prolog
 
 // ========================================================================= //
 // Model elimination procedure (MESON version, based on Stickel's PTTP).     //
@@ -22,119 +22,119 @@ module Reasoning.Automated.Harrison.Handbook.meson
 // Generation of contrapositives.                                            //
 // ------------------------------------------------------------------------- //
 
-    let contrapositives cls =
-        let baseClause =
-            cls
-            |> List.map (fun c ->
-                List.map negate (subtract cls [c]), c)
-        if List.forall negative cls then
-            (List.map negate cls, False) :: baseClause 
-        else baseClause
+let contrapositives cls =
+    let baseClause =
+        cls
+        |> List.map (fun c ->
+            List.map negate (subtract cls [c]), c)
+    if List.forall negative cls then
+        (List.map negate cls, False) :: baseClause 
+    else baseClause
 
 // pg. 220
 // ------------------------------------------------------------------------- //
 // The core of MESON: ancestor unification or Prolog-style extension.        //
 // ------------------------------------------------------------------------- //
 
-    let rec mexpand001 rules ancestors g cont (env, n, k) =
-        if n < 0 then
-            failwith "Too deep"
-        else
-            try 
-                ancestors
-                |> tryfind (fun a ->
-                    cont (unify_literals env (g, negate a), n, k))
-            with _ ->
-                rules
-                |> tryfind (fun rule ->
-                    let (asm, c) ,k' = renamerule k rule
-                    (unify_literals env (g, c), n - List.length asm, k')
-                    |> List.foldBack (mexpand001 rules (g :: ancestors)) asm cont)
+let rec mexpand001 rules ancestors g cont (env, n, k) =
+    if n < 0 then
+        failwith "Too deep"
+    else
+        try 
+            ancestors
+            |> tryfind (fun a ->
+                cont (unify_literals env (g, negate a), n, k))
+        with _ ->
+            rules
+            |> tryfind (fun rule ->
+                let (asm, c) ,k' = renamerule k rule
+                (unify_literals env (g, c), n - List.length asm, k')
+                |> List.foldBack (mexpand001 rules (g :: ancestors)) asm cont)
                     
 // pg. 220
 // ------------------------------------------------------------------------- //
 // Full MESON procedure.                                                     //
 // ------------------------------------------------------------------------- //
 
-    let puremeson001 fm =        
-        let rules =
-            let cls = simpcnf (specialize (pnf fm))
-            List.foldBack ((@) << contrapositives) cls []
-        deepen 0 <| fun n ->
-            mexpand001 rules [] False id (undefined, n, 0)
-            |> ignore
-            n
+let puremeson001 fm =
+    let rules =
+        let cls = simpcnf (specialize (pnf fm))
+        List.foldBack ((@) << contrapositives) cls []
+    deepen 0 <| fun n ->
+        mexpand001 rules [] False id (undefined, n, 0)
+        |> ignore
+        n
 
-    let meson001 fm =
-        Not (generalize fm)
-        |> askolemize
-        |> simpdnf
-        |> List.map (puremeson001 << list_conj)
+let meson001 fm =
+    Not (generalize fm)
+    |> askolemize
+    |> simpdnf
+    |> List.map (puremeson001 << list_conj)
 
 // pg. 221
 // ------------------------------------------------------------------------- //
 // With repetition checking and divide-and-conquer search.                   //
 // ------------------------------------------------------------------------- //
 
-    let rec equal env fm1 fm2 =
-        try unify_literals env (fm1, fm2) = env
-        with _ -> false
+let rec equal env fm1 fm2 =
+    try unify_literals env (fm1, fm2) = env
+    with _ -> false
 
-    let expand2 expfn goals1 n1 goals2 n2 n3 cont env k =
-        expfn goals1 (fun (e1, r1, k1) ->
-            expfn goals2 (fun (e2, r2, k2) ->
-                            if n2 + r1 <= n3 + r2 then
-                                failwith "pair"
-                            else
-                                cont (e2, r2, k2))
-                    (e1, n2 + r1, k1))
-            (env, n1, k)
+let expand2 expfn goals1 n1 goals2 n2 n3 cont env k =
+    expfn goals1 (fun (e1, r1, k1) ->
+        expfn goals2 (fun (e2, r2, k2) ->
+                        if n2 + r1 <= n3 + r2 then
+                            failwith "pair"
+                        else
+                            cont (e2, r2, k2))
+                (e1, n2 + r1, k1))
+        (env, n1, k)
 
-    let rec mexpand002 rules ancestors g cont (env, n, k) =
-        let rec mexpands002 rules ancestors gs cont (env, n, k) =
-            if n < 0 then failwith "Too deep" 
-            else
-                let m = List.length gs
-                if m <= 1 then
-                    List.foldBack (mexpand002 rules ancestors) gs cont (env, n, k) 
-                else
-                    let n1 = n / 2
-                    let n2 = n - n1
-                    let goals1,goals2 = chop_list (m / 2) gs
-                    let expfn = expand2 (mexpands002 rules ancestors)
-
-                    try expfn goals1 n1 goals2 n2 -1 cont env k
-                    with _ ->
-                        expfn goals2 n1 goals1 n2 n1 cont env k
-
-        if n < 0 then
-            failwith "Too deep"
-        elif List.exists (equal env g) ancestors then
-            failwith "repetition"
+let rec mexpand002 rules ancestors g cont (env, n, k) =
+    let rec mexpands002 rules ancestors gs cont (env, n, k) =
+        if n < 0 then failwith "Too deep" 
         else
-            try ancestors |> tryfind (fun a -> cont (unify_literals env (g, negate a), n, k)) with
-            | Failure _ ->
-                rules
-                |> tryfind (fun r ->
-                    let (asm, c), k' = renamerule k r
-                    (unify_literals env (g, c), n - List.length asm, k')
-                    |> mexpands002 rules (g :: ancestors) asm cont)
+            let m = List.length gs
+            if m <= 1 then
+                List.foldBack (mexpand002 rules ancestors) gs cont (env, n, k) 
+            else
+                let n1 = n / 2
+                let n2 = n - n1
+                let goals1,goals2 = chop_list (m / 2) gs
+                let expfn = expand2 (mexpands002 rules ancestors)
 
-    let puremeson002 fm =        
-        let rules =
-            let cls =
-                pnf fm
-                |> specialize
-                |> simpcnf
-            List.foldBack ((@) << contrapositives) cls []
+                try expfn goals1 n1 goals2 n2 -1 cont env k
+                with _ ->
+                    expfn goals2 n1 goals1 n2 n1 cont env k
 
-        deepen 0 <| fun n ->
-            mexpand002 rules [] False id (undefined, n, 0)
-            |> ignore
-            n
+    if n < 0 then
+        failwith "Too deep"
+    elif List.exists (equal env g) ancestors then
+        failwith "repetition"
+    else
+        try ancestors |> tryfind (fun a -> cont (unify_literals env (g, negate a), n, k)) with
+        | Failure _ ->
+            rules
+            |> tryfind (fun r ->
+                let (asm, c), k' = renamerule k r
+                (unify_literals env (g, c), n - List.length asm, k')
+                |> mexpands002 rules (g :: ancestors) asm cont)
 
-    let meson002 fm =
-        Not (generalize fm)
-        |> askolemize
-        |> simpdnf
-        |> List.map (puremeson002 << list_conj)
+let puremeson002 fm =        
+    let rules =
+        let cls =
+            pnf fm
+            |> specialize
+            |> simpcnf
+        List.foldBack ((@) << contrapositives) cls []
+
+    deepen 0 <| fun n ->
+        mexpand002 rules [] False id (undefined, n, 0)
+        |> ignore
+        n
+
+let meson002 fm =
+    Not (generalize fm)
+    |> askolemize
+    |> simpdnf
+    |> List.map (puremeson002 << list_conj)
