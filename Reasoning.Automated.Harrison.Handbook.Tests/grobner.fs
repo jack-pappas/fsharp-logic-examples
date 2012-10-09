@@ -19,23 +19,15 @@ open FsUnit
 (* Examples.                                                                 *)
 (* ------------------------------------------------------------------------- *)
 
-let private example_results_1 = [|
-    true;
-    false;
-    true;
-    |]
-
-[<TestCase(@"a^2 = 2 /\ x^2 + a*x + 1 = 0 ==> x^4 + 1 = 0", 0)>]
-[<TestCase(@"a^2 = 2 /\ x^2 + a*x + 1 = 0 ==> x^4 + 2 = 0", 1)>]
+[<TestCase(@"a^2 = 2 /\ x^2 + a*x + 1 = 0 ==> x^4 + 1 = 0", Result = true)>]
+[<TestCase(@"a^2 = 2 /\ x^2 + a*x + 1 = 0 ==> x^4 + 2 = 0", Result = false)>]
 [<TestCase(@"(a * x^2 + b * x + c = 0) /\
    (a * y^2 + b * y + c = 0) /\
    ~(x = y)
-   ==> (a * x * y = c) /\ (a * (x + y) + b = 0)", 2)>]
-let ``examples 1`` (f, idx) =
+   ==> (a * x * y = c) /\ (a * (x + y) + b = 0)", Result = true)>]
+let ``examples 1`` f =
     parse f
     |> grobner_decide
-    |> should equal example_results_1.[idx]
-
 
 (* ------------------------------------------------------------------------- *)
 (* Compare with earlier procedure.                                           *)
@@ -60,53 +52,40 @@ let ``examples 2``() =
 (* More tests.                                                               *)
 (* ------------------------------------------------------------------------- *)
 
-let private example_results_3 = [|
-    true;
-    false;
-    true;
-    true;
-    true;
-    true;
-    true;
-    true;
-    true;
-    |]
-
-[<TestCase(@"a^2 = 2 /\ x^2 + a*x + 1 = 0 ==> x^4 + 1 = 0", 0)>]
-[<TestCase(@"a^2 = 2 /\ x^2 + a*x + 1 = 0 ==> x^4 + 2 = 0", 1)>]
+[<TestCase(@"a^2 = 2 /\ x^2 + a*x + 1 = 0 ==> x^4 + 1 = 0", Result = true)>]
+[<TestCase(@"a^2 = 2 /\ x^2 + a*x + 1 = 0 ==> x^4 + 2 = 0", Result = false)>]
 [<TestCase(@"(a * x^2 + b * x + c = 0) /\
       (a * y^2 + b * y + c = 0) /\
       ~(x = y)
-      ==> (a * x * y = c) /\ (a * (x + y) + b = 0)", 2)>]
+      ==> (a * x * y = c) /\ (a * (x + y) + b = 0)", Result = true)>]
 [<TestCase(@"(y_1 = 2 * y_3) /\
   (y_2 = 2 * y_4) /\
   (y_1 * y_3 = y_2 * y_4)
-  ==> (y_1^2 = y_2^2)", 3)>]
+  ==> (y_1^2 = y_2^2)", Result = true)>]
 [<TestCase(@"(x1 = u3) /\
   (x1 * (u2 - u1) = x2 * u3) /\
   (x4 * (x2 - u1) = x1 * (x3 - u1)) /\
   (x3 * u3 = x4 * u2) /\
   ~(u1 = 0) /\
   ~(u3 = 0)
-  ==> (x3^2 + x4^2 = (u2 - x3)^2 + (u3 - x4)^2)", 4)>]
+  ==> (x3^2 + x4^2 = (u2 - x3)^2 + (u3 - x4)^2)", Result = true)>]
 [<TestCase(@"(u1 * x1 - u1 * u3 = 0) /\
   (u3 * x2 - (u2 - u1) * x1 = 0) /\
   (x1 * x4 - (x2 - u1) * x3 - u1 * x1 = 0) /\
   (u3 * x4 - u2 * x3 = 0) /\
   ~(u1 = 0) /\
   ~(u3 = 0)
-  ==> (2 * u2 * x4 + 2 * u3 * x3 - u3^2 - u2^2 = 0)", 5)>]
+  ==> (2 * u2 * x4 + 2 * u3 * x3 - u3^2 - u2^2 = 0)", Result = true)>]
 // Checking resultants (in one direction) //
 [<TestCase(@"a * x^2 + b * x + c = 0 /\ 2 * a * x + b = 0
- ==> 4*a^2*c-b^2*a = 0", 6)>]
+ ==> 4*a^2*c-b^2*a = 0", Result = true)>]
 [<TestCase(@"a * x^2 + b * x + c = 0 /\ d * x + e = 0
- ==> d^2*c-e*d*b+a*e^2 = 0", 7)>]
+ ==> d^2*c-e*d*b+a*e^2 = 0", Result = true)>]
 [<TestCase(@"a * x^2 + b * x + c = 0 /\ d * x^2 + e * x + f = 0
- ==> d^2*c^2-2*d*c*a*f+a^2*f^2-e*d*b*c-e*b*a*f+a*e^2*c+f*d*b^2 = 0", 8)>]
-let ``examples 3`` (f, idx) =
+ ==> d^2*c^2-2*d*c*a*f+a^2*f^2-e*d*b*c-e*b*a*f+a*e^2*c+f*d*b^2 = 0", Result = true)>]
+let ``examples 3`` f =
     parse f
     |> grobner_decide
-    |> should equal example_results_3.[idx]
 
 
 // TODO : Implement the additional, long-running test cases.
@@ -185,22 +164,15 @@ let ``examples 9``() =
 (* Here are further steps towards a solution, step-by-step.                  *)
 (* ------------------------------------------------------------------------- *)
 
-let private example_results_10 = [|
-    true;
-    true;
-    true;
-    |]
-
 [<TestCase(@"a = c^2 /\ b^3 = a^3 + d^2 /\ (b - a) * e^2 + 1 = 0
-   ==> c^2 * b = -(a^2 + b^2 + (e * d)^2)", 0)>]
+   ==> c^2 * b = -(a^2 + b^2 + (e * d)^2)", Result = true)>]
 [<TestCase(@"a = c^2 /\ b^3 = a^3 + d^2 /\ (b - a) * e^2 + 1 = 0
-   ==> c^6 * b^3 = -(a^2 + b^2 + (e * d)^2)^3", 1)>]
+   ==> c^6 * b^3 = -(a^2 + b^2 + (e * d)^2)^3", Result = true)>]
 [<TestCase(@"a = c^2 /\ b^3 = a^3 + d^2 /\ (b - a) * e^2 + 1 = 0
-   ==> c^6 * (c^6 + d^2) + (a^2 + b^2 + (e * d)^2)^3 = 0", 2)>]
-let ``examples 10`` (f, idx) =
+   ==> c^6 * (c^6 + d^2) + (a^2 + b^2 + (e * d)^2)^3 = 0", Result = true)>]
+let ``examples 10`` f =
     parse f
     |> grobner_decide
-    |> should equal example_results_10.[idx]
 
 
 (* ------------------------------------------------------------------------- *)
