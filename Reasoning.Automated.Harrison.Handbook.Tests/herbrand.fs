@@ -24,7 +24,9 @@ open FsUnit
     
 [<Test>]
 let ``gilmore simple``() =
-    gilmore (parse "exists x. forall y. P(x) ==> P(y)")
+    "exists x. forall y. P(x) ==> P(y)"
+    |> parse
+    |> gilmore
     |> should equal 2
 
 // pg. 161
@@ -34,30 +36,31 @@ let ``gilmore simple``() =
 
 [<Test>]
 let ``gilmore quick``() =
-    gilmore (parse @"~(exists x. U(x) /\ Q(x)) 
+    @"~(exists x. U(x) /\ Q(x)) 
         /\ (forall x. P(x) ==> Q(x) \/ R(x)) 
         /\ ~(exists x. P(x) ==> (exists x. Q(x))) 
         /\ (forall x. Q(x) 
-        /\ R(x) ==> U(x)) ==> (exists x. P(x) /\ R(x))")
+        /\ R(x) ==> U(x)) ==> (exists x. P(x) /\ R(x))"
+    |> parse
+    |> gilmore
     |> should equal 1
 
 [<Test>]
 let ``davis putnam``() =
-    davisputnam (parse @"(forall x y. exists z. forall w. P(x) /\ Q(y) ==> R(z) /\ U(w))
-        ==> (exists x y. P(x) /\ Q(y)) ==> (exists z. R(z))")
+    @"(forall x y. exists z. forall w. P(x) /\ Q(y) ==> R(z) /\ U(w))
+        ==> (exists x y. P(x) /\ Q(y)) ==> (exists z. R(z))"
+    |> parse
+    |> davisputnam
     |> should equal 19
 
-[<Test>]
-let ``davis putnam'``() =
-    davisputnam' (parse @"(forall x. exists y. P(x,y)) 
+[<TestCase(@"(forall x. exists y. P(x,y)) 
         /\ (forall x. exists y. G(x,y)) 
         /\ (forall x y. P(x,y) \/ G(x,y) ==> (forall z. P(y,z) \/ G(y,z) ==> H(x,z)))
-        ==> (forall x. exists y. H(x,y))")
-    |> should equal 3
-
-[<Test; Category("LongRunning")>]
-let ``davis putnam' slow``() =
-    davisputnam' (parse @"(exists x. P(x)) /\ (exists x. G(x)) ==>
+        ==> (forall x. exists y. H(x,y))", Result = 3)>]
+[<TestCase(@"(exists x. P(x)) /\ (exists x. G(x)) ==>
         ((forall x. P(x) ==> H(x)) /\ (forall x. G(x) ==> J(x)) <=>
-        (forall x y. P(x) /\ G(y) ==> H(x) /\ J(y)))")
-    |> should equal 5
+        (forall x y. P(x) /\ G(y) ==> H(x) /\ J(y)))",
+        Result = 5, Category = "LongRunning")>]
+let ``davis putnam'`` f =
+    parse f
+    |> davisputnam'
