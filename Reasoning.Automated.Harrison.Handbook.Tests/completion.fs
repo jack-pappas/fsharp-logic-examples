@@ -28,11 +28,14 @@ open FsUnit
 [<Test>]
 let ``critical_pairs``() =
     let eq = (parse @"f(f(x)) = g(x)")
-    sprint_fol_formula_list (critical_pairs eq eq)
-    |> should equal "<<f(g(x0)) =g(f(x0))>>
-<<g(x1) =g(x1)>>
-"
-  
+    critical_pairs eq eq
+    |> should equal 
+    <| [Atom
+          (R ("=",
+            [Fn ("f", [Fn ("g", [Var "x0"])]);
+             Fn ("g", [Fn ("f", [Var "x0"])])]));
+        Atom (R ("=", [Fn ("g", [Var "x1"]); Fn ("g", [Var "x1"])]))]
+
 // pg. 284
 // ------------------------------------------------------------------------- //
 // Inverse property (K&B example 4).                                         //
@@ -40,11 +43,20 @@ let ``critical_pairs``() =
 
 [<Test>]
 let ``complete_and_simplify``() =
-    sprint_fol_formula_list (complete_and_simplify ["1"; "*"; "i"] [parse @"i(a) * (a * b) = b"])
-    |> should equal "<<x0 *i(x0) *x3 =x3>>
-<<i(i(x0)) *x1 =x0 *x1>>
-<<i(a) *a *b =b>>
-"
+    complete_and_simplify ["1"; "*"; "i"] [parse @"i(a) * (a * b) = b"]
+    |> should equal
+    <| [Atom
+          (R ("=",
+            [Fn ("*", [Var "x0"; Fn ("*", [Fn ("i", [Var "x0"]); Var "x3"])]);
+             Var "x3"]));
+         Atom
+          (R ("=",
+            [Fn ("*", [Fn ("i", [Fn ("i", [Var "x0"])]); Var "x1"]);
+             Fn ("*", [Var "x0"; Var "x1"])]));
+         Atom
+          (R ("=",
+            [Fn ("*", [Fn ("i", [Var "a"]); Fn ("*", [Var "a"; Var "b"])]);
+             Var "b"]))]
   
 // pg. 284
 // ------------------------------------------------------------------------- //
@@ -60,7 +72,8 @@ let ``meson002 and equalitize``() =
 
 [<Test>]
 let ``skolemize again``() =
-    sprint_fol_formula (skolemize (parse @"
-        forall x z. exists w. forall y. z = x * y ==> w = y"))
-    |> should equal "<<~z =x *y \/ f_w(x,z) =y>>
-"
+    skolemize (parse @"
+        forall x z. exists w. forall y. z = x * y ==> w = y")
+    |> should equal
+    <| Or (Not (Atom (R ("=", [Var "z"; Fn ("*", [Var "x"; Var "y"])]))),
+            Atom (R ("=", [Fn ("f_w", [Var "x"; Var "z"]); Var "y"])))

@@ -44,204 +44,152 @@ let ``resolution002``() =
             ((F(x,y) /\ G(x,y)) ==> (G(x,z) /\ G(z,z)))")
     |> should equal [true]
 
-let private results = [|
-                        [true]; // 0
-                        []; // 1
-                        []; // 2
-                        []; // 3
-                        []; // 4
-                        []; // 5
-                        []; // 6
-                        []; // 7
-                        []; // 8
-                        []; // 9
-                        []; // 10
-                        []; // 11
-                        []; // 12
-                        []; // 13
-                        []; // 14
-                        []; // 15
-                        []; // 16
-                        []; // 17
-                        [true]; // 18
-                        [true]; // 19
-                        [true]; // 20
-                        [true; true; true]; // 21
-                        [true; true]; // 22
-                        [true; true]; // 23
-                        [true]; // 24
-                        [true; true]; // 25
-                        [true; true]; // 26
-                        [true]; // 27
-                        [true]; // 28
-                        [true; true; true; true]; // 29
-                        [true]; // 30
-                        [true]; // 31
-                        [true]; // 32
-                        [true; true; true]; // 33
-                        [true; true; true; true; true; true; true; true; true; true; true; true; true;
-                         true; true; true; true; true; true; true; true; true; true; true; true; true;
-                         true; true; true; true; true; true]; // 34
-                        [true]; // 35
-                        [true]; // 36
-                        [true; true]; // 37
-                        [true]; // 38
-                        [true]; // 39
-                        [true]; // 40
-                        [true]; // 41
-                        [true]; // 42
-                        [true]; // 43
-                        [true; true]; // 44
-                        [true; true]; // 45
-                        [true]; // 46
-                        [true]; // 47
-                        [true]; // 48
-                        [true; true]; // 49
-                        [true]; // 50
-                        [true]; // 51
-                        [true]; // 52
-                        [true]; // 53
-                        [true]; // 54
-                        [true]; // 55
-                        [true]; // 56
-                        [true]; // 57
-                            |]
 
 [<TestCase(@"
-	p ==> q <=> ~q ==> ~p", 1)>]
+    (forall x y z. P(x,y) ==> P(y,z) ==> P(x,z)) /\ 
+    (forall x y z. Q(x,y) ==> Q(y,z) ==> Q(x,z)) /\ 
+    (forall x y. Q(x,y) ==> Q(y,x)) /\ 
+    (forall x y. P(x,y) \/ Q(x,y)) 
+    ==> (forall x y. P(x,y)) \/ (forall x y. Q(x,y))",
+    Result = [|true|], Category = "LongRunning")>]
 [<TestCase(@"
-	~ ~p <=> p", 2)>]
+	p ==> q <=> ~q ==> ~p", Result = [||])>]
 [<TestCase(@"
-	~(p ==> q) ==> q ==> p", 3)>]
+	~ ~p <=> p", Result = [||])>]
 [<TestCase(@"
-	~p ==> q <=> ~q ==> p", 4)>]
+	~(p ==> q) ==> q ==> p", Result = [||])>]
 [<TestCase(@"
-	(p \/ q ==> p \/ r) ==> p \/ (q ==> r)", 5)>]
+	~p ==> q <=> ~q ==> p", Result = [||])>]
 [<TestCase(@"
-	p \/ ~p", 6)>]
+	(p \/ q ==> p \/ r) ==> p \/ (q ==> r)", Result = [||])>]
 [<TestCase(@"
-	p \/ ~ ~ ~p", 7)>]
+	p \/ ~p", Result = [||])>]
 [<TestCase(@"
-	((p ==> q) ==> p) ==> p", 8)>]
+	p \/ ~ ~ ~p", Result = [||])>]
 [<TestCase(@"
-	(p \/ q) /\ (~p \/ q) /\ (p \/ ~q) ==> ~(~q \/ ~q)", 9)>]
+	((p ==> q) ==> p) ==> p", Result = [||])>]
 [<TestCase(@"
-	(q ==> r) /\ (r ==> p /\ q) /\ (p ==> q /\ r) ==> (p <=> q)", 10)>]
+	(p \/ q) /\ (~p \/ q) /\ (p \/ ~q) ==> ~(~q \/ ~q)", Result = [||])>]
 [<TestCase(@"
-	p <=> p", 11)>]
+	(q ==> r) /\ (r ==> p /\ q) /\ (p ==> q /\ r) ==> (p <=> q)", Result = [||])>]
 [<TestCase(@"
-	((p <=> q) <=> r) <=> (p <=> (q <=> r))", 12)>]
+	p <=> p", Result = [||])>]
 [<TestCase(@"
-	p \/ q /\ r <=> (p \/ q) /\ (p \/ r)", 13)>]
+	((p <=> q) <=> r) <=> (p <=> (q <=> r))", Result = [||])>]
 [<TestCase(@"
-	(p <=> q) <=> (q \/ ~p) /\ (~q \/ p)", 14)>]
+	p \/ q /\ r <=> (p \/ q) /\ (p \/ r)", Result = [||])>]
 [<TestCase(@"
-	p ==> q <=> ~p \/ q", 15)>]
+	(p <=> q) <=> (q \/ ~p) /\ (~q \/ p)", Result = [||])>]
 [<TestCase(@"
-	(p ==> q) \/ (q ==> p)", 16)>]
+	p ==> q <=> ~p \/ q", Result = [||])>]
 [<TestCase(@"
-	p /\ (q ==> r) ==> s <=> (~p \/ q \/ s) /\ (~p \/ ~r \/ s)", 17)>]
+	(p ==> q) \/ (q ==> p)", Result = [||])>]
 [<TestCase(@"
-	exists y. forall x. P(y) ==> P(x)", 18)>]
+	p /\ (q ==> r) ==> s <=> (~p \/ q \/ s) /\ (~p \/ ~r \/ s)", Result = [||])>]
 [<TestCase(@"
-	exists x. forall y z. (P(y) ==> Q(z)) ==> P(x) ==> Q(x)", 19)>]
+	exists y. forall x. P(y) ==> P(x)", Result = [|true|])>]
+[<TestCase(@"
+	exists x. forall y z. (P(y) ==> Q(z)) ==> P(x) ==> Q(x)", Result = [|true|])>]
 [<TestCase(@"
 	(forall x y. exists z. forall w. P(x) /\ Q(y) ==> R(z) /\ U(w)) 
-    ==> (exists x y. P(x) /\ Q(y)) ==> (exists z. R(z))", 20)>]
+    ==> (exists x y. P(x) /\ Q(y)) ==> (exists z. R(z))", Result = [|true|])>]
 [<TestCase(@"
-	(exists x. P ==> Q(x)) /\ (exists x. Q(x) ==> P) ==> (exists x. P <=> Q(x))", 21)>]
+	(exists x. P ==> Q(x)) /\ (exists x. Q(x) ==> P) ==> (exists x. P <=> Q(x))", Result = [|true; true; true|])>]
 [<TestCase(@"
-	(forall x. P <=> Q(x)) ==> (P <=> (forall x. Q(x)))", 22)>]
+	(forall x. P <=> Q(x)) ==> (P <=> (forall x. Q(x)))", Result = [|true; true|])>]
 [<TestCase(@"
-	(forall x. P \/ Q(x)) <=> P \/ (forall x. Q(x))", 23)>]
+	(forall x. P \/ Q(x)) <=> P \/ (forall x. Q(x))", Result = [|true; true|])>]
 [<TestCase(@"
     ~(exists x. U(x) /\ Q(x)) /\ 
     (forall x. P(x) ==> Q(x) \/ R(x)) /\ 
     ~(exists x. P(x) ==> (exists x. Q(x))) /\ 
     (forall x. Q(x) /\ R(x) ==> U(x)) ==> 
-    (exists x. P(x) /\ R(x))", 24)>]
+    (exists x. P(x) /\ R(x))", Result = [| true |])>]
 [<TestCase(@"
 	(exists x. P(x)) /\ 
     (forall x. U(x) ==> ~G(x) /\ R(x)) /\ 
     (forall x. P(x) ==> G(x) /\ U(x)) /\ 
     ((forall x. P(x) ==> Q(x)) \/ (exists x. Q(x) /\ P(x))) 
-    ==> (exists x. Q(x) /\ P(x))", 25)>]
+    ==> (exists x. Q(x) /\ P(x))", Result = [|true; true|])>]
 [<TestCase(@"
 	(exists x. P(x)) /\ 
     (forall x. U(x) ==> ~G(x) /\ R(x)) /\ 
     (forall x. P(x) ==> G(x) /\ U(x)) /\ 
     ((forall x. P(x) ==> Q(x)) \/ (exists x. Q(x) /\ P(x))) 
-    ==> (exists x. Q(x) /\ P(x))", 26)>]
+    ==> (exists x. Q(x) /\ P(x))", Result = [|true; true|])>]
 [<TestCase(@"
 	(exists x. P(x) /\ ~Q(x)) /\ 
     (forall x. P(x) ==> R(x)) /\ 
     (forall x. U(x) /\ V(x) ==> P(x)) /\ 
     (exists x. R(x) /\ ~Q(x)) 
     ==> (forall x. U(x) ==> ~R(x)) 
-        ==> (forall x. U(x) ==> ~V(x))", 27)>]
+        ==> (forall x. U(x) ==> ~V(x))", Result = [| true |])>]
 [<TestCase(@"
 	(exists x. P(x) /\ ~Q(x)) /\ 
     (forall x. P(x) ==> R(x)) /\ 
     (forall x. U(x) /\ V(x) ==> P(x)) /\ 
     (exists x. R(x) /\ ~Q(x)) 
     ==> (forall x. U(x) ==> ~R(x)) 
-        ==> (forall x. U(x) ==> ~V(x))", 28)>]
+        ==> (forall x. U(x) ==> ~V(x))", Result = [| true |])>]
 [<TestCase(@"
 	(exists x. P(x)) /\ (exists x. G(x)) ==> 
     ((forall x. P(x) ==> H(x)) /\ (forall x. G(x) ==> J(x)) <=> 
-     (forall x y. P(x) /\ G(y) ==> H(x) /\ J(y)))", 29)>]
+     (forall x y. P(x) /\ G(y) ==> H(x) /\ J(y)))", Result = [|true; true; true; true|])>]
 [<TestCase(@"
 	(forall x. P(x) \/ G(x) ==> ~H(x)) /\ 
     (forall x. (G(x) ==> ~U(x)) ==> P(x) /\ H(x)) 
-    ==> (forall x. U(x))", 30)>]
+    ==> (forall x. U(x))", Result = [| true |])>]
 [<TestCase(@"
 	~(exists x. P(x) /\ (G(x) \/ H(x))) /\ 
     (exists x. Q(x) /\ P(x)) /\ 
     (forall x. ~H(x) ==> J(x)) 
-    ==> (exists x. Q(x) /\ J(x))", 31)>]
+    ==> (exists x. Q(x) /\ J(x))", Result = [| true |])>]
 [<TestCase(@"
 	(forall x. P(x) /\ (G(x) \/ H(x)) ==> Q(x)) /\ 
     (forall x. Q(x) /\ H(x) ==> J(x)) /\ 
     (forall x. R(x) ==> H(x)) 
-    ==> (forall x. P(x) /\ R(x) ==> J(x))", 32)>]
+    ==> (forall x. P(x) /\ R(x) ==> J(x))", Result = [| true |])>]
 [<TestCase(@"
 	(forall x. P(a) /\ (P(x) ==> P(b)) ==> P(c)) <=> 
-    (forall x. P(a) ==> P(x) \/ P(c)) /\ (P(a) ==> P(b) ==> P(c))", 33)>]
+    (forall x. P(a) ==> P(x) \/ P(c)) /\ (P(a) ==> P(b) ==> P(c))", Result = [|true; true; true|])>]
 [<TestCase(@"
 	((exists x. forall y. P(x) <=> P(y)) <=>
      ((exists x. Q(x)) <=> (forall y. Q(y)))) <=>
     ((exists x. forall y. Q(x) <=> Q(y)) <=>
-     ((exists x. P(x)) <=> (forall y. P(y))))", 34)>]
+     ((exists x. P(x)) <=> (forall y. P(y))))",
+     Result = [|true; true; true; true; true; true; true; true; true; true; true; true; true;
+    true; true; true; true; true; true; true; true; true; true; true; true; true;
+    true; true; true; true; true; true|])>]
 [<TestCase(@"
-	exists x y. P(x,y) ==> (forall x y. P(x,y))", 35)>]
+	exists x y. P(x,y) ==> (forall x y. P(x,y))", Result = [|true|])>]
 [<TestCase(@"
 	(forall x. exists y. P(x,y)) /\ 
     (forall x. exists y. G(x,y)) /\ 
     (forall x y. P(x,y) \/ G(x,y) 
     ==> (forall z. P(y,z) \/ G(y,z) ==> H(x,z))) 
-        ==> (forall x. exists y. H(x,y))", 36)>]
+        ==> (forall x. exists y. H(x,y))", Result = [|true|])>]
 [<TestCase(@"
 	(forall z. 
       exists w. forall x. exists y. (P(x,z) ==> P(y,w)) /\ P(y,z) /\ 
       (P(y,w) ==> (exists u. Q(u,w)))) /\ 
     (forall x z. ~P(x,z) ==> (exists y. Q(y,z))) /\ 
     ((exists x y. Q(x,y)) ==> (forall x. R(x,x))) ==> 
-    (forall x. exists y. R(x,y))", 37)>]
+    (forall x. exists y. R(x,y))", Result = [|true; true|])>]
 [<TestCase(@"
-	~(exists x. forall y. P(y,x) <=> ~P(y,y))", 38)>]
+	~(exists x. forall y. P(y,x) <=> ~P(y,y))", Result = [|true|])>]
 [<TestCase(@"
     (exists y. forall x. P(x,y) <=> P(x,x))
-    ==> ~(forall x. exists y. forall z. P(z,y) <=> ~P(z,x))", 39)>]
+    ==> ~(forall x. exists y. forall z. P(z,y) <=> ~P(z,x))", Result = [|true|])>]
 [<TestCase(@"
 	(forall z. exists y. forall x. P(x,y) <=> P(x,z) /\ ~P(x,x)) 
-    ==> ~(exists z. forall x. P(x,z))", 40)>]
+    ==> ~(exists z. forall x. P(x,z))", Result = [|true|])>]
 [<TestCase(@"
-	~(exists y. forall x. P(x,y) <=> ~(exists z. P(x,z) /\ P(z,x)))", 41)>]
+	~(exists y. forall x. P(x,y) <=> ~(exists z. P(x,z) /\ P(z,x)))", Result = [|true|])>]
 [<TestCase(@"
 	(forall x. P(x) ==> (exists y. G(y) /\ H(x,y)) /\ 
     (exists y. G(y) /\ ~H(x,y))) /\ 
     (exists x. J(x) /\ (forall y. G(y) ==> H(x,y))) ==> 
-    (exists x. J(x) /\ ~P(x))", 42)>]
+    (exists x. J(x) /\ ~P(x))", Result = [|true|])>]
 [<TestCase(@"
 	(forall x. 
       P(x) /\ (forall y. G(y) /\ H(x,y) ==> J(x,y)) ==> 
@@ -249,14 +197,14 @@ let private results = [|
     ~(exists y. L(y) /\ R(y)) /\ 
     (exists x. P(x) /\ (forall y. H(x,y) ==> 
       L(y)) /\ (forall y. G(y) /\ H(x,y) ==> J(x,y))) ==> 
-    (exists x. P(x) /\ ~(exists y. G(y) /\ H(x,y)))", 43)>]
+    (exists x. P(x) /\ ~(exists y. G(y) /\ H(x,y)))", Result = [|true|])>]
 [<TestCase(@"
 	(forall x. P(x) /\ (forall y. P(y) /\ H(y,x) ==> G(y)) ==> G(x)) /\ 
     ((exists x. P(x) /\ ~G(x)) ==> 
      (exists x. P(x) /\ ~G(x) /\ 
                 (forall y. P(y) /\ ~G(y) ==> J(x,y)))) /\ 
     (forall x y. P(x) /\ P(y) /\ H(x,y) ==> ~J(y,x)) ==> 
-    (forall x. P(x) ==> G(x))", 44)>]
+    (forall x. P(x) ==> G(x))", Result = [|true; true|])>]
 [<TestCase(@"
 	lives(agatha) /\ lives(butler) /\ lives(charles) /\ 
     (killed(agatha,agatha) \/ killed(butler,agatha) \/ 
@@ -269,260 +217,204 @@ let private results = [|
     (forall x. ~hates(x,agatha) \/ ~hates(x,butler) \/ ~hates(x,charles)) 
     ==> killed(agatha,agatha) /\ 
         ~killed(butler,agatha) /\ 
-        ~killed(charles,agatha)", 45)>]
+        ~killed(charles,agatha)", Result = [|true; true|])>]
 [<TestCase(@"
 	P(f((a),b),f(b,c)) /\ 
     P(f(b,c),f(a,c)) /\ 
     (forall (x) y z. P(x,y) /\ P(y,z) ==> P(x,z)) 
-    ==> P(f(a,b),f(a,c))", 46)>]
+    ==> P(f(a,b),f(a,c))", Result = [|true|] )>]
 [<TestCase(@"
 	forall P Q R. forall x. exists v. exists w. forall y. forall z. 
-    ((P(x) /\ Q(y)) ==> ((P(v) \/ R(w))  /\ (R(z) ==> Q(v))))", 47)>]
+    ((P(x) /\ Q(y)) ==> ((P(v) \/ R(w))  /\ (R(z) ==> Q(v))))", Result = [|true|] )>]
 [<TestCase(@"
-	(forall x. P(x) <=> ~P(f(x))) ==> (exists x. P(x) /\ ~P(f(x)))", 48)>]
+	(forall x. P(x) <=> ~P(f(x))) ==> (exists x. P(x) /\ ~P(f(x)))", Result = [|true|] )>]
 [<TestCase(@"
 	forall x. P(x,f(x)) <=> 
-              exists y. (forall z. P(z,y) ==> P(z,f(x))) /\ P(x,y)", 49)>]
-[<TestCase(@"
-    exists x. forall y z. 
-        ((F(y,z) ==> (G(y) ==> H(x))) ==> F(x,x)) /\ 
-        ((F(z,x) ==> G(x)) ==> H(z)) /\ 
-        F(x,y) 
-        ==> F(z,z)", 51)>]
-[<TestCase(@"
-    exists x. forall y z. 
-        ((F(y,z) ==> (G(y) ==> H(x))) ==> F(x,x)) /\ 
-        ((F(z,x) ==> G(x)) ==> H(z)) /\ 
-        F(x,y) 
-        ==> F(z,z)", 52)>]
-[<TestCase(@"
-	(forall x. exists y. F(x,y) \/ F(y,x)) /\ 
-    (forall x y. F(y,x) ==> F(y,y)) 
-    ==> exists z. F(z,z)", 53)>]
-[<TestCase(@"
-	(forall x. exists y. F(x,y) \/ F(y,x)) /\ 
-    (forall x y. F(y,x) ==> F(y,y)) 
-    ==> exists z. F(z,z)", 54)>]
-[<TestCase(@"
-	(forall x. exists y. F(x,y) \/ F(y,x)) /\ 
-    (forall x y. F(y,x) ==> F(y,y)) 
-    ==> exists z. F(z,z)", 55)>]
-[<TestCase(@"
-	(forall x. exists y. F(x,y) \/ F(y,x)) /\ 
-    (forall x y. F(y,x) ==> F(y,y)) 
-    ==> exists z. F(z,z)", 56)>]
-[<TestCase(@"
-    exists x. exists y. forall z. 
-        (F(x,y) ==> (F(y,z) /\ F(z,z))) /\ 
-        ((F(x,y) /\ G(x,y)) ==> (G(x,z) /\ G(z,z)))", 57)>]
-let ``presolution all`` (f, idx) =
-    presolution (parse f)
-    |> should equal results.[idx]
-
-[<TestCase(@"
-    (forall x y z. P(x,y) ==> P(y,z) ==> P(x,z)) /\ 
-    (forall x y z. Q(x,y) ==> Q(y,z) ==> Q(x,z)) /\ 
-    (forall x y. Q(x,y) ==> Q(y,x)) /\ 
-    (forall x y. P(x,y) \/ Q(x,y)) 
-    ==> (forall x y. P(x,y)) \/ (forall x y. Q(x,y))", 0); Category("LongRunning")>]
+              exists y. (forall z. P(z,y) ==> P(z,f(x))) /\ P(x,y)", Result = [|true; true|])>]
 [<TestCase(@"
 	exists x. forall y z. 
         ((F(y) ==> G(y)) <=> F(x)) /\ 
         ((F(y) ==> H(y)) <=> G(x)) /\ 
         (((F(y) ==> G(y)) ==> H(y)) <=> H(x)) 
-        ==> F(z) /\ G(z) /\ H(z)", 50)>]
-let ``presolution slow`` (f, idx) =
-    presolution (parse f)
-    |> should equal results.[idx]
+        ==> F(z) /\ G(z) /\ H(z)",
+    Result = [|true|], Category = "LongRunning")>]
+[<TestCase(@"
+    exists x. forall y z. 
+        ((F(y,z) ==> (G(y) ==> H(x))) ==> F(x,x)) /\ 
+        ((F(z,x) ==> G(x)) ==> H(z)) /\ 
+        F(x,y) 
+        ==> F(z,z)", Result = [|true|])>]
+[<TestCase(@"
+    exists x. forall y z. 
+        ((F(y,z) ==> (G(y) ==> H(x))) ==> F(x,x)) /\ 
+        ((F(z,x) ==> G(x)) ==> H(z)) /\ 
+        F(x,y) 
+        ==> F(z,z)", Result = [|true|])>]
+[<TestCase(@"
+	(forall x. exists y. F(x,y) \/ F(y,x)) /\ 
+    (forall x y. F(y,x) ==> F(y,y)) 
+    ==> exists z. F(z,z)", Result = [|true|])>]
+[<TestCase(@"
+	(forall x. exists y. F(x,y) \/ F(y,x)) /\ 
+    (forall x y. F(y,x) ==> F(y,y)) 
+    ==> exists z. F(z,z)", Result = [|true|])>]
+[<TestCase(@"
+	(forall x. exists y. F(x,y) \/ F(y,x)) /\ 
+    (forall x y. F(y,x) ==> F(y,y)) 
+    ==> exists z. F(z,z)", Result = [|true|])>]
+[<TestCase(@"
+	(forall x. exists y. F(x,y) \/ F(y,x)) /\ 
+    (forall x y. F(y,x) ==> F(y,y)) 
+    ==> exists z. F(z,z)", Result = [|true|])>]
+[<TestCase(@"
+    exists x. exists y. forall z. 
+        (F(x,y) ==> (F(y,z) /\ F(z,z))) /\ 
+        ((F(x,y) /\ G(x,y)) ==> (G(x,z) /\ G(z,z)))", Result = [|true|])>]
+let ``presolution all`` f =
+    parse f
+    |> presolution
+    |> List.toArray
 
-let private resolution_results = [|
-                                    [true]; // 0
-                                    []; // 1
-                                    []; // 2
-                                    []; // 3
-                                    []; // 4
-                                    []; // 5
-                                    []; // 6
-                                    []; // 7
-                                    []; // 8
-                                    []; // 9
-                                    []; // 10
-                                    []; // 11
-                                    []; // 12
-                                    []; // 13
-                                    []; // 14
-                                    []; // 15
-                                    []; // 16
-                                    []; // 17
-                                    [true]; // 18
-                                    [true]; // 19
-                                    [true]; // 20
-                                    [true; true; true]; // 21
-                                    [true; true]; // 22
-                                    [true; true]; // 23
-                                    [true]; // 24
-                                    [true; true]; // 25
-                                    [true; true]; // 26
-                                    [true]; // 27
-                                    [true]; // 28
-                                    [true; true; true; true]; // 29
-                                    [true]; // 30
-                                    [true]; // 31
-                                    [true]; // 32
-                                    [true; true; true]; // 33
-                                    [true; true; true; true; true; true; true; true; true; true; true; true; true;
-                                     true; true; true; true; true; true; true; true; true; true; true; true; true;
-                                     true; true; true; true; true; true]; // 34
-                                    [true]; // 35
-                                    [true]; // 36
-                                    [true; true]; // 37
-                                    [true]; // 38
-                                    [true]; // 39
-                                    [true]; // 40
-                                    [true]; // 41
-                                    [true; true]; // 42
-                                    [true]; // 43
-                                    [true]; // 44
-                                    [true]; // 45
-                                    [true; true]; // 46
-                                    [true]; // 47
-                                    [true]; // 48
-                                    [true]; // 49
-                                    [true]; // 50
-                                    [true]; // 51
-                                    [true]; // 52
-                                        |]
 
 [<TestCase(@"
-	p ==> q <=> ~q ==> ~p", 1)>]
+	exists x. forall y z. 
+        ((F(y) ==> G(y)) <=> F(x)) /\ 
+        ((F(y) ==> H(y)) <=> G(x)) /\ 
+        (((F(y) ==> G(y)) ==> H(y)) <=> H(x)) 
+        ==> F(z) /\ G(z) /\ H(z)", Result = [| true |], Category = "LongRunning")>]
 [<TestCase(@"
-	~ ~p <=> p", 2)>]
+	p ==> q <=> ~q ==> ~p", Result = [||])>]
 [<TestCase(@"
-	~(p ==> q) ==> q ==> p", 3)>]
+	~ ~p <=> p", Result = [||])>]
 [<TestCase(@"
-	~p ==> q <=> ~q ==> p", 4)>]
+	~(p ==> q) ==> q ==> p", Result = [||])>]
 [<TestCase(@"
-	(p \/ q ==> p \/ r) ==> p \/ (q ==> r)", 5)>]
+	~p ==> q <=> ~q ==> p", Result = [||])>]
 [<TestCase(@"
-	p \/ ~p", 6)>]
+	(p \/ q ==> p \/ r) ==> p \/ (q ==> r)", Result = [||])>]
 [<TestCase(@"
-	p \/ ~ ~ ~p", 7)>]
+	p \/ ~p", Result = [||])>]
 [<TestCase(@"
-	((p ==> q) ==> p) ==> p", 8)>]
+	p \/ ~ ~ ~p", Result = [||])>]
 [<TestCase(@"
-	(p \/ q) /\ (~p \/ q) /\ (p \/ ~q) ==> ~(~q \/ ~q)", 9)>]
+	((p ==> q) ==> p) ==> p", Result = [||])>]
 [<TestCase(@"
-	(q ==> r) /\ (r ==> p /\ q) /\ (p ==> q /\ r) ==> (p <=> q)", 10)>]
+	(p \/ q) /\ (~p \/ q) /\ (p \/ ~q) ==> ~(~q \/ ~q)", Result = [||])>]
 [<TestCase(@"
-	p <=> p", 11)>]
+	(q ==> r) /\ (r ==> p /\ q) /\ (p ==> q /\ r) ==> (p <=> q)", Result = [||])>]
 [<TestCase(@"
-	((p <=> q) <=> r) <=> (p <=> (q <=> r))", 12)>]
+	p <=> p", Result = [||])>]
 [<TestCase(@"
-	p \/ q /\ r <=> (p \/ q) /\ (p \/ r)", 13)>]
+	((p <=> q) <=> r) <=> (p <=> (q <=> r))", Result = [||])>]
 [<TestCase(@"
-	(p <=> q) <=> (q \/ ~p) /\ (~q \/ p)", 14)>]
+	p \/ q /\ r <=> (p \/ q) /\ (p \/ r)", Result = [||])>]
 [<TestCase(@"
-	p ==> q <=> ~p \/ q", 15)>]
+	(p <=> q) <=> (q \/ ~p) /\ (~q \/ p)", Result = [||])>]
 [<TestCase(@"
-	(p ==> q) \/ (q ==> p)", 16)>]
+	p ==> q <=> ~p \/ q", Result = [||])>]
 [<TestCase(@"
-	p /\ (q ==> r) ==> s <=> (~p \/ q \/ s) /\ (~p \/ ~r \/ s)", 17)>]
+	(p ==> q) \/ (q ==> p)", Result = [||])>]
 [<TestCase(@"
-	exists y. forall x. P(y) ==> P(x)", 18)>]
+	p /\ (q ==> r) ==> s <=> (~p \/ q \/ s) /\ (~p \/ ~r \/ s)", Result = [||])>]
 [<TestCase(@"
-	exists x. forall y z. (P(y) ==> Q(z)) ==> P(x) ==> Q(x)", 19)>]
+	exists y. forall x. P(y) ==> P(x)", Result = [| true |])>]
+[<TestCase(@"
+	exists x. forall y z. (P(y) ==> Q(z)) ==> P(x) ==> Q(x)", Result = [| true |])>]
 [<TestCase(@"
 	(forall x y. exists z. forall w. P(x) /\ Q(y) ==> R(z) /\ U(w)) 
-    ==> (exists x y. P(x) /\ Q(y)) ==> (exists z. R(z))", 20)>]
+    ==> (exists x y. P(x) /\ Q(y)) ==> (exists z. R(z))", Result = [| true |])>]
 [<TestCase(@"
-	(exists x. P ==> Q(x)) /\ (exists x. Q(x) ==> P) ==> (exists x. P <=> Q(x))", 21)>]
+	(exists x. P ==> Q(x)) /\ (exists x. Q(x) ==> P) ==> (exists x. P <=> Q(x))", Result = [| true; true; true |])>]
 [<TestCase(@"
-	(forall x. P <=> Q(x)) ==> (P <=> (forall x. Q(x)))", 22)>]
+	(forall x. P <=> Q(x)) ==> (P <=> (forall x. Q(x)))", Result = [| true; true |])>]
 [<TestCase(@"
-	(forall x. P \/ Q(x)) <=> P \/ (forall x. Q(x))", 23)>]
+	(forall x. P \/ Q(x)) <=> P \/ (forall x. Q(x))", Result = [| true; true |])>]
 [<TestCase(@"
     ~(exists x. U(x) /\ Q(x)) /\ 
     (forall x. P(x) ==> Q(x) \/ R(x)) /\ 
     ~(exists x. P(x) ==> (exists x. Q(x))) /\ 
     (forall x. Q(x) /\ R(x) ==> U(x)) ==> 
-    (exists x. P(x) /\ R(x))", 24)>]
+    (exists x. P(x) /\ R(x))", Result = [| true |])>]
 [<TestCase(@"
 	(exists x. P(x)) /\ 
     (forall x. U(x) ==> ~G(x) /\ R(x)) /\ 
     (forall x. P(x) ==> G(x) /\ U(x)) /\ 
     ((forall x. P(x) ==> Q(x)) \/ (exists x. Q(x) /\ P(x))) 
-    ==> (exists x. Q(x) /\ P(x))", 25)>]
+    ==> (exists x. Q(x) /\ P(x))", Result = [| true; true |])>]
 [<TestCase(@"
 	(exists x. P(x)) /\ 
     (forall x. U(x) ==> ~G(x) /\ R(x)) /\ 
     (forall x. P(x) ==> G(x) /\ U(x)) /\ 
     ((forall x. P(x) ==> Q(x)) \/ (exists x. Q(x) /\ P(x))) 
-    ==> (exists x. Q(x) /\ P(x))", 26)>]
+    ==> (exists x. Q(x) /\ P(x))", Result = [| true; true |])>]
 [<TestCase(@"
 	(exists x. P(x) /\ ~Q(x)) /\ 
     (forall x. P(x) ==> R(x)) /\ 
     (forall x. U(x) /\ V(x) ==> P(x)) /\ 
     (exists x. R(x) /\ ~Q(x)) 
     ==> (forall x. U(x) ==> ~R(x)) 
-        ==> (forall x. U(x) ==> ~V(x))", 27)>]
+        ==> (forall x. U(x) ==> ~V(x))", Result = [| true |])>]
 [<TestCase(@"
 	(exists x. P(x) /\ ~Q(x)) /\ 
     (forall x. P(x) ==> R(x)) /\ 
     (forall x. U(x) /\ V(x) ==> P(x)) /\ 
     (exists x. R(x) /\ ~Q(x)) 
     ==> (forall x. U(x) ==> ~R(x)) 
-        ==> (forall x. U(x) ==> ~V(x))", 28)>]
+        ==> (forall x. U(x) ==> ~V(x))", Result = [| true |])>]
 [<TestCase(@"
 	(exists x. P(x)) /\ (exists x. G(x)) ==> 
     ((forall x. P(x) ==> H(x)) /\ (forall x. G(x) ==> J(x)) <=> 
-     (forall x y. P(x) /\ G(y) ==> H(x) /\ J(y)))", 29)>]
+     (forall x y. P(x) /\ G(y) ==> H(x) /\ J(y)))", Result = [|true; true; true; true|])>]
 [<TestCase(@"
 	(forall x. P(x) \/ G(x) ==> ~H(x)) /\ 
     (forall x. (G(x) ==> ~U(x)) ==> P(x) /\ H(x)) 
-    ==> (forall x. U(x))", 30)>]
+    ==> (forall x. U(x))", Result = [|true|])>]
 [<TestCase(@"
 	~(exists x. P(x) /\ (G(x) \/ H(x))) /\ 
     (exists x. Q(x) /\ P(x)) /\ 
     (forall x. ~H(x) ==> J(x)) 
-    ==> (exists x. Q(x) /\ J(x))", 31)>]
+    ==> (exists x. Q(x) /\ J(x))", Result = [|true|])>]
 [<TestCase(@"
 	(forall x. P(x) /\ (G(x) \/ H(x)) ==> Q(x)) /\ 
     (forall x. Q(x) /\ H(x) ==> J(x)) /\ 
     (forall x. R(x) ==> H(x)) 
-    ==> (forall x. P(x) /\ R(x) ==> J(x))", 32)>]
+    ==> (forall x. P(x) /\ R(x) ==> J(x))", Result = [|true|])>]
 [<TestCase(@"
 	(forall x. P(a) /\ (P(x) ==> P(b)) ==> P(c)) <=> 
-    (forall x. P(a) ==> P(x) \/ P(c)) /\ (P(a) ==> P(b) ==> P(c))", 33)>]
+    (forall x. P(a) ==> P(x) \/ P(c)) /\ (P(a) ==> P(b) ==> P(c))", Result = [|true; true; true|])>]
 [<TestCase(@"
 	((exists x. forall y. P(x) <=> P(y)) <=>
      ((exists x. Q(x)) <=> (forall y. Q(y)))) <=>
     ((exists x. forall y. Q(x) <=> Q(y)) <=>
-     ((exists x. P(x)) <=> (forall y. P(y))))", 34)>]
+     ((exists x. P(x)) <=> (forall y. P(y))))",
+     Result = [|true; true; true; true; true; true; true; true; true; true; true; true; true;
+    true; true; true; true; true; true; true; true; true; true; true; true; true;
+    true; true; true; true; true; true|])>]
 [<TestCase(@"
-	exists x y. P(x,y) ==> (forall x y. P(x,y))", 35)>]
+	exists x y. P(x,y) ==> (forall x y. P(x,y))", Result = [|true|])>]
 [<TestCase(@"
 	(forall x. exists y. P(x,y)) /\ 
     (forall x. exists y. G(x,y)) /\ 
     (forall x y. P(x,y) \/ G(x,y) 
     ==> (forall z. P(y,z) \/ G(y,z) ==> H(x,z))) 
-        ==> (forall x. exists y. H(x,y))", 36)>]
+        ==> (forall x. exists y. H(x,y))", Result = [|true|])>]
 [<TestCase(@"
 	(forall z. 
       exists w. forall x. exists y. (P(x,z) ==> P(y,w)) /\ P(y,z) /\ 
       (P(y,w) ==> (exists u. Q(u,w)))) /\ 
     (forall x z. ~P(x,z) ==> (exists y. Q(y,z))) /\ 
     ((exists x y. Q(x,y)) ==> (forall x. R(x,x))) ==> 
-    (forall x. exists y. R(x,y))", 37)>]
+    (forall x. exists y. R(x,y))", Result = [| true; true |])>]
 [<TestCase(@"
-	~(exists x. forall y. P(y,x) <=> ~P(y,y))", 38)>]
+	~(exists x. forall y. P(y,x) <=> ~P(y,y))", Result = [|true|])>]
 [<TestCase(@"
     (exists y. forall x. P(x,y) <=> P(x,x))
-    ==> ~(forall x. exists y. forall z. P(z,y) <=> ~P(z,x))", 39)>]
+    ==> ~(forall x. exists y. forall z. P(z,y) <=> ~P(z,x))", Result = [|true|])>]
 [<TestCase(@"
 	(forall z. exists y. forall x. P(x,y) <=> P(x,z) /\ ~P(x,x)) 
-    ==> ~(exists z. forall x. P(x,z))", 40)>]
+    ==> ~(exists z. forall x. P(x,z))", Result = [|true|])>]
 [<TestCase(@"
-	~(exists y. forall x. P(x,y) <=> ~(exists z. P(x,z) /\ P(z,x)))", 41)>]
+	~(exists y. forall x. P(x,y) <=> ~(exists z. P(x,z) /\ P(z,x)))", Result = [|true|])>]
 [<TestCase(@"
 	lives(agatha) /\ lives(butler) /\ lives(charles) /\ 
     (killed(agatha,agatha) \/ killed(butler,agatha) \/ 
@@ -535,57 +427,49 @@ let private resolution_results = [|
     (forall x. ~hates(x,agatha) \/ ~hates(x,butler) \/ ~hates(x,charles)) 
     ==> killed(agatha,agatha) /\ 
         ~killed(butler,agatha) /\ 
-        ~killed(charles,agatha)", 42)>]
+        ~killed(charles,agatha)", Result = [| true; true |])>]
 [<TestCase(@"
 	P(f((a),b),f(b,c)) /\ 
     P(f(b,c),f(a,c)) /\ 
     (forall (x) y z. P(x,y) /\ P(y,z) ==> P(x,z)) 
-    ==> P(f(a,b),f(a,c))", 43)>]
+    ==> P(f(a,b),f(a,c))", Result = [| true |])>]
 [<TestCase(@"
 	forall P Q R. forall x. exists v. exists w. forall y. forall z. 
-    ((P(x) /\ Q(y)) ==> ((P(v) \/ R(w))  /\ (R(z) ==> Q(v))))", 44)>]
+    ((P(x) /\ Q(y)) ==> ((P(v) \/ R(w))  /\ (R(z) ==> Q(v))))", Result = [| true |])>]
 [<TestCase(@"
-	(forall x. P(x) <=> ~P(f(x))) ==> (exists x. P(x) /\ ~P(f(x)))", 45)>]
+	(forall x. P(x) <=> ~P(f(x))) ==> (exists x. P(x) /\ ~P(f(x)))", Result = [| true |])>]
 [<TestCase(@"
 	forall x. P(x,f(x)) <=> 
-              exists y. (forall z. P(z,y) ==> P(z,f(x))) /\ P(x,y)", 46)>]
+              exists y. (forall z. P(z,y) ==> P(z,f(x))) /\ P(x,y)", Result = [| true; true |])>]
+[<TestCase(@"
+	exists x. forall y z. 
+        ((F(y) ==> G(y)) <=> F(x)) /\ 
+        ((F(y) ==> H(y)) <=> G(x)) /\ 
+        (((F(y) ==> G(y)) ==> H(y)) <=> H(x)) 
+        ==> F(z) /\ G(z) /\ H(z)", Result = [| true |], Category = "LongRunning")>]
 [<TestCase(@"
 	(forall x. exists y. F(x,y) \/ F(y,x)) /\ 
     (forall x y. F(y,x) ==> F(y,y)) 
-    ==> exists z. F(z,z)", 48)>]
+    ==> exists z. F(z,z)", Result = [|true|])>]
 [<TestCase(@"
 	(forall x. exists y. F(x,y) \/ F(y,x)) /\ 
     (forall x y. F(y,x) ==> F(y,y)) 
-    ==> exists z. F(z,z)", 49)>]
+    ==> exists z. F(z,z)", Result = [|true|])>]
 [<TestCase(@"
 	(forall x. exists y. F(x,y) \/ F(y,x)) /\ 
     (forall x y. F(y,x) ==> F(y,y)) 
-    ==> exists z. F(z,z)", 50)>]
+    ==> exists z. F(z,z)", Result = [|true|])>]
 [<TestCase(@"
 	(forall x. exists y. F(x,y) \/ F(y,x)) /\ 
     (forall x y. F(y,x) ==> F(y,y)) 
-    ==> exists z. F(z,z)", 51)>]
+    ==> exists z. F(z,z)", Result = [|true|])>]
 [<TestCase(@"
     exists x. exists y. forall z. 
         (F(x,y) ==> (F(y,z) /\ F(z,z))) /\ 
-        ((F(x,y) /\ G(x,y)) ==> (G(x,z) /\ G(z,z)))", 52)>]
-let ``resolution003 all`` (f, idx) =
-    resolution003 (parse f)
-    |> should equal resolution_results.[idx]
+        ((F(x,y) /\ G(x,y)) ==> (G(x,z) /\ G(z,z)))", Result = [|true|])>]
+let ``resolution003 all`` f =
+    parse f
+    |> resolution003
+    |> List.toArray
 
-[<TestCase(@"
-	exists x. forall y z. 
-        ((F(y) ==> G(y)) <=> F(x)) /\ 
-        ((F(y) ==> H(y)) <=> G(x)) /\ 
-        (((F(y) ==> G(y)) ==> H(y)) <=> H(x)) 
-        ==> F(z) /\ G(z) /\ H(z)", 0); Category("LongRunning")>]
-[<TestCase(@"
-	exists x. forall y z. 
-        ((F(y) ==> G(y)) <=> F(x)) /\ 
-        ((F(y) ==> H(y)) <=> G(x)) /\ 
-        (((F(y) ==> G(y)) ==> H(y)) <=> H(x)) 
-        ==> F(z) /\ G(z) /\ H(z)", 47)>]
-let ``resolution003 slow`` (f, idx) =
-    resolution003 (parse f)
-    |> should equal resolution_results.[idx]
 
