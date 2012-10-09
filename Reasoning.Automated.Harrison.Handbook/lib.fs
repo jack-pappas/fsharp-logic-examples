@@ -75,7 +75,7 @@ let check p x =
 // F#:    val funpow : int -> ('a -> 'a) -> 'a -> 'a
 let funpow n f x =
     if n < 0 then
-        failwith "A function cannot be executed a negative number of times."
+        invalidArg "n" "A function cannot be executed a negative number of times."
     elif n = 0 then
         x
     else
@@ -111,7 +111,7 @@ let rec repeat f x =
 let rec last l =
     match l with
     | [] ->
-        failwith "Cannot get the last element of an empty list."
+        invalidArg "l" "Cannot get the last element of an empty list."
     | [x] -> x
     | _ :: tl ->
         last tl
@@ -184,7 +184,8 @@ let distinctpairs l =
 let chop_list n l =
     let len = List.length l
     if n > len then
-        failwith "chop_list"
+        invalidArg "n" "Cannot chop the list at an index greater \
+                        than the number of items in the list."
     elif n = 0 then
         // Optimized case for n = 0.
         [], l
@@ -218,7 +219,8 @@ let butlast l =
 // F#:    val insertat : int -> 'a -> 'a list -> 'a list
 let insertat i x l =
     if i > List.length l then
-        failwith "insertat: list too short for position to exist"
+        invalidArg "i" "Cannot insert an item at an index greater \
+                        than the number of items in the list."
     elif i = 0 then
         // Optimized case for i = 0.
         x :: l
@@ -728,6 +730,32 @@ let ran (f : func<_,_>) =
     // that they would be by 'setify'.
     foldl (fun a x y -> y :: a) [] f
     |> setify
+
+//// pg. 621
+//// OCaml: val graph : ('a, 'b) func -> ('a * 'b) list = <fun>
+//// F#:    val graph : func<'a,'b>   -> ('a * 'b) list when 'a : comparison and 'b : comparison
+//let inline graph (f : func<_,_>) =
+//    Map.toList f
+//    
+//// pg. 621
+//// OCaml: val dom : ('a, 'b) func -> 'a list = <fun>
+//// F#:    val dom : func<'a,'b>   -> 'a list when 'a : comparison
+//let dom (f : func<_,_>) =
+//    (Set.empty, f)
+//    ||> Map.fold (fun dom x _ ->
+//        Set.add x dom)
+//    // TEMP : Convert the set to a list for compatibility with existing code.
+//    |> Set.toList
+//    
+//// pg. 621
+//// OCaml: val ran : ('a, 'b) func -> 'b list = <fun>
+//// F#:    val ran : func<'a,'b>   -> 'b list when 'b : comparison
+//let ran (f : func<_,_>) =
+//    (Set.empty, f)
+//    ||> Map.fold (fun range _ y ->
+//        Set.add y range)
+//    // TEMP : Convert the set to a list for compatibility with existing code.
+//    |> Set.toList
 
 // ------------------------------------------------------------------------- //
 // Application.                                                              //
