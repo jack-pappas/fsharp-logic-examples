@@ -44,20 +44,20 @@ let ``nelop001``() =
         @"f(v - 1) - 1 = v + 1 /\ f(u) + 1 = u - 1 /\ u + 1 = v ==> false")
     |> should be True
 
-[<TestCase(@"y <= x /\ y >= x + z /\ z >= 0 ==> f(f(x) - f(y)) = f(z)", Result=true)>]
-[<TestCase(@"x = y /\ y >= z /\ z >= x ==> f(z) = f(x)", Result=true)>]
-[<TestCase(@"z = f(x - y) /\ x = z + y /\ ~(-(y) = -(x - f(f(z)))) ==> false", Result=true)>]
-[<TestCase(@"a + 2 = b ==> f(read(update(A,a,3),b-2)) = f(b - a + 1)", Result=false)>]
-[<TestCase(@"hd(x) = hd(y) /\ tl(x) = tl(y) /\ ~(x = nil) /\ ~(y = nil) ==> f(x) = f(y)", Result=false)>]
-[<TestCase(@"~(f(f(x) - f(y)) = f(z)) /\ y <= x /\ y >= x + z /\ z >= 0 ==> false", Result=true)>]
-[<TestCase(@"(x >= y ==> MAX(x,y) = x) /\ (y >= x ==> MAX(x,y) = y) ==> x = y + 2 ==> MAX(x,y) = x", Result=true)>]
-[<TestCase(@"x <= g(x) /\ x >= g(x) ==> x = g(g(g(g(x))))", Result=true)>]
-[<TestCase(@"2 * f(x + y) = 3 * y /\ 2 * x = y ==> f(f(x + y)) = 3 * x", Result=true)>]
-[<TestCase(@"4 * x = 2 * x + 2 * y /\ x = f(2 * x - y) /\ f(2 * y - x) = 3 /\ f(x) = 4 ==> false", Result=true)>]
+[<TestCase(@"y <= x /\ y >= x + z /\ z >= 0 ==> f(f(x) - f(y)) = f(z)", Result = true)>]
+[<TestCase(@"x = y /\ y >= z /\ z >= x ==> f(z) = f(x)", Result = true)>]
+[<TestCase(@"z = f(x - y) /\ x = z + y /\ ~(-(y) = -(x - f(f(z)))) ==> false", Result = true)>]
+[<TestCase(@"a + 2 = b ==> f(read(update(A,a,3),b-2)) = f(b - a + 1)", Result = false)>]
+[<TestCase(@"hd(x) = hd(y) /\ tl(x) = tl(y) /\ ~(x = nil) /\ ~(y = nil) ==> f(x) = f(y)", Result = false)>]
+[<TestCase(@"~(f(f(x) - f(y)) = f(z)) /\ y <= x /\ y >= x + z /\ z >= 0 ==> false", Result = true)>]
+[<TestCase(@"(x >= y ==> MAX(x,y) = x) /\ (y >= x ==> MAX(x,y) = y) ==> x = y + 2 ==> MAX(x,y) = x", Result = true)>]
+[<TestCase(@"x <= g(x) /\ x >= g(x) ==> x = g(g(g(g(x))))", Result = true)>]
+[<TestCase(@"2 * f(x + y) = 3 * y /\ 2 * x = y ==> f(f(x + y)) = 3 * x", Result = true)>]
+[<TestCase(@"4 * x = 2 * x + 2 * y /\ x = f(2 * x - y) /\ f(2 * y - x) = 3 /\ f(x) = 4 ==> false", Result = true)>]
 let ``nelop int_lang`` f = 
     nelop (add_default [int_lang]) (parse f)
 
-[<TestCase(@"x^2 =  1 ==> (f(x) = f(-(x)))  ==> (f(x) = f(1))", Result=true)>]
+[<TestCase(@"x^2 =  1 ==> (f(x) = f(-(x)))  ==> (f(x) = f(1))", Result = true)>]
 let ``nelop real_lang`` f = 
     nelop (add_default [real_lang]) (parse f)
 

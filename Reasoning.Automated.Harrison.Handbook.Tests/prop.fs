@@ -18,8 +18,8 @@ open FsUnit
 // Example of use.                                                           //
 // ------------------------------------------------------------------------- //
 
-[<TestCase(true, false, true, Result=true)>]
-[<TestCase(true, true, false, Result=false)>]
+[<TestCase(true, false, true, Result = true)>]
+[<TestCase(true, true, false, Result = false)>]
 let ``eval``(p, q, r) =
     function
         | P "p" -> p
@@ -43,10 +43,10 @@ let ``atoms``() =
 // Examples.                                                                 //
 // ------------------------------------------------------------------------- //
 
-[<TestCase(@"p \/ ~p", Result=true)>]
-[<TestCase(@"p \/ q ==> p", Result=false)>]
-[<TestCase(@"p \/ q ==> q \/ (p <=> q)", Result=false)>]
-[<TestCase(@"(p \/ q) /\ ~(p /\ q) ==> (~p <=> q)", Result=true)>]
+[<TestCase(@"p \/ ~p", Result = true)>]
+[<TestCase(@"p \/ q ==> p", Result = false)>]
+[<TestCase(@"p \/ q ==> q \/ (p <=> q)", Result = false)>]
+[<TestCase(@"(p \/ q) /\ ~(p /\ q) ==> (~p <=> q)", Result = true)>]
 let ``tautology all`` formula  =
     tautology (parse_prop_formula formula)
 
@@ -55,12 +55,12 @@ let ``tautology all`` formula  =
 // Surprising tautologies including Dijkstra's "Golden rule".                //
 // ------------------------------------------------------------------------- //
 
-[<TestCase(@"(p ==> q) \/ (q ==> p)", Result=true)>]
-[<TestCase(@"p \/ (q <=> r) <=> (p \/ q <=> p \/ r)", Result=true)>]
-[<TestCase(@"p /\ q <=> ((p <=> q) <=> p \/ q)", Result=true)>]
-[<TestCase(@"(p ==> q) <=> (~q ==> ~p)", Result=true)>]
-[<TestCase(@"(p ==> ~q) <=> (q ==> ~p)", Result=true)>]
-[<TestCase(@"(p ==> q) <=> (q ==> p)", Result=false)>]
+[<TestCase(@"(p ==> q) \/ (q ==> p)", Result = true)>]
+[<TestCase(@"p \/ (q <=> r) <=> (p \/ q <=> p \/ r)", Result = true)>]
+[<TestCase(@"p /\ q <=> ((p <=> q) <=> p \/ q)", Result = true)>]
+[<TestCase(@"(p ==> q) <=> (~q ==> ~p)", Result = true)>]
+[<TestCase(@"(p ==> ~q) <=> (q ==> ~p)", Result = true)>]
+[<TestCase(@"(p ==> q) <=> (q ==> p)", Result = false)>]
 let ``surprising tautology`` formula =
     tautology (parse_prop_formula formula)
 
@@ -96,8 +96,8 @@ let ``nnf``() =
 // Some tautologies remarked on.                                             //
 // ------------------------------------------------------------------------- //
 
-[<TestCase(@"(p ==> p') /\ (q ==> q') ==> (p /\ q ==> p' /\ q')", Result=true)>]
-[<TestCase(@"(p ==> p') /\ (q ==> q') ==> (p \/ q ==> p' \/ q')", Result=true)>]
+[<TestCase(@"(p ==> p') /\ (q ==> q') ==> (p /\ q ==> p' /\ q')", Result = true)>]
+[<TestCase(@"(p ==> p') /\ (q ==> q') ==> (p \/ q ==> p' \/ q')", Result = true)>]
 let ``remarked tautology`` formula  =
     tautology (parse_prop_formula formula)
 
