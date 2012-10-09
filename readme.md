@@ -89,9 +89,12 @@ A large set of unit tests is created based on available examples. These test cas
   - So far, most (all?) of the functions in `lib.fs` which perform set-based operations on lists have been rewritten to use `Set<_>` internally. However, they still accept and output lists for compatibility with existing code; the overhead of converting between sets and lists currently causes some tests to run significantly slower.
 
 ### Optimization TODO ###
- - Rewrite functions, as needed, to avoid unnecessary data-manipulation and list traversals. The code makes extensive use of the `(@)` operator and the `List.foldBack` function, which should be replaced (if possible) with `(::)` and `List.fold`. In addition, there are a number of places where the range operator `[m..n]` is used to create a list of values which is immediately consumed using `List.foldBack`, `List.map`, etc.; instead, these should be replaced with the `List.init` function.
  - Modify code to use arrays instead of lists, where possible.
- - Modify code to use `Option` and `Choice<_,_>` instead of handling backtracking with exceptions.
  - Modify code to use F# `Set<_>` instead of representing sets with lists.
+ - Rewrite functions, as needed, to avoid unnecessary data-manipulation and list traversals. The code makes extensive use of the `(@)` operator and the `List.foldBack` function, which should be replaced (if possible) with `(::)` and `List.fold`.
+   - In addition, there are a number of places where the range operator `[m..n]` is used to create a list of values which is immediately consumed using `List.foldBack`, `List.map`, etc.; instead, these should be replaced with the `List.init` function.
+   - Some of the uses of `List.foldBack` and `List.reduceBack` will be replaced by `Set.foldBack` and `Array.foldBack` as we make other optimizations.
+ - Modify code to use `Option` and `Choice<_,_>` instead of handling backtracking with exceptions.
+ - Parsing code should be modified to operate on `char list` rather than `string list`, because the string comparisons are much more expensive.
  - (To be performed LAST) Finish CPS-transforming recursive functions.
   - Instead of doing this manually, we could implement a `cont` workflow builder type for F# and use that for the CPS transformations. It would also make the code much easier to read.
