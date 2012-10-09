@@ -89,7 +89,7 @@ let ``examples 5``() =
 [<Test>]
 let ``examples 6``() =
     coordinations
-    |> List.partition (grobner_decide >>|> invariant_under_shearing)
+    |> List.partition (grobner_decide << invariant_under_shearing)
     |> should equal (([("collinear",
                            Atom
                             (R ("=",
