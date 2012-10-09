@@ -184,4 +184,3 @@ let wu fm vars zeros =
     let ps = List.map (lhs << polyatom vars) (conjuncts con)
     let tri = triangulate vars [] pols
     List.foldBack (fun p -> union (pprove vars tri p [])) ps []
-

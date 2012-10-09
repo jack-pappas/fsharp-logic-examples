@@ -256,4 +256,3 @@ let ebddtaut fm =
     let defs, fm' =
         sort_defs [] (List.map dest_iffdef eqs) (List.foldBack mk_imp noneqs r)
     snd (mkbdds undefined (mk_bdd (<), undefined) defs fm') = 1
-

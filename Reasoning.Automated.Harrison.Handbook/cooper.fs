@@ -396,4 +396,3 @@ let natural_qelim =
     integer_qelim
     << relativize (fun x ->
         Atom (R ("<=", [zero; Var x])))
-

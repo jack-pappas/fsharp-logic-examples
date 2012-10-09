@@ -302,4 +302,3 @@ let grobner_basis vars pols =
     |> List.map (mpolyatom vars)
     |> groebner
     |> List.map (term_of_poly vars)
-

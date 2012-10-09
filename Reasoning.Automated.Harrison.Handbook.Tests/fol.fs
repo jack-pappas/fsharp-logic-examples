@@ -63,8 +63,16 @@ let ``holds with mod_interp 4``() =
 let ``variant``(x, y, z) =
     variant x [y; z]
 
-[<TestCase(@"forall x. x = y", Result="<<forall x'. x' =x>>\r\n")>]
-[<TestCase(@"forall x x'. x = y ==> x = x'", Result="<<forall x' x''. x' =x ==> x' =x''>>\r\n")>]
-let ``subst`` f =
+let private subst_results = [| 
+                                Forall ("x'", Atom (R ("=", [Var "x'"; Var "x"])));
+                                Forall ("x'",
+                                 Forall ("x''",
+                                  Imp (Atom (R ("=", [Var "x'"; Var "x"])),
+                                   Atom (R ("=", [Var "x'"; Var "x''"])))));
+                            |]
+
+[<TestCase(@"forall x. x = y", 0)>]
+[<TestCase(@"forall x x'. x = y ==> x = x'", 1)>]
+let ``subst`` (f, idx) =
     subst ("y" |=> Var "x") (parse f)
-    |> sprint_fol_formula
+    |> should equal subst_results.[idx]
