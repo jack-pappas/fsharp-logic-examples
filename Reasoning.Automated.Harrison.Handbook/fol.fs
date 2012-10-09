@@ -164,6 +164,10 @@ let fprintert tw tm =
     fprint_term tw 0 tm
     fprintf tw "|>>"
 
+// Actual function for printing
+let inline print_term t = fprintert stdout t
+let inline sprint_term t = writeToString (fun sw -> fprintert sw t)
+
 // Added by EGT, updated by Phan
 let fprint_term_list tw ts = List.iter (fprint_term tw 0) ts
 

@@ -68,7 +68,8 @@ let max_varindex pfx s (n : num) =
     let l = String.length s
     if l <= m || not <| s.StartsWith pfx then n
     else
-        let s' = s.[m .. (l - m)]
+        let s' = s.Substring m
+        assert (String.length s' > 0)
         if List.forall numeric (explode s') then
             max n (num_of_string s')
         else n
@@ -78,7 +79,7 @@ let max_varindex pfx s (n : num) =
 // Overall definitional CNF.                                                 //
 // ------------------------------------------------------------------------- //
 
-let mk_defcnf fn fm =        
+let mk_defcnf fn fm =
     let fm'', defs, _ =
         let fm' = nenf fm
         let n = GenericOne + overatoms (max_varindex "p_" << pname) fm' GenericZero
