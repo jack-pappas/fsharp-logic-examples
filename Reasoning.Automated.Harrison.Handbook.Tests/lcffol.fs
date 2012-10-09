@@ -16,16 +16,14 @@ open FsUnit
 
 // pg. 501
 
-let private lcfrefute_results = [| 
-                                   @"p(1) /\ ~q(1) /\ (forall x. p(x) ==> q(x)) ==> false";
-                                   @"(exists x. ~p(x)) /\ (forall x. p(x)) ==> (~(~p(f_1)) ==> (forall x. ~(~p(x)))) ==> false";
-                                    |]
-
-[<TestCase(@"p(1) /\ ~q(1) /\ (forall x. p(x) ==> q(x))", 0)>]
-[<TestCase(@"(exists x. ~p(x)) /\ (forall x. p(x))", 1)>]
-let ``lcfrefute`` (f, idx) =
+// Temporary use string comparison due to a subtle bug in the parsers.
+[<TestCase(@"p(1) /\ ~q(1) /\ (forall x. p(x) ==> q(x))", 
+                Result="|- p(1) /\ ~q(1) /\ (forall x. p(x) ==> q(x)) ==> false")>]
+[<TestCase(@"(exists x. ~p(x)) /\ (forall x. p(x))", 
+                Result="|- (exists x. ~p(x)) /\ (forall x. p(x)) ==> (~(~p(f_1)) ==> (forall x. ~(~p(x)))) ==> false")>]
+let ``lcfrefute`` f =
     lcfrefute (parse f) 1 simpcont 
-    |> should equal (parse lcfrefute_results.[idx])
+    |> sprint_thm
 
 // pg. 504
 //  ------------------------------------------------------------------------- // 
