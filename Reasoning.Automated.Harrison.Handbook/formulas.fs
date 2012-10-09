@@ -50,8 +50,6 @@ let parse_right_infix opsym opcon =
 
 // OCaml: val parse_list : 'a ->  ('a list -> 'b * 'a list) -> 'a list -> 'b list * 'a list = <fun>
 // F#:    val parse_list : 'a -> (('a list -> 'b * 'a list) -> 'a list -> 'b list * 'a list)  when 'a : equality
-// TODO : Optimize using continuation-passing style.
-// (So the list inside the function is built from the bottom up -- list append is expensive!)
 let parse_list opsym =
     parse_ginfix opsym (fun f e1 e2 -> (f e1) @ [e2]) (fun x -> [x])
 
@@ -335,7 +333,6 @@ let dest_and = function
 
 // OCaml: val conjuncts : 'a formula -> 'a formula list = <fun>
 // F#:    val conjuncts : 'a formula -> 'a formula list
-// TODO : Optimize using continuation-passing style.
 let rec conjuncts = function
     | And (p, q) ->
         conjuncts p @ conjuncts q 
@@ -351,7 +348,6 @@ let dest_or = function
 
 // OCaml: val disjuncts : 'a formula -> 'a formula list = <fun>
 // F#:    val disjuncts : 'a formula -> 'a formula list
-// TODO : Optimize using continuation-passing style.
 let rec disjuncts = function
     | Or (p, q) ->
         disjuncts p @ disjuncts q 
@@ -382,7 +378,6 @@ let inline consequent fm =
 
 // OCaml: val onatoms : ('a -> 'a formula) -> 'a formula -> 'a formula = <fun>
 // F#:    val onatoms : ('a -> 'a formula) -> 'a formula -> 'a formula
-// TODO : Optimize using continuation-passing style.
 let rec onatoms f fm =
     match fm with
     | Atom a ->
@@ -410,7 +405,6 @@ let rec onatoms f fm =
 
 // OCaml: val overatoms : ('a -> 'b -> 'b) -> 'a formula -> 'b -> 'b = <fun>
 // F#:    val overatoms : ('a -> 'b -> 'b) -> 'a formula -> 'b -> 'b
-// TODO : Optimize using continuation-passing style.
 let rec overatoms f fm b =
     match fm with
     | Atom a ->

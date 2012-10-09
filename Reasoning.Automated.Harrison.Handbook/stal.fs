@@ -51,7 +51,6 @@ let rec align (p, q) =
 let equate2 (p, q) eqv =
     equate (negate p, negate q) (equate (p, q) eqv)
 
-// TODO : Optimize using continuation-passing style.
 let rec irredundant rel eqs =
     match eqs with
     | [] -> []
@@ -70,8 +69,6 @@ let consequences (p, q as peq) fm eqs =
 let triggers fm =
     let poslits = insert True (List.map (fun p -> Atom p) (atoms fm))
     let lits = union poslits (List.map negate poslits)
-    // TODO : From here on down, the code can be reformatted to form a pipeline
-    // using the (|>) operator instead of assigning intermediate results to variables.
     let pairs = allpairs (fun p q -> p, q) lits lits
     let npairs = List.filter (fun (p, q) -> atom p <> atom q) pairs
     let eqs = setify <| List.map align npairs

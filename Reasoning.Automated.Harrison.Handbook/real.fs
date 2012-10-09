@@ -45,7 +45,6 @@ open complex
 // Formal derivative of polynomial.                                          //
 // ------------------------------------------------------------------------- //
 
-// TODO : Optimize using continuation-passing style.
 let rec poly_diffn x n p =
     match p with
     | Fn ("+", [c; Fn ("*", [y; q])])

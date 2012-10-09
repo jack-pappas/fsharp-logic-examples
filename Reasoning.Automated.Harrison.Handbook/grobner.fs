@@ -47,7 +47,6 @@ open real
 // ------------------------------------------------------------------------- //
 
 let mmul (c1, m1) (c2, m2) =
-    // TODO : Modify this to use the F# BigInt type (arbitary-precision integer)
     (c1 * c2, List.map2 (+) m1 m2)
 
 let mdiv =
@@ -56,7 +55,6 @@ let mdiv =
             failwith "mdiv"
         else n1 - n2
     fun (c1, m1) (c2, m2) ->
-        // TODO : Modify this to use the F# BigInt type (arbitary-precision integer)
         (c1 / c2, List.map2 index_sub m1 m2)
 
 let mlcm (c1, m1) (c2, m2) =

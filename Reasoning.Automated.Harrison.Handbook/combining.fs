@@ -250,8 +250,6 @@ let nelop001 langs fm =
 // Find the smallest subset satisfying a predicate.                          //
 // ------------------------------------------------------------------------- //
 
-// TODO : Optimize by using the Maybe or Either monads instead of using
-// exceptions for control flow.
 let rec findasubset p m l =
     if m = 0 then p [] else
     match l with

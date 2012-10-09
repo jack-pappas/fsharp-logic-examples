@@ -346,8 +346,7 @@ let rec variant x vars =
 // ------------------------------------------------------------------------- //
 // Substitution in formulas, with variable renaming.                         //
 // ------------------------------------------------------------------------- //
-    
-// TODO : Optimize using continuation-passing style.
+
 let rec subst subfn fm =
     match fm with
     | False -> False

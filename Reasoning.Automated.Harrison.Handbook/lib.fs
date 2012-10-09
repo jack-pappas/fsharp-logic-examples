@@ -77,8 +77,7 @@ let check p x =
 
 // pg. 612
 // OCaml: val funpow : int -> ('a -> 'a) -> 'a -> 'a = <fun>
-// F#:    val funpow : int -> ('a -> 'a) -> 'a -> 'a               
-// TODO : Optimize to use imperative loop instead of recursion.
+// F#:    val funpow : int -> ('a -> 'a) -> 'a -> 'a
 let rec funpow n f x =
     if n < 1 then x
     else funpow (n - 1) f (f x)
@@ -157,7 +156,6 @@ let inline (---) (m : num) (n : num) = [m..n]
 // pg. 619
 // OCaml: val end_itlist : ('a -> 'a -> 'a) -> 'a list -> 'a = <fun>
 // F#:    val end_itlist : ('a -> 'a -> 'a) -> 'a list -> 'a
-// TODO : Optimize using continuation-passing style.
 let rec end_itlist f l =
     match l with
     | [] -> failwith "end_itlist"
@@ -291,7 +289,6 @@ let butlast l =
 // pg. 620
 // OCaml: val allpairs : ('a -> 'b -> 'c) -> 'a list -> 'b list -> 'c list = <fun>
 // F#:    val allpairs : ('a -> 'b -> 'c) -> 'a list -> 'b list -> 'c list
-// TODO : Optimize using continuation-passing style.
 let rec allpairs f l1 l2 =
     match l1 with
     | [] -> []
@@ -301,7 +298,6 @@ let rec allpairs f l1 l2 =
 // pg. 620
 // OCaml: val distinctpairs : 'a list -> ('a * 'a) list = <fun>
 // F#:    val distinctpairs : 'a list -> ('a * 'a) list
-// TODO : Optimize using continuation-passing style.
 let rec distinctpairs l =
     match l with
     | [] -> []
@@ -311,7 +307,6 @@ let rec distinctpairs l =
 // pg. 619
 // OCaml: val chop_list : int -> 'a list -> 'a list * 'a list = <fun>
 // F#:    val chop_list : int -> 'a list -> 'a list * 'a list
-// TODO : Optimize using continuation-passing style.
 let rec chop_list n l =
     if n = 0 then [], l
     else
@@ -330,7 +325,6 @@ let rec chop_list n l =
 // pg. 619
 // OCaml: val insertat : int -> 'a -> 'a list -> 'a list = <fun>
 // F#:    val insertat : int -> 'a -> 'a list -> 'a list
-// TODO : Optimize using continuation-passing style.
 let rec insertat i x l =
     if i = 0 then x :: l
     else
@@ -371,7 +365,6 @@ let inline index x xs = List.findIndex ((=) x) xs
 // pg. 619
 // OCaml: val earlier : 'a list -> 'a -> 'a -> bool = <fun>
 // F#:    val earlier : 'a list -> 'a -> 'a -> bool when 'a : comparison
-// TODO : Optimize using continuation-passing style.
 let rec earlier l x y =
     match l with
     | [] -> false
@@ -386,11 +379,7 @@ let rec earlier l x y =
 // pg. 619
 // OCaml: val do_list : ('a -> 'b) -> 'a list -> unit = <fun>
 // F#:    val do_list : ('a -> unit) -> 'a list -> unit
-// F# : Use List.iter.
-//    let inline do_list f l =
-//        // TEMP : Leave this function as an alias for List.iter until
-//        // all usages can be replaced; then this function can be discarded.
-//        List.iter f l
+// NOTE : 'do_list' has been replaced with the built-in F# function List.iter.
 
 // ------------------------------------------------------------------------- //
 // Association lists.                                                        //
@@ -424,7 +413,6 @@ let rec rev_assoc a l =
 // pg. ???
 // OCaml: val merge : ('a -> 'a -> bool) -> 'a list -> 'a list -> 'a list = <fun>
 // F#:    val merge : ('a -> 'a -> bool) -> 'a list -> 'a list -> 'a list
-// TODO : Optimize using continuation-passing style.
 let rec merge comparer l1 l2 =
     match l1, l2 with
     | [], x
@@ -442,7 +430,6 @@ let rec merge comparer l1 l2 =
 // pg. 619
 // OCaml: val sort : ('a -> 'a -> bool) -> 'a list -> 'a list = <fun>
 // F#:    val sort : ('a -> 'a -> bool) -> ('a list -> 'a list) when 'a : equality
-// TODO : Optimize using continuation-passing style.
 let rec mergepairs ord l1 l2 =
     match l1, l2 with
     | [s], [] -> s
@@ -564,9 +551,6 @@ let minimize f l =
 // Set operations on ordered lists.                                          //
 // ------------------------------------------------------------------------- //
 
-// TODO: Should these be converted to F# Set
-// i.e. Set.union, Set.intersect, Set.difference
-
 // pg. 620
 // OCaml: val setify : 'a list -> 'a list = <fun>
 // F#:    val setify : ('a list -> 'a list) when 'a : comparison
@@ -584,16 +568,12 @@ let setify =
 // pg. 620
 // OCaml: val union : 'a list -> 'a list -> 'a list = <fun>
 // F#:    val union : ('a list -> 'a list -> 'a list) when 'a : comparison
-// TODO: Use Set.union
-// F#:    val union : Set<'T> -> Set<'T> -> Set<'T> (requires comparison)
 let union =
     let rec union l1 l2 =
         match l1, l2 with
         | [], l2 -> l2
         | l1, [] -> l1
         | (h1 :: t1 as l1), (h2 :: t2 as l2) ->
-            // TODO : The first two cases here can be simplified
-            // by using the (<=) to test both cases at once.
             if h1 = h2 then
                 h1 :: (union t1 t2)
             elif h1 < h2 then
@@ -606,8 +586,6 @@ let union =
 // pg. 620
 // OCaml: val intersect : 'a list -> 'a list -> 'a list = <fun>
 // F#:    val intersect : ('a list -> 'a list -> 'a list) when 'a : comparison
-// TODO: Use Set.intersect
-// F#:    val intersect : Set<'T> -> Set<'T> -> Set<'T> (requires comparison)
 let intersect =
     let rec intersect l1 l2 =
         match l1, l2 with
@@ -626,8 +604,6 @@ let intersect =
 // pg. 620
 // OCaml: val subtract : 'a list -> 'a list -> 'a list = <fun>
 // F#:    val subtract : ('a list -> 'a list -> 'a list) when 'a : comparison
-// TODO: Use Set.Difference or (l1 - l2)
-// F#:    val difference : Set<'T> -> Set<'T> -> Set<'T> (requires comparison)
 let subtract =
     let rec subtract l1 l2 =
         match l1, l2 with
@@ -671,7 +647,6 @@ let subset,psubset =
 // pg. 620
 // OCaml: val set_eq : 'a list -> 'a list -> bool = <fun>
 // F#:    val set_eq : 'a list -> 'a list -> bool when 'a : comparison
-// TODO: Can we use (s1 = s2) once they are converted to sets?
 let rec set_eq s1 s2 =
     setify s1 = setify s2
     
@@ -832,13 +807,11 @@ let is_undefined = function
 // OCaml: val mapf : ('a -> 'b)  -> ('c, 'a) func -> ('c, 'b) func = <fun>
 // F#:    val mapf : (('a -> 'b) -> func<'c,'a>   -> func<'c,'b>)
 let mapf =
-    // TODO : Optimize using continuation-passing style.
     let rec map_list f l =
         match l with
         | [] -> []
         | (x, y) :: t ->
             (x, f y) :: (map_list f t)
-    // TODO : Optimize using continuation-passing style.
     let rec mapf f t =
         match t with
         | Empty -> Empty
@@ -856,13 +829,11 @@ let mapf =
 // OCaml: val foldl : ('a -> 'b -> 'c -> 'a) -> 'a -> ('b, 'c) func -> 'a = <fun>
 // F#:    val foldl : (('a -> 'b -> 'c -> 'a) -> 'a -> func<'b,'c> -> 'a)
 let foldl =
-    // TODO : Optimize using continuation-passing style.
     let rec foldl_list f a l =
         match l with
         | [] -> a
         | (x, y) :: t ->
             foldl_list f (f a x y) t
-    // TODO : Optimize using continuation-passing style.
     let rec foldl f a t =
         match t with
         | Empty -> a
@@ -876,13 +847,11 @@ let foldl =
 // OCaml: val foldr :  ('a -> 'b -> 'c -> 'c) -> ('a, 'b) func -> 'c -> 'c = <fun>
 // F#:    val foldr : (('a -> 'b -> 'c -> 'c) -> func<'a,'b>   -> 'c -> 'c)
 let foldr =
-    // TODO : Optimize using continuation-passing style.
     let rec foldr_list f l a =
         match l with
         | [] -> a
         | (x, y) :: t ->
             f x y (foldr_list f t a)
-    // TODO : Optimize using continuation-passing style.
     let rec foldr f t a =
         match t with
         | Empty -> a

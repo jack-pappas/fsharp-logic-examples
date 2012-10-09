@@ -6,6 +6,7 @@
 
 module Reasoning.Automated.Harrison.Handbook.limitations
 
+open LanguagePrimitives
 open FSharpx.Compatibility.OCaml.Num
 
 open lib
@@ -57,8 +58,7 @@ open tactics
 // ------------------------------------------------------------------------- //
 
 let rec numeral n =
-    // TODO : Fix comparison here. 'n' could be Big_int 0, for example.
-    if n = Int 0 then Fn ("0", [])
+    if n = GenericZero then Fn ("0", [])
     else Fn ("S", [numeral (n - Int 1)])
         
 // pg. 532

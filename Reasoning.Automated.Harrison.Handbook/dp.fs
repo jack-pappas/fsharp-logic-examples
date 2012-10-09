@@ -51,7 +51,6 @@ let affirmative_negative_rule clauses =
         let clauses' = List.filter (fun cl -> intersect cl pureItem = []) clauses
         Some clauses'
             
-// TODO: Verify use of List.partition works
 let resolve_on p clauses =
     let p' = negate p 
     let pos, notpos = List.partition (mem p) clauses

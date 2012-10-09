@@ -110,8 +110,6 @@ let rec lexwhile prop inp =
 
 // OCaml: val lex : string list -> string list = <fun>
 // F#:    val lex : string list -> string list
-// TODO : Optimize this function using continuation-passing style
-// or, better yet, an imperative loop.
 let rec lex inp =
     match snd <| lexwhile space inp with
     | [] -> []
@@ -198,7 +196,6 @@ let parse_exp =
 
 // OCaml: val string_of_exp : expression -> string = <fun>
 // F#:    val string_of_exp : expression -> string
-// TODO : Optimize using continuation-passing style.
 let rec string_of_exp e =
     match e with
     | Var s -> s
@@ -215,7 +212,6 @@ let rec string_of_exp e =
 
 // OCaml: val string_of_exp   : int -> expression -> string = <fun>
 // F#:    val string_of_exp_2 : int -> expression -> string
-// TODO : Optimize using continuation-passing style.
 let rec string_of_exp_2 pr e =
     match e with
     | Var s -> s

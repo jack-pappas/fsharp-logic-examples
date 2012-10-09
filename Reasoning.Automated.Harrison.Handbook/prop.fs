@@ -75,7 +75,6 @@ let inline sprint_prop_list fs = writeToString (fun sw -> fprint_prop_list sw fs
 // Note: added cases for Exists and Forall to avoid compiler warning
 // OCaml: val eval : 'a formula -> ('a -> bool) -> bool = <fun>
 // F#:    val eval : 'a formula -> ('a -> bool) -> bool
-// TODO : Optimize using continuation-passing style.
 let rec eval fm v =
     match fm with
     | False -> false
@@ -187,7 +186,6 @@ let psubst subfn =
 
 // OCaml: val dual : 'a formula -> 'a formula = <fun>
 // F#:    val dual : 'a formula -> 'a formula
-// TODO : Optimize using continuation-passing style.
 let rec dual fm =
     match fm with
     | False -> True
@@ -245,7 +243,6 @@ let psimplify1 fm =
         
 // OCaml: val psimplify : 'a formula -> 'a formula = <fun>
 // F#:    val psimplify : 'a formula -> 'a formula
-// TODO : Optimize using continuation-passing style.
 let rec psimplify fm =
     match fm with
     | Not p ->
@@ -289,7 +286,6 @@ let negate = function
 // Note: Changed name from nnf to nnfOrig to avoid F# compiler error.
 // OCaml: val nnf :     'a formula -> 'a formula = <fun>
 // F#:    val nnfOrig : 'a formula -> 'a formula
-// TODO : Optimize using continuation-passing style.
 let rec nnfOrig fm =
     match fm with
     | And (p, q) ->
@@ -332,7 +328,6 @@ let nnf fm =
 // Note: Changed name from nenf to nenfOrig to avoid F# compiler error.
 // OCaml: val nenf :     'a formula -> 'a formula = <fun>
 // F#:    val nenfOrig : 'a formula -> 'a formula
-// TODO : Optimize using continuation-passing style.
 let rec nenfOrig fm =
     match fm with
     | Not (Not p) ->
@@ -384,7 +379,6 @@ let mk_lits pvs v =
         
 // OCaml: val allsatvaluations : (('a -> bool) -> bool) -> ('a -> bool) -> 'a list -> ('a -> bool) list = <fun>
 // F#:    val allsatvaluations :  (('a -> bool) -> bool) -> ('a -> bool) -> 'a list -> ('a -> bool) list when 'a : equality
-// TODO : Optimize using continuation-passing style.
 let rec allsatvaluations subfn v pvs =
     match pvs with
     | [] ->
@@ -412,7 +406,6 @@ let dnfOrig fm =
 // Note: Changed name from distrib to distribOrig to avoid F# compiler error.
 // OCaml: val distrib :     'a formula -> 'a formula = <fun>
 // F#:    val distribOrig : 'a formula -> 'a formula
-// TODO : Optimize using continuation-passing style.
 let rec distribOrig fm =
     match fm with
     | And (p, Or (q, r)) ->
@@ -423,7 +416,6 @@ let rec distribOrig fm =
         
 // OCaml: val rawdnf : 'a formula -> 'a formula = <fun>
 // F#:    val rawdnf : 'a formula -> 'a formula
-// TODO : Optimize using continuation-passing style.
 let rec rawdnf fm =
     match fm with
     | And (p, q) ->
@@ -444,7 +436,6 @@ let distrib s1 s2 =
     
 // OCaml: val purednf : 'a formula -> 'a formula list list = <fun>
 // F#:    val purednf : 'a formula -> 'a formula list list when 'a : comparison
-// TODO : Optimize using continuation-passing style.
 let rec purednf fm =
     match fm with
     | And (p, q) ->
