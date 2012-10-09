@@ -6,8 +6,6 @@
 
 module Reasoning.Automated.Harrison.Handbook.Tests.geom
 
-open NUnit.Framework
-open FsUnit
 open Reasoning.Automated.Harrison.Handbook.lib
 open Reasoning.Automated.Harrison.Handbook.formulas
 open Reasoning.Automated.Harrison.Handbook.folMod
@@ -17,6 +15,8 @@ open Reasoning.Automated.Harrison.Handbook.complex
 open Reasoning.Automated.Harrison.Handbook.real
 open Reasoning.Automated.Harrison.Handbook.grobner
 open Reasoning.Automated.Harrison.Handbook.geom
+open NUnit.Framework
+open FsUnit
 
 
 (* ------------------------------------------------------------------------- *)
@@ -55,13 +55,13 @@ let ``examples 1``() =
 let ``examples 2``() =
     coordinations
     |> List.forall (grobner_decide >>|> invariant_under_translation)
-    |> should equal true
+    |> should be True
 
 [<Test>]
 let ``examples 3``() =
     coordinations
     |> List.forall (grobner_decide >>|> invariant_under_rotation)
-    |> should equal true
+    |> should be True
 
 
 (* ------------------------------------------------------------------------- *)
@@ -84,7 +84,7 @@ let ``examples 4``() =
 let ``examples 5``() =
     coordinations
     |> List.forall (grobner_decide >>|> invariant_under_scaling)
-    |> should equal true
+    |> should be True
 
 [<Test>]
 let ``examples 6``() =
@@ -171,7 +171,7 @@ let ``examples 7``() =
         ==> lengths_eq(a,b,b,c)"
     |> parse
     |> (grobner_decide >>|> originate)
-    |> should equal true
+    |> should be True
 
 
 (* ------------------------------------------------------------------------- *)
@@ -185,7 +185,7 @@ let ``examples 8``() =
        ==> lengths_eq(a,e,e,c)"
     |> parse
     |> (grobner_decide >>|> originate)
-    |> should equal false
+    |> should be False
 
 [<Test>]
 let ``examples 9``() =
@@ -194,7 +194,7 @@ let ``examples 9``() =
        ==> lengths_eq(a,e,e,c)"
     |> parse
     |> (grobner_decide >>|> originate)
-    |> should equal true
+    |> should be True
 
 
 (* ------------------------------------------------------------------------- *)

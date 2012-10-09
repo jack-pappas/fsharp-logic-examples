@@ -6,13 +6,13 @@
 
 module Reasoning.Automated.Harrison.Handbook.Tests.grobner
 
-open NUnit.Framework
-open FsUnit
 open Reasoning.Automated.Harrison.Handbook.lib
 open Reasoning.Automated.Harrison.Handbook.formulas
 open Reasoning.Automated.Harrison.Handbook.folMod
 open Reasoning.Automated.Harrison.Handbook.complex
 open Reasoning.Automated.Harrison.Handbook.grobner
+open NUnit.Framework
+open FsUnit
 
 
 (* ------------------------------------------------------------------------- *)
@@ -53,7 +53,7 @@ let ``examples 2``() =
     |> should equal formula<fol>.True
 
     grobner_decide
-    |> should equal true
+    |> should be True
 
 
 (* ------------------------------------------------------------------------- *)
@@ -121,7 +121,7 @@ let ``examples 4``() =
     @"y * (c * x + d) = a * x + b ==> x * (c * y - a) = b - d * y"
     |> parse
     |> grobner_decide
-    |> should equal true
+    |> should be True
 
 
 (* ------------------------------------------------------------------------- *)
@@ -143,7 +143,7 @@ let ``examples 6``() =
     ==> (a * d * e)^2 + (c^2 * d * e)^2 + (c * d^2 * e)^2 + (b * d * e)^2 + 1 = 0"
     |> parse
     |> grobner_decide
-    |> should equal true
+    |> should be True
 
 
 (* ------------------------------------------------------------------------- *)
@@ -165,7 +165,7 @@ let ``examples 8``() =
     ==> 2 * (d * e)^2 + (d^2 * e)^2 + (b * d * e)^2 + 1 =  0"
     |> parse
     |> grobner_decide
-    |> should equal true
+    |> should be True
 
 (* ------------------------------------------------------------------------- *)
 (* Converse, 0 <= a /\ a^3 <= b^3 ==> a <= b                                 *)
@@ -179,7 +179,7 @@ let ``examples 9``() =
     ==> c^2 * b + a^2 + b^2 + (e * d)^2 = 0"
     |> parse
     |> grobner_decide
-    |> should equal true
+    |> should be True
 
 (* ------------------------------------------------------------------------- *)
 (* Here are further steps towards a solution, step-by-step.                  *)
@@ -214,4 +214,4 @@ let ``examples 11``() =
     @"(y - x) * s^2 = 1 /\ (x - y) * t^2 = 1 ==> s^2 + t^2 = 0"
     |> parse
     |> grobner_decide
-    |> should equal true
+    |> should be True
