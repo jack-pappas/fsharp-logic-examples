@@ -30,8 +30,8 @@ let ``wang``() =
                     ==> (exists x y. P(x) /\ Q(y)) ==> (exists z. R(z))")
     |> should be True
 
-[<TestCase(@"(forall x y. R(x,y) \/ R(y,x)) ==> forall x. R(x,x)", Result=true)>]
-[<TestCase(@"(forall x y z. R(x,y) /\ R(y,z) ==> R(x,z)) ==> forall x. R(x,x)", Result=false)>]
+[<TestCase(@"(forall x y. R(x,y) \/ R(y,x)) ==> forall x. R(x,x)", Result = true)>]
+[<TestCase(@"(forall x y z. R(x,y) /\ R(y,z) ==> R(x,z)) ==> forall x. R(x,x)", Result = false)>]
 let ``decide_fmp`` f =
     decide_fmp (parse f)
 

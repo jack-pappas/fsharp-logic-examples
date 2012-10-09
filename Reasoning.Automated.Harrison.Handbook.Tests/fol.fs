@@ -57,9 +57,9 @@ let ``holds with mod_interp 4``() =
 // Variant function and examples.                                            //
 // ------------------------------------------------------------------------- //
 
-[<TestCase(@"x", "y", "z", Result="x")>]
-[<TestCase(@"x", "x", "y", Result="x'")>]
-[<TestCase(@"x", "x", "x'", Result="x''")>]
+[<TestCase(@"x", "y", "z", Result = "x")>]
+[<TestCase(@"x", "x", "y", Result = "x'")>]
+[<TestCase(@"x", "x", "x'", Result = "x''")>]
 let ``variant``(x, y, z) =
     variant x [y; z]
 
