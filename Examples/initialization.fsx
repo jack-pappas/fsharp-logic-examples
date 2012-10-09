@@ -12,17 +12,15 @@
 #r @"FSharpx.Compatibility.Ocaml.dll"
 #r @"FSharp.PowerPack.dll"
 
-// TODO : Reference the OCaml compatibility DLL so we can use the Format and Num modules.
-
 fsi.PrintWidth <- 72;;                                   (* Reduce margins     *)
 //open Format;;                                          (* Open formatting    *)
 open FSharpx.Compatibility.OCaml;;                       (* Open bignums       *)
 open FSharpx.Compatibility.OCaml.Num;;
 
-let print_num (n : Num) = n.ToString ();;                (* Avoid range limit  *)
-fsi.AddPrinter print_num;;                               (* when printing nums *)
+fsi.AddPrinter (fun (n : Num) -> n.ToString ());;        (* Avoid range limit  *)
+                                                         (* when printing nums *)
 
-let STACK_LIMIT = 16777216 // 16MB
+let [<Literal>] STACK_LIMIT = 16777216;; // 16MB
 
 /// Run a function with custom stack size in byte
 let runWithStackFrame stackSize fn =
@@ -30,6 +28,8 @@ let runWithStackFrame stackSize fn =
     let thread = System.Threading.Thread((fun () -> result := fn()), stackSize)
     thread.Start()
     thread.Join() // thread finishes
-    !result
+    !result;;
 
-let inline runWith16MBStack fn = runWithStackFrame STACK_LIMIT fn
+let inline runWith16MBStack fn =
+    runWithStackFrame STACK_LIMIT fn;;
+
