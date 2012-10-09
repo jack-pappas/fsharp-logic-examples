@@ -163,17 +163,303 @@ let ``integer_qelim examples other 1`` (f, idx) =
 (* ------------------------------------------------------------------------- *)
 let private other_integer_qelim_results2 : formula<fol>[] = [|
     False;
-    // TODO
+    Or
+     (And
+       (Atom
+         (R ("divides",
+           [Fn ("20", []);
+            Fn ("+", [Fn ("*", [Fn ("1", []); Var "a"]); Fn ("1", [])])])),
+       Atom
+        (R ("<",
+          [Fn ("0", []);
+           Fn ("+",
+            [Fn ("*", [Fn ("-1", []); Var "a"]);
+             Fn ("+", [Fn ("*", [Fn ("1", []); Var "b"]); Fn ("-1", [])])])]))),
+     Or
+      (And
+        (Atom
+          (R ("divides",
+            [Fn ("20", []);
+             Fn ("+", [Fn ("*", [Fn ("1", []); Var "a"]); Fn ("2", [])])])),
+        Atom
+         (R ("<",
+           [Fn ("0", []);
+            Fn ("+",
+             [Fn ("*", [Fn ("-1", []); Var "a"]);
+              Fn ("+", [Fn ("*", [Fn ("1", []); Var "b"]); Fn ("-2", [])])])]))),
+      Or
+       (And
+         (Atom
+           (R ("divides",
+             [Fn ("20", []);
+              Fn ("+", [Fn ("*", [Fn ("1", []); Var "a"]); Fn ("3", [])])])),
+         Atom
+          (R ("<",
+            [Fn ("0", []);
+             Fn ("+",
+              [Fn ("*", [Fn ("-1", []); Var "a"]);
+               Fn ("+", [Fn ("*", [Fn ("1", []); Var "b"]); Fn ("-3", [])])])]))),
+       Or
+        (And
+          (Atom
+            (R ("divides",
+              [Fn ("20", []);
+               Fn ("+", [Fn ("*", [Fn ("1", []); Var "a"]); Fn ("4", [])])])),
+          Atom
+           (R ("<",
+             [Fn ("0", []);
+              Fn ("+",
+               [Fn ("*", [Fn ("-1", []); Var "a"]);
+                Fn ("+",
+                 [Fn ("*", [Fn ("1", []); Var "b"]); Fn ("-4", [])])])]))),
+        Or
+         (And
+           (Atom
+             (R ("divides",
+               [Fn ("20", []);
+                Fn ("+", [Fn ("*", [Fn ("1", []); Var "a"]); Fn ("5", [])])])),
+           Atom
+            (R ("<",
+              [Fn ("0", []);
+               Fn ("+",
+                [Fn ("*", [Fn ("-1", []); Var "a"]);
+                 Fn ("+",
+                  [Fn ("*", [Fn ("1", []); Var "b"]); Fn ("-5", [])])])]))),
+         Or
+          (And
+            (Atom
+              (R ("divides",
+                [Fn ("20", []);
+                 Fn ("+",
+                  [Fn ("*", [Fn ("1", []); Var "a"]); Fn ("6", [])])])),
+            Atom
+             (R ("<",
+               [Fn ("0", []);
+                Fn ("+",
+                 [Fn ("*", [Fn ("-1", []); Var "a"]);
+                  Fn ("+",
+                   [Fn ("*", [Fn ("1", []); Var "b"]); Fn ("-6", [])])])]))),
+          Or
+           (And
+             (Atom
+               (R ("divides",
+                 [Fn ("20", []);
+                  Fn ("+",
+                   [Fn ("*", [Fn ("1", []); Var "a"]); Fn ("7", [])])])),
+             Atom
+              (R ("<",
+                [Fn ("0", []);
+                 Fn ("+",
+                  [Fn ("*", [Fn ("-1", []); Var "a"]);
+                   Fn ("+",
+                    [Fn ("*", [Fn ("1", []); Var "b"]); Fn ("-7", [])])])]))),
+           Or
+            (And
+              (Atom
+                (R ("divides",
+                  [Fn ("20", []);
+                   Fn ("+",
+                    [Fn ("*", [Fn ("1", []); Var "a"]); Fn ("8", [])])])),
+              Atom
+               (R ("<",
+                 [Fn ("0", []);
+                  Fn ("+",
+                   [Fn ("*", [Fn ("-1", []); Var "a"]);
+                    Fn ("+",
+                     [Fn ("*", [Fn ("1", []); Var "b"]); Fn ("-8", [])])])]))),
+            Or
+             (And
+               (Atom
+                 (R ("divides",
+                   [Fn ("20", []);
+                    Fn ("+",
+                     [Fn ("*", [Fn ("1", []); Var "a"]); Fn ("9", [])])])),
+               Atom
+                (R ("<",
+                  [Fn ("0", []);
+                   Fn ("+",
+                    [Fn ("*", [Fn ("-1", []); Var "a"]);
+                     Fn ("+",
+                      [Fn ("*", [Fn ("1", []); Var "b"]); Fn ("-9", [])])])]))),
+             Or
+              (And
+                (Atom
+                  (R ("divides",
+                    [Fn ("20", []);
+                     Fn ("+",
+                      [Fn ("*", [Fn ("1", []); Var "a"]); Fn ("10", [])])])),
+                Atom
+                 (R ("<",
+                   [Fn ("0", []);
+                    Fn ("+",
+                     [Fn ("*", [Fn ("-1", []); Var "a"]);
+                      Fn ("+",
+                       [Fn ("*", [Fn ("1", []); Var "b"]); Fn ("-10", [])])])]))),
+              Or
+               (And
+                 (Atom
+                   (R ("divides",
+                     [Fn ("20", []);
+                      Fn ("+",
+                       [Fn ("*", [Fn ("1", []); Var "a"]); Fn ("11", [])])])),
+                 Atom
+                  (R ("<",
+                    [Fn ("0", []);
+                     Fn ("+",
+                      [Fn ("*", [Fn ("-1", []); Var "a"]);
+                       Fn ("+",
+                        [Fn ("*", [Fn ("1", []); Var "b"]); Fn ("-11", [])])])]))),
+               Or
+                (And
+                  (Atom
+                    (R ("divides",
+                      [Fn ("20", []);
+                       Fn ("+",
+                        [Fn ("*", [Fn ("1", []); Var "a"]); Fn ("12", [])])])),
+                  Atom
+                   (R ("<",
+                     [Fn ("0", []);
+                      Fn ("+",
+                       [Fn ("*", [Fn ("-1", []); Var "a"]);
+                        Fn ("+",
+                         [Fn ("*", [Fn ("1", []); Var "b"]);
+                          Fn ("-12", [])])])]))),
+                Or
+                 (And
+                   (Atom
+                     (R ("divides",
+                       [Fn ("20", []);
+                        Fn ("+",
+                         [Fn ("*", [Fn ("1", []); Var "a"]); Fn ("13", [])])])),
+                   Atom
+                    (R ("<",
+                      [Fn ("0", []);
+                       Fn ("+",
+                        [Fn ("*", [Fn ("-1", []); Var "a"]);
+                         Fn ("+",
+                          [Fn ("*", [Fn ("1", []); Var "b"]);
+                           Fn ("-13", [])])])]))),
+                 Or
+                  (And
+                    (Atom
+                      (R ("divides",
+                        [Fn ("20", []);
+                         Fn ("+",
+                          [Fn ("*", [Fn ("1", []); Var "a"]);
+                           Fn ("14", [])])])),
+                    Atom
+                     (R ("<",
+                       [Fn ("0", []);
+                        Fn ("+",
+                         [Fn ("*", [Fn ("-1", []); Var "a"]);
+                          Fn ("+",
+                           [Fn ("*", [Fn ("1", []); Var "b"]);
+                            Fn ("-14", [])])])]))),
+                  Or
+                   (And
+                     (Atom
+                       (R ("divides",
+                         [Fn ("20", []);
+                          Fn ("+",
+                           [Fn ("*", [Fn ("1", []); Var "a"]);
+                            Fn ("15", [])])])),
+                     Atom
+                      (R ("<",
+                        [Fn ("0", []);
+                         Fn ("+",
+                          [Fn ("*", [Fn ("-1", []); Var "a"]);
+                           Fn ("+",
+                            [Fn ("*", [Fn ("1", []); Var "b"]);
+                             Fn ("-15", [])])])]))),
+                   Or
+                    (And
+                      (Atom
+                        (R ("divides",
+                          [Fn ("20", []);
+                           Fn ("+",
+                            [Fn ("*", [Fn ("1", []); Var "a"]);
+                             Fn ("16", [])])])),
+                      Atom
+                       (R ("<",
+                         [Fn ("0", []);
+                          Fn ("+",
+                           [Fn ("*", [Fn ("-1", []); Var "a"]);
+                            Fn ("+",
+                             [Fn ("*", [Fn ("1", []); Var "b"]);
+                              Fn ("-16", [])])])]))),
+                    Or
+                     (And
+                       (Atom
+                         (R ("divides",
+                           [Fn ("20", []);
+                            Fn ("+",
+                             [Fn ("*", [Fn ("1", []); Var "a"]);
+                              Fn ("17", [])])])),
+                       Atom
+                        (R ("<",
+                          [Fn ("0", []);
+                           Fn ("+",
+                            [Fn ("*", [Fn ("-1", []); Var "a"]);
+                             Fn ("+",
+                              [Fn ("*", [Fn ("1", []); Var "b"]);
+                               Fn ("-17", [])])])]))),
+                     Or
+                      (And
+                        (Atom
+                          (R ("divides",
+                            [Fn ("20", []);
+                             Fn ("+",
+                              [Fn ("*", [Fn ("1", []); Var "a"]);
+                               Fn ("18", [])])])),
+                        Atom
+                         (R ("<",
+                           [Fn ("0", []);
+                            Fn ("+",
+                             [Fn ("*", [Fn ("-1", []); Var "a"]);
+                              Fn ("+",
+                               [Fn ("*", [Fn ("1", []); Var "b"]);
+                                Fn ("-18", [])])])]))),
+                      Or
+                       (And
+                         (Atom
+                           (R ("divides",
+                             [Fn ("20", []);
+                              Fn ("+",
+                               [Fn ("*", [Fn ("1", []); Var "a"]);
+                                Fn ("19", [])])])),
+                         Atom
+                          (R ("<",
+                            [Fn ("0", []);
+                             Fn ("+",
+                              [Fn ("*", [Fn ("-1", []); Var "a"]);
+                               Fn ("+",
+                                [Fn ("*", [Fn ("1", []); Var "b"]);
+                                 Fn ("-19", [])])])]))),
+                       And
+                        (Atom
+                          (R ("divides",
+                            [Fn ("20", []);
+                             Fn ("+",
+                              [Fn ("*", [Fn ("1", []); Var "a"]);
+                               Fn ("20", [])])])),
+                        Atom
+                         (R ("<",
+                           [Fn ("0", []);
+                            Fn ("+",
+                             [Fn ("*", [Fn ("-1", []); Var "a"]);
+                              Fn ("+",
+                               [Fn ("*", [Fn ("1", []); Var "b"]);
+                                Fn ("-20", [])])])]))))))))))))))))))))));
     False;
     True;
     False;
     |]
 
 [<TestCase(@"forall a b. exists x. a < 20 * x /\ 20 * x < b", 0)>]
-//[<TestCase(@"exists x. a < 20 * x /\ 20 * x < b", 1)>]
-[<TestCase(@"forall b. exists x. a < 20 * x /\ 20 * x < b", 1)>]
-[<TestCase(@"forall a. exists b. a < 4 * b + 3 * a \/ (~(a < b) /\ a > b + 1)", 2)>]
-[<TestCase(@"exists y. forall x. x + 5 * y > 1 /\ 13 * x - y > 1 /\ x + 2 < 0", 3)>]
+[<TestCase(@"exists x. a < 20 * x /\ 20 * x < b", 1)>]
+[<TestCase(@"forall b. exists x. a < 20 * x /\ 20 * x < b", 2)>]
+[<TestCase(@"forall a. exists b. a < 4 * b + 3 * a \/ (~(a < b) /\ a > b + 1)", 3)>]
+[<TestCase(@"exists y. forall x. x + 5 * y > 1 /\ 13 * x - y > 1 /\ x + 2 < 0", 4)>]
 let ``integer_qelim examples other 2`` (f, idx) =
     integer_qelim (parse f)
     |> should equal other_integer_qelim_results2.[idx]
