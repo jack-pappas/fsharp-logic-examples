@@ -44,6 +44,8 @@ A large set of unit tests is created based on available examples. These test cas
  - A few slow tests are put into `LongRunning` category. They aren't recommended to run on the development basis. Their purposes are to validate the project upon release.
  
 ### Optimization Notes (`optimized` branch only) ###
+ - Replaced the `(--)` and `(---)` operators with F# list comprehensions using the range syntax, e.g., `[m..n]`.
+ 
  - A number of functions defined in `lib.fs` have exact equivalents in `FSharp.Core`; these functions have been removed from `lib.fs` and all uses of them replaced by their equivalent function from `FSharp.Core`. NOTE : Some of these functions have also been replaced in the `master` branch code.
   - Replaced `(**)` (or `(>>|>)` in the `master` branch) with `(<<)`.
   - Replaced `map2` with `List.map2`.
@@ -70,18 +72,21 @@ A large set of unit tests is created based on available examples. These test cas
   - Replaced `maximize` and `optimize` with `List.maxBy`.
   - Replaced `minimize` and `optimize` with `List.minBy`.
 
- - Replaced the `(--)` and `(---)` operators with F# list comprehensions using the range syntax, e.g., `[m..n]`.
+ - Re-implemented some of the remaining functions in `lib.fs` so they're faster.
 
   - Replaced the Patricia trie datatype used to implement Finite Partial Functions (the `func<_,_>` type in the code) with the F# `Map<_,_>` type.
-  - `func<_,_>` is now just an alias for `Map<_,_>`.
-  - Removed some of the functions for manipulating the Patricia trie type, since they were no longer needed.
-  - Modified the remaining functions for working with `func<_,_>` so they work with `Map<_,_>` instead; some of these functions are now just aliases for functions in the F# `Map` module.
+    - `func<_,_>` is now just an alias for `Map<_,_>`.
+    - Removed some of the functions for manipulating the Patricia trie type, since they were no longer needed.
+    - Modified the remaining functions for working with `func<_,_>` so they work with `Map<_,_>` instead; some of these functions are now just aliases for functions in the F# `Map` module.
 
  - **`(Incomplete)`** Recursive functions have been modified/re-implemented so thta all recursive calls can be compiled to tail-calls. For many functions, this means modifying the function to use continuation-passing (CPS).
 
  - **`(Incomplete)`** Reformatted code (where possible) for better readability. This doesn't affect the performance *per se*, but it does often make it easier to spot potential optimizations in the code.
   - Reformat heavily-nested function calls using the F# pipeline operator `(|>)`.
   - Use `match` instead of 'if-elif-else' when it seems appropriate.
+  
+ - **`(Incomplete)`** Replace sorted lists with F# `Set<_>` type and functions from the `Set` module.
+  - So far, most (all?) of the functions in `lib.fs` which perform set-based operations on lists have been rewritten to use `Set<_>` internally. However, they still accept and output lists for compatibility with existing code; the overhead of converting between sets and lists currently causes some tests to run significantly slower.
 
 ### Optimization TODO ###
  - Rewrite functions, as needed, to avoid unnecessary data-manipulation and list traversals. The code makes extensive use of the `(@)` operator and the `List.foldBack` function, which should be replaced (if possible) with `(::)` and `List.fold`. In addition, there are a number of places where the range operator `[m..n]` is used to create a list of values which is immediately consumed using `List.foldBack`, `List.map`, etc.; instead, these should be replaced with the `List.init` function.
