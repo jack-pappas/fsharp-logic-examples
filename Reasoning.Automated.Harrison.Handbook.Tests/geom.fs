@@ -86,13 +86,79 @@ let ``examples 5``() =
     |> List.forall (grobner_decide >>|> invariant_under_scaling)
     |> should equal true
 
-// TODO : Determine the expected result of this test; it's output is truncated
-// by ocamltop so we can't tell what it should be.
-//[<Test>]
-//let ``examples 6``() =
-//    coordinations
-//    |> List.partition (grobner_decide >>|> invariant_under_shearing)
-//    |> should equal (* ??? *)
+[<Test>]
+let ``examples 6``() =
+    coordinations
+    |> List.partition (grobner_decide >>|> invariant_under_shearing)
+    |> should equal (([("collinear",
+                           Atom
+                            (R ("=",
+                              [Fn ("*",
+                                [Fn ("-", [Var "1_x"; Var "2_x"]);
+                                 Fn ("-", [Var "2_y"; Var "3_y"])]);
+                               Fn ("*",
+                                [Fn ("-", [Var "1_y"; Var "2_y"]);
+                                 Fn ("-", [Var "2_x"; Var "3_x"])])])));
+                          ("parallel",
+                           Atom
+                            (R ("=",
+                              [Fn ("*",
+                                [Fn ("-", [Var "1_x"; Var "2_x"]);
+                                 Fn ("-", [Var "3_y"; Var "4_y"])]);
+                               Fn ("*",
+                                [Fn ("-", [Var "1_y"; Var "2_y"]);
+                                 Fn ("-", [Var "3_x"; Var "4_x"])])])));
+                          ("is_midpoint",
+                           And
+                            (Atom
+                              (R ("=",
+                                [Fn ("*", [Fn ("2", []); Var "1_x"]);
+                                 Fn ("+", [Var "2_x"; Var "3_x"])])),
+                            Atom
+                             (R ("=",
+                               [Fn ("*", [Fn ("2", []); Var "1_y"]);
+                                Fn ("+", [Var "2_y"; Var "3_y"])]))));
+                          ("is_intersection",
+                           And
+                            (Atom
+                              (R ("=",
+                                [Fn ("*",
+                                  [Fn ("-", [Var "1_x"; Var "2_x"]);
+                                   Fn ("-", [Var "2_y"; Var "3_y"])]);
+                                 Fn ("*",
+                                  [Fn ("-", [Var "1_y"; Var "2_y"]);
+                                   Fn ("-", [Var "2_x"; Var "3_x"])])])),
+                            Atom
+                             (R ("=",
+                               [Fn ("*",
+                                 [Fn ("-", [Var "1_x"; Var "4_x"]);
+                                  Fn ("-", [Var "4_y"; Var "5_y"])]);
+                                Fn ("*",
+                                 [Fn ("-", [Var "1_y"; Var "4_y"]);
+                                  Fn ("-", [Var "4_x"; Var "5_x"])])]))));
+                          ("=",
+                           And (Atom (R ("=", [Var "1_x"; Var "2_x"])),
+                            Atom (R ("=", [Var "1_y"; Var "2_y"]))))],
+                         [("perpendicular",
+                           Atom
+                            (R ("=",
+                              [Fn ("+",
+                                [Fn ("*",
+                                  [Fn ("-", [Var "1_x"; Var "2_x"]);
+                                   Fn ("-", [Var "3_x"; Var "4_x"])]);
+                                 Fn ("*",
+                                  [Fn ("-", [Var "1_y"; Var "2_y"]);
+                                   Fn ("-", [Var "3_y"; Var "4_y"])])]);
+                               Fn ("0", [])])));
+                          ("lengths_eq",
+                           Atom
+                            (R ("=",
+                              [Fn ("+",
+                                [Fn ("^", [Fn ("-", [Var "1_x"; Var "2_x"]); Fn ("2", [])]);
+                                 Fn ("^", [Fn ("-", [Var "1_y"; Var "2_y"]); Fn ("2", [])])]);
+                               Fn ("+",
+                                [Fn ("^", [Fn ("-", [Var "3_x"; Var "4_x"]); Fn ("2", [])]);
+                                 Fn ("^", [Fn ("-", [Var "3_y"; Var "4_y"]); Fn ("2", [])])])])))]))
 
 
 (* ------------------------------------------------------------------------- *)

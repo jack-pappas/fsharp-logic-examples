@@ -24,14 +24,185 @@ open Reasoning.Automated.Harrison.Handbook.real
 (* ------------------------------------------------------------------------- *)
 (* First examples.                                                           *)
 (* ------------------------------------------------------------------------- *)
-(*
+
 let private example_results_1 : formula<fol>[] = [|
     False;
     True;
     False;
     False;
     True;
-    // TODO (#5) : Output is truncated by ocamltop
+    Or
+     (And
+       (Atom
+         (R ("=",
+           [Fn ("+", [Fn ("0", []); Fn ("*", [Var "a"; Fn ("1", [])])]);
+            Fn ("0", [])])),
+       Or
+        (And
+          (Atom
+            (R ("=",
+              [Fn ("+", [Fn ("0", []); Fn ("*", [Var "b"; Fn ("1", [])])]);
+               Fn ("0", [])])),
+          Atom
+           (R ("=",
+             [Fn ("+", [Fn ("0", []); Fn ("*", [Var "c"; Fn ("1", [])])]);
+              Fn ("0", [])]))),
+        And
+         (Not
+           (Atom
+             (R ("=",
+               [Fn ("+", [Fn ("0", []); Fn ("*", [Var "b"; Fn ("1", [])])]);
+                Fn ("0", [])]))),
+         Or
+          (Atom
+            (R (">",
+              [Fn ("+", [Fn ("0", []); Fn ("*", [Var "b"; Fn ("1", [])])]);
+               Fn ("0", [])])),
+          Not
+           (Atom
+             (R (">",
+               [Fn ("+", [Fn ("0", []); Fn ("*", [Var "b"; Fn ("1", [])])]);
+                Fn ("0", [])]))))))),
+     And
+      (Not
+        (Atom
+          (R ("=",
+            [Fn ("+", [Fn ("0", []); Fn ("*", [Var "a"; Fn ("1", [])])]);
+             Fn ("0", [])]))),
+      Or
+       (And
+         (Atom
+           (R (">",
+             [Fn ("+", [Fn ("0", []); Fn ("*", [Var "a"; Fn ("1", [])])]);
+              Fn ("0", [])])),
+         Or
+          (Atom
+            (R ("=",
+              [Fn ("+",
+                [Fn ("0", []);
+                 Fn ("*",
+                  [Var "a";
+                   Fn ("+",
+                    [Fn ("+",
+                      [Fn ("0", []);
+                       Fn ("*",
+                        [Var "b";
+                         Fn ("+",
+                          [Fn ("0", []);
+                           Fn ("*", [Var "b"; Fn ("-1", [])])])])]);
+                     Fn ("*",
+                      [Var "a";
+                       Fn ("+",
+                        [Fn ("0", []); Fn ("*", [Var "c"; Fn ("4", [])])])])])])]);
+               Fn ("0", [])])),
+          And
+           (Not
+             (Atom
+               (R ("=",
+                 [Fn ("+",
+                   [Fn ("0", []);
+                    Fn ("*",
+                     [Var "a";
+                      Fn ("+",
+                       [Fn ("+",
+                         [Fn ("0", []);
+                          Fn ("*",
+                           [Var "b";
+                            Fn ("+",
+                             [Fn ("0", []);
+                              Fn ("*", [Var "b"; Fn ("-1", [])])])])]);
+                        Fn ("*",
+                         [Var "a";
+                          Fn ("+",
+                           [Fn ("0", []);
+                            Fn ("*", [Var "c"; Fn ("4", [])])])])])])]);
+                  Fn ("0", [])]))),
+           Not
+            (Atom
+              (R (">",
+                [Fn ("+",
+                  [Fn ("0", []);
+                   Fn ("*",
+                    [Var "a";
+                     Fn ("+",
+                      [Fn ("+",
+                        [Fn ("0", []);
+                         Fn ("*",
+                          [Var "b";
+                           Fn ("+",
+                            [Fn ("0", []);
+                             Fn ("*", [Var "b"; Fn ("-1", [])])])])]);
+                       Fn ("*",
+                        [Var "a";
+                         Fn ("+",
+                          [Fn ("0", []); Fn ("*", [Var "c"; Fn ("4", [])])])])])])])
+    ;
+                 Fn ("0", [])])))))),
+       And
+        (Not
+          (Atom
+            (R (">",
+              [Fn ("+", [Fn ("0", []); Fn ("*", [Var "a"; Fn ("1", [])])]);
+               Fn ("0", [])]))),
+        Or
+         (Atom
+           (R ("=",
+             [Fn ("+",
+               [Fn ("0", []);
+                Fn ("*",
+                 [Var "a";
+                  Fn ("+",
+                   [Fn ("+",
+                     [Fn ("0", []);
+                      Fn ("*",
+                       [Var "b";
+                        Fn ("+",
+                         [Fn ("0", []); Fn ("*", [Var "b"; Fn ("-1", [])])])])]);
+                    Fn ("*",
+                     [Var "a";
+                      Fn ("+",
+                       [Fn ("0", []); Fn ("*", [Var "c"; Fn ("4", [])])])])])])]);
+              Fn ("0", [])])),
+         And
+          (Not
+            (Atom
+              (R ("=",
+                [Fn ("+",
+                  [Fn ("0", []);
+                   Fn ("*",
+                    [Var "a";
+                     Fn ("+",
+                      [Fn ("+",
+                        [Fn ("0", []);
+                         Fn ("*",
+                          [Var "b";
+                           Fn ("+",
+                            [Fn ("0", []);
+                             Fn ("*", [Var "b"; Fn ("-1", [])])])])]);
+                       Fn ("*",
+                        [Var "a";
+                         Fn ("+",
+                          [Fn ("0", []); Fn ("*", [Var "c"; Fn ("4", [])])])])])])])
+    ;
+                 Fn ("0", [])]))),
+          Atom
+           (R (">",
+             [Fn ("+",
+               [Fn ("0", []);
+                Fn ("*",
+                 [Var "a";
+                  Fn ("+",
+                   [Fn ("+",
+                     [Fn ("0", []);
+                      Fn ("*",
+                       [Var "b";
+                        Fn ("+",
+                         [Fn ("0", []); Fn ("*", [Var "b"; Fn ("-1", [])])])])]);
+                    Fn ("*",
+                     [Var "a";
+                      Fn ("+",
+                       [Fn ("0", []); Fn ("*", [Var "c"; Fn ("4", [])])])])])])]);
+              Fn ("0", [])]))))))));
     False;
     True;
     |]
@@ -52,7 +223,7 @@ let ``examples 1`` (f, idx) =
     parse f
     |> real_qelim
     |> should equal example_results_1.[idx]
-*)
+
 
 (* ------------------------------------------------------------------------- *)
 (* Termination ordering for group theory completion.                         *)
@@ -65,10 +236,6 @@ let ``examples 2``() =
     |> parse
     |> real_qelim
     |> should equal formula<fol>.True
-
-
-// TODO : Add the other test in this section; ocamltop truncates the
-// output so we can't determine the expected result.
 
 
 (* ------------------------------------------------------------------------- *)
