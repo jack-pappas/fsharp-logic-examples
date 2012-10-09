@@ -89,14 +89,15 @@ let can f x =
     try 
         f x |> ignore
         true
-    with _ -> false
+    with Failure _ ->
+        false
 
 // pg. 618
 // OCaml: val repeat : ('a -> 'a) -> 'a -> 'a = <fun>
 // F#:    val repeat : ('a -> 'a) -> 'a -> 'a
 let rec repeat f x = 
     try repeat f (f x)
-    with _ -> x
+    with Failure _ -> x
 
 // ------------------------------------------------------------------------- //
 // Handy list operations.                                                    //
@@ -497,10 +498,8 @@ let repetitions =
         else repcount 1 l
         
 // pg. 619
-// OCaml: val tryfind : ('a -> 'b)   -> 'a list -> 'b = <fun>
-// F#:    val tryFind : ('a -> bool) -> 'a list -> 'a option
-// Use List.tryFind?
-// Note: Signature differences
+// OCaml: val tryfind : ('a -> 'b) -> 'a list -> 'b = <fun>
+// F#:    val tryFind : ('a -> 'b) -> 'a list -> 'b
 let rec tryfind f l =
     match l with
     | [] ->
@@ -519,7 +518,7 @@ let rec mapfilter f l =
     | h :: t ->
         let rest = mapfilter f t
         try (f h) :: rest
-        with _ -> rest
+        with Failure _ -> rest
 
 // ------------------------------------------------------------------------- //
 // Find list member that maximizes or minimizes a function.                  //
