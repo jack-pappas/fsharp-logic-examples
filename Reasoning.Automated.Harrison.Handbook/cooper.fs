@@ -331,7 +331,7 @@ let operations = [  "=", (=);
                     ">", (>);
                     "<=", (<=);
                     ">=", (>=);
-                    "divides", (fun x y -> y % x = GenericZero); ] // NB: Fixed bug with order of arguments. Not sure the above remark is correct; OCaml also throws division by zero exception
+                    "divides", (fun x y -> y % x = GenericZero); ]
 
 let evalc = 
     let v1 = (fun (R(p,[s;t]) as at) ->
