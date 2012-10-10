@@ -15,6 +15,29 @@ You will have to build the application once you have NuGet installed and the sol
 
 [NUnit] (http://www.nunit.org/) is recommended to run the unit tests.
 
+### Notes on running Unit test ###
+
+To run the unit test you will need to 
+1. Download and install NUnit
+2. Download project and open with Visual Studio 2010
+3. Build solution
+4. Start NUnit (x86 version)
+   Note: On 64-bit systems the system menu will use 64-bit version of NUnit.
+   The test do not run correctly with the 64-bit version.
+   To run the test you must use the x86 version.
+   The x86 version of NUnit is nunit-x86 and is found in the NUnit bin directory.
+5. Within NUnit File -> Open Project
+6. File type: Assemblies (*.dll, *.exe)
+7. Navigate to directory with Reasoning.Automated.Harrison.Handbook.Tests.dll
+8. Double click Reasoning.Automated.Harrison.Handbook.Tests.dll
+9. Click Categories tab on left side of NUnit
+10. Double click LongRunning
+11. Click Add
+12. Select Exclude these categories
+13. Click Tests tab on left side of NUnit
+13. Click Run
+
+
 
 ### Interesting changes from OCaml to F# ###
 
