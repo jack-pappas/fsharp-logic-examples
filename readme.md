@@ -20,7 +20,7 @@ You will have to build the application once you have NuGet installed and the sol
 To run the unit test you will need to
 
 1. Download and install NUnit
-2. Download project and open with Visual Studio 2010
+2. Download repository, unpack if necessary, and open with Visual Studio 2010
 3. Build solution
 4. Start NUnit (x86 version)
    Note: On 64-bit systems the system menu will use 64-bit version of NUnit.
