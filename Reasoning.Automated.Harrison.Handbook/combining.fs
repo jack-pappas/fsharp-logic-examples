@@ -243,7 +243,7 @@ let nelop1001 langs fms0 =
     nelop_refute001 vars (List.zip langs seps)
 
 let nelop001 langs fm =
-    List.forall (nelop1001 langs) (simpdnf (simplify004 (Not fm)))
+    List.forall (nelop1001 langs) (simpdnf (simplify (Not fm)))
     
 // pg. 445
 // ------------------------------------------------------------------------- //
@@ -286,4 +286,4 @@ let nelop1 langs fms0 =
     nelop_refute eqs (List.zip langs seps)
 
 let nelop langs fm =
-    List.forall (nelop1 langs) (simpdnf (simplify004 (Not fm)))
+    List.forall (nelop1 langs) (simpdnf (simplify (Not fm)))

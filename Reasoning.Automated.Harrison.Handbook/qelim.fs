@@ -72,7 +72,7 @@ let lift_qelim afn nfn qfn =
         | _ -> fm
 
     fun fm ->
-        simplify004 (qelift (fv fm) (miniscope fm))
+        simplify (qelift (fv fm) (miniscope fm))
   
 // pg. 333
 //  ------------------------------------------------------------------------- // 
@@ -103,7 +103,7 @@ let cnnf lfn =
         | Not (Iff (p, q)) ->
             Or (And (cnnf p, cnnf (Not q)), And (cnnf (Not p), cnnf q))
         | _ -> lfn fm
-    simplify004 << cnnf << simplify004
+    simplify << cnnf << simplify
   
 // pg. 334
 //  ------------------------------------------------------------------------- // 

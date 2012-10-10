@@ -250,7 +250,7 @@ let grobner_trivial fms =
     reduce (groebner pols) (mpoly_const vars (Int 1)) = []
 
 let grobner_decide fm =
-    let fm1 = specialize (prenex (nnf (simplify004 fm)))
+    let fm1 = specialize (prenex (nnf (simplify fm)))
     List.forall grobner_trivial (simpdnf (nnf (Not fm1)))
 
 // Not in book

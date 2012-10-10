@@ -25,8 +25,8 @@ type expression =
 // ------------------------------------------------------------------------- //
 
 // OCaml: val simplify1 : expression -> expression
-// F#:    val simplify001 : expression -> expression
-let simplify001 expr =
+// F#:    val simplify1 : expression -> expression
+let simplify1 expr =
     match expr with
     | Mul (Const 0, x)
     | Mul (x, Const 0) ->
@@ -43,17 +43,17 @@ let simplify001 expr =
     | _ -> expr
 
 // OCaml: val simplify : expression -> expression = <fun>
-// F#:    val simplify002 : expression -> expression
-let rec simplify002 expr =
+// F#:    val simplify : expression -> expression
+let rec simplify expr =
     match expr with
     | Add (e1, e2) ->
-        Add (simplify002 e1, simplify002 e2)
-        |> simplify001
+        Add (simplify e1, simplify e2)
+        |> simplify1
     | Mul (e1, e2) ->
-        Mul (simplify002 e1, simplify002 e2)
-        |> simplify001
+        Mul (simplify e1, simplify e2)
+        |> simplify1
     | _ ->
-        simplify001 expr
+        simplify1 expr
 
 // pg. 17
 // ------------------------------------------------------------------------- //

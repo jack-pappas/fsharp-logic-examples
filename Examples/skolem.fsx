@@ -30,7 +30,7 @@ open Reasoning.Automated.Harrison.Handbook.skolem
 // Example.                                                                  //
 // ------------------------------------------------------------------------- //
 
-print_fol_formula (simplify004 (parse @"(forall x y. P(x) \/ (P(y) /\ false)) ==> exists z. Q"));;
+print_fol_formula (simplify (parse @"(forall x y. P(x) \/ (P(y) /\ false)) ==> exists z. Q"));;
 
 // pg. 141
 // ------------------------------------------------------------------------- //

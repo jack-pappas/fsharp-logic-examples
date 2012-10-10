@@ -368,7 +368,7 @@ let basic_complex_qelim vars (Exists (x, p)) =
 // OCaml: val complex_qelim : fol formula -> fol formula = <fun>
 // F#:    val complex_qelim : formula<fol> -> formula<fol>
 let complex_qelim =
-    simplify004 << evalc << lift_qelim polyatom (dnf << cnnf id << evalc) basic_complex_qelim
+    simplify << evalc << lift_qelim polyatom (dnf << cnnf id << evalc) basic_complex_qelim
 
 
 

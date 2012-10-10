@@ -21,8 +21,8 @@ open folMod
 // ------------------------------------------------------------------------- //
 
 // OCaml:  val simplify1 : expression  -> expression = <fun>
-// F#:     val simplify003 : fol formula -> fol formula
-let simplify003 fm =
+// F#:     val simplify1 : fol formula -> fol formula
+let simplify1 fm =
     match fm with
     | Forall (x, p) ->
         if mem x (fv p) then fm else p
@@ -32,23 +32,23 @@ let simplify003 fm =
         psimplify1 fm
 
 // OCaml: val simplify : expression  -> expression = <fun>
-// F#:    val simplify004 : fol formula -> fol formula
-let rec simplify004 fm =
+// F#:    val simplify : fol formula -> fol formula
+let rec simplify fm =
     match fm with
     | Not p ->
-        simplify003 (Not (simplify004 p))
+        simplify1 (Not (simplify p))
     | And (p, q) ->
-        simplify003 (And (simplify004 p, simplify004 q))
+        simplify1 (And (simplify p, simplify q))
     | Or (p, q) ->
-        simplify003 (Or (simplify004 p, simplify004 q))
+        simplify1 (Or (simplify p, simplify q))
     | Imp (p, q) ->
-        simplify003 (Imp (simplify004 p, simplify004 q))
+        simplify1 (Imp (simplify p, simplify q))
     | Iff (p, q) ->
-        simplify003 (Iff (simplify004 p, simplify004 q))
+        simplify1 (Iff (simplify p, simplify q))
     | Forall (x, p) ->
-        simplify003 (Forall (x, simplify004 p))
+        simplify1 (Forall (x, simplify p))
     | Exists (x, p) ->
-        simplify003 (Exists (x, simplify004 p))
+        simplify1 (Exists (x, simplify p))
     | _ -> fm
 
 // pg. 141
@@ -134,7 +134,7 @@ let rec prenex fm =
     | _ -> fm
 
 let pnf fm =
-    prenex (nnf (simplify004 fm))
+    prenex (nnf (simplify fm))
 
 // pg. 146
 // ------------------------------------------------------------------------- //
@@ -180,7 +180,7 @@ and skolem2 cons (p, q) fns =
 // ------------------------------------------------------------------------- //
 
 let askolemize fm =
-    fst (skolem (nnf (simplify004 fm)) (List.map fst (functions fm)))
+    fst (skolem (nnf (simplify fm)) (List.map fst (functions fm)))
 
 let rec specialize fm =
     match fm with

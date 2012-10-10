@@ -92,7 +92,7 @@ let rec miniscope fm =
 // Stronger version of "aedecide" similar to Wang's classic procedure.       //
 // ------------------------------------------------------------------------- //
 
-let wang fm = aedecide (miniscope (nnf (simplify004 fm)))
+let wang fm = aedecide (miniscope (nnf (simplify fm)))
 
 // pg. 318
 // ------------------------------------------------------------------------- //
