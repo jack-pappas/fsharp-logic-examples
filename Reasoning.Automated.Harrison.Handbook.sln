@@ -22,6 +22,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Examples", "Examples", "{F3
 		Examples\geom.fsx = Examples\geom.fsx
 		Examples\grobner.fsx = Examples\grobner.fsx
 		Examples\herbrand.fsx = Examples\herbrand.fsx
+		Examples\init_all.fsx = Examples\init_all.fsx
 		Examples\initialization.fsx = Examples\initialization.fsx
 		Examples\interpolation.fsx = Examples\interpolation.fsx
 		Examples\intro.fsx = Examples\intro.fsx
