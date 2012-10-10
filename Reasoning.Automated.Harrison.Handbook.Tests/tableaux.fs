@@ -299,16 +299,16 @@ let ``tab``() =
      ((exists x. Q(x)) <=> (forall y. Q(y)))) <=> 
     ((exists x. forall y. Q(x) <=> Q(y)) <=> 
      ((exists x. P(x)) <=> (forall y. P(y))))",
-     Result = [| 5; 4; 5; 3; 3; 3; 2; 4; 6; 2; 3; 3; 4; 3; 3; 3; 3; 2; 2; 3; 6; 3; 2; 4; 3; 3; 3; 3; 3; 4; 4; 4 |], Category="LongRunning")>]
+     Result = [| 5; 4; 5; 3; 3; 3; 2; 4; 6; 2; 3; 3; 4; 3; 3; 3; 3; 2; 2; 3; 6; 3; 2; 4; 3; 3; 3; 3; 3; 4; 4; 4 |], Category = "LongRunning")>]
 [<TestCase(@"
 	((exists x. forall y. P(x) <=> P(y)) <=>
      ((exists x. Q(x)) <=> (forall y. Q(y)))) <=>
     ((exists x. forall y. Q(x) <=> Q(y)) <=>
-     ((exists x. P(x)) <=> (forall y. P(y))))", Result = [| 5; 4; 5; 3; 3; 3; 2; 4; 6; 2; 3; 3; 4; 3; 3; 3; 3; 2; 2; 3; 6; 3; 2; 4; 3; 3; 3; 3; 3; 4; 4; 4 |], Category="LongRunning")>]
+     ((exists x. P(x)) <=> (forall y. P(y))))", Result = [| 5; 4; 5; 3; 3; 3; 2; 4; 6; 2; 3; 3; 4; 3; 3; 3; 3; 2; 2; 3; 6; 3; 2; 4; 3; 3; 3; 3; 3; 4; 4; 4 |], Category = "LongRunning")>]
 [<TestCase(@"
     exists x. exists y. forall z. 
         (F(x,y) ==> (F(y,z) /\ F(z,z))) /\ 
-        ((F(x,y) /\ G(x,y)) ==> (G(x,z) /\ G(z,z)))", Result = [| 7 |], Category="LongRunning")>]
+        ((F(x,y) /\ G(x,y)) ==> (G(x,z) /\ G(z,z)))", Result = [| 7 |], Category = "LongRunning")>]
 let ``splittab all`` f =
     parse f
     |> splittab
