@@ -17,7 +17,8 @@ You will have to build the application once you have NuGet installed and the sol
 
 ### Notes on running Unit test ###
 
-To run the unit test you will need to 
+To run the unit test you will need to
+
 1. Download and install NUnit
 2. Download project and open with Visual Studio 2010
 3. Build solution
@@ -35,7 +36,7 @@ To run the unit test you will need to
 11. Click Add
 12. Select Exclude these categories
 13. Click Tests tab on left side of NUnit
-13. Click Run
+14. Click Run
 
 
 
