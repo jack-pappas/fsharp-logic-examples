@@ -127,7 +127,7 @@ let print_truthtable fm =
     // [P "p"; P "q"; P "r"]
     let ats = atoms fm
     // 5 + 1 = length of false + length of space
-    let width = List.foldBack (max >>|> String.length >>|> pname) ats 5 + 1
+    let width = List.foldBack (max << String.length << pname) ats 5 + 1
     let fixw s = s + String.replicate (width - String.length s) " "
     let truthstring p = fixw (if p then "true" else "false")
     let mk_row v =

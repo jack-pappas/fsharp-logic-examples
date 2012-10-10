@@ -20,7 +20,7 @@ open equal
 let rec subterms tm =
     match tm with
     | Fn (f, args) ->
-        List.foldBack (union >>|> subterms) args [tm]
+        List.foldBack (union << subterms) args [tm]
     | _ -> [tm]
 
 // pg. 250
@@ -69,7 +69,7 @@ let predecessors t pfn =
 let ccsatisfiable fms =
     let pos, neg = List.partition positive fms
     let eqps = List.map dest_eq pos 
-    let eqns = List.map (dest_eq >>|> negate) neg        
+    let eqns = List.map (dest_eq << negate) neg        
     let pfn =
         let lrs =
             List.map fst eqps

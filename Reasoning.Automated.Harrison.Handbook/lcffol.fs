@@ -101,13 +101,13 @@ let spec' y fm n thp (e, s) =
     imp_unduplicate (imp_trans (ispec (e y) (onformula e fm)) th)
 
 let ex_falso' fms (e, s) =
-    ex_falso (List.foldBack (mk_imp >>|> onformula e) fms s)
+    ex_falso (List.foldBack (mk_imp << onformula e) fms s)
 
 let complits' (p :: fl, lits) i (e, s) =
     let l1, p' :: l2 = chop_list i lits
-    List.foldBack (imp_insert >>|> onformula e) (fl @ l1)
+    List.foldBack (imp_insert << onformula e) (fl @ l1)
             (imp_contr (onformula e p)
-                    (List.foldBack (mk_imp >>|> onformula e) l2 s))
+                    (List.foldBack (mk_imp << onformula e) l2 s))
 
 let deskol' (skh : fol formula) thp (e, s) =
     let th = thp (e, s)
@@ -130,37 +130,37 @@ let rec lcftab skofun (fms, lits, n) cont (env, sks, k as esk) =
 
         | (Imp (p, q) as fm) :: fl
             when p = q ->
-            lcftab skofun (fl, lits, n) (cont >>|> add_assum' fm) esk
+            lcftab skofun (fl, lits, n) (cont << add_assum' fm) esk
 
         | Imp (Imp (p, q), False) :: fl ->
-            lcftab skofun (p :: Imp (q, False) :: fl, lits, n) (cont >>|> imp_false_rule') esk
+            lcftab skofun (p :: Imp (q, False) :: fl, lits, n) (cont << imp_false_rule') esk
 
         | Imp (p, q) :: fl when q <> False ->
             lcftab skofun (Imp (p, False) :: fl, lits, n) (fun th ->
-                lcftab skofun (q :: fl, lits, n) (cont >>|> imp_true_rule' th)) esk
+                lcftab skofun (q :: fl, lits, n) (cont << imp_true_rule' th)) esk
 
         | ((Atom _ | Imp (Atom _, False)) as p) :: fl ->
             try tryfind (fun p' ->
                 let env' = unify_complementsf env (p, p')
                 cont (complits' (fms, lits) (index p' lits)) (env', sks, k)) lits
             with Failure _ ->
-                lcftab skofun (fl,p::lits,n) (cont >>|> imp_front' (List.length fl)) esk
+                lcftab skofun (fl,p::lits,n) (cont << imp_front' (List.length fl)) esk
 
         | (Forall (x, p) as fm) :: fl ->
             let y = Var ("X_" + string k)
             lcftab skofun ((subst (x |=> y) p) :: fl @ [fm], lits, n - 1)
-                        (cont >>|> spec' y fm (List.length fms)) (env, sks, k + 1)
+                        (cont << spec' y fm (List.length fms)) (env, sks, k + 1)
 
         | (Imp (Forall (y, p) as yp, False)) :: fl ->
             let fx = skofun yp
             let p' = subst (y |=> fx) p
             let skh = Imp (p', Forall (y, p))
             let sks' = (Forall (y, p), fx) :: sks
-            lcftab skofun (Imp (p', False) :: fl, lits, n) (cont >>|> deskol' skh) (env, sks', k)
+            lcftab skofun (Imp (p', False) :: fl, lits, n) (cont << deskol' skh) (env, sks', k)
 
         | fm :: fl ->
             let fm' = consequent (concl (eliminate_connective fm))
-            lcftab skofun (fm' :: fl, lits, n) (cont >>|> eliminate_connective' fm) esk
+            lcftab skofun (fm' :: fl, lits, n) (cont << eliminate_connective' fm) esk
           
 // pg. 500
 //  ------------------------------------------------------------------------- // 
@@ -278,12 +278,12 @@ let elim_skolemvar th =
 let deskolcont thp (env, sks, k) =
     let ifn = tsubst (solve env)
     let isk = setify (List.map (fun (p, t) -> onformula ifn p, ifn t) sks)
-    let ssk = sort (decreasing (termsize >>|> snd)) isk
+    let ssk = sort (decreasing (termsize << snd)) isk
     let vs = List.map (fun i -> Var ("Y_" + string i)) (1 -- List.length ssk)
     let vfn =
         replacet (List.foldBack2 (fun (p, t) v -> t |-> v) ssk vs undefined)
-    let th = thp (vfn >>|> ifn, onformula vfn (List.foldBack mk_skol ssk False))
-    repeat (elim_skolemvar >>|> imp_swap) th
+    let th = thp (vfn << ifn, onformula vfn (List.foldBack mk_skol ssk False))
+    repeat (elim_skolemvar << imp_swap) th
         
 // pg. 504
 //  ------------------------------------------------------------------------- // 

@@ -43,7 +43,7 @@ open decidable
 
 let qelim bfn x p =
     let cjs = conjuncts p
-    let ycjs, ncjs = List.partition (mem x >>|> fv) cjs
+    let ycjs, ncjs = List.partition (mem x << fv) cjs
     if ycjs = [] then p
     else
         let q = bfn (Exists (x, list_conj ycjs))
@@ -103,7 +103,7 @@ let cnnf lfn =
         | Not (Iff (p, q)) ->
             Or (And (cnnf p, cnnf (Not q)), And (cnnf (Not p), cnnf q))
         | _ -> lfn fm
-    simplify004 >>|> cnnf >>|> simplify004
+    simplify004 << cnnf << simplify004
   
 // pg. 334
 //  ------------------------------------------------------------------------- // 
@@ -161,4 +161,4 @@ let afn_dlo vars fm =
     | _ -> fm
 
 let quelim_dlo =
-    lift_qelim afn_dlo (dnf >>|> cnnf lfn_dlo) (fun v -> dlobasic)
+    lift_qelim afn_dlo (dnf << cnnf lfn_dlo) (fun v -> dlobasic)

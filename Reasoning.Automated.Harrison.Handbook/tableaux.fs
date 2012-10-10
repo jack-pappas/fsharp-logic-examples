@@ -61,7 +61,7 @@ let rec unify_refute djs (acc : func<string, term>) : func<string, term> =
     | head :: tail -> 
         let pos, neg = List.partition positive head
         let unifyResult = unify_complements acc
-        tryfind (unify_refute tail >>|> unify_complements acc) (allpairs (fun p q -> (p, q)) pos neg)
+        tryfind (unify_refute tail << unify_complements acc) (allpairs (fun p q -> (p, q)) pos neg)
 
 
 // pg. 175

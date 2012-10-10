@@ -107,7 +107,7 @@ coordinate (parse @"collinear(a,b,c) ==> collinear(b,a,c)");;
 // 3 basis elements and 2 pairs
 // 4 basis elements and 4 pairs
 // val it : bool = true
-List.forall (grobner_decide >>|> invariant_under_translation) coordinations;;
+List.forall (grobner_decide << invariant_under_translation) coordinations;;
 
 // 3 basis elements and 3 pairs
 // 3 basis elements and 2 pairs
@@ -247,7 +247,7 @@ List.forall (grobner_decide >>|> invariant_under_translation) coordinations;;
 // 6 basis elements and 12 pairs
 // 7 basis elements and 17 pairs
 // val it : bool = true
-List.forall (grobner_decide >>|> invariant_under_rotation) coordinations;;
+List.forall (grobner_decide << invariant_under_rotation) coordinations;;
     
 // pg. 416
 //  ------------------------------------------------------------------------- // 
@@ -518,7 +518,7 @@ real_qelim (parse @"forall x y. exists s c. s^2 + c^2 = 1 /\ s * x + c * y = 0")
 // 9 basis elements and 17 pairs
 // 9 basis elements and 16 pairs
 // val it : bool = true
-List.forall (grobner_decide >>|> invariant_under_scaling) coordinations;;
+List.forall (grobner_decide << invariant_under_scaling) coordinations;;
 
 // 2 basis elements and 1 pairs
 // 2 basis elements and 1 pairs
@@ -643,7 +643,7 @@ List.forall (grobner_decide >>|> invariant_under_scaling) coordinations;;
 //               ("+",
 //                [Fn ("^",[Fn ("-",[Var "3_x"; Var "4_x"]); Fn ("2",[])]);
 //                 Fn ("^",[Fn ("-",[Var "3_y"; Var "4_y"]); Fn ("2",[])])])])))])
-List.partition (grobner_decide >>|> invariant_under_shearing) coordinations;;
+List.partition (grobner_decide << invariant_under_shearing) coordinations;;
     
 // pg. 418
 //  ------------------------------------------------------------------------- // 
@@ -651,7 +651,7 @@ List.partition (grobner_decide >>|> invariant_under_shearing) coordinations;;
 //  ------------------------------------------------------------------------- // 
 
 // TODO: Fix this: System.DivideByZeroException: Attempted to divide by zero.
-(grobner_decide >>|> originate) (parse @"is_midpoint(m,a,c) /\ perpendicular(a,c,m,b) ==> lengths_eq(a,b,b,c)");;
+(grobner_decide << originate) (parse @"is_midpoint(m,a,c) /\ perpendicular(a,c,m,b) ==> lengths_eq(a,b,b,c)");;
        
 // pg. 418
 //  ------------------------------------------------------------------------- // 
@@ -659,10 +659,10 @@ List.partition (grobner_decide >>|> invariant_under_shearing) coordinations;;
 //  ------------------------------------------------------------------------- // 
 
 // TODO: Fix this: System.DivideByZeroException: Attempted to divide by zero.
-(grobner_decide >>|> originate) (parse @"parallel(a,b,d,c) /\ parallel(a,d,b,c) /\ is_intersection(e,a,c,b,d) ==> lengths_eq(a,e,e,c)");;
+(grobner_decide << originate) (parse @"parallel(a,b,d,c) /\ parallel(a,d,b,c) /\ is_intersection(e,a,c,b,d) ==> lengths_eq(a,e,e,c)");;
 
 // TODO: Fix this: System.DivideByZeroException: Attempted to divide by zero.
-(grobner_decide >>|> originate) (parse @"parallel(a,b,d,c) /\ parallel(a,d,b,c) /\ is_intersection(e,a,c,b,d) /\ ~collinear(a,b,c) ==> lengths_eq(a,e,e,c)");;
+(grobner_decide << originate) (parse @"parallel(a,b,d,c) /\ parallel(a,d,b,c) /\ is_intersection(e,a,c,b,d) /\ ~collinear(a,b,c) ==> lengths_eq(a,e,e,c)");;
         
 // pg. 421
 //  ------------------------------------------------------------------------- // 
@@ -1308,4 +1308,4 @@ wu butterfly vars003 zeros003;;
 //  ------------------------------------------------------------------------- // 
 
 // TODO: Fix this: System.DivideByZeroException: Attempted to divide by zero.
-(grobner_decide >>|> originate) (parse @"is_midpoint(d,b,c) /\ is_midpoint(e,a,c) /\ is_midpoint(f,a,b) /\ is_intersection(m,b,e,a,d) ==> collinear(c,f,m)");;
+(grobner_decide << originate) (parse @"is_midpoint(d,b,c) /\ is_midpoint(e,a,c) /\ is_midpoint(f,a,b) /\ is_intersection(m,b,e,a,d) ==> collinear(c,f,m)");;

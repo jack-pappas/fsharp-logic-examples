@@ -349,8 +349,8 @@ let evalc =
 // ------------------------------------------------------------------------- //
 
 let integer_qelim = 
-    simplify004 >>|> evalc >>|>
-    lift_qelim linform (cnnf posineq >>|> evalc) cooper
+    simplify004 << evalc <<
+    lift_qelim linform (cnnf posineq << evalc) cooper
 
 // pg.350
 // ------------------------------------------------------------------------- //
@@ -376,4 +376,4 @@ let rec relativize r fm =
     | _ -> fm
 
 let natural_qelim =
-    integer_qelim >>|> relativize (fun x -> Atom (R ("<=", [zero; Var x])))
+    integer_qelim << relativize (fun x -> Atom (R ("<=", [zero; Var x])))

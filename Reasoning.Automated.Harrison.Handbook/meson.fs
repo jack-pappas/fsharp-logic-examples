@@ -59,7 +59,7 @@ let rec mexpand001 rules ancestors g cont (env, n, k) =
 
 let puremeson001 fm =
     let cls = simpcnf (specialize (pnf fm))
-    let rules = List.foldBack ((@) >>|> contrapositives) cls []
+    let rules = List.foldBack ((@) << contrapositives) cls []
     deepen (fun n ->
         mexpand001 rules [] False id (undefined, n, 0)
         |> ignore
@@ -67,7 +67,7 @@ let puremeson001 fm =
 
 let meson001 fm =
     let fm1 = askolemize (Not (generalize fm))
-    List.map (puremeson001 >>|> list_conj) (simpdnf fm1)
+    List.map (puremeson001 << list_conj) (simpdnf fm1)
 
 // pg. 221
 // ------------------------------------------------------------------------- //
@@ -121,7 +121,7 @@ let rec mexpand002 rules ancestors g cont (env, n, k) =
 
 let puremeson002 fm =   
     let cls = simpcnf (specialize (pnf fm))
-    let rules = List.foldBack ((@) >>|> contrapositives) cls []
+    let rules = List.foldBack ((@) << contrapositives) cls []
     deepen (fun n ->
         mexpand002 rules [] False id (undefined, n, 0)
         |> ignore
@@ -129,4 +129,4 @@ let puremeson002 fm =
 
 let meson002 fm =
     let fm1 = askolemize (Not (generalize fm))
-    List.map (puremeson002 >>|> list_conj) (simpdnf fm1)
+    List.map (puremeson002 << list_conj) (simpdnf fm1)

@@ -87,7 +87,7 @@ let equalitize fm =
     else
         let preds = subtract allpreds ["=", 2]
         let funcs = functions fm
-        let axioms = List.foldBack (union >>|> function_congruence) funcs
-                            (List.foldBack (union >>|> predicate_congruence) preds
+        let axioms = List.foldBack (union << function_congruence) funcs
+                            (List.foldBack (union << predicate_congruence) preds
                                     equivalence_axioms)
         Imp (end_itlist mk_and axioms, fm)

@@ -23,10 +23,9 @@ let (|Failure|_|) (exn: exn) =
 
 // pg. 618
 // OCaml: val ( ** ) : ('a -> 'b) -> ('c -> 'a) -> 'c -> 'b = <fun>
-// F#:    val ( >>|> ) : ('a -> 'b) -> ('c -> 'a) -> 'c -> 'b
-/// Composes two functions, then applies a value to the resulting function.
-let inline ( >>|> ) f g x =
-    f <| g x
+// F#:    val ( << ) : ('a -> 'b) -> ('c -> 'a) -> 'c -> 'b
+    // NOTE : The ( ** ) operator has been replaced with the equivalent,
+    // built-in F# operator ( << ).
 
 // ------------------------------------------------------------------------- //
 // GCD and LCM on arbitrary-precision numbers.                               //

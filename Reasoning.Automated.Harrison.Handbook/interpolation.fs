@@ -80,10 +80,10 @@ let rec toptermt fns tm =
     | Var x -> []
     | Fn (f, args) ->
         if mem (f, List.length args) fns then [tm]
-        else List.foldBack (union >>|> toptermt fns) args []
+        else List.foldBack (union << toptermt fns) args []
 
 let topterms fns =
-    atom_union (fun (R (p, args)) -> List.foldBack (union >>|> toptermt fns) args [])
+    atom_union (fun (R (p, args)) -> List.foldBack (union << toptermt fns) args [])
         
 // pg. 433
 // ------------------------------------------------------------------------- //
@@ -129,7 +129,7 @@ let cinterpolate p q =
 let interpolate p q =
     let rec vs = List.map (fun v -> Var v) (intersect (fv p) (fv q))
     and fns = functions (And (p, q))
-    let n = List.foldBack (max_varindex "c_" >>|> fst) fns (Int 0) + (Int 1)
+    let n = List.foldBack (max_varindex "c_" << fst) fns (Int 0) + (Int 1)
     let cs = List.map (fun i -> Fn ("c_" + i.ToString(), [])) (n --- (n + Int (List.length vs - 1)))
     let rec fn_vc = fpf vs cs
     and fn_cv = fpf cs vs

@@ -176,7 +176,7 @@ let wu fm vars zeros =
     let gfm = subst(List.foldBack (fun v -> v |-> zero) zeros undefined) gfm0
     if not (set_eq vars (fv gfm)) then failwith "wu: bad parameters" else
     let ant, con = dest_imp gfm
-    let pols = List.map (lhs >>|> polyatom vars) (conjuncts ant)
-    let ps = List.map (lhs >>|> polyatom vars) (conjuncts con)
+    let pols = List.map (lhs << polyatom vars) (conjuncts ant)
+    let ps = List.map (lhs << polyatom vars) (conjuncts con)
     let tri = triangulate vars [] pols
     List.foldBack (fun p -> union (pprove vars tri p [])) ps []

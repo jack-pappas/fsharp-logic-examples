@@ -62,7 +62,7 @@ let aedecide fm =
 // ------------------------------------------------------------------------- //
 
 let separate x cjs =
-    let yes, no = List.partition (mem x >>|> fv) cjs
+    let yes, no = List.partition (mem x << fv) cjs
     if yes = [] then list_conj no
     elif no = [] then Exists (x, list_conj yes)
     else And (Exists (x, list_conj yes), list_conj no)
@@ -179,12 +179,12 @@ let decide_finite n fm =
 
 let limmeson n fm =
     let cls = simpcnf (specialize (pnf fm))
-    let rules = List.foldBack ((@) >>|> contrapositives) cls []
+    let rules = List.foldBack ((@) << contrapositives) cls []
     mexpand002 rules [] False id (undefined, n, 0)
 
 let limited_meson n fm =
     let fm1 = askolemize (Not (generalize fm))
-    List.map (limmeson n >>|> list_conj) (simpdnf fm1)
+    List.map (limmeson n << list_conj) (simpdnf fm1)
 
 let decide_fmp fm =
     let rec test n =

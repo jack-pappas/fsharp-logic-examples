@@ -271,7 +271,7 @@ let schur = polytest (parset
             (x1 - x2 - x3 - x4)^10))");;
 
 let complex_qelim_all =
-    time complex_qelim >>|> generalize;;
+    time complex_qelim << generalize;;
 
 // complex.p012
 time complex_qelim (parse @"exists x. x + 2 = 3");;

@@ -139,10 +139,10 @@ let unassigned =
         | _ -> p
     fun cls trail ->
         subtract (unions (image (image litabs) cls))
-            (image (litabs >>|> fst) trail)
+            (image (litabs << fst) trail)
 
 let rec unit_subpropagate (cls, fn, trail) =
-    let cls' = List.map (List.filter (not >>|> defined fn >>|> negate)) cls
+    let cls' = List.map (List.filter (not << defined fn << negate)) cls
     let uu = function
         | [c] when not (defined fn c) -> [c]
         | _ -> failwith ""
@@ -202,7 +202,7 @@ let rec dplb cls trail =
         | (p, Guessed) :: tt ->
             let trail' = backjump cls p tt
             let declits = List.filter (fun (_, d) -> d = Guessed) trail'
-            let conflict = insert (negate p) (image (negate >>|> fst) declits)
+            let conflict = insert (negate p) (image (negate << fst) declits)
             dplb (conflict :: cls) ((negate p, Deduced) :: trail')
         | _ -> false
     else

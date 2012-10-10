@@ -211,7 +211,7 @@ let rec grobner basis pairs =
     | (p1, p2) :: opairs ->
         let sp = reduce basis (spoly p1 p2)
         if sp = [] then grobner basis opairs
-        else if List.forall (List.forall ((=) 0) >>|> snd) sp then [sp] else
+        else if List.forall (List.forall ((=) 0) << snd) sp then [sp] else
         let newcps = List.map (fun p -> p, sp) basis
         grobner (sp :: basis) (opairs @ newcps)
             
@@ -239,13 +239,13 @@ let rabinowitsch vars v p =
 // ------------------------------------------------------------------------- //
 
 let grobner_trivial fms =
-    let vars0 = List.foldBack (union >>|> fv) fms []
+    let vars0 = List.foldBack (union << fv) fms []
     let eqs, neqs = List.partition positive fms
     let rvs = List.map (fun n -> variant ("_" + string n) vars0)
                 (1 -- List.length neqs)
     let vars = vars0 @ rvs
     let rec poleqs = List.map (mpolyatom vars) eqs
-    and polneqs = List.map (mpolyatom vars >>|> negate) neqs
+    and polneqs = List.map (mpolyatom vars << negate) neqs
     let pols = poleqs @ List.map2 (rabinowitsch vars) rvs polneqs
     reduce (groebner pols) (mpoly_const vars (Int 1)) = []
 

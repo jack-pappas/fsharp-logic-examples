@@ -300,7 +300,7 @@ time integer_qelim
 // ------------------------------------------------------------------------- //
 
 // coo.p045
-(integer_qelim >>|> generalize)
+(integer_qelim << generalize)
     (parse @"a + 2 = b /\ v_3 = b - a + 1 /\ v_2 = b - 2 /\ v_1 = 3 ==> false")
     |> print_fol_formula;;
 

@@ -298,7 +298,7 @@ let rec veref sign m v fm =
     | Atom (R ("<=", [s;t])) ->
         sign (dtermval v s <= dtermval v t)
     | Not p ->
-        veref (not >>|> sign) m v p
+        veref (not << sign) m v p
     | And (p, q) ->
         sign (sign (veref sign m v p) && sign (veref sign m v q))
     | Or (p, q) ->
@@ -409,7 +409,7 @@ let rec run prog (Config (state, tape) as config) =
 
 let input_tape =
     let writen n =
-        funpow n (move Left >>|> write One) >>|> move Left >>|> write Blank
+        funpow n (move Left << write One) << move Left << write Blank
     fun args ->
         List.foldBack writen args (Tape (0, undefined))
             

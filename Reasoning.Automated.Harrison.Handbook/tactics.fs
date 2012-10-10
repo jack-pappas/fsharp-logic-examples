@@ -140,7 +140,7 @@ let gen_right_alpha y x (th : thm) : thm =
 // ------------------------------------------------------------------------- //
 
 let forall_intro_tac y (Goals ((asl, (Forall (x, p) as fm)) :: gls, jfn)) =
-    if mem y (fv fm) || List.exists (mem y >>|> fv >>|> snd) asl then
+    if mem y (fv fm) || List.exists (mem y << fv << snd) asl then
         failwith "fix: variable already free in goal"
     else
         Goals ((asl,subst(x |=> Var y) p) :: gls,
@@ -176,7 +176,7 @@ let exists_intro_tac t (Goals ((asl, Exists (x, p)) :: gls, jfn)) =
 // ------------------------------------------------------------------------- //
 
 let imp_intro_tac s (Goals ((asl, Imp (p, q)) :: gls, jfn)) =
-    let jmod = if asl = [] then add_assum True else imp_swap >>|> shunt
+    let jmod = if asl = [] then add_assum True else imp_swap << shunt
     Goals (((s, p) :: asl, q) :: gls, jmodify jfn jmod)
         
 // pg. 510
@@ -240,7 +240,7 @@ let justify byfn hyps p g =
     match byfn hyps p g with
     | [th] when consequent (concl th) = p -> th
     | ths ->
-        let th = lcffol (List.foldBack (mk_imp >>|> consequent >>|> concl) ths p)
+        let th = lcffol (List.foldBack (mk_imp << consequent << concl) ths p)
         if ths = [] then assumptate g th else imp_trans_chain ths th
             
 // pg. 512
@@ -275,7 +275,7 @@ let auto_tac byfn hyps (Goals ((asl, w) :: gls, jfn) as g) =
 
 let lemma_tac s p byfn hyps (Goals ((asl, w) :: gls, jfn) as g) =
     let tr = imp_trans (justify byfn hyps p g)
-    let mfn = if asl = [] then tr else imp_unduplicate >>|> tr >>|> shunt
+    let mfn = if asl = [] then tr else imp_unduplicate << tr << shunt
     Goals (((s, p) :: asl, w) :: gls, jmodify jfn mfn)
         
 // pg. 513
@@ -284,7 +284,7 @@ let lemma_tac s p byfn hyps (Goals ((asl, w) :: gls, jfn) as g) =
 // ------------------------------------------------------------------------- //
 
 let exists_elim_tac l (Exists (x, p) as fm) byfn hyps (Goals ((asl, w) :: gls, jfn) as g) =
-    if List.exists (mem x >>|> fv) (w :: List.map snd asl) then
+    if List.exists (mem x << fv) (w :: List.map snd asl) then
         failwith "exists_elim_tac: variable free in assumptions"
     else
         let th = justify byfn hyps (Exists (x, p)) g
@@ -325,8 +325,8 @@ let disj_elim_tac l fm byfn hyps (Goals ((asl, w) :: gls, jfn) as g) =
 // ------------------------------------------------------------------------- //
 
 let multishunt i th =
-    let th1 = imp_swap (funpow i (imp_swap >>|> shunt) th)
-    imp_swap (funpow (i - 1) (unshunt >>|> imp_front 2) th1)
+    let th1 = imp_swap (funpow i (imp_swap << shunt) th)
+    imp_swap (funpow (i - 1) (unshunt << imp_front 2) th1)
 
 let assume lps (Goals((asl, Imp (p, q)) :: gls, jfn)) =
     if end_itlist mk_and (List.map snd lps) <> p then

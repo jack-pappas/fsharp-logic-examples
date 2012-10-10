@@ -117,7 +117,7 @@ let rec dp_refine cjs0 fvs dunno need =
     match dunno with
     | [] -> need
     | cl :: dknow ->
-        let mfn = dp_mfn cjs0 >>|> subst >>|> fpf fvs
+        let mfn = dp_mfn cjs0 << subst << fpf fvs
         let need' =
             if dpll (List.foldBack mfn (need @ dknow) []) then cl :: need
             else need

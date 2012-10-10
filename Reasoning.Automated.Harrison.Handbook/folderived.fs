@@ -83,7 +83,7 @@ let rec icongruence s t stm ttm =
         | Fn (fs, sa), Fn (ft, ta)
             when fs = ft && List.length sa = List.length ta ->
             let ths = List.map2 (icongruence s t) sa ta
-            let ts = List.map (consequent >>|> concl) ths
+            let ts = List.map (consequent << concl) ths
             imp_trans_chain ths (axiom_funcong fs (List.map lhs ts) (List.map rhs ts))
         | _ -> failwith "icongruence: not congruent"
     
@@ -186,7 +186,7 @@ let rec isubst s t sfm tfm =
         | Atom (R (p, sa)), Atom (R (p', ta))
             when p = p' && List.length sa = List.length ta ->
             let ths = List.map2 (icongruence s t) sa ta
-            let ls, rs = List.unzip (List.map (dest_eq >>|> consequent >>|> concl) ths)
+            let ls, rs = List.unzip (List.map (dest_eq << consequent << concl) ths)
             imp_trans_chain ths (axiom_predcong p ls rs)
 
         | Imp (sp, sq), Imp (tp, tq) ->
