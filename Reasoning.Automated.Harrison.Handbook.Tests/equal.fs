@@ -8,7 +8,7 @@ module Reasoning.Automated.Harrison.Handbook.Tests.equal
 
 open Reasoning.Automated.Harrison.Handbook.lib
 open Reasoning.Automated.Harrison.Handbook.formulas
-open Reasoning.Automated.Harrison.Handbook.folMod
+open Reasoning.Automated.Harrison.Handbook.fol
 open Reasoning.Automated.Harrison.Handbook.skolem
 open Reasoning.Automated.Harrison.Handbook.meson
 open Reasoning.Automated.Harrison.Handbook.equal

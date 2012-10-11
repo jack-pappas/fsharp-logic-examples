@@ -1,6 +1,6 @@
 ﻿// ========================================================================= //
 // Copyright (c) 2003-2007, John Harrison.                                   //
-// Copyright (c) 2012 Eric Taucher, Jack Pappas                              //
+// Copyright (c) 2012 Eric Taucher, Jack Pappas, Anh-Dung Phan               //
 // (See "LICENSE.txt" for details.)                                          //
 // ========================================================================= //
 
@@ -10,7 +10,7 @@ open intro
 open formulas
 open prop
 open dp
-open folMod
+open fol
 open skolem
 
 // ========================================================================= //

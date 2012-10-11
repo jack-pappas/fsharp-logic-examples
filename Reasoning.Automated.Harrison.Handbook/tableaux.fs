@@ -1,6 +1,6 @@
 ﻿// ========================================================================= //
 // Copyright (c) 2003-2007, John Harrison.                                   //
-// Copyright (c) 2012 Eric Taucher, Jack Pappas                              //
+// Copyright (c) 2012 Eric Taucher, Jack Pappas, Anh-Dung Phan               //
 // (See "LICENSE.txt" for details.)                                          //
 // ========================================================================= //
 
@@ -9,7 +9,7 @@ module Reasoning.Automated.Harrison.Handbook.tableaux
 open intro
 open formulas
 open prop
-open folMod
+open fol
 open skolem
 open herbrand
 open unif

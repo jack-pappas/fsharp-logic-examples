@@ -7,7 +7,7 @@
 module Reasoning.Automated.Harrison.Handbook.Tests.unif
 
 open Reasoning.Automated.Harrison.Handbook.lib
-open Reasoning.Automated.Harrison.Handbook.folMod
+open Reasoning.Automated.Harrison.Handbook.fol
 open Reasoning.Automated.Harrison.Handbook.unif
 
 open NUnit.Framework

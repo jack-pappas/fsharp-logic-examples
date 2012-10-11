@@ -13,30 +13,24 @@ After installing NuGet, make sure to enable "Allow NuGet to download missing pac
 [This setting](http://docs.nuget.org/docs/workflows/using-nuget-without-committing-packages) is under Options -> Package Manager -> General.
 You will have to build the application once you have NuGet installed and the solution open in Visual Studio.
 
-[NUnit] (http://www.nunit.org/) is recommended to run the unit tests.
+The test cases have been tested with *NUnit 2.6 x86* and *TestDriven.NET-3.4.2803* x86 test runners. 
+**We recommend you to use x86 versions of the test runners.** 
+Although 1MB stack limit is enough for 32-bit test processes, the test cases will soon result in `StackOverflowException` on a 64-bit process. 
+The reason is that many functions are *non-tail-recursive* and types often double their sizes on x64.
 
-### Notes on running Unit test ###
+### Instructions on running tests with NUnit ###
 
 To run the unit test you will need to
 
 1. Download and install NUnit
-2. Download repository, unpack if necessary, and open with Visual Studio 2010
-3. Build solution
-4. Start NUnit (x86 version)
-   Note: On 64-bit systems the system menu will use 64-bit version of NUnit.
-   The test do not run correctly with the 64-bit version.
-   To run the test you must use the x86 version.
-   The x86 version of NUnit is nunit-x86 and is found in the NUnit bin directory.
-5. Within NUnit File -> Open Project
-6. File type: Assemblies (*.dll, *.exe)
-7. Navigate to directory with Reasoning.Automated.Harrison.Handbook.Tests.dll
-8. Double click Reasoning.Automated.Harrison.Handbook.Tests.dll
-9. Click Categories tab on left side of NUnit
-10. Double click LongRunning
-11. Click Add
-12. Select Exclude these categories
-13. Click Tests tab on left side of NUnit
-14. Click Run
+2. Download repository, unpack if necessary, open with Visual Studio 2010, and build the solution
+4. Start NUnit x86 (Note: on 64-bit systems the system menu will use 64-bit version of NUnit. 
+   The x86 version of NUnit is nunit-x86 which can be found in the NUnit bin directory)
+5. Within NUnit *File -> Open Project*, navigate to directory with Reasoning.Automated.Harrison.Handbook.Tests.dll
+6. Double click Reasoning.Automated.Harrison.Handbook.Tests.dll
+9. Click *Categories* tab on left side of NUnit
+10. Double click LongRunning, click *Add* and select *Exclude these categories*
+13. Click *Tests* tab on left side of NUnit and hit *Run*
 
 
 
@@ -61,7 +55,7 @@ To run the unit test you will need to
  - Run a few examples with 16MB stack (the default limit set by OCaml version) using `runWith16MBStack` in `initialization.fsx`. These examples result in `StackOverflowException` in F# on Windows due to small 1MB stack (see extensive discussion [here](http://stackoverflow.com/questions/7947446/why-does-f-impose-a-low-limit-on-stack-size)).
 
 ### Unit tests ###
-A large set of unit tests is created based on available examples. These test cases serve as proofs of correctness when the code base is updated or optimized over time. They currently work fine with *NUnit x86 2.6* and *TestDriven.NET-3.4.2803* test runners. There are a few problems on implementing test cases though:
+A large set of unit tests is created based on available examples. These test cases serve as proofs of correctness when the code base is updated or optimized over time. There are a few problems on implementing test cases though:
  - NUnit only accepts parameterized tests on primitive types. To compare sophisticated values, we have to put them into arrays and use indices as test parameters.
  - FsUnit uses type test to implement its DSL. Type inference doesn't work on this DSL, so make sure that `expected` and `result` belong to the same type.
  - FsUnit and the library have some clashed constraints, namely `True` and `False`. To create tests correctly, one might need to use detailed type annotation, such as `formula<fol>.True` and `formula<fol>.False` for literals in first-order logic.

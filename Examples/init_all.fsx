@@ -17,7 +17,7 @@ open Reasoning.Automated.Harrison.Handbook.defcnf
 open Reasoning.Automated.Harrison.Handbook.dp
 open Reasoning.Automated.Harrison.Handbook.stal
 open Reasoning.Automated.Harrison.Handbook.bdd
-open Reasoning.Automated.Harrison.Handbook.folMod
+open Reasoning.Automated.Harrison.Handbook.fol
 open Reasoning.Automated.Harrison.Handbook.skolem
 open Reasoning.Automated.Harrison.Handbook.herbrand
 open Reasoning.Automated.Harrison.Handbook.unif
