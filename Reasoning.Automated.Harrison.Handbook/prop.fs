@@ -480,21 +480,31 @@ let mk_lits pvs v =
         if eval p v then p else Not p)
     |> list_conj
         
-// OCaml: val allsatvaluations : (('a -> bool) -> bool) -> ('a -> bool) -> 'a list -> ('a -> bool) list = <fun>
-// F#:    val allsatvaluations :  (('a -> bool) -> bool) -> ('a -> bool) -> 'a list -> ('a -> bool) list when 'a : equality
-// TODO : Optimize using continuation-passing style.
-let rec allsatvaluations subfn v pvs =
+
+//
+let rec private allsatvaluationsImpl subfn v pvs cont =
     match pvs with
     | [] ->
-        if subfn v then [v] else []
+        if subfn v then
+            cont [v]
+        else
+            cont []
     | p :: ps -> 
         let v' t q =
             if q = p then t
             else v q
-        allsatvaluations subfn (v' false) ps @
-        allsatvaluations subfn (v' true) ps
+
+        allsatvaluationsImpl subfn (v' false) ps <| fun ps_false ->
+        allsatvaluationsImpl subfn (v' true) ps <| fun ps_true ->
+            // OPTIMIZE : Modify this function so it doesn't use @ here
+            cont (ps_false @ ps_true)
+
+// OCaml: val allsatvaluations : (('a -> bool) -> bool) -> ('a -> bool) -> 'a list -> ('a -> bool) list = <fun>
+// F#:    val allsatvaluations :  (('a -> bool) -> bool) -> ('a -> bool) -> 'a list -> ('a -> bool) list when 'a : equality
+let allsatvaluations subfn v pvs =
+    allsatvaluationsImpl subfn v pvs id
             
-// Note: Changed name from distrib to distribOrig to avoid F# compiler error.
+// Note: Changed name from dnf to dnfOrig to avoid F# compiler error.
 // OCaml: val dnf :     'a formula -> 'a formula = <fun>
 // F#:    val dnfOrig : 'a formula -> 'a formula when 'a : comparison
 let dnfOrig fm =

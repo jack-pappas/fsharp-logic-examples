@@ -17,8 +17,10 @@ open skolem
 // ========================================================================= //
 
 let is_eq = function 
-    | Atom (R ("=", _)) -> true 
-    | _ -> false
+    | Atom (R ("=", _)) ->
+        true 
+    | _ ->
+        false
 
 let mk_eq s t =
     Atom (R ("=", [s; t]))
@@ -49,10 +51,10 @@ let rec predicates fm =
 let function_congruence (f, n) =
     if n = 0 then [] 
     else
-        // TODO : These instances of List.map could be optimized by using
-        // List.init instead (so we don't need the intermediate list).
-        let argnames_x = List.map (fun n -> "x" + (string n)) [1 .. n]
-        let argnames_y = List.map (fun n -> "y" + (string n)) [1 .. n]
+        let argnames_x =
+            List.init n <| fun i -> "x" + string (i + 1)
+        let argnames_y =
+            List.init n <| fun i -> "y" + string (i + 1)
         let args_x = List.map Var argnames_x
         let args_y = List.map Var argnames_y
         let ant =
@@ -73,11 +75,9 @@ let predicate_congruence (p, n) =
         // TODO : These instances of List.map could be optimized by using
         // List.init instead (so we don't need the intermediate list).
         let argnames_x =
-            //List.init n <| fun n -> "x" + string (n + 1)
-            List.map (fun n -> "x" + (string n)) [1 .. n]
+            List.init n <| fun n -> "x" + string (n + 1)
         let argnames_y =
-            //List.init n <| fun n -> "y" + string (n + 1)
-            List.map (fun n -> "y" + (string n)) [1 .. n]
+            List.init n <| fun n -> "y" + string (n + 1)
         let args_x = List.map Var argnames_x
         let args_y = List.map Var argnames_y
         let ant =
@@ -97,7 +97,7 @@ let equivalence_axioms =
 
 let equalitize fm =
     let allpreds = predicates fm
-    if not (mem ("=", 2) allpreds) then fm
+    if not <| mem ("=", 2) allpreds then fm
     else
         let axioms =
             let preds = subtract allpreds ["=", 2]

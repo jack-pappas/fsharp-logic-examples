@@ -119,10 +119,10 @@ let rec carryselect x y c0 c1 s0 s1 c s n k =
     let k' = min n k
     let fm =
         And (And (ripplecarry0 x y c0 s0 k', ripplecarry1 x y c1 s1 k'),
-        And (Iff (c k', mux (c 0) (c0 k') (c1 k')),
-            [0 .. (k' - 1)]
-            |> conjoin (fun i ->
-                Iff (s i, mux (c 0) (s0 i) (s1 i)))))
+             And (Iff (c k', mux (c 0) (c0 k') (c1 k')),
+                [0 .. (k' - 1)]
+                |> conjoin (fun i ->
+                    Iff (s i, mux (c 0) (s0 i) (s1 i)))))
 
     if k' < k then fm else
         And (fm, carryselect
@@ -166,17 +166,19 @@ let rippleshift u v c z w n =
 // ------------------------------------------------------------------------- //
 
 let multiplier x u v out n =
-    if n = 1 then And (Iff (out 0, x 0 0), Not (out 1)) else
-    psimplify (
-        And (Iff (out 0, x 0 0),
-            And (rippleshift (fun i -> 
-                    if i = n - 1 then False
-                    else x 0 (i + 1)) (x 1) (v 2) (out 1) (u 2) n, 
-                    if n = 2 then And (Iff (out 2, u 2 0), Iff(out 3, u 2 1)) 
-                    else conjoin (fun k ->
-                        rippleshift (u k) (x k) (v(k + 1)) (out k) (
-                            if k = n - 1 then fun i -> out (n + i) 
-                            else u (k + 1)) n) [2 .. (n - 1)])))
+    if n = 1 then
+        And (Iff (out 0, x 0 0), Not (out 1))
+    else
+        psimplify (
+            And (Iff (out 0, x 0 0),
+                And (rippleshift (fun i -> 
+                        if i = n - 1 then False
+                        else x 0 (i + 1)) (x 1) (v 2) (out 1) (u 2) n, 
+                        if n = 2 then And (Iff (out 2, u 2 0), Iff(out 3, u 2 1)) 
+                        else conjoin (fun k ->
+                            rippleshift (u k) (x k) (v(k + 1)) (out k) (
+                                if k = n - 1 then fun i -> out (n + i) 
+                                else u (k + 1)) n) [2 .. (n - 1)])))
 
 // pg. 71
 // ------------------------------------------------------------------------- //
@@ -197,15 +199,12 @@ let congruent_to x m n =
     |> conjoin (fun i ->
         if bit i m then x i
         else Not (x i))
-                
 
 let prime p =
-    let l1 = List.map mk_index ["x"; "y"; "out"]
-    match l1 with
+    match List.map mk_index ["x"; "y"; "out"] with
     | [x; y; out] ->
-        let m i j = And (x i,y j)
-        let l2 = List.map mk_index2 ["u"; "v"]
-        match l2 with
+        let m i j = And (x i, y j)
+        match List.map mk_index2 ["u"; "v"] with
         | [u; v] ->
             let n = bitlength p
             Not (And (multiplier m u v out (n - 1), congruent_to out p (max n (2 * n - 2))))

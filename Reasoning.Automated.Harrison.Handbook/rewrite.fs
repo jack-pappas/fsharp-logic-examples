@@ -25,9 +25,10 @@ let rec rewrite1 eqs t =
     | Atom (R ("=", [l; r])) :: oeqs -> 
         try 
             tsubst (term_match undefined [l, t]) r
-        with _ ->
+        with Failure _ ->
             rewrite1 oeqs t
-    | _ -> failwith "rewrite1"
+    | _ ->
+        failwith "rewrite1"
 
 // pg. 263
 // ------------------------------------------------------------------------- //
@@ -36,9 +37,10 @@ let rec rewrite1 eqs t =
 
 let rec rewrite eqs tm =
     try rewrite eqs (rewrite1 eqs tm)
-    with _ ->
+    with Failure _ ->
         match tm with
-        | Var x -> tm
+        | Var x ->
+            tm
         | Fn (f, args) -> 
             let tm' = Fn (f, List.map (rewrite eqs) args)
             if tm' = tm then tm 

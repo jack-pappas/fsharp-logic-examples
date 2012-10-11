@@ -84,10 +84,12 @@ let triggers fm =
         union poslits (List.map negate poslits)
         
     let eqs =
+        (lits, lits)
         // pairs
-        allpairs (fun p q -> p, q) lits lits
+        ||> allpairs (fun p q -> p, q)
         // npairs
-        |> List.filter (fun (p, q) -> atom p <> atom q)
+        |> List.filter (fun (p, q) ->
+            atom p <> atom q)
         // eqs
         |> List.map align
         |> setify

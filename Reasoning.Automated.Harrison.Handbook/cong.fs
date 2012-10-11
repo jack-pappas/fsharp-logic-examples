@@ -40,7 +40,7 @@ let congruent eqv (s, t) =
 // ------------------------------------------------------------------------- //
 
 let rec emerge (s, t) (eqv, pfn) =
-    let s' = canonize eqv s 
+    let s' = canonize eqv s
     let t' = canonize eqv t
     if s' = t' then
         eqv, pfn
@@ -51,7 +51,7 @@ let rec emerge (s, t) (eqv, pfn) =
         let eqv' = equate (s, t) eqv
         let pfn' =
             let st' = canonize eqv' s'
-            (st' |-> union sp tp) pfn            
+            (st' |-> union sp tp) pfn
 
         (pairs, (eqv', pfn'))
         ||> List.foldBack (fun (u, v) (eqv, pfn) ->

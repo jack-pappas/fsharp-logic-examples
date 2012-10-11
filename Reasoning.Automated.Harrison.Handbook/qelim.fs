@@ -52,61 +52,113 @@ let qelim bfn x p =
         List.foldBack mk_and ncjs q
 
 let lift_qelim afn nfn qfn =
-    let rec qelift vars fm =
+    let rec qelift vars fm cont =
         match fm with
         | Atom (R (_,_)) ->
-            afn vars fm
+            cont (afn vars fm)
         | Not p ->
-            Not (qelift vars p)
+            qelift vars p <| fun qelift_p ->
+                cont (Not qelift_p)
         | And (p, q) ->
-            And (qelift vars p, qelift vars q)
+            qelift vars p <| fun qelift_p ->
+            qelift vars q <| fun qelift_q ->
+                cont (And (qelift_p, qelift_q))
         | Or (p, q) ->
-            Or (qelift vars p, qelift vars q)
+            qelift vars p <| fun qelift_p ->
+            qelift vars q <| fun qelift_q ->
+                cont (Or (qelift_p, qelift_q))
         | Imp (p, q) ->
-            Imp (qelift vars p, qelift vars q)
+            qelift vars p <| fun qelift_p ->
+            qelift vars q <| fun qelift_q ->
+                cont (Imp (qelift_p, qelift_q))
         | Iff (p, q) ->
-            Iff (qelift vars p, qelift vars q)
+            qelift vars p <| fun qelift_p ->
+            qelift vars q <| fun qelift_q ->
+                cont (Iff (qelift_p, qelift_q))
         | Forall (x, p) ->
-            Not (qelift vars (Exists (x, Not p)))
+            qelift vars (Exists (x, Not p)) <| fun result ->
+                cont (Not result)
         | Exists (x, p) ->
-                let djs = disjuncts (nfn (qelift (x :: vars) p))
-                list_disj (List.map (qelim (qfn vars) x) djs)
-        | _ -> fm
+            qelift (x :: vars) p <| fun qelift_p ->
+                qelift_p
+                |> nfn
+                |> disjuncts
+                |> List.map (qelim (qfn vars) x)
+                |> list_disj
+                |> cont
+        | _ ->
+            cont fm
 
     fun fm ->
-        simplify004 (qelift (fv fm) (miniscope fm))
+        qelift (fv fm) (miniscope fm) id
+        |> simplify004
   
 // pg. 333
 //  ------------------------------------------------------------------------- // 
 //  Cleverer (proposisional) NNF with conditional and literal modification.   // 
-//  ------------------------------------------------------------------------- // 
+//  ------------------------------------------------------------------------- //
 
 let cnnf lfn =
-    // OPTIMIZE : Optimize with CPS.
-    let rec cnnf fm =
+    let rec cnnf fm cont =
         match fm with
         | And (p, q) ->
-            And (cnnf p, cnnf q)
+            cnnf p <| fun cnnf_p ->
+            cnnf q <| fun cnnf_q ->
+                And (cnnf_p, cnnf_q)
+                |> cont
         | Or (p, q) ->
-            Or (cnnf p, cnnf q)
+            cnnf p <| fun cnnf_p ->
+            cnnf q <| fun cnnf_q ->
+                Or (cnnf_p, cnnf_q)
+                |> cont
         | Imp (p, q) ->
-            Or (cnnf(Not p), cnnf q)
+            cnnf (Not p) <| fun cnnf_not_p ->
+            cnnf q <| fun cnnf_q ->
+                Or (cnnf_not_p, cnnf_q)
+                |> cont
         | Iff (p, q) ->
-            Or (And (cnnf p, cnnf q), And (cnnf (Not p), cnnf (Not q)))
+            cnnf p <| fun cnnf_p ->
+            cnnf q <| fun cnnf_q ->
+            cnnf (Not p) <| fun cnnf_not_p ->
+            cnnf (Not q) <| fun cnnf_not_q ->
+                Or (And (cnnf_p, cnnf_q), And (cnnf_not_p, cnnf_not_q))
+                |> cont
         | Not (Not p) ->
-            cnnf p
+            cnnf p cont
         | Not (And (p, q)) ->
-            Or (cnnf (Not p), cnnf (Not q))
+            cnnf (Not p) <| fun cnnf_not_p ->
+            cnnf (Not q) <| fun cnnf_not_q ->
+                Or (cnnf_not_p, cnnf_not_q)
+                |> cont
         | Not (Or (And (p, q), And (p', r))) when p' = negate p ->
-            Or (cnnf (And (p, Not q)), cnnf (And (p', Not r)))
+            cnnf (And (p, Not q)) <| fun left ->
+            cnnf (And (p', Not r)) <| fun right ->
+                Or (left, right)
+                |> cont
         | Not (Or (p, q)) ->
-            And (cnnf (Not p), cnnf (Not q))
+            cnnf (Not p) <| fun cnnf_not_p ->
+            cnnf (Not q) <| fun cnnf_not_q ->
+                And (cnnf_not_p, cnnf_not_q)
+                |> cont
         | Not (Imp (p, q)) ->
-            And (cnnf p, cnnf (Not q))
+            cnnf p <| fun cnnf_p ->
+            cnnf (Not q) <| fun cnnf_not_q ->
+                And (cnnf_p, cnnf_not_q)
+                |> cont
         | Not (Iff (p, q)) ->
-            Or (And (cnnf p, cnnf (Not q)), And (cnnf (Not p), cnnf q))
-        | _ -> lfn fm
-    simplify004 << cnnf << simplify004
+            cnnf p <| fun cnnf_p ->
+            cnnf q <| fun cnnf_q ->
+            cnnf (Not p) <| fun cnnf_not_p ->
+            cnnf (Not q) <| fun cnnf_not_q ->
+                Or (And (cnnf_p, cnnf_not_q), And (cnnf_not_p, cnnf_q))
+                |> cont
+        | _ ->
+            cont (lfn fm)
+
+    fun fm ->
+        let fm = simplify004 fm
+        cnnf fm id
+        |> simplify004
   
 // pg. 334
 //  ------------------------------------------------------------------------- // 

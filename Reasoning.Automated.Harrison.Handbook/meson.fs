@@ -92,7 +92,8 @@ let expand2 expfn goals1 n1 goals2 n2 n3 cont env k =
 
 let rec mexpand002 rules ancestors g cont (env, n, k) =
     let rec mexpands002 rules ancestors gs cont (env, n, k) =
-        if n < 0 then failwith "Too deep" 
+        if n < 0 then
+            failwith "Too deep" 
         else
             let m = List.length gs
             if m <= 1 then

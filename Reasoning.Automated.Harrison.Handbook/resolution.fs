@@ -34,8 +34,7 @@ let rec mgu l env =
         solve env
 
 let unifiable p q =
-    let f = unify_literals undefined
-    try f (p, q)
+    try unify_literals undefined (p, q)
         |> ignore
         true
     with _ ->

@@ -44,12 +44,14 @@ let rec modify_S cl =
     let dest_eq = function
         | Atom (R ("=", [s;t])) ->
             Some (s, t)
-        | _ -> None
+        | _ ->
+            None
 
     match List.tryPick dest_eq cl with
-    | None -> [cl]
-    | Some (s, t) -> 
-        let eq1 = mk_eq s t 
+    | None ->
+        [cl]
+    | Some (s, t) ->
+        let eq1 = mk_eq s t
         let eq2 = mk_eq t s
         let sub = modify_S (subtract cl [eq1])
         List.map (insert eq1) sub @ List.map (insert eq2) sub
@@ -72,8 +74,10 @@ let rec modify_T = function
 
 // val is_nonvar : term -> bool
 let is_nonvar = function
-    | Var _ -> false
-    | _ -> true
+    | Var _ ->
+        false
+    | _ ->
+        true
 
 let find_nestnonvar = function
     | Var _ ->
@@ -116,8 +120,8 @@ let rec emodify fvs cls =
     try
         let t = tryfind find_nvsubterm cls
         let w = variant "w" fvs
-        let cls' = List.map (replace (t |=> Var w)) cls
-        emodify (w :: fvs) (Not (mk_eq t (Var w)) :: cls')
+        let cls = List.map (replace (t |=> Var w)) cls
+        emodify (w :: fvs) (Not (mk_eq t (Var w)) :: cls)
     with Failure _ ->
         cls
 

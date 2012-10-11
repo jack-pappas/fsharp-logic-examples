@@ -85,16 +85,21 @@ let resolution_rule clauses =
 // Overall procedure.                                                        //
 // ------------------------------------------------------------------------- //
 
-let rec dp clauses =
-    if clauses = [] then true 
-    elif mem [] clauses then false 
-    else 
+let rec dp = function
+    | [] ->
+        true
+    | clauses when mem [] clauses ->
+        false
+    | clauses ->
         match one_literal_rule clauses with
-        | Some value -> dp value
+        | Some value ->
+            dp value
         | None ->
             match affirmative_negative_rule clauses with
-            | Some value -> dp value
-            | None -> dp (resolution_rule clauses)
+            | Some value ->
+                dp value
+            | None ->
+                dp (resolution_rule clauses)
 
 // pg. 84
 // ------------------------------------------------------------------------- //

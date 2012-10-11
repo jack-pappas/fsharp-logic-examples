@@ -27,9 +27,9 @@ let rec skolems fms corr =
     | [] ->
         [], corr
     | p :: ofms ->
-        let p', corr' = skolem (rename_form p) corr
-        let ps', corr'' = skolems ofms corr'
-        p' :: ps', corr''
+        let p', corr = skolem (rename_form p) corr
+        let ps', corr = skolems ofms corr
+        p' :: ps', corr
 
 let skolemizes fms =
     fst <| skolems fms []

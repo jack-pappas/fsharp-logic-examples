@@ -90,20 +90,32 @@ let pushquant x p =
         |> List.map (separate x)
         |> list_disj
 
-// OPTIMIZE : Optimize with CPS.
-let rec miniscope = function
+//
+let rec private miniscopeImpl fm cont =
+    match fm with
     | Not p ->
-        Not (miniscope p)
+        miniscopeImpl p <| fun miniscoped_p ->
+            cont (Not miniscoped_p)
     | And (p, q) ->
-        And (miniscope p, miniscope q)
+        miniscopeImpl p <| fun miniscoped_p ->
+        miniscopeImpl q <| fun miniscoped_q ->
+            cont (And (miniscoped_p, miniscoped_q))
     | Or (p, q) ->
-        Or (miniscope p, miniscope q)
+        miniscopeImpl p <| fun miniscoped_p ->
+        miniscopeImpl q <| fun miniscoped_q ->
+            cont (Or (miniscoped_p, miniscoped_q))
     | Forall (x, p) ->
-        Not (pushquant x (Not (miniscope p)))
+        miniscopeImpl p <| fun miniscoped_p ->
+            cont (Not (pushquant x (Not miniscoped_p)))
     | Exists (x, p) ->
-        pushquant x (miniscope p)
+        miniscopeImpl p <| fun miniscoped_p ->
+            cont (pushquant x miniscoped_p)
     | fm ->
-        fm
+        cont fm
+
+//
+let miniscope fm =
+    miniscopeImpl fm id
 
 // pg. 316
 // ------------------------------------------------------------------------- //

@@ -87,10 +87,11 @@ let order (Bdd (_, ord)) p1 p2 =
 // Threading state through.                                                  //
 // ------------------------------------------------------------------------- //
 
+// OPTIMIZE : Use the State workflow instead.
 let thread s g (f1, x1) (f2, x2) =
-    let s', y1 = f1 s x1
-    let s'', y2 = f2 s' x2
-    g s'' (y1, y2)
+    let s, y1 = f1 s x1
+    let s, y2 = f2 s x2
+    g s (y1, y2)
 
 // pg. 104
 // ------------------------------------------------------------------------- //
@@ -98,10 +99,15 @@ let thread s g (f1, x1) (f2, x2) =
 // ------------------------------------------------------------------------- //
 
 let rec bdd_and (bdd,comp as bddcomp) (m1, m2) =
-    if m1 = -1 || m2 = -1 then bddcomp, -1
-    elif m1 = 1 then bddcomp, m2 
-    elif m2 = 1 then bddcomp, m1
-    else
+    match m1, m2 with
+    | -1, _
+    | _, -1 ->
+        bddcomp, -1
+    | 1, _ ->
+        bddcomp, m2
+    | _, 1 ->
+        bddcomp, m1
+    | m1, m2 ->
         try bddcomp, apply comp (m1, m2)
         with Failure _ ->
             try bddcomp, apply comp (m2, m1)
@@ -200,8 +206,8 @@ let rec sort_defs acc defs fm =
             defs |> List.find (suitable_iffdef defs)
         let ps, nonps =
             defs |> List.partition (fun (x', _) -> x' = x)
-        let ps' = subtract ps [x, e]
-        sort_defs ((x, e) :: acc) nonps (List.foldBack restore_iffdef ps' fm)
+        let ps = subtract ps [x, e]
+        sort_defs ((x, e) :: acc) nonps (List.foldBack restore_iffdef ps fm)
     with _ ->
         List.rev acc, List.foldBack restore_iffdef defs fm
 
@@ -236,16 +242,18 @@ let rec mkbdde sfn (bdd,comp as bddcomp) fm =
 
 let rec mkbdds sfn bdd defs fm =
     match defs with
-    | [] -> mkbdde sfn bdd fm
+    | [] ->
+        mkbdde sfn bdd fm
     | (p, e) :: odefs ->
-        let bdd', b = mkbdde sfn bdd e
-        mkbdds ((p |-> b) sfn) bdd' odefs fm
+        let bdd, b = mkbdde sfn bdd e
+        mkbdds ((p |-> b) sfn) bdd odefs fm
 
 let ebddtaut fm =
     let l, r =
         try dest_nimp fm
         with _ -> True, fm
-    let eqs, noneqs =            
+
+    let eqs, noneqs =
         conjuncts l
         |> List.partition (fun fm ->
             try
@@ -253,6 +261,7 @@ let ebddtaut fm =
                 true
             with _ ->
                 false)
+
     let defs, fm' =
         sort_defs [] (List.map dest_iffdef eqs) (List.foldBack mk_imp noneqs r)
     snd (mkbdds undefined (mk_bdd (<), undefined) defs fm') = 1

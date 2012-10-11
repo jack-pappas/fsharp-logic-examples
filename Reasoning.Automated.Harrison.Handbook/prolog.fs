@@ -78,11 +78,14 @@ let parserule s =
         parse_formula (parse_infix_atom, parse_atom) [] (lex (explode s))
     let asm, rest1 =
         if rest <> [] && List.head rest = ":-"
-        then parse_list ","
-                (parse_formula (parse_infix_atom, parse_atom) []) (List.tail rest)
+        then parse_list "," (parse_formula (parse_infix_atom, parse_atom) []) (List.tail rest)
         else [], rest
-    if rest1 = [] then asm, c
-    else failwith "Extra material after rule"
+
+    match rest1 with
+    | [] ->
+        asm, c
+    | _ ->
+        failwith "Extra material after rule"
 
 // pg. 120
 // ------------------------------------------------------------------------- //

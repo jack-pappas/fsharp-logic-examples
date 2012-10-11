@@ -49,8 +49,10 @@ let rec lexord ord l1 l2 =
     | h1 :: t1, h2 :: t2 ->
         if ord h1 h2 then
             List.length t1 = List.length t2
-        else h1 = h2 && lexord ord t1 t2
-    | _ -> false
+        else
+            h1 = h2 && lexord ord t1 t2
+    | _ ->
+        false
 
 let rec lpo_gt w s t =
     match s, t with
@@ -63,7 +65,8 @@ let rec lpo_gt w s t =
         && (f = g
             && lexord (lpo_gt w) fargs gargs
             || w (f, List.length fargs) (g ,List.length gargs))
-    | _ -> false
+    | _ ->
+        false
 
 and lpo_ge w s t =
     (s = t) || lpo_gt w s t

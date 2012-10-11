@@ -36,11 +36,9 @@ let renamepair (fm1,fm2) =
     let fvs1 = fv fm1
     let fvs2 = fv fm2
     let nms1, nms2 =
-        // OPTIMIZE : Replace this call to List.map with a call to
-        // List.init instead. Also, instead of calling chop_list
-        // we could just make two separate calls to List.init.
-        [0 .. (List.length fvs1 + List.length fvs2 - 1)]
-        |> List.map (fun n -> Var ("x" + string n))
+        List.init (List.length fvs1 + List.length fvs2)
+        <| fun i ->
+            Var ("x" + string i)
         |> chop_list (List.length fvs1)
 
     subst (fpf fvs1 nms1) fm1, subst (fpf fvs2 nms2) fm2
@@ -88,11 +86,14 @@ let critical_pairs fma fmb =
 // ------------------------------------------------------------------------- //
 
 let normalize_and_orient ord eqs (Atom (R ("=", [s;t]))) =
-    let s' = rewrite eqs s
-    let t' = rewrite eqs t
-    if ord s' t' then s', t'
-    elif ord t' s' then t', s'
-    else failwith "Can't orient equation"
+    let s = rewrite eqs s
+    let t = rewrite eqs t
+    if ord s t then
+        s, t
+    elif ord t s then
+        t, s
+    else
+        failwith "Can't orient equation"
   
 // pg. 279
 // ------------------------------------------------------------------------- //
@@ -113,6 +114,13 @@ let status (eqs, def, crs) eqs0 =
 
 let rec complete ord (eqs,def,crits) =
     match crits with
+    | [] ->
+        match def with
+        | [] -> eqs
+        | def ->
+            let e = List.find (can (normalize_and_orient ord eqs)) def
+            complete ord (eqs, subtract def [e], [e])
+
     | eq :: ocrits ->
         let trip =
             try
@@ -127,12 +135,7 @@ let rec complete ord (eqs,def,crits) =
                 eqs, eq :: def, ocrits
         status trip eqs
         complete ord trip
-    | _ -> 
-        match def with
-        | [] -> eqs
-        | def ->
-            let e = List.find (can (normalize_and_orient ord eqs)) def
-            complete ord (eqs, subtract def [e], [e])
+    
 
 // pg. 283
 // ------------------------------------------------------------------------- //
@@ -141,7 +144,8 @@ let rec complete ord (eqs,def,crits) =
 
 let rec interreduce dun eqs =
     match eqs with
-    | [] -> List.rev dun
+    | [] ->
+        List.rev dun
     | (Atom (R ("=", [l; r]))) :: oeqs ->
         let dun' =
             if rewrite (dun @ oeqs) l <> l then dun
@@ -180,6 +184,14 @@ let def = []
 let crits = unions (allpairs critical_pairs eqs eqs)
 let complete1 ord (eqs, def, crits) =
     match crits with
+    | [] ->
+        match def with
+        | [] ->
+            eqs, def, crits
+        | def ->
+            let e = List.find (can (normalize_and_orient ord eqs)) def
+            eqs, subtract def [e], [e]
+
     | eq :: ocrits ->
         let trip =
             try
@@ -196,9 +208,4 @@ let complete1 ord (eqs, def, crits) =
 
         status trip eqs
         trip
-    | _ ->
-        if def = [] then
-            eqs, def, crits
-        else
-            let e = List.find (can (normalize_and_orient ord eqs)) def
-            eqs, subtract def [e], [e]
+    
