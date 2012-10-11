@@ -232,7 +232,7 @@ List.forall (grobner_decide << invariant_under_rotation) coordinations;;
 //  ------------------------------------------------------------------------- // 
 
 // TODO: Fix these. Incorrect result, returns: System.Exception: pdivide_pos: zero head coefficient
-real_qelim (parse @"forall x y. exists s c. s^2 + c^2 = 1 /\ s * x + c * y = 0");;
+Initialization.runWith16MBStack (fun () -> real_qelim (parse @"forall x y. exists s c. s^2 + c^2 = 1 /\ s * x + c * y = 0"));;
 
 // 3 basis elements and 3 pairs
 // 3 basis elements and 2 pairs
