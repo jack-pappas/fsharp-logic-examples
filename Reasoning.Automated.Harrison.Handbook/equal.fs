@@ -7,7 +7,7 @@
 module Reasoning.Automated.Harrison.Handbook.equal
 
 open formulas
-open folMod
+open fol
 open skolem
 
 //

@@ -16,7 +16,7 @@ open defcnf
 open dp
 open stal
 open bdd
-open folMod
+open fol
 open skolem
 open herbrand
 open unif

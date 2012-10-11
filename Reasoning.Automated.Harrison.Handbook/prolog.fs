@@ -9,7 +9,7 @@ module Reasoning.Automated.Harrison.Handbook.prolog
 open intro
 open formulas
 open prop
-open folMod
+open fol
 open skolem
 open unif
 open tableaux

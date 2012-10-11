@@ -6,7 +6,7 @@
 
 module Reasoning.Automated.Harrison.Handbook.skolems
 
-open folMod
+open fol
 open skolem
 
 // ========================================================================= //

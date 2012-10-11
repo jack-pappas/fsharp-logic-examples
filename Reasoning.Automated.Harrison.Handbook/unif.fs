@@ -7,7 +7,7 @@
 module Reasoning.Automated.Harrison.Handbook.unif
 
 open intro
-open folMod
+open fol
 
 // pg. 167
 // ========================================================================= //

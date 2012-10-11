@@ -5,7 +5,7 @@
 // ========================================================================= //
 
 [<CompilationRepresentation(CompilationRepresentationFlags.ModuleSuffix)>]
-module Reasoning.Automated.Harrison.Handbook.folMod // TODO : Change this back to 'fol'?
+module Reasoning.Automated.Harrison.Handbook.fol
  
 open intro
 open formulas

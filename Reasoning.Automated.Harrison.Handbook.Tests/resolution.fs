@@ -9,7 +9,7 @@ module Reasoning.Automated.Harrison.Handbook.Tests.resolution
 open Reasoning.Automated.Harrison.Handbook.lib
 open Reasoning.Automated.Harrison.Handbook.formulas
 open Reasoning.Automated.Harrison.Handbook.prop
-open Reasoning.Automated.Harrison.Handbook.folMod
+open Reasoning.Automated.Harrison.Handbook.fol
 open Reasoning.Automated.Harrison.Handbook.skolem
 open Reasoning.Automated.Harrison.Handbook.unif
 open Reasoning.Automated.Harrison.Handbook.tableaux

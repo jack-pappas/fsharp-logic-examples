@@ -8,7 +8,7 @@
 
 open Reasoning.Automated.Harrison.Handbook.lib
 open Reasoning.Automated.Harrison.Handbook.formulas
-open Reasoning.Automated.Harrison.Handbook.folMod
+open Reasoning.Automated.Harrison.Handbook.fol
 open Reasoning.Automated.Harrison.Handbook.equal
 open Reasoning.Automated.Harrison.Handbook.cooper
 open Reasoning.Automated.Harrison.Handbook.complex

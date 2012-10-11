@@ -8,7 +8,7 @@ module Reasoning.Automated.Harrison.Handbook.cong
 
 open formulas
 open prop
-open folMod
+open fol
 open skolem
 open equal
 

@@ -6,7 +6,7 @@
 
 module Reasoning.Automated.Harrison.Handbook.Tests.paramodulation
 
-open Reasoning.Automated.Harrison.Handbook.folMod
+open Reasoning.Automated.Harrison.Handbook.fol
 open Reasoning.Automated.Harrison.Handbook.paramodulation
 
 open NUnit.Framework

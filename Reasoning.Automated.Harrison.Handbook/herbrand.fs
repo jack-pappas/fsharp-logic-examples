@@ -10,7 +10,7 @@ open intro
 open formulas
 open prop
 open dp
-open folMod
+open fol
 open skolem
 
 // ========================================================================= //

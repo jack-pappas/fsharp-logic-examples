@@ -9,7 +9,7 @@ module Reasoning.Automated.Harrison.Handbook.skolem
 open intro
 open formulas
 open prop
-open folMod
+open fol
 
 // ========================================================================= //
 // Prenex and Skolem normal forms.                                           //

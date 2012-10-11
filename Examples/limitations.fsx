@@ -10,7 +10,7 @@ open FSharpx.Compatibility.OCaml
 
 open Reasoning.Automated.Harrison.Handbook.lib
 open Reasoning.Automated.Harrison.Handbook.formulas
-open Reasoning.Automated.Harrison.Handbook.folMod
+open Reasoning.Automated.Harrison.Handbook.fol
 open Reasoning.Automated.Harrison.Handbook.meson
 open Reasoning.Automated.Harrison.Handbook.lcf
 open Reasoning.Automated.Harrison.Handbook.lcfprop

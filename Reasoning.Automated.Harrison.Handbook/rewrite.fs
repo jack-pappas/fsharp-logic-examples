@@ -7,7 +7,7 @@
 module Reasoning.Automated.Harrison.Handbook.rewrite
 
 open formulas
-open folMod
+open fol
 open resolution
 
 //

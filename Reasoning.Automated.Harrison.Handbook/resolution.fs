@@ -8,7 +8,7 @@ module Reasoning.Automated.Harrison.Handbook.resolution
 
 open formulas
 open prop
-open folMod
+open fol
 open skolem
 open herbrand
 open unif
