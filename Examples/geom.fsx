@@ -626,19 +626,16 @@ List.partition (grobner_decide << invariant_under_shearing) coordinations;;
 //  One from "Algorithms for Computer Algebra"                                // 
 //  ------------------------------------------------------------------------- // 
 
-// TODO: Fix this: System.DivideByZeroException: Attempted to divide by zero.
-(grobner_decide << originate) (parse @"is_midpoint(m,a,c) /\ perpendicular(a,c,m,b) ==> lengths_eq(a,b,b,c)");;
+grobner_decide << originate) (parse @"is_midpoint(m,a,c) /\ perpendicular(a,c,m,b) ==> lengths_eq(a,b,b,c)";;
        
 // pg. 418
 //  ------------------------------------------------------------------------- // 
 //  Parallelogram theorem (Chou's expository example at the start).           // 
 //  ------------------------------------------------------------------------- // 
 
-// TODO: Fix this: System.DivideByZeroException: Attempted to divide by zero.
-(grobner_decide << originate) (parse @"parallel(a,b,d,c) /\ parallel(a,d,b,c) /\ is_intersection(e,a,c,b,d) ==> lengths_eq(a,e,e,c)");;
+grobner_decide << originate) (parse @"parallel(a,b,d,c) /\ parallel(a,d,b,c) /\ is_intersection(e,a,c,b,d) ==> lengths_eq(a,e,e,c)";;
 
-// TODO: Fix this: System.DivideByZeroException: Attempted to divide by zero.
-(grobner_decide << originate) (parse @"parallel(a,b,d,c) /\ parallel(a,d,b,c) /\ is_intersection(e,a,c,b,d) /\ ~collinear(a,b,c) ==> lengths_eq(a,e,e,c)");;
+grobner_decide << originate) (parse @"parallel(a,b,d,c) /\ parallel(a,d,b,c) /\ is_intersection(e,a,c,b,d) /\ ~collinear(a,b,c) ==> lengths_eq(a,e,e,c)";;
         
 // pg. 421
 //  ------------------------------------------------------------------------- // 

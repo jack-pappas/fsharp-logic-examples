@@ -151,11 +151,9 @@ time grobner_decide  (parse @"a^2 = 2 /\ x^2 + a*x + 1 = 0 ==> x^4 + 2 = 0");;
 // val it : bool = true
 time grobner_decide (parse @"(a * x^2 + b * x + c = 0) /\ (a * y^2 + b * y + c = 0) /\ ~(x = y) ==> (a * x * y = c) /\ (a * (x + y) + b = 0)");;
 
-// TODO: Fix this: System.DivideByZeroException: Attempted to divide by zero.
-time grobner_decide (parse @"(y_1 = 2 * y_3) /\ (y_2 = 2 * y_4) /\ (y_1 * y_3 = y_2 * y_4) ==> (y_1^2 = y_2^2)");;
-
-// TODO: Fix this: System.DivideByZeroException: Attempted to divide by zero.
+time grobner_decide (parse @"(y_1 = 2 * y_3) /\ (y_2 = 2 *
 time grobner_decide (parse @"(x1 = u3) /\ (x1 * (u2 - u1) = x2 * u3) /\ (x4 * (x2 - u1) = x1 * (x3 - u1)) /\ (x3 * u3 = x4 * u2) /\ ~(u1 = 0) /\ ~(u3 = 0) ==> (x3^2 + x4^2 = (u2 - x3)^2 + (u3 - x4)^2)");;
+ y_4) /\ (y_1 * y_3 = y_2 * y_4) ==> (y_1^2 = y_2^2)");;
 
 // TODO: Fix this: System.DivideByZeroException: Attempted to divide by zero.
 time grobner_decide (parse @"(u1 * x1 - u1 * u3 = 0) /\ (u3 * x2 - (u2 - u1) * x1 = 0) /\ (x1 * x4 - (x2 - u1) * x3 - u1 * x1 = 0) /\ (u3 * x4 - u2 * x3 = 0) /\  ~(u1 = 0) /\ ~(u3 = 0) ==> (2 * u2 * x4 + 2 * u3 * x3 - u3^2 - u2^2 = 0)");;
@@ -416,12 +414,12 @@ time grobner_decide (parse @"a * x^3 + b * x^2 + c * x + d = 0 /\ e * x^2 + f * 
 // TODO: Fix this: System.DivideByZeroException: Attempted to divide by zero.
 time grobner_decide (parse @" (x1 - x0)^2 + (y1 - y0)^2 = (x2 - x0)^2 + (y2 - y0)^2 /\ (x2 - x0)^2 + (y2 - y0)^2 = (x3 - x0)^2 + (y3 - y0)^2 /\ (x1 - x0')^2 + (y1 - y0')^2 = (x2 - x0')^2 + (y2 - y0')^2 /\ (x2 - x0')^2 + (y2 - y0')^2 = (x3 - x0')^2 + (y3 - y0')^2 ==> x0 = x0' /\ y0 = y0'");;
 
-       //**** Corrected with non-isotropy conditions; even lengthier
+//**** Corrected with non-isotropy conditions; even lengthier
        
 // TODO: Fix this: System.DivideByZeroException: Attempted to divide by zero.
 time grobner_decide (parse @"(x1 - x0)^2 + (y1 - y0)^2 = (x2 - x0)^2 + (y2 - y0)^2 /\ (x2 - x0)^2 + (y2 - y0)^2 = (x3 - x0)^2 + (y3 - y0)^2 /\ (x1 - x0')^2 + (y1 - y0')^2 = (x2 - x0')^2 + (y2 - y0')^2 /\ (x2 - x0')^2 + (y2 - y0')^2 = (x3 - x0')^2 + (y3 - y0')^2 /\ ~((x1 - x0)^2 + (y1 - y0)^2 = 0) /\ ~((x1 - x0')^2 + (y1 - y0')^2 = 0) ==> x0 = x0' /\ y0 = y0'");;
 
-        //*** Maybe this is more efficient? (No?)
+//*** Maybe this is more efficient? (No?)
         
 // TODO: Fix this: System.DivideByZeroException: Attempted to divide by zero.
 time grobner_decide (parse @"(x1 - x0)^2 + (y1 - y0)^2 = d /\ (x2 - x0)^2 + (y2 - y0)^2 = d /\ (x3 - x0)^2 + (y3 - y0)^2 = d /\ (x1 - x0')^2 + (y1 - y0')^2 = e /\ (x2 - x0')^2 + (y2 - y0')^2 = e /\ (x3 - x0')^2 + (y3 - y0')^2 = e /\ ~(d = 0) /\ ~(e = 0) ==> x0 = x0' /\ y0 = y0'");;
