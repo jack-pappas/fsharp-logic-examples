@@ -507,10 +507,6 @@ let list_disj = function
 // OCaml: val mk_lits : 'a formula list -> ('a -> bool) -> 'a formula = <fun>
 // F#:    val mk_lits : 'a formula list -> ('a -> bool) -> 'a formula when 'a : equality
 let mk_lits pvs v =
-//    pvs
-//    |> List.map (fun p ->
-//        if eval p v then p else Not p)
-//    |> list_conj
     match pvs with
     | [] ->
         True

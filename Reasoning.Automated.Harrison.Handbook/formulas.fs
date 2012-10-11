@@ -157,6 +157,7 @@ let fbracket tw p n f x y =
 
 // OCaml: val strip_quant : 'a formula -> string list * 'a formula = <fun>
 // F#:    val strip_quant : 'a formula -> string list * 'a formula
+// OPTIMIZE : Optimize with CPS.
 let rec strip_quant fm =
     match fm with
     | Forall (x, (Forall (y, p) as yp))

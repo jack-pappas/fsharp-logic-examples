@@ -46,11 +46,12 @@ let rec groundterms cntms funcs n =
     if n = 0 then
         cntms
     else
-        List.foldBack (fun (f, m) l -> 
-            List.map (fun args -> 
-                Fn (f, args))
-                (groundtuples cntms funcs (n - 1) m) @ l)
-            funcs []
+        (funcs, [])
+        ||> List.foldBack (fun (f, m) l -> 
+            (groundtuples cntms funcs (n - 1) m
+            |> List.map (fun args -> 
+                Fn (f, args))) @ l)
+            
 
 and groundtuples cntms funcs n m =
     if m = 0 then 
