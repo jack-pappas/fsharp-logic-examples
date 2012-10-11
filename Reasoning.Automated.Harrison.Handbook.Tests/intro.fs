@@ -18,7 +18,7 @@ open FsUnit
 
 [<Test>]
 let ``simplify``() =
-    simplify (Add (Mul (Add (Mul (Const 0, Var "x"), Const 1), Const 3), Const 12)) 
+    simplify002 (Add (Mul (Add (Mul (Const 0, Var "x"), Const 1), Const 3), Const 12)) 
     |> should equal (Const 15)
 
 [<Test>]
