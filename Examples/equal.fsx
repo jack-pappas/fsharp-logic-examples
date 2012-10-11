@@ -1,30 +1,19 @@
 ﻿// ========================================================================= //
 // Copyright (c) 2003-2007, John Harrison.                                   //
-// Copyright (c) 2012 Eric Taucher, Jack Pappas                              //
+// Copyright (c) 2012 Eric Taucher, Jack Pappas, Anh-Dung Phan               //
 // (See "LICENSE.txt" for details.)                                          //
 // ========================================================================= //
 
 #load "initialization.fsx"
 
 open Reasoning.Automated.Harrison.Handbook.lib
-//open Reasoning.Automated.Harrison.Handbook.intro
 open Reasoning.Automated.Harrison.Handbook.formulas
-//open Reasoning.Automated.Harrison.Handbook.prop
-//open Reasoning.Automated.Harrison.Handbook.propexamples
-//open Reasoning.Automated.Harrison.Handbook.defcnf
-//open Reasoning.Automated.Harrison.Handbook.dp
-//open Reasoning.Automated.Harrison.Handbook.stal
-//open Reasoning.Automated.Harrison.Handbook.bdd
 open Reasoning.Automated.Harrison.Handbook.folMod
 open Reasoning.Automated.Harrison.Handbook.skolem
-//open Reasoning.Automated.Harrison.Handbook.herbrand
-//open Reasoning.Automated.Harrison.Handbook.unif
-//open Reasoning.Automated.Harrison.Handbook.tableaux
-//open Reasoning.Automated.Harrison.Handbook.resolution
-//open Reasoning.Automated.Harrison.Handbook.prolog
 open Reasoning.Automated.Harrison.Handbook.meson
-//open Reasoning.Automated.Harrison.Handbook.skolems
 open Reasoning.Automated.Harrison.Handbook.equal
+
+fsi.AddPrinter sprint_fol_formula
 
 //
 // pg. 239
@@ -32,9 +21,9 @@ open Reasoning.Automated.Harrison.Handbook.equal
 // Example.                                                                  //
 // ------------------------------------------------------------------------- //
 
-print_fol_formula_list (function_congruence ("f", 3));;
+function_congruence ("f", 3);;
 
-print_fol_formula_list (function_congruence ("+", 2));;
+function_congruence ("+", 2);;
 
 // pg. 241
 // ------------------------------------------------------------------------- //
@@ -47,7 +36,6 @@ let ewd =
     (exists x. f(x)) /\ 
     (forall x y. g(x) /\ g(y) ==> x = y) 
     ==> forall y. g(y) ==> f(y)");;
-print_fol_formula ewd;;
 
 meson002 ewd;;
 
@@ -60,8 +48,6 @@ let wishnu =
     equalitize (parse @"
         (exists x. x = f(g(x)) /\ forall x'. x' = f(g(x')) ==> x = x') <=>
         (exists y. y = g(f(y)) /\ forall y'. y' = g(f(y')) ==> y = y')");;
-print_fol_formula wishnu;;
-
 time meson002 wishnu;;
 
 // pg. 248

@@ -1,35 +1,22 @@
 ﻿// ========================================================================= //
 // Copyright (c) 2003-2007, John Harrison.                                   //
-// Copyright (c) 2012 Eric Taucher, Jack Pappas                              //
+// Copyright (c) 2012 Eric Taucher, Jack Pappas, Anh-Dung Phan               //
 // (See "LICENSE.txt" for details.)                                          //
 // ========================================================================= //
 
 #load "initialization.fsx"
 
 open Reasoning.Automated.Harrison.Handbook.lib
-//open Reasoning.Automated.Harrison.Handbook.intro
 open Reasoning.Automated.Harrison.Handbook.formulas
 open Reasoning.Automated.Harrison.Handbook.prop
-//open Reasoning.Automated.Harrison.Handbook.propexamples
-//open Reasoning.Automated.Harrison.Handbook.defcnf
-//open Reasoning.Automated.Harrison.Handbook.dp
-//open Reasoning.Automated.Harrison.Handbook.stal
-//open Reasoning.Automated.Harrison.Handbook.bdd
 open Reasoning.Automated.Harrison.Handbook.folMod
 open Reasoning.Automated.Harrison.Handbook.skolem
-//open Reasoning.Automated.Harrison.Handbook.herbrand
-//open Reasoning.Automated.Harrison.Handbook.unif
 open Reasoning.Automated.Harrison.Handbook.tableaux
-//open Reasoning.Automated.Harrison.Handbook.resolution
-//open Reasoning.Automated.Harrison.Handbook.prolog
 open Reasoning.Automated.Harrison.Handbook.meson
-//open Reasoning.Automated.Harrison.Handbook.skolems
 open Reasoning.Automated.Harrison.Handbook.equal
-//open Reasoning.Automated.Harrison.Handbook.cong
-//open Reasoning.Automated.Harrison.Handbook.rewrite
-//open Reasoning.Automated.Harrison.Handbook.order
-//open Reasoning.Automated.Harrison.Handbook.completion
 open Reasoning.Automated.Harrison.Handbook.eqelim
+
+fsi.AddPrinter sprint_fol_formula
 
 // pg. 287
 // ------------------------------------------------------------------------- //
@@ -87,13 +74,11 @@ let ewd =
     (exists x. f(x)) /\ 
     (forall x y. g(x) /\ g(y) ==> x = y) 
     ==> forall y. g(y) ==> f(y)";;
-print_fol_formula ewd;;
 
 let wishnu = 
     (parse @"
     (exists x. x = f(g(x)) /\ forall x'. x' = f(g(x')) ==> x = x') <=> 
     (exists y. y = g(f(y)) /\ forall y'. y' = g(f(y')) ==> y = y')");;
-print_fol_formula wishnu;;
 
 let group1 =
     (parse @"
@@ -101,7 +86,6 @@ let group1 =
     (forall x. e * x = x) /\ 
     (forall x. i(x) * x = e) 
     ==> forall x. x * e = x");;
-print_fol_formula wishnu;;
 
 let group2 =
     (parse @"
@@ -109,7 +93,6 @@ let group2 =
     (forall x. e * x = x) /\ 
     (forall x. i(x) * x = e) 
     ==> forall x. x * i(x) = e");;
-print_fol_formula wishnu;;
 
 time bmeson ewd;;
 time emeson ewd;;
@@ -134,7 +117,6 @@ let fm =
     parse @"
     (forall x y z. x * (y * z) = (x * y) * z) /\ p * q * p = p 
     ==> exists q'. p * q' * p = p /\ q' * p * q' = q'";;
-print_fol_formula fm;;
 
 // long running
 //time bmeson fm;;        //* Seems to take a bit longer than below version  *//

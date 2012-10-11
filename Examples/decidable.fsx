@@ -1,37 +1,25 @@
 ﻿// ========================================================================= //
 // Copyright (c) 2003-2007, John Harrison.                                   //
-// Copyright (c) 2012 Eric Taucher, Jack Pappas                              //
+// Copyright (c) 2012 Eric Taucher, Jack Pappas, Anh-Dung Phan               //
 // (See "LICENSE.txt" for details.)                                          //
 // ========================================================================= //
 
 #load "initialization.fsx"
 
 open Reasoning.Automated.Harrison.Handbook.lib
-//open Reasoning.Automated.Harrison.Handbook.intro
 open Reasoning.Automated.Harrison.Handbook.formulas
 open Reasoning.Automated.Harrison.Handbook.prop
-//open Reasoning.Automated.Harrison.Handbook.propexamples
-//open Reasoning.Automated.Harrison.Handbook.defcnf
 open Reasoning.Automated.Harrison.Handbook.dp
-//open Reasoning.Automated.Harrison.Handbook.stal
-//open Reasoning.Automated.Harrison.Handbook.bdd
 open Reasoning.Automated.Harrison.Handbook.folMod
 open Reasoning.Automated.Harrison.Handbook.skolem
 open Reasoning.Automated.Harrison.Handbook.herbrand
-//open Reasoning.Automated.Harrison.Handbook.unif
 open Reasoning.Automated.Harrison.Handbook.tableaux
 open Reasoning.Automated.Harrison.Handbook.resolution
-//open Reasoning.Automated.Harrison.Handbook.prolog
 open Reasoning.Automated.Harrison.Handbook.meson
-//open Reasoning.Automated.Harrison.Handbook.skolems
 open Reasoning.Automated.Harrison.Handbook.equal
-//open Reasoning.Automated.Harrison.Handbook.cong
-//open Reasoning.Automated.Harrison.Handbook.rewrite
-//open Reasoning.Automated.Harrison.Handbook.order
-//open Reasoning.Automated.Harrison.Handbook.completion
-//open Reasoning.Automated.Harrison.Handbook.eqelim
-//open Reasoning.Automated.Harrison.Handbook.paramodulation
 open Reasoning.Automated.Harrison.Handbook.decidable
+
+fsi.AddPrinter sprint_fol_formula
 
 // pg. 309
 // ------------------------------------------------------------------------- //
@@ -68,7 +56,7 @@ let los =
 print_fol_formula los
 
 skolemize(Not los)
-print_fol_formula (skolemize(Not los))
+skolemize(Not los)
 
 // pg. 310
 // ------------------------------------------------------------------------- //
@@ -90,9 +78,7 @@ aedecide los
 // ------------------------------------------------------------------------- //
 
 let fm001 = (parse @"(forall x. p(x)) \/ (exists y. p(y))")
-print_fol_formula fm001
 pnf fm001
-print_fol_formula (pnf fm001)
 
 // pg. 312
 // ------------------------------------------------------------------------- //
@@ -144,16 +130,13 @@ davisputnam (parse @"exists y. forall x. P(y) ==> P(x)")
 // ------------------------------------------------------------------------- //
 
 miniscope(nnf (parse @"exists y. forall x. P(y) ==> P(x)"))
-print_fol_formula (miniscope(nnf (parse @"exists y. forall x. P(y) ==> P(x)")))
 
 let fm002 =
     miniscope(nnf (parse @"(
     forall x y. exists z. forall w. P(x) /\ Q(y) ==> R(z) /\ U(w))
     ==> (exists x y. P(x) /\ Q(y)) ==> (exists z. R(z))"))
 
-print_fol_formula (fm002)
-pnf(nnf fm002)
-print_fol_formula (pnf(nnf fm002))
+nnf fm002
 
 // pg. 316
 // ------------------------------------------------------------------------- //
@@ -178,7 +161,6 @@ let fm003 =
         ((exists x. Q(x)) <=> (forall y. Q(y)))) <=>
     ((exists x. forall y. Q(x) <=> Q(y)) <=>
         ((exists x. P(x)) <=> (forall y. P(y))))"))))
-print_fol_formula fm003
 
 // pg. 319
 // ------------------------------------------------------------------------- //
@@ -186,7 +168,6 @@ print_fol_formula fm003
 // ------------------------------------------------------------------------- //
 
 let all_valid_syllogisms = List.filter aedecide all_possible_syllogisms
-print_fol_formula_list all_valid_syllogisms
 List.length all_valid_syllogisms
 List.map anglicize_syllogism all_valid_syllogisms
 
@@ -197,7 +178,6 @@ List.map anglicize_syllogism all_valid_syllogisms
 
 // Note: This works, but the output is huge.
 let all_valid_syllogisms' = List.filter aedecide all_possible_syllogisms'
-print_fol_formula_list all_valid_syllogisms'
 List.length all_valid_syllogisms'
 List.map (anglicize_syllogism << consequent) all_valid_syllogisms'
 
