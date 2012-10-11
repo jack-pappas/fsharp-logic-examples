@@ -42,7 +42,7 @@ nelop001 (add_default [int_lang]) (parse
 // ------------------------------------------------------------------------- //
 
 // val it : int list = [1; 2; 5; 15; 52; 203; 877; 4140; 21147; 115975]
-let bell n = List.length (allpartitions (1 -- n)) in
+let bell n = List.length (allpartitions (1 -- n))
 List.map bell (1 -- 10);;
             
 // pg. 446
@@ -65,7 +65,6 @@ nelop (add_default [int_lang]) (parse
 // Confirmation of non-convexity.                                            //
 // ------------------------------------------------------------------------- //
 
-// TODO: Fix this - Exception occurs
 List.map (real_qelim << generalize) [
     parse "x * y = 0 /\ z = 0 ==> x = z \/ y = z";
     parse "x * y = 0 /\ z = 0 ==> x = z";
@@ -149,8 +148,6 @@ time (nelop (add_default [int_lang])) (parse
 
 // ** My former running example in the text; seems too slow.
 // *** Anyway this also needs extra predicates in CC
-
-// TODO: Exception occurs
 time (nelop (add_default [real_lang])) (parse
     "x^2 = y^2 /\ x < y /\ z^2 = z /\ x < x * z /\ P(f(1 + z)) ==> P(f(x + y) - f(0))");;
 
