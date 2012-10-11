@@ -715,58 +715,28 @@ let inline foldr folder (f : func<_,_>) state =
 // pg. 621
 // OCaml: val graph : ('a, 'b) func -> ('a * 'b) list = <fun>
 // F#:    val graph : func<'a,'b>   -> ('a * 'b) list when 'a : comparison and 'b : comparison
-let graph (f : func<_,_>) =
-    // TODO : Replace with call to Map.toList
-    // IMPORTANT : Make sure the values are returned in the same order
-    // that they would be by 'setify'.
-    foldl (fun a x y -> (x, y) :: a) [] f
-    |> setify
+let inline graph (f : func<_,_>) =
+    Map.toList f
     
 // pg. 621
 // OCaml: val dom : ('a, 'b) func -> 'a list = <fun>
 // F#:    val dom : func<'a,'b>   -> 'a list when 'a : comparison
 let dom (f : func<_,_>) =
-    // TODO : Replace with Map.fold to create list of keys.
-    // IMPORTANT : Make sure the values are returned in the same order
-    // that they would be by 'setify'.
-    foldl (fun a x y -> x :: a) [] f
-    |> setify
+    (Set.empty, f)
+    ||> Map.fold (fun dom x _ ->
+        Set.add x dom)
+    // TEMP : Convert the set to a list for compatibility with existing code.
+    |> Set.toList
     
 // pg. 621
 // OCaml: val ran : ('a, 'b) func -> 'b list = <fun>
 // F#:    val ran : func<'a,'b>   -> 'b list when 'b : comparison
 let ran (f : func<_,_>) =
-    // TODO : Replace with Map.fold to create list of values.
-    // IMPORTANT : Make sure the values are returned in the same order
-    // that they would be by 'setify'.
-    foldl (fun a x y -> y :: a) [] f
-    |> setify
-
-//// pg. 621
-//// OCaml: val graph : ('a, 'b) func -> ('a * 'b) list = <fun>
-//// F#:    val graph : func<'a,'b>   -> ('a * 'b) list when 'a : comparison and 'b : comparison
-//let inline graph (f : func<_,_>) =
-//    Map.toList f
-//    
-//// pg. 621
-//// OCaml: val dom : ('a, 'b) func -> 'a list = <fun>
-//// F#:    val dom : func<'a,'b>   -> 'a list when 'a : comparison
-//let dom (f : func<_,_>) =
-//    (Set.empty, f)
-//    ||> Map.fold (fun dom x _ ->
-//        Set.add x dom)
-//    // TEMP : Convert the set to a list for compatibility with existing code.
-//    |> Set.toList
-//    
-//// pg. 621
-//// OCaml: val ran : ('a, 'b) func -> 'b list = <fun>
-//// F#:    val ran : func<'a,'b>   -> 'b list when 'b : comparison
-//let ran (f : func<_,_>) =
-//    (Set.empty, f)
-//    ||> Map.fold (fun range _ y ->
-//        Set.add y range)
-//    // TEMP : Convert the set to a list for compatibility with existing code.
-//    |> Set.toList
+    (Set.empty, f)
+    ||> Map.fold (fun range _ y ->
+        Set.add y range)
+    // TEMP : Convert the set to a list for compatibility with existing code.
+    |> Set.toList
 
 // ------------------------------------------------------------------------- //
 // Application.                                                              //
