@@ -92,7 +92,7 @@ open Reasoning.Automated.Harrison.Handbook.prop
 open Reasoning.Automated.Harrison.Handbook.equal
 
 [<Test>]
-let ``nelop bugfix test``() =
+let ``nelop bugfix 1``() =
     let fm_2 = parse @"z = f(x - y) /\ x = z + y /\ ~(-(y) = -(x - f(f(z)))) ==> false"
     fm_2
     |> should equal
@@ -200,3 +200,327 @@ let ``nelop bugfix test``() =
     dj
     |> should equal [Atom (R ("=", [Var "v_1"; Var "z"]))]
 
+
+// The 'findsubset' line in the test above currently crashes
+// due to some bug in cooper.linform (or a function reachable from it).
+[<Test>]
+let ``nelop bugfix 2``() =
+    let fm =
+        Atom
+            (R ("=",
+              [Fn ("-", [Var "y"]);
+               Fn ("-",
+                [Fn ("-", [Fn ("+", [Var "z"; Var "y"]); Var "v_2"])])]))
+
+    let vars = ["z"; "y"; "v_2"]
+
+    linform vars fm
+    |> should equal
+    <| Atom
+         (R ("=",
+           [Fn ("0", []);
+            Fn ("+",
+             [Fn ("*", [Fn ("-1", []); Var "z"]);
+              Fn ("+", [Fn ("*", [Fn ("1", []); Var "v_2"]); Fn ("0", [])])])]))
+
+(* OCaml trace of the ``nelop bugfix 2`` test *)
+(*
+# #trace linform;;
+linform is now traced.
+# #trace mkatom;;
+mkatom is now traced.
+# #trace lint;;
+lint is now traced.
+# #trace linear_neg;;
+linear_neg is now traced.
+# #trace linear_add;;
+linear_add is now traced.
+# #trace linear_sub;;
+linear_sub is now traced.
+# #trace linear_mul;;
+linear_mul is now traced.
+# #trace earlier;;
+earlier is now traced.
+# linform vars fm;;
+linform <-- ["z"; "y"; "v_2"]
+linform --> <fun>
+linform* <--
+  Atom
+   (R ("=",
+     [Fn ("-", [Var "y"]);
+      Fn ("-", [Fn ("-", [Fn ("+", [Var "z"; Var "y"]); Var "v_2"])])]))
+mkatom <-- ["z"; "y"; "v_2"]
+mkatom --> <fun>
+mkatom* <-- "="
+mkatom* --> <fun>
+mkatom** <--
+  Fn ("-",
+   [Fn ("-", [Fn ("-", [Fn ("+", [Var "z"; Var "y"]); Var "v_2"])]);
+    Fn ("-", [Var "y"])])
+lint <-- ["z"; "y"; "v_2"]
+lint --> <fun>
+lint* <--
+  Fn ("-",
+   [Fn ("-", [Fn ("-", [Fn ("+", [Var "z"; Var "y"]); Var "v_2"])]);
+    Fn ("-", [Var "y"])])
+lint <-- ["z"; "y"; "v_2"]
+lint --> <fun>
+lint* <-- Fn ("-", [Var "y"])
+lint <-- ["z"; "y"; "v_2"]
+lint --> <fun>
+lint* <-- Var "y"
+lint* --> Fn ("+", [Fn ("*", [Fn ("1", []); Var "y"]); Fn ("0", [])])
+linear_neg <--
+  Fn ("+", [Fn ("*", [Fn ("1", []); Var "y"]); Fn ("0", [])])
+linear_neg -->
+  Fn ("+", [Fn ("*", [Fn ("-1", []); Var "y"]); Fn ("0", [])])
+lint* --> Fn ("+", [Fn ("*", [Fn ("-1", []); Var "y"]); Fn ("0", [])])
+lint <-- ["z"; "y"; "v_2"]
+lint --> <fun>
+lint* <--
+  Fn ("-", [Fn ("-", [Fn ("+", [Var "z"; Var "y"]); Var "v_2"])])
+lint <-- ["z"; "y"; "v_2"]
+lint --> <fun>
+lint* <-- Fn ("-", [Fn ("+", [Var "z"; Var "y"]); Var "v_2"])
+lint <-- ["z"; "y"; "v_2"]
+lint --> <fun>
+lint* <-- Var "v_2"
+lint* --> Fn ("+", [Fn ("*", [Fn ("1", []); Var "v_2"]); Fn ("0", [])])
+lint <-- ["z"; "y"; "v_2"]
+lint --> <fun>
+lint* <-- Fn ("+", [Var "z"; Var "y"])
+lint <-- ["z"; "y"; "v_2"]
+lint --> <fun>
+lint* <-- Var "y"
+lint* --> Fn ("+", [Fn ("*", [Fn ("1", []); Var "y"]); Fn ("0", [])])
+lint <-- ["z"; "y"; "v_2"]
+lint --> <fun>
+lint* <-- Var "z"
+lint* --> Fn ("+", [Fn ("*", [Fn ("1", []); Var "z"]); Fn ("0", [])])
+linear_add <-- ["z"; "y"; "v_2"]
+linear_add --> <fun>
+linear_add* <--
+  Fn ("+", [Fn ("*", [Fn ("1", []); Var "z"]); Fn ("0", [])])
+linear_add* --> <fun>
+linear_add** <--
+  Fn ("+", [Fn ("*", [Fn ("1", []); Var "y"]); Fn ("0", [])])
+earlier <-- [<poly>; <poly>; <poly>]
+earlier --> <fun>
+earlier* <-- <poly>
+earlier* --> <fun>
+earlier** <-- <poly>
+earlier** --> true
+linear_add <-- ["z"; "y"; "v_2"]
+linear_add --> <fun>
+linear_add* <-- Fn ("0", [])
+linear_add* --> <fun>
+linear_add** <--
+  Fn ("+", [Fn ("*", [Fn ("1", []); Var "y"]); Fn ("0", [])])
+linear_add <-- ["z"; "y"; "v_2"]
+linear_add --> <fun>
+linear_add* <-- Fn ("0", [])
+linear_add* --> <fun>
+linear_add** <-- Fn ("0", [])
+linear_add** --> Fn ("0", [])
+linear_add** -->
+  Fn ("+", [Fn ("*", [Fn ("1", []); Var "y"]); Fn ("0", [])])
+linear_add** -->
+  Fn ("+",
+   [Fn ("*", [Fn ("1", []); Var "z"]);
+    Fn ("+", [Fn ("*", [Fn ("1", []); Var "y"]); Fn ("0", [])])])
+lint* -->
+  Fn ("+",
+   [Fn ("*", [Fn ("1", []); Var "z"]);
+    Fn ("+", [Fn ("*", [Fn ("1", []); Var "y"]); Fn ("0", [])])])
+linear_sub <-- ["z"; "y"; "v_2"]
+linear_sub --> <fun>
+linear_sub* <--
+  Fn ("+",
+   [Fn ("*", [Fn ("1", []); Var "z"]);
+    Fn ("+", [Fn ("*", [Fn ("1", []); Var "y"]); Fn ("0", [])])])
+linear_sub* --> <fun>
+linear_sub** <--
+  Fn ("+", [Fn ("*", [Fn ("1", []); Var "v_2"]); Fn ("0", [])])
+linear_neg <--
+  Fn ("+", [Fn ("*", [Fn ("1", []); Var "v_2"]); Fn ("0", [])])
+linear_neg -->
+  Fn ("+", [Fn ("*", [Fn ("-1", []); Var "v_2"]); Fn ("0", [])])
+linear_add <-- ["z"; "y"; "v_2"]
+linear_add --> <fun>
+linear_add* <--
+  Fn ("+",
+   [Fn ("*", [Fn ("1", []); Var "z"]);
+    Fn ("+", [Fn ("*", [Fn ("1", []); Var "y"]); Fn ("0", [])])])
+linear_add* --> <fun>
+linear_add** <--
+  Fn ("+", [Fn ("*", [Fn ("-1", []); Var "v_2"]); Fn ("0", [])])
+earlier <-- [<poly>; <poly>; <poly>]
+earlier --> <fun>
+earlier* <-- <poly>
+earlier* --> <fun>
+earlier** <-- <poly>
+earlier** --> true
+linear_add <-- ["z"; "y"; "v_2"]
+linear_add --> <fun>
+linear_add* <--
+  Fn ("+", [Fn ("*", [Fn ("1", []); Var "y"]); Fn ("0", [])])
+linear_add* --> <fun>
+linear_add** <--
+  Fn ("+", [Fn ("*", [Fn ("-1", []); Var "v_2"]); Fn ("0", [])])
+earlier <-- [<poly>; <poly>; <poly>]
+earlier --> <fun>
+earlier* <-- <poly>
+earlier* --> <fun>
+earlier** <-- <poly>
+earlier <-- [<poly>; <poly>]
+earlier --> <fun>
+earlier* <-- <poly>
+earlier* --> <fun>
+earlier** <-- <poly>
+earlier** --> true
+earlier** --> true
+linear_add <-- ["z"; "y"; "v_2"]
+linear_add --> <fun>
+linear_add* <-- Fn ("0", [])
+linear_add* --> <fun>
+linear_add** <--
+  Fn ("+", [Fn ("*", [Fn ("-1", []); Var "v_2"]); Fn ("0", [])])
+linear_add <-- ["z"; "y"; "v_2"]
+linear_add --> <fun>
+linear_add* <-- Fn ("0", [])
+linear_add* --> <fun>
+linear_add** <-- Fn ("0", [])
+linear_add** --> Fn ("0", [])
+linear_add** -->
+  Fn ("+", [Fn ("*", [Fn ("-1", []); Var "v_2"]); Fn ("0", [])])
+linear_add** -->
+  Fn ("+",
+   [Fn ("*", [Fn ("1", []); Var "y"]);
+    Fn ("+", [Fn ("*", [Fn ("-1", []); Var "v_2"]); Fn ("0", [])])])
+linear_add** -->
+  Fn ("+",
+   [Fn ("*", [Fn ("1", []); Var "z"]);
+    Fn ("+",
+     [Fn ("*", [Fn ("1", []); Var "y"]);
+      Fn ("+", [Fn ("*", [Fn ("-1", []); Var "v_2"]); Fn ("0", [])])])])
+linear_sub** -->
+  Fn ("+",
+   [Fn ("*", [Fn ("1", []); Var "z"]);
+    Fn ("+",
+     [Fn ("*", [Fn ("1", []); Var "y"]);
+      Fn ("+", [Fn ("*", [Fn ("-1", []); Var "v_2"]); Fn ("0", [])])])])
+lint* -->
+  Fn ("+",
+   [Fn ("*", [Fn ("1", []); Var "z"]);
+    Fn ("+",
+     [Fn ("*", [Fn ("1", []); Var "y"]);
+      Fn ("+", [Fn ("*", [Fn ("-1", []); Var "v_2"]); Fn ("0", [])])])])
+linear_neg <--
+  Fn ("+",
+   [Fn ("*", [Fn ("1", []); Var "z"]);
+    Fn ("+",
+     [Fn ("*", [Fn ("1", []); Var "y"]);
+      Fn ("+", [Fn ("*", [Fn ("-1", []); Var "v_2"]); Fn ("0", [])])])])
+linear_neg -->
+  Fn ("+",
+   [Fn ("*", [Fn ("-1", []); Var "z"]);
+    Fn ("+",
+     [Fn ("*", [Fn ("-1", []); Var "y"]);
+      Fn ("+", [Fn ("*", [Fn ("1", []); Var "v_2"]); Fn ("0", [])])])])
+lint* -->
+  Fn ("+",
+   [Fn ("*", [Fn ("-1", []); Var "z"]);
+    Fn ("+",
+     [Fn ("*", [Fn ("-1", []); Var "y"]);
+      Fn ("+", [Fn ("*", [Fn ("1", []); Var "v_2"]); Fn ("0", [])])])])
+linear_sub <-- ["z"; "y"; "v_2"]
+linear_sub --> <fun>
+linear_sub* <--
+  Fn ("+",
+   [Fn ("*", [Fn ("-1", []); Var "z"]);
+    Fn ("+",
+     [Fn ("*", [Fn ("-1", []); Var "y"]);
+      Fn ("+", [Fn ("*", [Fn ("1", []); Var "v_2"]); Fn ("0", [])])])])
+linear_sub* --> <fun>
+linear_sub** <--
+  Fn ("+", [Fn ("*", [Fn ("-1", []); Var "y"]); Fn ("0", [])])
+linear_neg <--
+  Fn ("+", [Fn ("*", [Fn ("-1", []); Var "y"]); Fn ("0", [])])
+linear_neg -->
+  Fn ("+", [Fn ("*", [Fn ("1", []); Var "y"]); Fn ("0", [])])
+linear_add <-- ["z"; "y"; "v_2"]
+linear_add --> <fun>
+linear_add* <--
+  Fn ("+",
+   [Fn ("*", [Fn ("-1", []); Var "z"]);
+    Fn ("+",
+     [Fn ("*", [Fn ("-1", []); Var "y"]);
+      Fn ("+", [Fn ("*", [Fn ("1", []); Var "v_2"]); Fn ("0", [])])])])
+linear_add* --> <fun>
+linear_add** <--
+  Fn ("+", [Fn ("*", [Fn ("1", []); Var "y"]); Fn ("0", [])])
+earlier <-- [<poly>; <poly>; <poly>]
+earlier --> <fun>
+earlier* <-- <poly>
+earlier* --> <fun>
+earlier** <-- <poly>
+earlier** --> true
+linear_add <-- ["z"; "y"; "v_2"]
+linear_add --> <fun>
+linear_add* <--
+  Fn ("+",
+   [Fn ("*", [Fn ("-1", []); Var "y"]);
+    Fn ("+", [Fn ("*", [Fn ("1", []); Var "v_2"]); Fn ("0", [])])])
+linear_add* --> <fun>
+linear_add** <--
+  Fn ("+", [Fn ("*", [Fn ("1", []); Var "y"]); Fn ("0", [])])
+linear_add <-- ["z"; "y"; "v_2"]
+linear_add --> <fun>
+linear_add* <--
+  Fn ("+", [Fn ("*", [Fn ("1", []); Var "v_2"]); Fn ("0", [])])
+linear_add* --> <fun>
+linear_add** <-- Fn ("0", [])
+linear_add <-- ["z"; "y"; "v_2"]
+linear_add --> <fun>
+linear_add* <-- Fn ("0", [])
+linear_add* --> <fun>
+linear_add** <-- Fn ("0", [])
+linear_add** --> Fn ("0", [])
+linear_add** -->
+  Fn ("+", [Fn ("*", [Fn ("1", []); Var "v_2"]); Fn ("0", [])])
+linear_add** -->
+  Fn ("+", [Fn ("*", [Fn ("1", []); Var "v_2"]); Fn ("0", [])])
+linear_add** -->
+  Fn ("+",
+   [Fn ("*", [Fn ("-1", []); Var "z"]);
+    Fn ("+", [Fn ("*", [Fn ("1", []); Var "v_2"]); Fn ("0", [])])])
+linear_sub** -->
+  Fn ("+",
+   [Fn ("*", [Fn ("-1", []); Var "z"]);
+    Fn ("+", [Fn ("*", [Fn ("1", []); Var "v_2"]); Fn ("0", [])])])
+lint* -->
+  Fn ("+",
+   [Fn ("*", [Fn ("-1", []); Var "z"]);
+    Fn ("+", [Fn ("*", [Fn ("1", []); Var "v_2"]); Fn ("0", [])])])
+mkatom** -->
+  Atom
+   (R ("=",
+     [Fn ("0", []);
+      Fn ("+",
+       [Fn ("*", [Fn ("-1", []); Var "z"]);
+        Fn ("+", [Fn ("*", [Fn ("1", []); Var "v_2"]); Fn ("0", [])])])]))
+linform* -->
+  Atom
+   (R ("=",
+     [Fn ("0", []);
+      Fn ("+",
+       [Fn ("*", [Fn ("-1", []); Var "z"]);
+        Fn ("+", [Fn ("*", [Fn ("1", []); Var "v_2"]); Fn ("0", [])])])]))
+- : fol formula =
+Atom
+ (R ("=",
+   [Fn ("0", []);
+    Fn ("+",
+     [Fn ("*", [Fn ("-1", []); Var "z"]);
+      Fn ("+", [Fn ("*", [Fn ("1", []); Var "v_2"]); Fn ("0", [])])])]))
+*)
