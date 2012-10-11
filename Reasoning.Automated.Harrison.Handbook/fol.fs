@@ -65,13 +65,15 @@ let rec parse_atomic_term vs inp =
         (if is_const_name a && not (mem a vs) then Fn (a, []) else Var a), rest
 
 and parse_term vs inp =
-    parse_right_infix "::" (fun (e1,e2) -> Fn ("::",[e1;e2]))
-        (parse_right_infix "+" (fun (e1,e2) -> Fn ("+",[e1;e2]))
-            (parse_left_infix "-" (fun (e1,e2) -> Fn ("-",[e1;e2]))
-                (parse_right_infix "*" (fun (e1,e2) -> Fn ("*",[e1;e2]))
-                    (parse_left_infix "/" (fun (e1,e2) -> Fn ("/",[e1;e2]))
-                        (parse_left_infix "^" (fun (e1,e2) -> Fn ("^",[e1;e2]))
-                            (parse_atomic_term vs)))))) inp
+    // Here, higher-precedence operators are towards the bottom.
+    parse_atomic_term vs
+    |> parse_left_infix "^" (fun (e1, e2) -> Fn ("^", [e1;e2]))
+    |> parse_left_infix "/" (fun (e1, e2) -> Fn ("/",[e1;e2]))
+    |> parse_right_infix "*" (fun (e1, e2) -> Fn ("*",[e1;e2]))
+    |> parse_left_infix "-" (fun (e1, e2) -> Fn ("-",[e1;e2]))
+    |> parse_right_infix "+" (fun (e1, e2) -> Fn ("+",[e1;e2]))
+    |> parse_right_infix "::" (fun (e1, e2) -> Fn ("::",[e1;e2]))
+    <| inp
 
 let parset = make_parser (parse_term [])
 

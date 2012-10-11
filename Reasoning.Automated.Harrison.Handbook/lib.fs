@@ -286,27 +286,36 @@ let rec rev_assoc a l =
 // Merging of sorted lists (maintaining repetitions).                        //
 // ------------------------------------------------------------------------- //
 
-//
-let rec private mergeImpl comparer l1 l2 cont =
-    match l1, l2 with
-    | [], x
-    | x, [] ->
-        cont x
-    | h1 :: t1, h2 :: t2 ->
-        if comparer h1 h2 then
-            mergeImpl comparer t1 l2 <| fun lst ->
-                cont (h1 :: lst)
-        else
-            mergeImpl comparer l1 t2 <| fun lst ->
-                cont (h2 :: lst)
-
 // pg. ???
 // OCaml: val merge : ('a -> 'a -> bool) -> 'a list -> 'a list -> 'a list = <fun>
 // F#:    val merge : ('a -> 'a -> bool) -> 'a list -> 'a list -> 'a list
     // NOTE : 'comparer' returns bool, so it must implement either the
     // (<=) or (>=) operators.
 let merge comparer l1 l2 =
-    mergeImpl comparer l1 l2 id
+    let rec mergeRec acc comparer l1 l2 =
+        match l1, l2 with
+        | [], [] ->
+            // Reverse the accumulator list to put it
+            // in the correct order before returning.
+            List.rev acc
+        | lst, []
+        | [], lst ->
+            // Add the remaining items to the accumulator.
+            let acc =
+                (acc, lst)
+                ||> List.fold (fun acc el ->
+                    el :: acc)
+            mergeRec acc comparer [] []
+        | (h1 :: t1 as l1), (h2 :: t2 as l2) ->
+            // Add the lesser of the two head elements to the
+            // accumulator list, then continue processing.
+            if comparer h1 h2 then
+                mergeRec (h1 :: acc) comparer t1 l2
+            else
+                mergeRec (h2 :: acc) comparer l1 t2
+
+    // Merge the lists.
+    mergeRec [] comparer l1 l2
 
 // ------------------------------------------------------------------------- //
 // Bottom-up mergesort.                                                      //

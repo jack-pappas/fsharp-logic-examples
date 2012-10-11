@@ -80,22 +80,25 @@ let simplify002 expr =
 
 // OCaml: val matches : string -> string -> bool = <fun>
 // F#:    val matches : string -> (string -> bool)
-let matches str (c : string) =
+let matches (chars : string) =
     // Preconditions
-    if String.length c > 1 then
-        invalidArg "c" "The character string contains more than one (1) character."
+    if String.length chars < 1 then
+        invalidArg "chars" "The character-set string is empty."
 
-    let len = String.length str
-    let c' = char c
+    // Fold over the characters in the string, creating an F# set from them.
+    let charSet =
+        (Set.empty, chars)
+        ||> Seq.fold (fun charSet c ->
+            Set.add c charSet)
 
-    let mutable idx = 0
-    let mutable foundMatch = false
-    while idx < len && not foundMatch do
-        if str.[idx] = c' then
-            foundMatch <- true
-        idx <- idx + 1
+    // Return a function which checks to see if a certain character
+    // is contained within the character set.
+    fun (c : string) ->
+        // Preconditions
+        if String.length c <> 1 then
+            invalidArg "c" "The character string does not contain exactly one (1) character."
 
-    foundMatch
+        Set.contains c.[0] charSet
         
 // OCaml: val space : string -> bool = <fun>
 // F#:    val space : (string -> bool)
