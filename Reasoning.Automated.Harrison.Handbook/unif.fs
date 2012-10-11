@@ -33,13 +33,10 @@ let rec unify (env : func<string, term>) eqs =
     | [] -> env
     | (Fn (f, fargs), Fn (g, gargs)) :: oth ->
         if f = g && List.length fargs = List.length gargs then
-            // OPTIMIZE : Replace the List.zip and @ with a single
-            // traversal using List.foldBack2.
-//            (fargs, gargs, oth)
-//            |||> List.foldBack2 (fun farg garg oth ->
-//                (farg, garg) :: oth)
-//            |> unify env
-            unify env (List.zip fargs gargs @ oth)
+            (fargs, gargs, oth)
+            |||> List.foldBack2 (fun farg garg oth ->
+                (farg, garg) :: oth)
+            |> unify env
         else
             failwith "impossible unification"
     | (Var x, t) :: oth

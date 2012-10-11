@@ -495,9 +495,9 @@ let image f s =
 // F#:    val unions : 'a list list -> 'a list when 'a : comparison
 let unions s =
     (Set.empty, s)
-    ||> List.fold (fun combined s ->
-        Set.ofList s
-        |> Set.union combined)
+    ||> List.fold (
+        List.fold (fun combined el ->
+            Set.add el combined))
     |> Set.toList
 
 // ------------------------------------------------------------------------- //
