@@ -61,9 +61,21 @@ let fa x y z s c =
 // Useful idiom.                                                             //
 // ------------------------------------------------------------------------- //
 
-let conjoin f l =
-    List.map f l
-    |> list_conj
+let conjoin (fromInclusive, toExclusive) f =
+    // IMPORTANT : Handle the empty case here like [m..n] and list_conj would.
+    if fromInclusive >= toExclusive then
+        True
+    else
+        // Map the first element.
+        let mutable result = f fromInclusive
+        let fromInclusive = fromInclusive + 1
+
+        for i = fromInclusive to (toExclusive - 1) do
+            result <-
+                let result' = f i
+                mk_and result result'
+        result
+    
     
 // pg. 67
 // ------------------------------------------------------------------------- //
@@ -71,9 +83,8 @@ let conjoin f l =
 // ------------------------------------------------------------------------- //
 
 let ripplecarry x y c out n =
-    [0 .. (n - 1)]
-    |> conjoin (fun i ->
-        fa (x i) (y i) (c i) (out i) (c (i + 1)))
+    conjoin (0, n) <| fun i ->
+        fa (x i) (y i) (c i) (out i) (c (i + 1))
 
 // pg. 67
 // ------------------------------------------------------------------------- //
@@ -120,8 +131,7 @@ let rec carryselect x y c0 c1 s0 s1 c s n k =
     let fm =
         And (And (ripplecarry0 x y c0 s0 k', ripplecarry1 x y c1 s1 k'),
              And (Iff (c k', mux (c 0) (c0 k') (c1 k')),
-                [0 .. (k' - 1)]
-                |> conjoin (fun i ->
+                conjoin (0, k') (fun i ->
                     Iff (s i, mux (c 0) (s0 i) (s1 i)))))
 
     if k' < k then fm else
@@ -142,7 +152,7 @@ let mk_adder_test n k =
 
     match l with
     | [x; y; c; s; c0; s0; c1; s1; c2; s2] ->
-        Imp (And (And (carryselect x y c0 c1 s0 s1 c s n k, Not(c 0)), ripplecarry0 x y c2 s2 n), And (Iff (c n,c2 n), conjoin (fun i -> Iff (s i, s2 i)) [0 .. (n - 1)]))
+        Imp (And (And (carryselect x y c0 c1 s0 s1 c s n k, Not(c 0)), ripplecarry0 x y c2 s2 n), And (Iff (c n,c2 n), conjoin (0, n) (fun i -> Iff (s i, s2 i))))
     | _ -> failwith "mk_adder_test"
         
 // pg. 70
@@ -175,10 +185,10 @@ let multiplier x u v out n =
                         if i = n - 1 then False
                         else x 0 (i + 1)) (x 1) (v 2) (out 1) (u 2) n, 
                         if n = 2 then And (Iff (out 2, u 2 0), Iff(out 3, u 2 1)) 
-                        else conjoin (fun k ->
+                        else conjoin (2, n) (fun k ->
                             rippleshift (u k) (x k) (v(k + 1)) (out k) (
                                 if k = n - 1 then fun i -> out (n + i) 
-                                else u (k + 1)) n) [2 .. (n - 1)])))
+                                else u (k + 1)) n))))
 
 // pg. 71
 // ------------------------------------------------------------------------- //
@@ -195,8 +205,7 @@ let rec bit n x =
     else bit (n - 1) (x / 2)
 
 let congruent_to x m n =
-    [0 .. (n - 1)]
-    |> conjoin (fun i ->
+    conjoin (0, n) (fun i ->
         if bit i m then x i
         else Not (x i))
 
