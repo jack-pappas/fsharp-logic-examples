@@ -81,3 +81,122 @@ let ``non-convexity integer_qelim``() =
         parse @"0 <= x /\ x < 2 /\ y = 0 /\ z = 1 ==> x = y";
         parse @"0 <= x /\ x < 2 /\ y = 0 /\ z = 1 ==> x = z"; ]
     |> should equal [formula<fol>.True; formula<fol>.False; formula<fol>.False]
+
+
+
+
+
+// TEMP : To help solve a small bug in 'nelop'
+
+open Reasoning.Automated.Harrison.Handbook.prop
+open Reasoning.Automated.Harrison.Handbook.equal
+
+[<Test>]
+let ``nelop bugfix test``() =
+    let fm_2 = parse @"z = f(x - y) /\ x = z + y /\ ~(-(y) = -(x - f(f(z)))) ==> false"
+    fm_2
+    |> should equal
+    <| Imp
+        (And
+           (Atom (R ("=",[Var "z"; Fn ("f",[Fn ("-",[Var "x"; Var "y"])])])),
+            And
+              (Atom (R ("=",[Var "x"; Fn ("+",[Var "z"; Var "y"])])),
+               Not
+                 (Atom
+                    (R ("=",
+                        [Fn ("-",[Var "y"]);
+                         Fn
+                           ("-",
+                            [Fn
+                               ("-",[Var "x"; Fn ("f",[Fn ("f",[Var "z"])])])])]))))),
+         formula<fol>.False)
+
+
+    let simp_dnf_fm_2 = simpdnf (psimplify (Not fm_2))
+    simp_dnf_fm_2
+    |> should equal
+    <| [[Atom (R ("=",[Var "x"; Fn ("+",[Var "z"; Var "y"])]));
+        Atom (R ("=",[Var "z"; Fn ("f",[Fn ("-",[Var "x"; Var "y"])])]));
+        Not
+          (Atom
+             (R ("=",
+                 [Fn ("-",[Var "y"]);
+                  Fn
+                    ("-",[Fn ("-",[Var "x"; Fn ("f",[Fn ("f",[Var "z"])])])])])))]]
+
+
+    let simp_dnf_fm_2' = List.head simp_dnf_fm_2
+    simp_dnf_fm_2'
+    |> should equal
+    <| [Atom (R ("=",[Var "x"; Fn ("+",[Var "z"; Var "y"])]));
+       Atom (R ("=",[Var "z"; Fn ("f",[Fn ("-",[Var "x"; Var "y"])])]));
+       Not
+         (Atom
+            (R ("=",
+                [Fn ("-",[Var "y"]);
+                 Fn
+                   ("-",[Fn ("-",[Var "x"; Fn ("f",[Fn ("f",[Var "z"])])])])])))]
+
+
+    let langs = add_default [int_lang]
+
+    let fms = homogenize langs simp_dnf_fm_2'
+    fms
+    |> should equal
+    <| [Atom (R ("=",[Var "x"; Fn ("+",[Var "z"; Var "y"])]));
+       Atom (R ("=",[Var "z"; Fn ("f",[Var "v_1"])]));
+       Not
+         (Atom
+            (R ("=",
+                [Fn ("-",[Var "y"]);
+                 Fn ("-",[Fn ("-",[Var "x"; Var "v_2"])])])));
+       Atom (R ("=",[Var "v_2"; Fn ("f",[Fn ("f",[Var "z"])])]));
+       Atom (R ("=",[Var "v_1"; Fn ("-",[Var "x"; Var "y"])]))]
+
+
+    let seps = langpartition langs fms
+    seps
+    |> should equal
+    <| [[Atom (R ("=",[Var "x"; Fn ("+",[Var "z"; Var "y"])]));
+        Not
+          (Atom
+             (R ("=",
+                 [Fn ("-",[Var "y"]);
+                  Fn ("-",[Fn ("-",[Var "x"; Var "v_2"])])])));
+        Atom (R ("=",[Var "v_1"; Fn ("-",[Var "x"; Var "y"])]))];
+       [Atom (R ("=",[Var "z"; Fn ("f",[Var "v_1"])]));
+        Atom (R ("=",[Var "v_2"; Fn ("f",[Fn ("f",[Var "z"])])]))]]
+
+
+    let fvlist = List.map (unions << List.map fv) seps
+    fvlist
+    |> should equal [["v_1"; "v_2"; "x"; "y"; "z"]; ["v_1"; "v_2"; "z"]]
+    
+
+    let vars = List.filter (fun x -> List.length (List.filter (mem x) fvlist) >= 2) (unions fvlist)
+    vars
+    |> should equal ["v_1"; "v_2"; "z"]
+
+
+    let eqs = List.map (fun (a, b) -> mk_eq (Var a) (Var b)) (distinctpairs vars)
+    eqs
+    |> should equal
+    <| [Atom (R ("=",[Var "v_1"; Var "v_2"]));
+       Atom (R ("=",[Var "v_1"; Var "z"]));
+       Atom (R ("=",[Var "v_2"; Var "z"]))]
+
+
+    let ldseps = List.zip langs seps
+
+    let eqs_negated = List.map negate eqs
+    eqs_negated
+    |> should equal
+    <| [Not (Atom (R ("=",[Var "v_1"; Var "v_2"])));
+       Not (Atom (R ("=",[Var "v_1"; Var "z"])));
+       Not (Atom (R ("=",[Var "v_2"; Var "z"])))]
+
+
+    let dj = findsubset (trydps ldseps) eqs_negated
+    dj
+    |> should equal [Atom (R ("=", [Var "v_1"; Var "z"]))]
+
