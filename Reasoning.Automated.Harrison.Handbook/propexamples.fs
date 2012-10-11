@@ -197,8 +197,12 @@ let multiplier x u v out n =
 // ------------------------------------------------------------------------- //
 
 let rec bitlength x =
-    if x = 0 then 0
-    else 1 + bitlength (x / 2)
+    let rec bitlength acc x =
+        if x = 0 then
+            acc
+        else
+            bitlength (acc + 1) (x / 2)
+    bitlength 0 x
 
 let rec bit n x =
     if n = 0 then x % 2 = 1
