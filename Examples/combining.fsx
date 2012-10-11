@@ -1,45 +1,19 @@
 ﻿// ========================================================================= //
 // Copyright (c) 2003-2007, John Harrison.                                   //
-// Copyright (c) 2012 Eric Taucher, Jack Pappas                              //
+// Copyright (c) 2012 Eric Taucher, Jack Pappas, Anh-Dung Phan               //
 // (See "LICENSE.txt" for details.)                                          //
 // ========================================================================= //
 
 #load "initialization.fsx"
 
 open Reasoning.Automated.Harrison.Handbook.lib
-//open Reasoning.Automated.Harrison.Handbook.intro
-//open Reasoning.Automated.Harrison.Handbook.formulas
-//open Reasoning.Automated.Harrison.Handbook.prop
-//open Reasoning.Automated.Harrison.Handbook.propexamples
-//open Reasoning.Automated.Harrison.Handbook.defcnf
-//open Reasoning.Automated.Harrison.Handbook.dp
-//open Reasoning.Automated.Harrison.Handbook.stal
-//open Reasoning.Automated.Harrison.Handbook.bdd
 open Reasoning.Automated.Harrison.Handbook.folMod
-//open Reasoning.Automated.Harrison.Handbook.skolem
-//open Reasoning.Automated.Harrison.Handbook.herbrand
-//open Reasoning.Automated.Harrison.Handbook.unif
-//open Reasoning.Automated.Harrison.Handbook.tableaux
-//open Reasoning.Automated.Harrison.Handbook.resolution
-//open Reasoning.Automated.Harrison.Handbook.prolog
-//open Reasoning.Automated.Harrison.Handbook.meson
-//open Reasoning.Automated.Harrison.Handbook.skolems
-//open Reasoning.Automated.Harrison.Handbook.equal
 open Reasoning.Automated.Harrison.Handbook.cong
-//open Reasoning.Automated.Harrison.Handbook.rewrite
-//open Reasoning.Automated.Harrison.Handbook.order
-//open Reasoning.Automated.Harrison.Handbook.completion
-//open Reasoning.Automated.Harrison.Handbook.eqelim
-//open Reasoning.Automated.Harrison.Handbook.paramodulation
-//open Reasoning.Automated.Harrison.Handbook.decidable
-//open Reasoning.Automated.Harrison.Handbook.qelim
 open Reasoning.Automated.Harrison.Handbook.cooper
-//open Reasoning.Automated.Harrison.Handbook.complex
 open Reasoning.Automated.Harrison.Handbook.real
-//open Reasoning.Automated.Harrison.Handbook.grobner
-//open Reasoning.Automated.Harrison.Handbook.geom
-//open Reasoning.Automated.Harrison.Handbook.interpolation
 open Reasoning.Automated.Harrison.Handbook.combining
+
+fsi.AddPrinter sprint_fol_formula
 
 // pg. 440
 // ------------------------------------------------------------------------- //
@@ -68,7 +42,7 @@ nelop001 (add_default [int_lang]) (parse
 // ------------------------------------------------------------------------- //
 
 // val it : int list = [1; 2; 5; 15; 52; 203; 877; 4140; 21147; 115975]
-let bell n = List.length (allpartitions (1 -- n)) in
+let bell n = List.length (allpartitions (1 -- n))
 List.map bell (1 -- 10);;
             
 // pg. 446
@@ -91,7 +65,6 @@ nelop (add_default [int_lang]) (parse
 // Confirmation of non-convexity.                                            //
 // ------------------------------------------------------------------------- //
 
-// TODO: Fix this - Exception occurs
 List.map (real_qelim << generalize) [
     parse "x * y = 0 /\ z = 0 ==> x = z \/ y = z";
     parse "x * y = 0 /\ z = 0 ==> x = z";
@@ -175,8 +148,6 @@ time (nelop (add_default [int_lang])) (parse
 
 // ** My former running example in the text; seems too slow.
 // *** Anyway this also needs extra predicates in CC
-
-// TODO: Exception occurs
 time (nelop (add_default [real_lang])) (parse
     "x^2 = y^2 /\ x < y /\ z^2 = z /\ x < x * z /\ P(f(1 + z)) ==> P(f(x + y) - f(0))");;
 

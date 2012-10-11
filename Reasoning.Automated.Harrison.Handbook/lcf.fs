@@ -226,5 +226,3 @@ let fprint_thm sw th =
 // Add printing facility
 let inline print_thm th = fprint_thm stdout th
 let inline sprint_thm th = writeToString (fun sw -> fprint_thm sw th)
-
-//#install_printer print_thm;;

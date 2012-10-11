@@ -1,44 +1,19 @@
 ﻿// ========================================================================= //
 // Copyright (c) 2003-2007, John Harrison.                                   //
-// Copyright (c) 2012 Eric Taucher, Jack Pappas                              //
+// Copyright (c) 2012 Eric Taucher, Jack Pappas, Anh-Dung Phan               //
 // (See "LICENSE.txt" for details.)                                          //
 // ========================================================================= //
 
 #load "initialization.fsx"
 
 open Reasoning.Automated.Harrison.Handbook.lib
-//open Reasoning.Automated.Harrison.Handbook.intro
 open Reasoning.Automated.Harrison.Handbook.formulas
-//open Reasoning.Automated.Harrison.Handbook.prop
-//open Reasoning.Automated.Harrison.Handbook.propexamples
-//open Reasoning.Automated.Harrison.Handbook.defcnf
-//open Reasoning.Automated.Harrison.Handbook.dp
-//open Reasoning.Automated.Harrison.Handbook.stal
-//open Reasoning.Automated.Harrison.Handbook.bdd
 open Reasoning.Automated.Harrison.Handbook.folMod
-//open Reasoning.Automated.Harrison.Handbook.skolem
-//open Reasoning.Automated.Harrison.Handbook.herbrand
-//open Reasoning.Automated.Harrison.Handbook.unif
-//open Reasoning.Automated.Harrison.Handbook.tableaux
-//open Reasoning.Automated.Harrison.Handbook.resolution
-//open Reasoning.Automated.Harrison.Handbook.prolog
-//open Reasoning.Automated.Harrison.Handbook.meson
-//open Reasoning.Automated.Harrison.Handbook.skolems
 open Reasoning.Automated.Harrison.Handbook.equal
-//open Reasoning.Automated.Harrison.Handbook.cong
-//open Reasoning.Automated.Harrison.Handbook.rewrite
-//open Reasoning.Automated.Harrison.Handbook.order
-//open Reasoning.Automated.Harrison.Handbook.completion
-//open Reasoning.Automated.Harrison.Handbook.eqelim
-//open Reasoning.Automated.Harrison.Handbook.paramodulation
-//open Reasoning.Automated.Harrison.Handbook.decidable
-//open Reasoning.Automated.Harrison.Handbook.qelim
-//open Reasoning.Automated.Harrison.Handbook.cooper
 open Reasoning.Automated.Harrison.Handbook.complex
 
 fsi.AddPrinter sprint_term
 fsi.AddPrinter sprint_fol_formula
-fsi.AddPrinter sprint_fol_formula_list
 
 //  pg. 355
 //  ------------------------------------------------------------------------- //
@@ -313,13 +288,13 @@ time complex_qelim (parse @"exists a b c x y.
         ~(x = y) /\ 
         ~(a * x * y = c)");;
 
- //** This works by a combination with grobner_decide but seems slow like this:
+//** This works by a combination with grobner_decide but seems slow like this:
 // complex.p024
-    complex_qelim (parse
-        @"forall a b c x y.
-          ~(a = 0) /\ 
-          (forall z. a * z^2 + b * z + c = 0 <=> z = x) /\ x = y
-          ==> a * x * y = c /\ a * (x + y) + b = 0");;
+complex_qelim (parse
+    @"forall a b c x y.
+        ~(a = 0) /\ 
+        (forall z. a * z^2 + b * z + c = 0 <=> z = x) /\ x = y
+        ==> a * x * y = c /\ a * (x + y) + b = 0");;
 
 //     *** and w/o the condition, it's false I think
 // complex.p025
@@ -332,109 +307,109 @@ time complex_qelim (parse @"exists a b c x y.
 //     *** because the following is!
 
 // complex.p026
-    complex_qelim (parse
-        @"forall a b c x.
-            (forall z. a * z^2 + b * z + c = 0 <=> z = x)
-            ==> a * x * x = c /\ a * (x + x) + b = 0");;
+complex_qelim (parse
+    @"forall a b c x.
+        (forall z. a * z^2 + b * z + c = 0 <=> z = x)
+        ==> a * x * x = c /\ a * (x + x) + b = 0");;
 
- //** In fact we have this, tho' I don't know if that's interesting **//
+//** In fact we have this, tho' I don't know if that's interesting **//
 // complex.p027
-    complex_qelim (parse
-        @"forall x y.
-        (forall a b c. (a * x^2 + b * x + c = 0) /\ 
-                       (a * y^2 + b * y + c = 0)
-                       ==> (a * x * y = c) /\ (a * (x + y) + b = 0))
-        <=> ~(x = y)");;
+complex_qelim (parse
+    @"forall x y.
+    (forall a b c. (a * x^2 + b * x + c = 0) /\ 
+                    (a * y^2 + b * y + c = 0)
+                    ==> (a * x * y = c) /\ (a * (x + y) + b = 0))
+    <=> ~(x = y)");;
 
 // complex.p028
-    time complex_qelim (parse
-        @"forall y_1 y_2 y_3 y_4.
-         (y_1 = 2 * y_3) /\ 
-         (y_2 = 2 * y_4) /\ 
-         (y_1 * y_3 = y_2 * y_4)
-         ==> (y_1^2 = y_2^2)");;
+time complex_qelim (parse
+    @"forall y_1 y_2 y_3 y_4.
+        (y_1 = 2 * y_3) /\ 
+        (y_2 = 2 * y_4) /\ 
+        (y_1 * y_3 = y_2 * y_4)
+        ==> (y_1^2 = y_2^2)");;
 
 // complex.p029
-    time complex_qelim (parse
-        @"forall x y. x^2 = 2 /\ y^2 = 3
-             ==> (x * y)^2 = 6");;
+time complex_qelim (parse
+    @"forall x y. x^2 = 2 /\ y^2 = 3
+            ==> (x * y)^2 = 6");;
 
 // complex.p030
-    time complex_qelim (parse
-        @"forall x a. (a^2 = 2) /\ (x^2 + a * x + 1 = 0)
-             ==> (x^4 + 1 = 0)");;
+time complex_qelim (parse
+    @"forall x a. (a^2 = 2) /\ (x^2 + a * x + 1 = 0)
+            ==> (x^4 + 1 = 0)");;
 
 // complex.p031
-    time complex_qelim (parse
-        @"forall a x. (a^2 = 2) /\ (x^2 + a * x + 1 = 0)
-             ==> (x^4 + 1 = 0)");;
+time complex_qelim (parse
+    @"forall a x. (a^2 = 2) /\ (x^2 + a * x + 1 = 0)
+            ==> (x^4 + 1 = 0)");;
 
 // complex.p032
-    time complex_qelim (parse
-        @"~(exists a x y. (a^2 = 2) /\ 
-                 (x^2 + a * x + 1 = 0) /\ 
-                 (y * (x^4 + 1) + 1 = 0))");;
+time complex_qelim (parse
+    @"~(exists a x y. (a^2 = 2) /\ 
+                (x^2 + a * x + 1 = 0) /\ 
+                (y * (x^4 + 1) + 1 = 0))");;
 
 // complex.p033
-    time complex_qelim (parse @"forall x. exists y. x^2 = y^3");;
+time complex_qelim (parse @"forall x. exists y. x^2 = y^3");;
 
 // complex.p034
-    time complex_qelim (parse
-        @"forall x y z a b. (a + b) * (x - y + z) - (a - b) * (x + y + z) =
-                   2 * (b * x + b * z - a * y)");;
+time complex_qelim (parse
+    @"forall x y z a b. (a + b) * (x - y + z) - (a - b) * (x + y + z) =
+                2 * (b * x + b * z - a * y)");;
 
 // complex.p035
-    time complex_qelim (parse
-        @"forall a b. ~(a = b) ==> exists x y. (y * x^2 = a) /\ (y * x^2 + x = b)");;
+time complex_qelim (parse
+    @"forall a b. ~(a = b) ==> exists x y. (y * x^2 = a) /\ (y * x^2 + x = b)");;
 
 // complex.p036
-    time complex_qelim (parse
-        @"forall a b c x y. (a * x^2 + b * x + c = 0) /\ 
-                   (a * y^2 + b * y + c = 0) /\ 
-                   ~(x = y)
-                   ==> (a * x * y = c) /\ (a * (x + y) + b = 0)");;
+time complex_qelim (parse
+    @"forall a b c x y. (a * x^2 + b * x + c = 0) /\ 
+                (a * y^2 + b * y + c = 0) /\ 
+                ~(x = y)
+                ==> (a * x * y = c) /\ (a * (x + y) + b = 0)");;
 
 // complex.p037
-    time complex_qelim (parse
-        @"~(forall a b c x y. (a * x^2 + b * x + c = 0) /\ 
-                     (a * y^2 + b * y + c = 0)
-                     ==> (a * x * y = c) /\ (a * (x + y) + b = 0))");;
+time complex_qelim (parse
+    @"~(forall a b c x y. (a * x^2 + b * x + c = 0) /\ 
+                    (a * y^2 + b * y + c = 0)
+                    ==> (a * x * y = c) /\ (a * (x + y) + b = 0))");;
 
 // complex.p038
-    time complex_qelim (parse
-        @"forall y_1 y_2 y_3 y_4.
-         (y_1 = 2 * y_3) /\ 
-         (y_2 = 2 * y_4) /\ 
-         (y_1 * y_3 = y_2 * y_4)
-         ==> (y_1^2 = y_2^2)");;
+time complex_qelim (parse
+    @"forall y_1 y_2 y_3 y_4.
+        (y_1 = 2 * y_3) /\ 
+        (y_2 = 2 * y_4) /\ 
+        (y_1 * y_3 = y_2 * y_4)
+        ==> (y_1^2 = y_2^2)");;
 
 // complex.p039
-    time complex_qelim (parse
-        @"forall a1 b1 c1 a2 b2 c2.
-            ~(a1 * b2 = a2 * b1)
-            ==> exists x y. (a1 * x + b1 * y = c1) /\ (a2 * x + b2 * y = c2)");;
+time complex_qelim (parse
+    @"forall a1 b1 c1 a2 b2 c2.
+        ~(a1 * b2 = a2 * b1)
+        ==> exists x y. (a1 * x + b1 * y = c1) /\ (a2 * x + b2 * y = c2)");;
 
 //  ------------------------------------------------------------------------- //
 //  This seems harder, so see how many quantifiers are feasible.              //
 //  ------------------------------------------------------------------------- //
 
 // complex.p040
-    time complex_qelim (parse
-        @"(a * x^2 + b * x + c = 0) /\ 
-      (a * y^2 + b * y + c = 0) /\ 
-      (forall z. (a * z^2 + b * z + c = 0)
-           ==> (z = x) \/ (z = y))
-      ==> (a * x * y = c) /\ (a * (x + y) + b = 0)");;
+time complex_qelim (parse
+    @"(a * x^2 + b * x + c = 0) /\ 
+    (a * y^2 + b * y + c = 0) /\ 
+    (forall z. (a * z^2 + b * z + c = 0)
+        ==> (z = x) \/ (z = y))
+    ==> (a * x * y = c) /\ (a * (x + y) + b = 0)");;
 
 // complex.p041
-    time complex_qelim (parse
-        @"forall y. (a * x^2 + b * x + c = 0) /\ 
-                (a * y^2 + b * y + c = 0) /\ 
-                (forall z. (a * z^2 + b * z + c = 0)
-                           ==> (z = x) \/ (z = y))
-                ==> (a * x * y = c) /\ (a * (x + y) + b = 0)");;
+time complex_qelim (parse
+    @"forall y. (a * x^2 + b * x + c = 0) /\ 
+            (a * y^2 + b * y + c = 0) /\ 
+            (forall z. (a * z^2 + b * z + c = 0)
+                        ==> (z = x) \/ (z = y))
+            ==> (a * x * y = c) /\ (a * (x + y) + b = 0)");;
 
- //*** feasible but lengthy?
+//*** feasible but lengthy?
 // complex.p042
 // long running
 //    time complex_qelim (parse
@@ -453,7 +428,7 @@ time complex_qelim (parse @"exists a b c x y.
 //                             ==> (z = x) \/ (z = y))
 //                  ==> (a * x * y = c) /\ (a * (x + y) + b = 0)");;
 
- //******** This seems too hard
+//******** This seems too hard
 // complex.p044
 // long running
 //    time complex_qelim (parse
@@ -464,63 +439,63 @@ time complex_qelim (parse @"exists a b c x y.
 //                   ==> (a * x * y = c) /\ (a * (x + y) + b = 0)");;
 
 // complex.p045
-    time complex_qelim (parse
-        @"~(forall x1 y1 x2 y2 x3 y3.
-          exists x0 y0. (x1 - x0)^2 + (y1 - y0)^2 = (x2 - x0)^2 + (y2 - y0)^2 /\ 
-                        (x2 - x0)^2 + (y2 - y0)^2 = (x3 - x0)^2 + (y3 - y0)^2)");;
+time complex_qelim (parse
+    @"~(forall x1 y1 x2 y2 x3 y3.
+        exists x0 y0. (x1 - x0)^2 + (y1 - y0)^2 = (x2 - x0)^2 + (y2 - y0)^2 /\ 
+                    (x2 - x0)^2 + (y2 - y0)^2 = (x3 - x0)^2 + (y3 - y0)^2)");;
 
 // complex.p046
-    time complex_qelim (parse
-        @"forall a b c.
-          (exists x y. (a * x^2 + b * x + c = 0) /\ 
-                 (a * y^2 + b * y + c = 0) /\ 
-                 ~(x = y)) <=>
-          (a = 0) /\ (b = 0) /\ (c = 0) \/
-          ~(a = 0) /\ ~(b^2 = 4 * a * c)");;
+time complex_qelim (parse
+    @"forall a b c.
+        (exists x y. (a * x^2 + b * x + c = 0) /\ 
+                (a * y^2 + b * y + c = 0) /\ 
+                ~(x = y)) <=>
+        (a = 0) /\ (b = 0) /\ (c = 0) \/
+        ~(a = 0) /\ ~(b^2 = 4 * a * c)");;
 
 // complex.p047
-    time complex_qelim (parse
-        @"~(forall x1 y1 x2 y2 x3 y3 x0 y0 x0' y0'.
-            (x1 - x0)^2 + (y1 - y0)^2 =
-            (x2 - x0)^2 + (y2 - y0)^2 /\ 
-            (x2 - x0)^2 + (y2 - y0)^2 =
-            (x3 - x0)^2 + (y3 - y0)^2 /\ 
-            (x1 - x0')^2 + (y1 - y0')^2 =
-            (x2 - x0')^2 + (y2 - y0')^2 /\ 
-            (x2 - x0')^2 + (y2 - y0')^2 =
-            (x3 - x0')^2 + (y3 - y0')^2
-            ==> x0 = x0' /\ y0 = y0')");;
+time complex_qelim (parse
+    @"~(forall x1 y1 x2 y2 x3 y3 x0 y0 x0' y0'.
+        (x1 - x0)^2 + (y1 - y0)^2 =
+        (x2 - x0)^2 + (y2 - y0)^2 /\ 
+        (x2 - x0)^2 + (y2 - y0)^2 =
+        (x3 - x0)^2 + (y3 - y0)^2 /\ 
+        (x1 - x0')^2 + (y1 - y0')^2 =
+        (x2 - x0')^2 + (y2 - y0')^2 /\ 
+        (x2 - x0')^2 + (y2 - y0')^2 =
+        (x3 - x0')^2 + (y3 - y0')^2
+        ==> x0 = x0' /\ y0 = y0')");;
 
 // complex.p048
-    time complex_qelim (parse
-        @"forall a b c.
-            a * x^2 + b * x + c = 0 /\ 
-            a * y^2 + b * y + c = 0 /\ 
-            ~(x = y)
-            ==> a * (x + y) + b = 0");;
+time complex_qelim (parse
+    @"forall a b c.
+        a * x^2 + b * x + c = 0 /\ 
+        a * y^2 + b * y + c = 0 /\ 
+        ~(x = y)
+        ==> a * (x + y) + b = 0");;
 
 // complex.p049
-    time complex_qelim (parse
-        @"forall a b c.
-            (a * x^2 + b * x + c = 0) /\ 
-            (2 * a * y^2 + 2 * b * y + 2 * c = 0) /\ 
-            ~(x = y)
-            ==> (a * (x + y) + b = 0)");;
+time complex_qelim (parse
+    @"forall a b c.
+        (a * x^2 + b * x + c = 0) /\ 
+        (2 * a * y^2 + 2 * b * y + 2 * c = 0) /\ 
+        ~(x = y)
+        ==> (a * (x + y) + b = 0)");;
 
 // complex.p050
-    complex_qelim_all (parse
-        @"~(y_1 = 2 * y_3 /\ 
-        y_2 = 2 * y_4 /\ 
-        y_1 * y_3 = y_2 * y_4 /\ 
-        (y_1^2 - y_2^2) * z = 1)");;
+complex_qelim_all (parse
+    @"~(y_1 = 2 * y_3 /\ 
+    y_2 = 2 * y_4 /\ 
+    y_1 * y_3 = y_2 * y_4 /\ 
+    (y_1^2 - y_2^2) * z = 1)");;
 
 // complex.p051
-    time complex_qelim (parse
-        @"forall y_1 y_2 y_3 y_4.
-           (y_1 = 2 * y_3) /\ 
-           (y_2 = 2 * y_4) /\ 
-           (y_1 * y_3 = y_2 * y_4)
-           ==> (y_1^2 = y_2^2)");;
+time complex_qelim (parse
+    @"forall y_1 y_2 y_3 y_4.
+        (y_1 = 2 * y_3) /\ 
+        (y_2 = 2 * y_4) /\ 
+        (y_1 * y_3 = y_2 * y_4)
+        ==> (y_1^2 = y_2^2)");;
 
 // complex.p052
 // long running
@@ -545,57 +520,57 @@ time complex_qelim (parse @"exists a b c x y.
 //       ==> (b * t = a)");;
 
 // complex.p054
-    complex_qelim_all (parse
-        @"(x1 = u3) /\ 
-      (x1 * (u2 - u1) = x2 * u3) /\ 
-      (x4 * (x2 - u1) = x1 * (x3 - u1)) /\ 
-      (x3 * u3 = x4 * u2) /\ 
-      ~(u1 = 0) /\ 
-      ~(u3 = 0)
-      ==> (x3^2 + x4^2 = (u2 - x3)^2 + (u3 - x4)^2)");;
+complex_qelim_all (parse
+    @"(x1 = u3) /\ 
+    (x1 * (u2 - u1) = x2 * u3) /\ 
+    (x4 * (x2 - u1) = x1 * (x3 - u1)) /\ 
+    (x3 * u3 = x4 * u2) /\ 
+    ~(u1 = 0) /\ 
+    ~(u3 = 0)
+    ==> (x3^2 + x4^2 = (u2 - x3)^2 + (u3 - x4)^2)");;
 
 // complex.p055
-    complex_qelim_all (parse
-        @"(u1 * x1 - u1 * u3 = 0) /\ 
-      (u3 * x2 - (u2 - u1) * x1 = 0) /\ 
-      (x1 * x4 - (x2 - u1) * x3 - u1 * x1 = 0) /\ 
-      (u3 * x4 - u2 * x3 = 0) /\ 
-      ~(u1 = 0) /\ 
-      ~(u3 = 0)
-      ==> (2 * u2 * x4 + 2 * u3 * x3 - u3^2 - u2^2 = 0)");;
+complex_qelim_all (parse
+    @"(u1 * x1 - u1 * u3 = 0) /\ 
+    (u3 * x2 - (u2 - u1) * x1 = 0) /\ 
+    (x1 * x4 - (x2 - u1) * x3 - u1 * x1 = 0) /\ 
+    (u3 * x4 - u2 * x3 = 0) /\ 
+    ~(u1 = 0) /\ 
+    ~(u3 = 0)
+    ==> (2 * u2 * x4 + 2 * u3 * x3 - u3^2 - u2^2 = 0)");;
 
 // complex.p056
-    complex_qelim_all (parse
-        @"(y1 * y3 + x1 * x3 = 0) /\ 
-      (y3 * (y2 - y3) + (x2 - x3) * x3 = 0) /\ 
-      ~(x3 = 0) /\ 
-      ~(y3 = 0)
-      ==> (y1 * (x2 - x3) = x1 * (y2 - y3))");;
+complex_qelim_all (parse
+    @"(y1 * y3 + x1 * x3 = 0) /\ 
+    (y3 * (y2 - y3) + (x2 - x3) * x3 = 0) /\ 
+    ~(x3 = 0) /\ 
+    ~(y3 = 0)
+    ==> (y1 * (x2 - x3) = x1 * (y2 - y3))");;
 
 // complex.p057
 // Real: 00:01:26.411, CPU: 00:01:26.281, GC gen0: 367, gen1: 43, gen2: 1
-    complex_qelim_all (parse
-        @"(2 * u2 * x2 + 2 * u3 * x1 - u3^2 - u2^2 = 0) /\ 
-      (2 * u1 * x2 - u1^2 = 0) /\ 
-      (-(x3^2) + 2 * x2 * x3 + 2 * u4 * x1 - u4^2 = 0) /\ 
-      (u3 * x5 + (-(u2) + u1) * x4 - u1 * u3 = 0) /\ 
-      ((u2 - u1) * x5 + u3 * x4 + (-(u2) + u1) * x3 - u3 * u4 = 0) /\ 
-      (u3 * x7 - u2 * x6 = 0) /\ 
-      (u2 * x7 + u3 * x6 - u2 * x3 - u3 * u4 = 0) /\ 
-      ~(4 * u1 * u3 = 0) /\ 
-      ~(2 * u1 = 0) /\ 
-      ~(-(u3^2) - u2^2 + 2 * u1 * u2 - u1^2 = 0) /\ 
-      ~(u3 = 0) /\ 
-      ~(-(u3^2) - u2^2 = 0) /\ 
-      ~(u2 = 0)
-      ==> (x4 * x7 + (-(x5) + x3) * x6 - x3 * x4 = 0)");;
+complex_qelim_all (parse
+    @"(2 * u2 * x2 + 2 * u3 * x1 - u3^2 - u2^2 = 0) /\ 
+    (2 * u1 * x2 - u1^2 = 0) /\ 
+    (-(x3^2) + 2 * x2 * x3 + 2 * u4 * x1 - u4^2 = 0) /\ 
+    (u3 * x5 + (-(u2) + u1) * x4 - u1 * u3 = 0) /\ 
+    ((u2 - u1) * x5 + u3 * x4 + (-(u2) + u1) * x3 - u3 * u4 = 0) /\ 
+    (u3 * x7 - u2 * x6 = 0) /\ 
+    (u2 * x7 + u3 * x6 - u2 * x3 - u3 * u4 = 0) /\ 
+    ~(4 * u1 * u3 = 0) /\ 
+    ~(2 * u1 = 0) /\ 
+    ~(-(u3^2) - u2^2 + 2 * u1 * u2 - u1^2 = 0) /\ 
+    ~(u3 = 0) /\ 
+    ~(-(u3^2) - u2^2 = 0) /\ 
+    ~(u2 = 0)
+    ==> (x4 * x7 + (-(x5) + x3) * x6 - x3 * x4 = 0)");;
 
 // complex.p058
-    time complex_qelim (parse
-        @"exists c.
-        (p1 = ai^2 * (b + c)^2 - c * b * (c + b - a) * (c + b + a)) /\ 
-        (p2 = ae^2 * (c - b)^2 - c * b * (a + b - c) * (a - b + a)) /\ 
-        (p3 = be^2 * (c - a)^2 - a * c * (a + b - c) * (c + b - a))");;
+time complex_qelim (parse
+    @"exists c.
+    (p1 = ai^2 * (b + c)^2 - c * b * (c + b - a) * (c + b + a)) /\ 
+    (p2 = ae^2 * (c - b)^2 - c * b * (a + b - c) * (a - b + a)) /\ 
+    (p3 = be^2 * (c - a)^2 - a * c * (a + b - c) * (c + b - a))");;
 
 // complex.p059
 // long running
@@ -606,40 +581,40 @@ time complex_qelim (parse @"exists a b c x y.
 //        (p3 = be^2 * (c - a)^2 - a * c * (a + b - c) * (c + b - a))");;
 
 // complex.p060
-    time complex_qelim (parse
-        @"forall y.
-             a * x^2 + b * x + c = 0 /\ 
-             a * y^2 + b * y + c = 0 /\ 
-             ~(x = y)
-             ==> a * x * y = c /\ a * (x + y) + b = 0");;
+time complex_qelim (parse
+    @"forall y.
+            a * x^2 + b * x + c = 0 /\ 
+            a * y^2 + b * y + c = 0 /\ 
+            ~(x = y)
+            ==> a * x * y = c /\ a * (x + y) + b = 0");;
 
 // complex.p061
-    complex_qelim_all (parse
-        @"a * x^2 + b * x + c = 0 /\ 
-        a * y^2 + b * y + c = 0 /\ 
-        ~(x = y)
-        ==> a * x * y = c /\ a * (x + y) + b = 0");;
+complex_qelim_all (parse
+    @"a * x^2 + b * x + c = 0 /\ 
+    a * y^2 + b * y + c = 0 /\ 
+    ~(x = y)
+    ==> a * x * y = c /\ a * (x + y) + b = 0");;
 
 //  ------------------------------------------------------------------------- //
 //  The Colmerauer example.                                                   //
 //  ------------------------------------------------------------------------- //
 
- //******** This works, but is quite slow. And it's false! Presumably we
+//******** This works, but is quite slow. And it's false! Presumably we
 //          actually need to use ordering properties associated with absolute
 //          values
 // complex.p062
 // Real: 00:00:47.647, CPU: 00:00:47.437, GC gen0: 152, gen1: 20, gen2: 0
-    let colmerauer = complex_qelim_all (parse
-        @"(x_1 + x_3  = (x_2) \/ x_1 + x_3  = -(x_2)) /\ 
-       (x_2 + x_4  = (x_3) \/ x_2 + x_4  = -(x_3)) /\ 
-       (x_3 + x_5  = (x_4) \/ x_3 + x_5  = -(x_4)) /\ 
-       (x_4 + x_6  = (x_5) \/ x_4 + x_6  = -(x_5)) /\ 
-       (x_5 + x_7  = (x_6) \/ x_5 + x_7  = -(x_6)) /\ 
-       (x_6 + x_8  = (x_7) \/ x_6 + x_8  = -(x_7)) /\ 
-       (x_7 + x_9  = (x_8) \/ x_7 + x_9  = -(x_8)) /\ 
-       (x_8 + x_10 = (x_9) \/ x_8 + x_10 = -(x_9)) /\ 
-       (x_9 + x_11 = (x_10) \/ x_9 + x_11 = -(x_10))
-       ==> x_1 = x_10 /\ x_2 = x_11");;
+let colmerauer = complex_qelim_all (parse
+    @"(x_1 + x_3  = (x_2) \/ x_1 + x_3  = -(x_2)) /\ 
+    (x_2 + x_4  = (x_3) \/ x_2 + x_4  = -(x_3)) /\ 
+    (x_3 + x_5  = (x_4) \/ x_3 + x_5  = -(x_4)) /\ 
+    (x_4 + x_6  = (x_5) \/ x_4 + x_6  = -(x_5)) /\ 
+    (x_5 + x_7  = (x_6) \/ x_5 + x_7  = -(x_6)) /\ 
+    (x_6 + x_8  = (x_7) \/ x_6 + x_8  = -(x_7)) /\ 
+    (x_7 + x_9  = (x_8) \/ x_7 + x_9  = -(x_8)) /\ 
+    (x_8 + x_10 = (x_9) \/ x_8 + x_10 = -(x_9)) /\ 
+    (x_9 + x_11 = (x_10) \/ x_9 + x_11 = -(x_10))
+    ==> x_1 = x_10 /\ x_2 = x_11");;
 
 //  ------------------------------------------------------------------------- //
 //  Checking resultants from Maple.                                           //
@@ -648,25 +623,25 @@ time complex_qelim (parse @"exists a b c x y.
 // interface(prettyprint=0);
 //         resultant(a * x^2 + b * x + c, 2 * a * x + b,x);
 // complex.p063
-    time complex_qelim (parse
-        @"forall a b c.
-       (exists x. a * x^2 + b * x + c = 0 /\ 2 * a * x + b = 0) \/ (a = 0) <=>
-       (4*a^2*c-b^2*a = 0)");;
+time complex_qelim (parse
+    @"forall a b c.
+    (exists x. a * x^2 + b * x + c = 0 /\ 2 * a * x + b = 0) \/ (a = 0) <=>
+    (4*a^2*c-b^2*a = 0)");;
 
 // complex.p064
-    time complex_qelim (parse
-        @"forall a b c d e.
-      (exists x. a * x^2 + b * x + c = 0 /\ d * x + e = 0) \/
-       a = 0 /\ d = 0 <=> d^2*c-e*d*b+a*e^2 = 0");;
+time complex_qelim (parse
+    @"forall a b c d e.
+    (exists x. a * x^2 + b * x + c = 0 /\ d * x + e = 0) \/
+    a = 0 /\ d = 0 <=> d^2*c-e*d*b+a*e^2 = 0");;
 
 // complex.p065
-    time complex_qelim (parse
-        @"forall a b c d e f.
-       (exists x. a * x^2 + b * x + c = 0 /\ d * x^2 + e * x + f = 0) \/
-       (a = 0) /\ (d = 0) <=>
-       d^2*c^2-2*d*c*a*f+a^2*f^2-e*d*b*c-e*b*a*f+a*e^2*c+f*d*b^2 = 0");;
+time complex_qelim (parse
+    @"forall a b c d e f.
+    (exists x. a * x^2 + b * x + c = 0 /\ d * x^2 + e * x + f = 0) \/
+    (a = 0) /\ (d = 0) <=>
+    d^2*c^2-2*d*c*a*f+a^2*f^2-e*d*b*c-e*b*a*f+a*e^2*c+f*d*b^2 = 0");;
 
- //*** No hope for this one I think
+//*** No hope for this one I think
 // complex.p066
 // long running
 //Initialization.runWith16MBStack (fun () -> 
@@ -683,103 +658,103 @@ time complex_qelim (parse @"exists a b c x y.
 //  ------------------------------------------------------------------------- //
 
 // complex.p067
-    time complex_qelim (parse
-        @"forall x y. x^2 + y^2 = 1 ==> (2 * y^2 - 1)^2 + (2 * x * y)^2 = 1");;
+time complex_qelim (parse
+    @"forall x y. x^2 + y^2 = 1 ==> (2 * y^2 - 1)^2 + (2 * x * y)^2 = 1");;
 
 //  ------------------------------------------------------------------------- //
 //  The examples from my thesis.                                              //
 //  ------------------------------------------------------------------------- //
 
 // complex.p068
-    time complex_qelim (parse
-        @"forall s c. s^2 + c^2 = 1
-          ==> 2 * s - (2 * s * c * c - s^3) = 3 * s^3");;
+time complex_qelim (parse
+    @"forall s c. s^2 + c^2 = 1
+        ==> 2 * s - (2 * s * c * c - s^3) = 3 * s^3");;
 
 // complex.p069
-    time complex_qelim (parse
-        @"forall u v.
-      -((((9 * u^8) * v) * v - (u * u^9)) * 128) -
-         (((7 * u^6) * v) * v - (u * u^7)) * 144 -
-         (((5 * u^4) * v) * v - (u * u^5)) * 168 -
-         (((3 * u^2) * v) * v - (u * u^3)) * 210 -
-         (v * v - (u * u)) * 315 + 315 - 1280 * u^10 =
-       (-(1152) * u^8 - 1008 * u^6 - 840 * u^4 - 630 * u^2 - 315) *
-       (u^2 + v^2 - 1)");;
+time complex_qelim (parse
+    @"forall u v.
+    -((((9 * u^8) * v) * v - (u * u^9)) * 128) -
+        (((7 * u^6) * v) * v - (u * u^7)) * 144 -
+        (((5 * u^4) * v) * v - (u * u^5)) * 168 -
+        (((3 * u^2) * v) * v - (u * u^3)) * 210 -
+        (v * v - (u * u)) * 315 + 315 - 1280 * u^10 =
+    (-(1152) * u^8 - 1008 * u^6 - 840 * u^4 - 630 * u^2 - 315) *
+    (u^2 + v^2 - 1)");;
 
 // complex.p07`
-    time complex_qelim (parse
-        @"forall u v.
-            u^2 + v^2 = 1
-            ==> (((9 * u^8) * v) * v - (u * u^9)) * 128 +
-                (((7 * u^6) * v) * v - (u * u^7)) * 144 +
-                (((5 * u^4) * v) * v - (u * u^5)) * 168 +
-                (((3 * u^2) * v) * v - (u * u^3)) * 210 +
-                (v * v - (u * u)) * 315 + 1280 * u^10 = 315");;
+time complex_qelim (parse
+    @"forall u v.
+        u^2 + v^2 = 1
+        ==> (((9 * u^8) * v) * v - (u * u^9)) * 128 +
+            (((7 * u^6) * v) * v - (u * u^7)) * 144 +
+            (((5 * u^4) * v) * v - (u * u^5)) * 168 +
+            (((3 * u^2) * v) * v - (u * u^3)) * 210 +
+            (v * v - (u * u)) * 315 + 1280 * u^10 = 315");;
 
 //  ------------------------------------------------------------------------- //
 //  Deliberately silly examples from Poizat's model theory book (6.6).        //
 //  ------------------------------------------------------------------------- //
 
 // complex.p071
-    time complex_qelim (parse @"exists z. x * z^87 + y * z^44 + 1 = 0");;
+time complex_qelim (parse @"exists z. x * z^87 + y * z^44 + 1 = 0");;
 
 // complex.p072
-    time complex_qelim (parse
-        @"forall u. exists v. x * (u + v^2)^2 + y * (u + v^2) + z = 0");;
+time complex_qelim (parse
+    @"forall u. exists v. x * (u + v^2)^2 + y * (u + v^2) + z = 0");;
 
 //  ------------------------------------------------------------------------- //
 //  Actually prove simple equivalences.                                       //
 //  ------------------------------------------------------------------------- //
 
 // complex.p073
-    time complex_qelim (parse
-        @"forall x y. (exists z. x * z^87 + y * z^44 + 1 = 0)
-                      <=> ~(x = 0) \/ ~(y = 0)");;
+time complex_qelim (parse
+    @"forall x y. (exists z. x * z^87 + y * z^44 + 1 = 0)
+                    <=> ~(x = 0) \/ ~(y = 0)");;
 
 // complex.p074
-    time complex_qelim (parse
-        @"forall x y z. (forall u. exists v.
-                             x * (u + v^2)^2 + y * (u + v^2) + z = 0)
-                        <=> ~(x = 0) \/ ~(y = 0) \/ z = 0");;
+time complex_qelim (parse
+    @"forall x y z. (forall u. exists v.
+                            x * (u + v^2)^2 + y * (u + v^2) + z = 0)
+                    <=> ~(x = 0) \/ ~(y = 0) \/ z = 0");;
 
 //  ------------------------------------------------------------------------- //
 //  Invertibility of 2x2 matrix in terms of nonzero determinant.              //
 //  ------------------------------------------------------------------------- //
 
 // complex.p075
-    time complex_qelim (parse
-        @"exists w x y z. (a * w + b * y = 1) /\ 
-                          (a * x + b * z = 0) /\ 
-                          (c * w + d * y = 0) /\ 
-                          (c * x + d * z = 1)");;
+time complex_qelim (parse
+    @"exists w x y z. (a * w + b * y = 1) /\ 
+                        (a * x + b * z = 0) /\ 
+                        (c * w + d * y = 0) /\ 
+                        (c * x + d * z = 1)");;
 
 // complex.p076
-    time complex_qelim (parse
-        @"forall a b c d.
-            (exists w x y z. (a * w + b * y = 1) /\ 
-                             (a * x + b * z = 0) /\ 
-                             (c * w + d * y = 0) /\ 
-                             (c * x + d * z = 1))
-            <=> ~(a * d = b * c)");;
+time complex_qelim (parse
+    @"forall a b c d.
+        (exists w x y z. (a * w + b * y = 1) /\ 
+                            (a * x + b * z = 0) /\ 
+                            (c * w + d * y = 0) /\ 
+                            (c * x + d * z = 1))
+        <=> ~(a * d = b * c)");;
 
 //  ------------------------------------------------------------------------- //
 //  Inspired by Cardano's formula for a cubic. Not all complex cbrts work.    //
 //  ------------------------------------------------------------------------- //
 
 // complex.p077
-    time complex_qelim (parse
-        @"forall m n x u t cu ct.
-       t - u = n /\ 27 * t * u = m^3 /\ 
-       ct^3 = t /\ cu^3 = u /\ 
-       x = ct - cu
-       ==> x^3 + m * x = n");;
+time complex_qelim (parse
+    @"forall m n x u t cu ct.
+    t - u = n /\ 27 * t * u = m^3 /\ 
+    ct^3 = t /\ cu^3 = u /\ 
+    x = ct - cu
+    ==> x^3 + m * x = n");;
 
 // complex.p078
-    time complex_qelim (parse
-        @"forall m n x u t.
-       t - u = n /\ 27 * t * u = m^3
-       ==> exists ct cu. ct^3 = t /\ cu^3 = u /\ 
-                         (x = ct - cu ==> x^3 + m * x = n)");;
+time complex_qelim (parse
+    @"forall m n x u t.
+    t - u = n /\ 27 * t * u = m^3
+    ==> exists ct cu. ct^3 = t /\ cu^3 = u /\ 
+                        (x = ct - cu ==> x^3 + m * x = n)");;
 
 //  ------------------------------------------------------------------------- //
 //  SOS in rational functions for Motzkin polynomial (dehomogenized).         //
@@ -787,94 +762,94 @@ time complex_qelim (parse @"exists a b c x y.
 //  ------------------------------------------------------------------------- //
 
 // complex.p079
-    time complex_qelim (parse
-        @"forall x y z.
-        (x^2 + y^2)^2 * (1 + x^4 * y^2 + x^2 * y^4 - 3 * x^2 * y^2) =
-         x^2 * y^2 * (x^2 + y^2 + 1) * (x^2 + y^2 - 2)^2 + (x^2 - y^2)^2");;
+time complex_qelim (parse
+    @"forall x y z.
+    (x^2 + y^2)^2 * (1 + x^4 * y^2 + x^2 * y^4 - 3 * x^2 * y^2) =
+        x^2 * y^2 * (x^2 + y^2 + 1) * (x^2 + y^2 - 2)^2 + (x^2 - y^2)^2");;
 
 // complex.p080
-    time complex_qelim (parse
-        @"forall x y z.
-        (x^2 + y^2)^2 * (1 + x^4 * y^2 + x^2 * y^4 - 3 * x^2 * y^2) =
-        x^2 * y^2 * x^2  * (x^2 + y^2 - 2)^2 +
-        x^2 * y^2 * y^2 * (x^2 + y^2 - 2)^2 +
-        x^2 * y^2 * (x^2 + y^2 - 2)^2 +
-        (x^2 - y^2)^2");;
+time complex_qelim (parse
+    @"forall x y z.
+    (x^2 + y^2)^2 * (1 + x^4 * y^2 + x^2 * y^4 - 3 * x^2 * y^2) =
+    x^2 * y^2 * x^2  * (x^2 + y^2 - 2)^2 +
+    x^2 * y^2 * y^2 * (x^2 + y^2 - 2)^2 +
+    x^2 * y^2 * (x^2 + y^2 - 2)^2 +
+    (x^2 - y^2)^2");;
 
 // complex.p081
-    time complex_qelim (parse
-        @"forall x y z.
-        (x^2 + y^2)^2 * (1 + x^4 * y^2 + x^2 * y^4 - 3 * x^2 * y^2) =
-        x^4 * y^2 * (x^2 + y^2 - 2)^2 +
-        x^2 * y^4 * (x^2 + y^2 - 2)^2 +
-        x^2 * y^2 * (x^2 + y^2 - 2)^2 +
-        (x^2 - y^2)^2");;
+time complex_qelim (parse
+    @"forall x y z.
+    (x^2 + y^2)^2 * (1 + x^4 * y^2 + x^2 * y^4 - 3 * x^2 * y^2) =
+    x^4 * y^2 * (x^2 + y^2 - 2)^2 +
+    x^2 * y^4 * (x^2 + y^2 - 2)^2 +
+    x^2 * y^2 * (x^2 + y^2 - 2)^2 +
+    (x^2 - y^2)^2");;
 
 // complex.p082
-    time complex_qelim (parse
-        @"forall x y z.
-        (x^2 + y^2)^2 * (1 + x^4 * y^2 + x^2 * y^4 - 3 * x^2 * y^2) =
-        (x^2 * y * (x^2 + y^2 - 2))^2 +
-        (x * y^2 * (x^2 + y^2 - 2))^2 +
-        (x * y * (x^2 + y^2 - 2))^2 +
-        (x^2 - y^2)^2");;
+time complex_qelim (parse
+    @"forall x y z.
+    (x^2 + y^2)^2 * (1 + x^4 * y^2 + x^2 * y^4 - 3 * x^2 * y^2) =
+    (x^2 * y * (x^2 + y^2 - 2))^2 +
+    (x * y^2 * (x^2 + y^2 - 2))^2 +
+    (x * y * (x^2 + y^2 - 2))^2 +
+    (x^2 - y^2)^2");;
 
 //  ------------------------------------------------------------------------- //
 //  A cute bilinear identity -- see ch14 of Rajwade's "Squares" for more.     //
 //  ------------------------------------------------------------------------- //
 
 // complex.p083
-    polytest (parset
-        @"(x_1^2 + x_2^2 + x_3^2 + x_4^2 + x_5^2 + x_6^2 + x_7^2 + x_8^2 + x_9^2) *
-       (y_1^2 + y_2^2 + y_3^2 + y_4^2 + y_5^2 + y_6^2 + y_7^2 + y_8^2 +
-        y_9^2 + y_10^2 + y_11^2 + y_12^2 + y_13^2 + y_14^2 + y_15^2 + y_16^2) -
-       ((0 + x_1 * y_1 + x_2 * y_2 + x_3 * y_3 + x_4 * y_4 + x_5 * y_5 + x_6 * y_6 + x_7 * y_7 + x_8 * y_8 + x_9 * y_9)^2 +
-        (0 - x_2 * y_1 + x_1 * y_2 + x_4 * y_3 - x_3 * y_4 + x_6 * y_5 - x_5 * y_6 - x_8 * y_7 + x_7 * y_8 + x_9 * y_10)^2 +
-        (0 - x_3 * y_1 - x_4 * y_2 + x_1 * y_3 + x_2 * y_4 + x_7 * y_5 + x_8 * y_6 - x_5 * y_7 - x_6 * y_8 + x_9 * y_11)^2 +
-        (0 - x_4 * y_1 + x_3 * y_2 - x_2 * y_3 + x_1 * y_4 + x_8 * y_5 - x_7 * y_6 + x_6 * y_7 - x_5 * y_8 + x_9 * y_12)^2 +
-        (0 - x_5 * y_1 - x_6 * y_2 - x_7 * y_3 - x_8 * y_4 + x_1 * y_5 + x_2 * y_6 + x_3 * y_7 + x_4 * y_8 + x_9 * y_13)^2 +
-        (0 - x_6 * y_1 + x_5 * y_2 - x_8 * y_3 + x_7 * y_4 - x_2 * y_5 + x_1 * y_6 - x_4 * y_7 + x_3 * y_8 + x_9 * y_14)^2 +
-        (0 - x_7 * y_1 + x_8 * y_2 + x_5 * y_3 - x_6 * y_4 - x_3 * y_5 + x_4 * y_6 + x_1 * y_7 - x_2 * y_8 + x_9 * y_15)^2 +
-        (0 - x_8 * y_1 - x_7 * y_2 + x_6 * y_3 + x_5 * y_4 - x_4 * y_5 - x_3 * y_6 + x_2 * y_7 + x_1 * y_8 + x_9 * y_16)^2 +
-        (0 - x_9 * y_1 + x_1 * y_9 - x_2 * y_10 - x_3 * y_11 - x_4 * y_12 - x_5 * y_13 - x_6 * y_14 - x_7 * y_15 - x_8 * y_16)^2 +
-        (0 - x_9 * y_2 + x_2 * y_9 + x_1 * y_10 - x_4 * y_11 + x_3 * y_12 - x_6 * y_13 + x_5 * y_14 + x_8 * y_15 - x_7 * y_16)^2 +
-        (0 - x_9 * y_3 + x_3 * y_9 + x_4 * y_10 + x_1 * y_11 - x_2 * y_12 - x_7 * y_13 - x_8 * y_14 + x_5 * y_15 + x_6 * y_16)^2 +
-        (0 - x_9 * y_4 + x_4 * y_9 - x_3 * y_10 + x_2 * y_11 + x_1 * y_12 - x_8 * y_13 + x_7 * y_14 - x_6 * y_15 + x_5 * y_16)^2 +
-        (0 - x_9 * y_5 + x_5 * y_9 + x_6 * y_10 + x_7 * y_11 + x_8 * y_12 + x_1 * y_13 - x_2 * y_14 - x_3 * y_15 - x_4 * y_16)^2 +
-        (0 - x_9 * y_6 + x_6 * y_9 - x_5 * y_10 + x_8 * y_11 - x_7 * y_12 + x_2 * y_13 + x_1 * y_14 + x_4 * y_15 - x_3 * y_16)^2 +
-        (0 - x_9 * y_7 + x_7 * y_9 - x_8 * y_10 - x_5 * y_11 + x_6 * y_12 + x_3 * y_13 - x_4 * y_14 + x_1 * y_15 + x_2 * y_16)^2 +
-        (0 - x_9 * y_8 + x_8 * y_9 + x_7 * y_10 - x_6 * y_11 - x_5 * y_12 + x_4 * y_13 + x_3 * y_14 - x_2 * y_15 + x_1 * y_16)^2)");;
+polytest (parset
+    @"(x_1^2 + x_2^2 + x_3^2 + x_4^2 + x_5^2 + x_6^2 + x_7^2 + x_8^2 + x_9^2) *
+    (y_1^2 + y_2^2 + y_3^2 + y_4^2 + y_5^2 + y_6^2 + y_7^2 + y_8^2 +
+    y_9^2 + y_10^2 + y_11^2 + y_12^2 + y_13^2 + y_14^2 + y_15^2 + y_16^2) -
+    ((0 + x_1 * y_1 + x_2 * y_2 + x_3 * y_3 + x_4 * y_4 + x_5 * y_5 + x_6 * y_6 + x_7 * y_7 + x_8 * y_8 + x_9 * y_9)^2 +
+    (0 - x_2 * y_1 + x_1 * y_2 + x_4 * y_3 - x_3 * y_4 + x_6 * y_5 - x_5 * y_6 - x_8 * y_7 + x_7 * y_8 + x_9 * y_10)^2 +
+    (0 - x_3 * y_1 - x_4 * y_2 + x_1 * y_3 + x_2 * y_4 + x_7 * y_5 + x_8 * y_6 - x_5 * y_7 - x_6 * y_8 + x_9 * y_11)^2 +
+    (0 - x_4 * y_1 + x_3 * y_2 - x_2 * y_3 + x_1 * y_4 + x_8 * y_5 - x_7 * y_6 + x_6 * y_7 - x_5 * y_8 + x_9 * y_12)^2 +
+    (0 - x_5 * y_1 - x_6 * y_2 - x_7 * y_3 - x_8 * y_4 + x_1 * y_5 + x_2 * y_6 + x_3 * y_7 + x_4 * y_8 + x_9 * y_13)^2 +
+    (0 - x_6 * y_1 + x_5 * y_2 - x_8 * y_3 + x_7 * y_4 - x_2 * y_5 + x_1 * y_6 - x_4 * y_7 + x_3 * y_8 + x_9 * y_14)^2 +
+    (0 - x_7 * y_1 + x_8 * y_2 + x_5 * y_3 - x_6 * y_4 - x_3 * y_5 + x_4 * y_6 + x_1 * y_7 - x_2 * y_8 + x_9 * y_15)^2 +
+    (0 - x_8 * y_1 - x_7 * y_2 + x_6 * y_3 + x_5 * y_4 - x_4 * y_5 - x_3 * y_6 + x_2 * y_7 + x_1 * y_8 + x_9 * y_16)^2 +
+    (0 - x_9 * y_1 + x_1 * y_9 - x_2 * y_10 - x_3 * y_11 - x_4 * y_12 - x_5 * y_13 - x_6 * y_14 - x_7 * y_15 - x_8 * y_16)^2 +
+    (0 - x_9 * y_2 + x_2 * y_9 + x_1 * y_10 - x_4 * y_11 + x_3 * y_12 - x_6 * y_13 + x_5 * y_14 + x_8 * y_15 - x_7 * y_16)^2 +
+    (0 - x_9 * y_3 + x_3 * y_9 + x_4 * y_10 + x_1 * y_11 - x_2 * y_12 - x_7 * y_13 - x_8 * y_14 + x_5 * y_15 + x_6 * y_16)^2 +
+    (0 - x_9 * y_4 + x_4 * y_9 - x_3 * y_10 + x_2 * y_11 + x_1 * y_12 - x_8 * y_13 + x_7 * y_14 - x_6 * y_15 + x_5 * y_16)^2 +
+    (0 - x_9 * y_5 + x_5 * y_9 + x_6 * y_10 + x_7 * y_11 + x_8 * y_12 + x_1 * y_13 - x_2 * y_14 - x_3 * y_15 - x_4 * y_16)^2 +
+    (0 - x_9 * y_6 + x_6 * y_9 - x_5 * y_10 + x_8 * y_11 - x_7 * y_12 + x_2 * y_13 + x_1 * y_14 + x_4 * y_15 - x_3 * y_16)^2 +
+    (0 - x_9 * y_7 + x_7 * y_9 - x_8 * y_10 - x_5 * y_11 + x_6 * y_12 + x_3 * y_13 - x_4 * y_14 + x_1 * y_15 + x_2 * y_16)^2 +
+    (0 - x_9 * y_8 + x_8 * y_9 + x_7 * y_10 - x_6 * y_11 - x_5 * y_12 + x_4 * y_13 + x_3 * y_14 - x_2 * y_15 + x_1 * y_16)^2)");;
 
 //  ------------------------------------------------------------------------- //
 //  This is essentially the Cauchy-Riemann conditions for a differential.     //
 //  ------------------------------------------------------------------------- //
 
 // complex.p084
-    time complex_qelim (parse
-        @"forall x y. (a * x + b * y = u * x - v * y) /\ 
-                    (c * x + d * y = u * y + v * x)
-                    ==> (a = d)");;
+time complex_qelim (parse
+    @"forall x y. (a * x + b * y = u * x - v * y) /\ 
+                (c * x + d * y = u * y + v * x)
+                ==> (a = d)");;
 
 // complex.p085
-    time complex_qelim (parse
-        @"forall a b c d.
-          (forall x y. (a * x + b * y = u * x - v * y) /\ 
-                       (c * x + d * y = u * y + v * x))
-                       ==> (a = d) /\ (b = -(c))");;
+time complex_qelim (parse
+    @"forall a b c d.
+        (forall x y. (a * x + b * y = u * x - v * y) /\ 
+                    (c * x + d * y = u * y + v * x))
+                    ==> (a = d) /\ (b = -(c))");;
 
 // complex.p086
-    time complex_qelim (parse
-        @"forall a b c d.
-            (exists u v. forall x y. (a * x + b * y = u * x - v * y) /\ 
-                                     (c * x + d * y = u * y + v * x))
-            <=> (a = d) /\ (b = -(c))");;
+time complex_qelim (parse
+    @"forall a b c d.
+        (exists u v. forall x y. (a * x + b * y = u * x - v * y) /\ 
+                                    (c * x + d * y = u * y + v * x))
+        <=> (a = d) /\ (b = -(c))");;
 
 //  ------------------------------------------------------------------------- //
 //  Finding non-trivial perpendiculars to lines.                              //
 //  ------------------------------------------------------------------------- //
 
 // complex.p087
-    complex_qelim (parse
-        @"forall x1 y1 x2 y2. exists a b.
-          ~(a = 0 /\ b = 0) /\ a * x1 + b * y1 = 0 /\ a * x2 + b * y2 = 0");;
+complex_qelim (parse
+    @"forall x1 y1 x2 y2. exists a b.
+        ~(a = 0 /\ b = 0) /\ a * x1 + b * y1 = 0 /\ a * x2 + b * y2 = 0");;
 

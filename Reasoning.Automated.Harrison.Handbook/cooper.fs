@@ -131,7 +131,7 @@ let rec private lintImpl vars tm cont =
     | Var _ ->
         Fn ("+", [Fn ("*", [Fn ("1", []); tm]); zero])
         |> cont
-    | Fn ("~", [t]) ->
+    | Fn ("-", [t]) ->
         lintImpl vars t <| fun lint_t ->
             cont (linear_neg lint_t)
     | Fn ("+", [s; t]) ->
@@ -178,7 +178,8 @@ let linform vars fm =
     | Atom (R (">=", [s; t])) ->
         mkatom vars "<" (Fn ("-", [Fn ("+", [s; Fn ("1", [])]); t]))
     | _ -> fm
-  
+
+
 // pg.341
 // ------------------------------------------------------------------------- //
 // Post-NNF transformation eliminating negated inequalities.                 //
@@ -409,21 +410,22 @@ let cooper vars fm =
 // Evaluation of constant expressions.                                       //
 // ------------------------------------------------------------------------- //
 
-let operations = ["=", (=);
-                    "<", (<); 
-                    ">", (>);
-                    "<=", (<=);
-                    ">=", (>=);
-                    "divides", (fun x y -> y % x = GenericZero); ]
+let operations = [
+    "=", (=);
+    "<", (<); 
+    ">", (>);
+    "<=", (<=);
+    ">=", (>=);
+    "divides", (fun x y -> y % x = GenericZero); ]
 
-let evalc = 
-    let v1 = (fun (R(p,[s;t]) as at) ->
+let evalc =
+    let v1 (R(p,[s;t]) as at) =
         try 
             if assoc p operations (dest_numeral s) (dest_numeral t)
-            then True 
+            then True
             else False
         with Failure _ ->
-            Atom at)
+            Atom at
     onatoms v1
          
 // pg.349

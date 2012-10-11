@@ -7,17 +7,14 @@
 #load "initialization.fsx"
 
 open Reasoning.Automated.Harrison.Handbook.lib
-//open Reasoning.Automated.Harrison.Handbook.intro
 open Reasoning.Automated.Harrison.Handbook.formulas
 open Reasoning.Automated.Harrison.Handbook.prop
-//open Reasoning.Automated.Harrison.Handbook.propexamples
-//open Reasoning.Automated.Harrison.Handbook.defcnf
 open Reasoning.Automated.Harrison.Handbook.dp
-//open Reasoning.Automated.Harrison.Handbook.stal
-//open Reasoning.Automated.Harrison.Handbook.bdd
 open Reasoning.Automated.Harrison.Handbook.folMod
 open Reasoning.Automated.Harrison.Handbook.skolem
 open Reasoning.Automated.Harrison.Handbook.herbrand
+
+fsi.AddPrinter sprint_fol_formula
 
 // pg. 161
 // ------------------------------------------------------------------------- //
@@ -27,7 +24,6 @@ open Reasoning.Automated.Harrison.Handbook.herbrand
 gilmore (parse @"exists x. forall y. P(x) ==> P(y)");;
 
 let sfm = skolemize(Not (parse @"exists x. forall y. P(x) ==> P(y)"));;
-print_fol_formula sfm;;
 
 // pg. 161
 // ------------------------------------------------------------------------- //

@@ -1,6 +1,6 @@
 ﻿// ========================================================================= //
 // Copyright (c) 2003-2007, John Harrison.                                   //
-// Copyright (c) 2012 Eric Taucher, Jack Pappas                              //
+// Copyright (c) 2012 Eric Taucher, Jack Pappas, Anh-Dung Phan               //
 // (See "LICENSE.txt" for details.)                                          //
 // ========================================================================= //
 
@@ -10,12 +10,9 @@ open Reasoning.Automated.Harrison.Handbook.lib
 open Reasoning.Automated.Harrison.Handbook.intro
 open Reasoning.Automated.Harrison.Handbook.formulas
 open Reasoning.Automated.Harrison.Handbook.prop
-//open Reasoning.Automated.Harrison.Handbook.propexamples
-//open Reasoning.Automated.Harrison.Handbook.defcnf
-//open Reasoning.Automated.Harrison.Handbook.dp
-//open Reasoning.Automated.Harrison.Handbook.stal
-//open Reasoning.Automated.Harrison.Handbook.bdd
 open Reasoning.Automated.Harrison.Handbook.folMod
+
+fsi.AddPrinter sprint_fol_formula
 
 // pg. 119
 // ------------------------------------------------------------------------- //
@@ -38,9 +35,9 @@ Atom(R("<",[Fn("+",[Var "x"; Var "y"]); Var "z"]));;
 // Example.                                                                  //
 // ------------------------------------------------------------------------- //
 
-print_fol_formula (parse @"forall x y. exists z. x < z /\ y < z");;
+(parse @"forall x y. exists z. x < z /\ y < z");;
 
-print_fol_formula (parse @"~(forall x. P(x)) <=> exists y. ~P(y)");;
+(parse @"~(forall x. P(x)) <=> exists y. ~P(y)");;
 
 // pg. 126
 
@@ -51,7 +48,6 @@ holds (mod_interp 2) undefined (parse @"forall x. (x = 0) \/ (x = 1)");;
 holds (mod_interp 3) undefined (parse @"forall x. (x = 0) \/ (x = 1)");;
 
 let fm = (parse @"forall x. ~(x = 0) ==> exists y. x * y = 1");;
-print_fol_formula fm;;
 
 List.filter (fun n -> holds (mod_interp n) undefined fm) (1--45);;
 
@@ -76,6 +72,6 @@ variant "x" ["x"; "x'"];;
 // Examples.                                                                 //
 // ------------------------------------------------------------------------- //
 
-print_fol_formula (subst ("y" |=> Var "x") (parse @"forall x. x = y"));;
+(subst ("y" |=> Var "x") (parse @"forall x. x = y"));;
 
-print_fol_formula (subst ("y" |=> Var "x") (parse @"forall x x'. x = y ==> x = x'"));;
+(subst ("y" |=> Var "x") (parse @"forall x x'. x = y ==> x = x'"));;

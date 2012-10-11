@@ -161,7 +161,9 @@ let allpairs f l1 l2 =
 // pg. 620
 // OCaml: val distinctpairs : 'a list -> ('a * 'a) list = <fun>
 // F#:    val distinctpairs : 'a list -> ('a * 'a) list
-// Produces all distinct pairs of elements from a list.
+/// Given a list, creates a new list containing all unique 2-combinations
+/// of the list elements. (I.e., (x, y) and (y, x) are the same and
+/// will only be included once.)
 let distinctpairs l =
     let s = Set.ofList l
     (Set.empty, s)

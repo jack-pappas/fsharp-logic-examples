@@ -1,13 +1,12 @@
 ﻿// ========================================================================= //
 // Copyright (c) 2003-2007, John Harrison.                                   //
-// Copyright (c) 2012 Eric Taucher, Jack Pappas                              //
+// Copyright (c) 2012 Eric Taucher, Jack Pappas, Anh-Dung Phan               //
 // (See "LICENSE.txt" for details.)                                          //
 // ========================================================================= //
 
 #load "initialization.fsx"
 
 open Reasoning.Automated.Harrison.Handbook.lib
-//open Reasoning.Automated.Harrison.Handbook.intro
 open Reasoning.Automated.Harrison.Handbook.formulas
 open Reasoning.Automated.Harrison.Handbook.prop
 open Reasoning.Automated.Harrison.Handbook.propexamples
@@ -17,7 +16,7 @@ open Reasoning.Automated.Harrison.Handbook.propexamples
 // Some currently tractable examples.                                        //
 // ------------------------------------------------------------------------- //
 
-print_prop_formula ( ramsey 3 3 4 );;
+ramsey 3 3 4;;
 
 tautology(ramsey 3 3 5);;
 
