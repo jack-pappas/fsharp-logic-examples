@@ -231,7 +231,6 @@ List.forall (grobner_decide << invariant_under_rotation) coordinations;;
 //  And show we can always invent such a transformation to zero a y:          // 
 //  ------------------------------------------------------------------------- // 
 
-// TODO: Fix these. Incorrect result, returns: System.Exception: pdivide_pos: zero head coefficient
 Initialization.runWith16MBStack (fun () -> real_qelim (parse @"forall x y. exists s c. s^2 + c^2 = 1 /\ s * x + c * y = 0"));;
 
 // 3 basis elements and 3 pairs

@@ -13,8 +13,6 @@ open Reasoning.Automated.Harrison.Handbook.fol
 open NUnit.Framework
 open FsUnit
 
-// TODO : Implement unit tests for formulas (particularly parsing and evaluation).
-
 let private parsed_formulas : formula<fol>[] = [|
     Exists ("a",
      Exists ("b",

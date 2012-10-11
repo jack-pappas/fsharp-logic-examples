@@ -87,10 +87,6 @@ let ``examples 3`` f =
     parse f
     |> grobner_decide
 
-
-// TODO : Implement the additional, long-running test cases.
-
-
 (* ------------------------------------------------------------------------- *)
 (* Inversion of homographic function (from Gosper's CF notes).               *)
 (* ------------------------------------------------------------------------- *)

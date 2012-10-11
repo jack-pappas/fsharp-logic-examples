@@ -11,6 +11,7 @@ open Reasoning.Automated.Harrison.Handbook.intro
 open Reasoning.Automated.Harrison.Handbook.formulas
 open Reasoning.Automated.Harrison.Handbook.prop
 open Reasoning.Automated.Harrison.Handbook.fol
+open Reasoning.Automated.Harrison.Handbook.skolem
 open Reasoning.Automated.Harrison.Handbook.completion
 open Reasoning.Automated.Harrison.Handbook.qelim
 open Reasoning.Automated.Harrison.Handbook.cooper
@@ -24,16 +25,13 @@ fsi.AddPrinter sprint_fol_formula
 // First examples.                                                           //
 // ------------------------------------------------------------------------- //
 
-// TODO: Fix these. Incorrect result, returns: System.Exception: pdivide_pos: zero head coefficient
 real_qelim (parse @"exists x. x^4 + x^2 + 1 = 0");;
 
 real_qelim (parse @"exists x. x^3 - x^2 + x - 1 = 0");;
 
 real_qelim (parse @"exists x y. x^3 - x^2 + x - 1 = 0 /\ y^3 - y^2 + y - 1 = 0 /\ ~(x = y)");;
 
-//#trace testform;;
 real_qelim (parse @"exists x. x^2 - 3 * x + 2 = 0 /\ 2 * x - 3 = 0");;
-//#untrace testform;;
 
 real_qelim (parse @"forall a f k. (forall e. k < e ==> f < a * e) ==> f <= a * k");;
 
@@ -91,13 +89,14 @@ and monicize vars pols cont sgns =
     let cont' mat = cont(List.map transform mat)
     matrix vars sols cont' sgns;;
 
-let basic_real_qelim vars (Exists(x,p)) =
-    let pols = atom_union (function (R(a,[t;Fn("0",[])])) -> [t] | _ -> []) p
-    let cont mat = if List.exists (fun m -> testform (List.zip pols m) p) mat
-                    then True else False
-    casesplit (x::vars) [] pols cont init_sgns;;
+let basic_real_qelim vars = function 
+    | (Exists(x,p)) ->
+        let pols = atom_union (function (R(a,[t;Fn("0",[])])) -> [t] | _ -> []) p
+        let cont mat = if List.exists (fun m -> testform (List.zip pols m) p) mat
+                        then True else False
+        casesplit (x::vars) [] pols cont init_sgns
+    | _ -> failwith "malformed input";;
 
-// TODO: Fix so they compile
-//let real_qelim = simplify << evalc << lift_qelim polyatom (simplify << evalc) basic_real_qelim;;
-//
-//let real_qelim' = simplify << evalc << lift_qelim polyatom (dnf << cnnf (fun x -> x) << evalc) basic_real_qelim
+let real_qelim = simplify << evalc << lift_qelim polyatom (simplify << evalc) basic_real_qelim;;
+
+let real_qelim' = simplify << evalc << lift_qelim polyatom (dnf << cnnf id << evalc) basic_real_qelim
