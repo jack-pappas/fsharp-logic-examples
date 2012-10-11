@@ -74,8 +74,8 @@ let rel_signs = [
     ">", [Positive]; ]
 
 let testform pmat fm =
-    eval fm (fun (R (a, [p; z])) ->
-        mem (assoc p pmat) (assoc a rel_signs))
+    eval fm <| fun (R (a, [p; z])) ->
+        mem (assoc p pmat) (assoc a rel_signs)
             
 // pg. 370
 // ------------------------------------------------------------------------- //

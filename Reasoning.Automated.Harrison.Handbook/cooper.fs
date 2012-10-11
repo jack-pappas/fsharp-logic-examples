@@ -309,7 +309,8 @@ let rec private divlcmImpl x fm cont =
     | Or (p, q) ->
         divlcmImpl x p <| fun divlcm_p ->
         divlcmImpl x q <| fun divlcm_q ->
-            cont (lcm_num divlcm_p divlcm_q)
+            lcm_num divlcm_p divlcm_q
+            |> cont
     | _ ->
         cont GenericOne
 
