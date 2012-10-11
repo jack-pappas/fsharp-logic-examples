@@ -1173,9 +1173,6 @@ let rec choose t =
 // F#:    val print_fpf : func<'a,'b>   -> unit
 let print_fpf (f : func<'a,'b>) = printf "<func>"
 
-// TODO: Convert to using fsi.AddPrinter()
-// #install_printer print_fpf
-
 // ------------------------------------------------------------------------- //
 // Related stuff for standard functions.                                     //
 // ------------------------------------------------------------------------- //
