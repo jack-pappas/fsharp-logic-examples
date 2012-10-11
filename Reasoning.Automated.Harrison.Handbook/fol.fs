@@ -167,9 +167,6 @@ let fprintert tw tm =
 let inline print_term t = fprintert stdout t
 let inline sprint_term t = writeToString (fun sw -> fprintert sw t)
 
-// Added by EGT, updated by Phan
-let fprint_term_list tw ts = List.iter (fprint_term tw 0) ts
-
 // pg. 630
 // ------------------------------------------------------------------------- //
 // Printing of formulas.                                                     //
@@ -190,12 +187,6 @@ let fprint_fol_formula tw =
   
 let inline print_fol_formula f = fprint_fol_formula stdout f
 let inline sprint_fol_formula f = writeToString (fun sw -> fprint_fol_formula sw f)
-
-// Added by EGT, updated by Phan
-let inline fprint_fol_formula_list tw fs = List.iter (fprint_fol_formula tw) fs
-
-let inline print_fol_formula_list fs = fprint_fol_formula_list stdout fs
-let inline sprint_fol_formula_list fs = writeToString (fun sw -> fprint_fol_formula_list sw fs)
 
 // pg. 125
 // ------------------------------------------------------------------------- //
