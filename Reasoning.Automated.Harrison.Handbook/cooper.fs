@@ -447,7 +447,8 @@ let rec private relativizeImpl r fm cont =
     match fm with
     | Not p ->
         relativizeImpl r p <| fun rel_p ->
-            cont (Not rel_p)
+            Not rel_p
+            |> cont
     | And (p, q) ->
         relativizeImpl r p <| fun rel_p ->
         relativizeImpl r q <| fun rel_q ->

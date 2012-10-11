@@ -220,15 +220,18 @@ let rec private dualImpl fm cont =
         cont fm
     | Not p ->
         dualImpl p <| fun p' ->
-            cont (Not p')
+            Not p'
+            |> cont
     | And (p, q) ->
         dualImpl p <| fun p' ->
         dualImpl q <| fun q' ->
-            cont (Or (p', q'))
+            Or (p', q')
+            |> cont
     | Or (p, q) ->
         dualImpl p <| fun p' ->
         dualImpl q <| fun q' ->
-            cont (And (p', q'))
+            And (p', q')
+            |> cont
     | _ ->
         failwith "Formula involves connectives ==> or <=>"
 
@@ -282,23 +285,33 @@ let rec private psimplifyImpl fm cont =
     (* Cases which need to be recursively simplified. *)
     | Not p ->
         psimplifyImpl p <| fun p' ->
-            cont (psimplify1 (Not p'))
+            Not p'
+            |> psimplify1
+            |> cont
     | And (p, q) ->
         psimplifyImpl p <| fun p' ->
         psimplifyImpl q <| fun q' ->
-            cont (psimplify1 (And (p', q')))
+            And (p', q')
+            |> psimplify1
+            |> cont
     | Or (p, q) ->
         psimplifyImpl p <| fun p' ->
         psimplifyImpl q <| fun q' ->
-            cont (psimplify1 (Or (p', q')))
+            Or (p', q')
+            |> psimplify1
+            |> cont
     | Imp (p, q) ->
         psimplifyImpl p <| fun p' ->
         psimplifyImpl q <| fun q' ->
-            cont (psimplify1 (Imp (p', q')))
+            Imp (p', q')
+            |> psimplify1
+            |> cont
     | Iff (p, q) ->
         psimplifyImpl p <| fun p' ->
         psimplifyImpl q <| fun q' ->
-            cont (psimplify1 (Iff (p', q')))
+            Iff (p', q')
+            |> psimplify1
+            |> cont
 
     (* This formula can't be simplified any further. *)
     | fm ->
@@ -339,43 +352,53 @@ let negate = function
 let rec private nnfOrigImpl fm cont =
     match fm with
     | And (p, q) ->
-        nnfOrigImpl p <| fun p' ->
-        nnfOrigImpl q <| fun q' ->
-            cont (And (p', q'))
+        nnfOrigImpl p <| fun nnf_p ->
+        nnfOrigImpl q <| fun nnf_q ->
+            And (nnf_p, nnf_q)
+            |> cont
     | Or (p, q) ->
-        nnfOrigImpl p <| fun p' ->
-        nnfOrigImpl q <| fun q' ->
-            cont (Or (p', q'))
+        nnfOrigImpl p <| fun nnf_p ->
+        nnfOrigImpl q <| fun nnf_q ->
+            Or (nnf_p, nnf_q)
+            |> cont
     | Imp (p, q) ->
-        nnfOrigImpl (Not p) <| fun p' ->
-        nnfOrigImpl q <| fun q' ->
-            cont (Or (p', q'))
+        nnfOrigImpl (Not p) <| fun nnf_not_p ->
+        nnfOrigImpl q <| fun nnf_q ->
+            Or (nnf_not_p, nnf_q)
+            |> cont
     | Iff (p, q) ->
-        nnfOrigImpl p <| fun p' ->
-        nnfOrigImpl q <| fun q' ->
-        nnfOrigImpl (Not p) <| fun not_p' ->
-        nnfOrigImpl (Not q) <| fun not_q' ->
-            cont (Or (And (p', q'), And (not_p', not_q')))
+        nnfOrigImpl p <| fun nnf_p ->
+        nnfOrigImpl q <| fun nnf_q ->
+        nnfOrigImpl (Not p) <| fun nnf_not_p ->
+        nnfOrigImpl (Not q) <| fun nnf_not_q ->
+            Or (And (nnf_p, nnf_q),
+                And (nnf_not_p, nnf_not_q))
+            |> cont
     | Not (Not p) ->
         nnfOrigImpl p cont
     | Not (And (p, q)) ->
-        nnfOrigImpl (Not p) <| fun not_p' ->
-        nnfOrigImpl (Not q) <| fun not_q' ->
-            cont (Or (not_p', not_q'))
+        nnfOrigImpl (Not p) <| fun nnf_not_p ->
+        nnfOrigImpl (Not q) <| fun nnf_not_q ->
+            Or (nnf_not_p, nnf_not_q)
+            |> cont
     | Not (Or (p, q)) ->
-        nnfOrigImpl (Not p) <| fun not_p' ->
-        nnfOrigImpl (Not q) <| fun not_q' ->
-            cont (And (not_p', not_q'))
+        nnfOrigImpl (Not p) <| fun nnf_not_p ->
+        nnfOrigImpl (Not q) <| fun nnf_not_q ->
+            And (nnf_not_p, nnf_not_q)
+            |> cont
     | Not (Imp (p, q)) ->
-        nnfOrigImpl p <| fun p' ->
-        nnfOrigImpl (Not q) <| fun not_q' ->
-            cont (And (p', not_q'))
+        nnfOrigImpl p <| fun nnf_p ->
+        nnfOrigImpl (Not q) <| fun nnf_not_q ->
+            And (nnf_p, nnf_not_q)
+            |> cont
     | Not (Iff (p, q)) ->
-        nnfOrigImpl p <| fun p' ->
-        nnfOrigImpl (Not q) <| fun not_q' ->
-        nnfOrigImpl (Not p) <| fun not_p' ->
-        nnfOrigImpl q <| fun q' ->
-            cont (Or (And (p', not_q'), And (not_p', q')))
+        nnfOrigImpl p <| fun nnf_p ->
+        nnfOrigImpl (Not q) <| fun nnf_not_q ->
+        nnfOrigImpl (Not p) <| fun nnf_not_p ->
+        nnfOrigImpl q <| fun nnf_q ->
+            Or (And (nnf_p, nnf_not_q),
+                And (nnf_not_p, nnf_q))
+            |> cont
     | fm ->
         cont fm
 
@@ -394,7 +417,8 @@ let nnfOrig fm =
 // OCaml: val nnf : 'a formula -> 'a formula = <fun>
 // F#:    val nnf : 'a formula -> 'a formula
 let inline nnf fm =
-    nnfOrig <| psimplify fm
+    psimplify fm
+    |> nnfOrig
 
 // pg. 53
 // ------------------------------------------------------------------------- //
@@ -407,37 +431,45 @@ let rec private nenfOrigImpl fm cont =
     | Not (Not p) ->
         nenfOrigImpl p cont
     | Not (And (p, q)) ->
-        nenfOrigImpl (Not p) <| fun not_p' ->
-        nenfOrigImpl (Not q) <| fun not_q' ->
-            cont (Or (not_p', not_q'))
+        nenfOrigImpl (Not p) <| fun nenf_not_p ->
+        nenfOrigImpl (Not q) <| fun nenf_not_q ->
+            Or (nenf_not_p, nenf_not_q)
+            |> cont
     | Not (Or (p, q)) ->
-        nenfOrigImpl (Not p) <| fun not_p' ->
-        nenfOrigImpl (Not q) <| fun not_q' ->
-            cont (And (not_p', not_q'))
+        nenfOrigImpl (Not p) <| fun nenf_not_p ->
+        nenfOrigImpl (Not q) <| fun nenf_not_q ->
+            And (nenf_not_p, nenf_not_q)
+            |> cont
     | Not (Imp (p, q)) ->
-        nenfOrigImpl p <| fun p' ->
-        nenfOrigImpl (Not q) <| fun not_q' ->
-            cont (And (p', not_q'))
+        nenfOrigImpl p <| fun nenf_p ->
+        nenfOrigImpl (Not q) <| fun nenf_not_q ->
+            And (nenf_p, nenf_not_q)
+            |> cont
     | Not (Iff (p, q)) ->
-        nenfOrigImpl p <| fun p' ->
-        nenfOrigImpl (Not q) <| fun not_q' ->
-            cont (Iff (p', not_q'))
+        nenfOrigImpl p <| fun nenf_p ->
+        nenfOrigImpl (Not q) <| fun nenf_not_q ->
+            Iff (nenf_p, nenf_not_q)
+            |> cont
     | And (p, q) ->
-        nenfOrigImpl p <| fun p' ->
-        nenfOrigImpl q <| fun q' ->
-            cont (And (p', q'))
+        nenfOrigImpl p <| fun nenf_p ->
+        nenfOrigImpl q <| fun nenf_q ->
+            And (nenf_p, nenf_q)
+            |> cont
     | Or (p, q) ->
-        nenfOrigImpl p <| fun p' ->
-        nenfOrigImpl q <| fun q' ->
-            cont (Or (p', q'))
+        nenfOrigImpl p <| fun nenf_p ->
+        nenfOrigImpl q <| fun nenf_q ->
+            Or (nenf_p, nenf_q)
+            |> cont
     | Imp (p, q) ->
-        nenfOrigImpl q <| fun q' ->
-        nenfOrigImpl (Not p) <| fun not_p' ->
-            cont (Or (not_p', q'))
+        nenfOrigImpl q <| fun nenf_q ->
+        nenfOrigImpl (Not p) <| fun nenf_not_p ->
+            Or (nenf_not_p, nenf_q)
+            |> cont
     | Iff (p, q) ->
-        nenfOrigImpl p <| fun p' ->
-        nenfOrigImpl q <| fun q' ->
-            cont (Iff (p', q'))
+        nenfOrigImpl p <| fun nenf_p ->
+        nenfOrigImpl q <| fun nenf_q ->
+            Iff (nenf_p, nenf_q)
+            |> cont
     | fm ->
         cont fm
 
@@ -494,7 +526,6 @@ let mk_lits pvs v =
             eval_fm p
             |> mk_and state)
         
-
 //
 let rec private allsatvaluationsImpl subfn v pvs cont =
     match pvs with
@@ -535,13 +566,15 @@ let dnfOrig fm =
 let rec private distribOrigImpl fm cont =
     match fm with
     | And (p, Or (q, r)) ->
-        distribOrigImpl (And (p, q)) <| fun p' ->
-        distribOrigImpl (And (p, r)) <| fun q' ->
-            cont (Or (p', q'))
+        distribOrigImpl (And (p, q)) <| fun distrib_p ->
+        distribOrigImpl (And (p, r)) <| fun distrib_q ->
+            Or (distrib_p, distrib_q)
+            |> cont
     | And (Or (p, q), r) ->
-        distribOrigImpl (And (p, r)) <| fun p' ->
-        distribOrigImpl (And (q, r)) <| fun q' ->
-            cont (Or (p', q'))
+        distribOrigImpl (And (p, r)) <| fun distrib_p ->
+        distribOrigImpl (And (q, r)) <| fun distrib_q ->
+            Or (distrib_p, distrib_q)
+            |> cont
     | fm ->
         cont fm
 
@@ -555,13 +588,16 @@ let distribOrig fm =
 let rec private rawdnfImpl fm cont =
     match fm with
     | And (p, q) ->
-        rawdnfImpl p <| fun p' ->
-        rawdnfImpl q <| fun q' ->
-            cont (distribOrig (And (p, q)))
+        rawdnfImpl p <| fun rawdnf_p ->
+        rawdnfImpl q <| fun rawdnf_q ->
+            And (rawdnf_p, rawdnf_q)
+            |> distribOrig
+            |> cont
     | Or (p, q) ->
-        rawdnfImpl p <| fun p' ->
-        rawdnfImpl q <| fun q' ->
-            cont (Or (p', q'))
+        rawdnfImpl p <| fun rawdnf_p ->
+        rawdnfImpl q <| fun rawdnf_q ->
+            Or (rawdnf_p, rawdnf_q)
+            |> cont
     | fm ->
         cont fm
 
@@ -585,13 +621,15 @@ let distrib s1 s2 =
 let rec private purednfImpl fm cont =
     match fm with
     | And (p, q) ->
-        purednfImpl p <| fun p' ->
-        purednfImpl q <| fun q' ->
-            cont (distrib p' q')
+        purednfImpl p <| fun purednf_p ->
+        purednfImpl q <| fun purednf_q ->
+            distrib purednf_p purednf_q
+            |> cont
     | Or (p, q) ->
-        purednfImpl p <| fun p' ->
-        purednfImpl q <| fun q' ->
-            cont (union p' q')
+        purednfImpl p <| fun purednf_p ->
+        purednfImpl q <| fun purednf_q ->
+            union purednf_p purednf_q
+            |> cont
     | _ ->
         cont [[fm]]
 

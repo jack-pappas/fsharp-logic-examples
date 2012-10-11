@@ -390,29 +390,36 @@ let rec private onatomsImpl f fm cont =
         cont (f a)
     | Not p ->
         onatomsImpl f p <| fun p' ->
-            cont (Not p')
+            Not p'
+            |> cont
     | And (p, q) ->
         onatomsImpl f p <| fun p' ->
         onatomsImpl f q <| fun q' ->
-            cont (And (p', q'))
+            And (p', q')
+            |> cont
     | Or (p, q) ->
         onatomsImpl f p <| fun p' ->
         onatomsImpl f q <| fun q' ->
-            cont (Or (p', q'))
+            Or (p', q')
+            |> cont
     | Imp (p, q) ->
         onatomsImpl f p <| fun p' ->
         onatomsImpl f q <| fun q' ->
-            cont (Imp (p', q'))
+            Imp (p', q')
+            |> cont
     | Iff (p, q) ->
         onatomsImpl f p <| fun p' ->
         onatomsImpl f q <| fun q' ->
-            cont (Iff (p', q'))
+            Iff (p', q')
+            |> cont
     | Forall (x, p) ->
         onatomsImpl f p <| fun p' ->
-            cont (Forall (x, p'))
+            Forall (x, p')
+            |> cont
     | Exists (x, p) ->
         onatomsImpl f p <| fun p' ->
-            cont (Exists (x, p'))
+            Exists (x, p')
+            |> cont
     | _ ->
         cont fm
 

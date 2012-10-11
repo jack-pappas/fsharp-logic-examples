@@ -58,26 +58,32 @@ let lift_qelim afn nfn qfn =
             cont (afn vars fm)
         | Not p ->
             qelift vars p <| fun qelift_p ->
-                cont (Not qelift_p)
+                Not qelift_p
+                |> cont
         | And (p, q) ->
             qelift vars p <| fun qelift_p ->
             qelift vars q <| fun qelift_q ->
-                cont (And (qelift_p, qelift_q))
+                And (qelift_p, qelift_q)
+                |> cont
         | Or (p, q) ->
             qelift vars p <| fun qelift_p ->
             qelift vars q <| fun qelift_q ->
-                cont (Or (qelift_p, qelift_q))
+                Or (qelift_p, qelift_q)
+                |> cont
         | Imp (p, q) ->
             qelift vars p <| fun qelift_p ->
             qelift vars q <| fun qelift_q ->
-                cont (Imp (qelift_p, qelift_q))
+                Imp (qelift_p, qelift_q)
+                |> cont
         | Iff (p, q) ->
             qelift vars p <| fun qelift_p ->
             qelift vars q <| fun qelift_q ->
-                cont (Iff (qelift_p, qelift_q))
+                Iff (qelift_p, qelift_q)
+                |> cont
         | Forall (x, p) ->
             qelift vars (Exists (x, Not p)) <| fun result ->
-                cont (Not result)
+                Not result
+                |> cont
         | Exists (x, p) ->
             qelift (x :: vars) p <| fun qelift_p ->
                 qelift_p
@@ -156,8 +162,7 @@ let cnnf lfn =
             cont (lfn fm)
 
     fun fm ->
-        let fm = simplify004 fm
-        cnnf fm id
+        cnnf (simplify004 fm) id
         |> simplify004
   
 // pg. 334
