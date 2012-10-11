@@ -76,6 +76,7 @@ let numeral2 fn m n =
 // even if it's zero. Thus, it's a constant iff not an addition term.        //
 // ------------------------------------------------------------------------- //
 
+// OPTIMIZE : Optimize functions with CPS.
 let rec linear_cmul (n : num) tm =
     if n = GenericZero then zero
     else
@@ -125,21 +126,34 @@ let linear_mul tm1 tm2 =
 // Linearize a term.                                                         //
 // ------------------------------------------------------------------------- //
 
-let rec lint vars tm =
+let rec private lintImpl vars tm cont =
     match tm with
     | Var _ ->
         Fn ("+", [Fn ("*", [Fn ("1", []); tm]); zero])
+        |> cont
     | Fn ("~", [t]) ->
-        linear_neg (lint vars t)
+        lintImpl vars t <| fun lint_t ->
+            cont (linear_neg lint_t)
     | Fn ("+", [s; t]) ->
-        linear_add vars (lint vars s) (lint vars t)
+        lintImpl vars s <| fun lint_s ->
+        lintImpl vars t <| fun lint_t ->
+            cont (linear_add vars lint_s lint_t)
     | Fn ("-", [s; t]) ->
-        linear_sub vars (lint vars s) (lint vars t)
+        lintImpl vars s <| fun lint_s ->
+        lintImpl vars t <| fun lint_t ->
+            cont (linear_sub vars lint_s lint_t)
     | Fn ("*", [s; t]) ->
-        linear_mul (lint vars s) (lint vars t)
-    | _ ->
-        if is_numeral tm then tm 
-        else failwith "lint: unknown term"
+        lintImpl vars s <| fun lint_s ->
+        lintImpl vars t <| fun lint_t ->
+            cont (linear_mul lint_s lint_t)
+    | tm ->
+        if is_numeral tm then
+            cont tm 
+        else
+            failwith "lintImpl: unknown term"
+
+let lint vars tm =
+    lintImpl vars tm id
   
 // pg.340
 // ------------------------------------------------------------------------- //
@@ -170,7 +184,7 @@ let linform vars fm =
 // Post-NNF transformation eliminating negated inequalities.                 //
 // ------------------------------------------------------------------------- //
     
-let rec posineq = function
+let posineq = function
     | Not (Atom (R ("<", [Fn ("0", []); t]))) ->
         Atom (R ("<", [zero; linear_sub [] (Fn ("1", [])) t]))
     | fm ->
@@ -181,25 +195,30 @@ let rec posineq = function
 // Find the LCM of the coefficients of x.                                    //
 // ------------------------------------------------------------------------- //
 
-let rec formlcm x fm : num =
+let rec private formlcmImpl x fm cont =
     match fm with
     | Atom (R (p, [_; Fn ("+", [Fn ("*", [c; y]); z])]))
         when y = x ->
-        abs (dest_numeral c)
+        cont (abs (dest_numeral c))
     | Not p ->
-        formlcm x p
+        formlcmImpl x p cont
     | And (p, q)
     | Or (p, q) ->
-        lcm_num (formlcm x p) (formlcm x q)
+        formlcmImpl x p <| fun lcm_p ->
+        formlcmImpl x q <| fun lcm_q ->
+            cont (lcm_num lcm_p lcm_q)
     | _ ->
-        GenericOne
+        cont GenericOne
+
+let formlcm x fm : num =
+    formlcmImpl x fm id
   
 // pg.342
 // ------------------------------------------------------------------------- //
 // Adjust all coefficients of x in formula; fold in reduction to +/- 1.      //
 // ------------------------------------------------------------------------- //
 
-let rec adjustcoeff x l fm =
+let rec private adjustcoeffImpl x l fm cont =
     match fm with
     | Atom (R (p, [d; Fn ("+", [Fn ("*", [c; y]); z])]))
         when y = x ->
@@ -207,13 +226,25 @@ let rec adjustcoeff x l fm =
         let n = if p = "<" then abs m else m
         let xtm = Fn ("*", [mk_numeral (m / n); x])
         Atom (R (p, [linear_cmul (abs m) d; Fn ("+", [xtm; linear_cmul n z])]))
+        |> cont
     | Not p ->
-        Not (adjustcoeff x l p)
+        adjustcoeffImpl x l p <| fun adjusted_p ->
+            cont (Not adjusted_p)
     | And (p, q) ->
-        And (adjustcoeff x l p, adjustcoeff x l q)
+        adjustcoeffImpl x l p <| fun adjusted_p ->
+        adjustcoeffImpl x l q <| fun adjusted_q ->
+            And (adjusted_p, adjusted_q)
+            |> cont
     | Or (p, q) ->
-        Or (adjustcoeff x l p, adjustcoeff x l q)
-    | _ -> fm
+        adjustcoeffImpl x l p <| fun adjusted_p ->
+        adjustcoeffImpl x l q <| fun adjusted_q ->
+            Or (adjusted_p, adjusted_q)
+            |> cont
+    | _ ->
+        cont fm
+
+let adjustcoeff x l fm =
+    adjustcoeffImpl x l fm id
   
 // pg.343
 // ------------------------------------------------------------------------- //
@@ -223,7 +254,7 @@ let rec adjustcoeff x l fm =
 let unitycoeff x fm =
     let l = formlcm x fm
     let fm' = adjustcoeff x l fm
-    if l = GenericOne then fm' 
+    if l = GenericOne then fm'
     else
         let xp = Fn ("+", [Fn ("*", [Fn ("1", []); x]); zero])
         And (Atom (R ("divides", [mk_numeral l; xp])), adjustcoeff x l fm)
@@ -233,82 +264,118 @@ let unitycoeff x fm =
 // The "minus infinity" version.                                             //
 // ------------------------------------------------------------------------- //
 
-let rec minusinf x fm =
+let rec private minusinfImpl x fm cont =
     match fm with
     | Atom (R ("=", [Fn ("0", []); Fn ("+", [Fn ("*", [Fn ("1", []); y]); a])]))
         when y = x ->
-        False
+        cont False
     | Atom (R ("<", [Fn ("0", []); Fn ("+", [Fn ("*", [pm1; y]); a])]))
         when y = x ->
         if pm1 = Fn ("1", []) then False else True
+        |> cont
     | Not p ->
-        Not (minusinf x p)
+        minusinfImpl x p <| fun minusinf_p ->
+            cont (Not minusinf_p)
     | And (p, q) ->
-        And (minusinf x p, minusinf x q)
+        minusinfImpl x p <| fun minusinf_p ->
+        minusinfImpl x q <| fun minusinf_q ->
+            And (minusinf_p, minusinf_q)
+            |> cont
     | Or (p, q) ->
-        Or (minusinf x p, minusinf x q)
-    | _ -> fm
+        minusinfImpl x p <| fun minusinf_p ->
+        minusinfImpl x q <| fun minusinf_q ->
+            Or (minusinf_p, minusinf_q)
+            |> cont
+    | _ ->
+        cont fm
+
+let minusinf x fm =
+    minusinfImpl x fm id
   
 // pg.344
 // ------------------------------------------------------------------------- //
 // The LCM of all the divisors that involve x.                               //
 // ------------------------------------------------------------------------- //
 
-let rec divlcm x fm : num =
+let rec private divlcmImpl x fm cont =
     match fm with
     | Atom (R ("divides", [d; Fn ("+", [Fn ("*", [c; y]); a])]))
         when y = x ->
-        dest_numeral d
+        cont (dest_numeral d)
     | Not p ->
-        divlcm x p
+        divlcmImpl x p cont
     | And (p, q)
     | Or (p, q) ->
-        lcm_num (divlcm x p) (divlcm x q)
+        divlcmImpl x p <| fun divlcm_p ->
+        divlcmImpl x q <| fun divlcm_q ->
+            cont (lcm_num divlcm_p divlcm_q)
     | _ ->
-        GenericOne
+        cont GenericOne
+
+let divlcm x fm =
+    divlcmImpl x fm id
   
 // pg.346
 // ------------------------------------------------------------------------- //
 // Construct the B-set.                                                      //
 // ------------------------------------------------------------------------- //
 
-let rec bset x fm =
+let rec private bsetImpl x fm cont =
+    // TODO : Merge the first and third cases?
     match fm with
     | Not (Atom (R ("=", [Fn ("0", []); Fn ("+", [Fn ("*", [Fn ("1", []); y]); a])])))
         when y = x ->
-        [linear_neg a]
+        cont [linear_neg a]
     | Atom (R ("=", [Fn ("0", []); Fn ("+", [Fn ("*", [Fn ("1", []); y]); a])]))
         when y = x ->
-        [linear_neg (linear_add [] a (Fn ("1", [])))]
+        cont [linear_neg (linear_add [] a (Fn ("1", [])))]
     | Atom (R ("<", [Fn ("0", []); Fn ("+", [Fn ("*", [Fn ("1", []); y]); a])]))
         when y = x ->
-        [linear_neg a]
+        cont [linear_neg a]
     | Not p ->
-        bset x p
-    | And (p, q) ->
-        union (bset x p) (bset x q)
+        bsetImpl x p cont
+    | And (p, q)
     | Or (p, q) ->
-        union (bset x p) (bset x q)
-    | _ -> []
+        bsetImpl x p <| fun bset_p ->
+        bsetImpl x q <| fun bset_q ->
+            union bset_p bset_q
+            |> cont
+    | _ ->
+        cont []
+
+let bset x fm =
+    bsetImpl x fm id
   
 // pg.347
 // ------------------------------------------------------------------------- //
 // Replace top variable with another linear form, retaining canonicality.    //
 // ------------------------------------------------------------------------- //
 
-let rec linrep vars x t fm =
+let rec private linrepImpl vars x t fm cont =
     match fm with
     | Atom (R (p, [d; Fn ("+", [Fn ("*", [c; y]); a])]))
         when y = x ->
         let ct = linear_cmul (dest_numeral c) t
         Atom (R (p, [d; linear_add vars ct a]))
+        |> cont
     | Not p ->
-        Not (linrep vars x t p)
+        linrepImpl vars x t p <| fun linrep_p ->
+            cont (Not linrep_p)
     | And (p, q) ->
-        And (linrep vars x t p, linrep vars x t q)
+        linrepImpl vars x t p <| fun linrep_p ->
+        linrepImpl vars x t q <| fun linrep_q ->
+            And (linrep_p, linrep_q)
+            |> cont
     | Or (p, q) ->
-        Or (linrep vars x t p, linrep vars x t q)
-    | _ -> fm
+        linrepImpl vars x t p <| fun linrep_p ->
+        linrepImpl vars x t q <| fun linrep_q ->
+            Or (linrep_p, linrep_q)
+            |> cont
+    | fm ->
+        cont fm
+
+let linrep vars x t fm =
+    linrepImpl vars x t fm id
   
 // pg.348
 // ------------------------------------------------------------------------- //
@@ -374,23 +441,44 @@ let integer_qelim =
 // Natural number version.                                                   //
 // ------------------------------------------------------------------------- //
 
-let rec relativize r fm =
+let rec private relativizeImpl r fm cont =
     match fm with
     | Not p ->
-        Not (relativize r p)
+        relativizeImpl r p <| fun rel_p ->
+            cont (Not rel_p)
     | And (p, q) ->
-        And (relativize r p, relativize r q)
+        relativizeImpl r p <| fun rel_p ->
+        relativizeImpl r q <| fun rel_q ->
+            And (rel_p, rel_q)
+            |> cont
     | Or (p, q) ->
-        Or(relativize r p, relativize r q)
+        relativizeImpl r p <| fun rel_p ->
+        relativizeImpl r q <| fun rel_q ->
+            Or (rel_p, rel_q)
+            |> cont
     | Imp (p, q) ->
-        Imp (relativize r p, relativize r q)
+        relativizeImpl r p <| fun rel_p ->
+        relativizeImpl r q <| fun rel_q ->
+            Imp (rel_p, rel_q)
+            |> cont
     | Iff (p, q) ->
-        Iff (relativize r p, relativize r q)
+        relativizeImpl r p <| fun rel_p ->
+        relativizeImpl r q <| fun rel_q ->
+            Iff (rel_p, rel_q)
+            |> cont
     | Forall (x, p) ->
-        Forall (x, Imp (r x, relativize r p))
+        relativizeImpl r p <| fun rel_p ->
+            Forall (x, Imp (r x, rel_p))
+            |> cont
     | Exists (x, p) ->
-        Exists (x, And (r x, relativize r p))
-    | _ -> fm
+        relativizeImpl r p <| fun rel_p ->
+            Exists (x, And (r x, rel_p))
+            |> cont
+    | fm ->
+        cont fm
+
+let relativize r fm =
+    relativizeImpl r fm id
 
 let natural_qelim =
     integer_qelim
