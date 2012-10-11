@@ -70,7 +70,7 @@ time meson002 wishnu;;
 // ------------------------------------------------------------------------- //
 
 // long running
-//(meson002 >>|> equalitize) 
+//(meson002 << equalitize) 
 //    (parse @"
 //    (forall x y z. x * (y * z) = (x * y) * z) /\ 
 //    (forall x. 1 * x = x) /\ 
@@ -82,7 +82,7 @@ time meson002 wishnu;;
 // ------------------------------------------------------------------------- //
 
 // long running
-//(meson002 >>|> equalitize)
+//(meson002 << equalitize)
 //    (parse @"
 //    (forall x y z. x * (y * z) = (x * y) * z) /\ 
 //    (forall x. 1 * x = x) /\ 

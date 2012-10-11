@@ -249,16 +249,11 @@ let ``meson002 small``() =
     ~p /\ (p \/ q) /\ (r \/ s) /\ (~q \/ t \/ u) /\ 
         (~r \/ ~t) /\ (~r \/ ~u) /\ (~q \/ v \/ w) /\ 
         (~s \/ ~v) /\ (~s \/ ~w) ==> false", Result = [||])>]
-let ``meson002 all`` f =
-    parse f
-    |> meson002
-    |> List.toArray
-
 [<TestCase(@"
-    ~(exists y. forall x. P(x,y) <=> ~(exists z. P(x,z) /\ P(z,x)))", Result = [| 12 |]); Category("LongRunning")>]
+    ~(exists y. forall x. P(x,y) <=> ~(exists z. P(x,z) /\ P(z,x)))", Result = [| 12 |], Category = "LongRunning")>]
 [<TestCase(@"
     (forall x y. Q(x,y) <=> forall z. P(z,x) <=> P(z,y)) 
-    ==> forall x y. Q(x,y) <=> Q(y,x)", Result = [| 11; 11 |])>]
+    ==> forall x y. Q(x,y) <=> Q(y,x)", Result = [| 11; 11 |], Category = "LongRunning")>]
 [<TestCase(@"
     (forall x. 
         P(x) /\ (forall y. G(y) /\ H(x,y) ==> J(x,y)) ==> 
@@ -266,15 +261,15 @@ let ``meson002 all`` f =
     ~(exists y. L(y) /\ R(y)) /\ 
         (exists x. P(x) /\ (forall y. H(x,y) ==> 
             L(y)) /\ (forall y. G(y) /\ H(x,y) ==> J(x,y))) ==> 
-    (exists x. P(x) /\ ~(exists y. G(y) /\ H(x,y)))", Result = [| 24 |])>]
+    (exists x. P(x) /\ ~(exists y. G(y) /\ H(x,y)))", Result = [| 24 |], Category = "LongRunning")>]
 [<TestCase(@"
     (forall x. P(x) /\ (forall y. P(y) /\ H(y,x) ==> G(y)) ==> G(x)) /\ 
     ((exists x. P(x) /\ ~G(x)) ==> 
         (exists x. P(x) /\ ~G(x) /\ 
             (forall y. P(y) /\ ~G(y) ==> J(x,y)))) /\ 
     (forall x y. P(x) /\ P(y) /\ H(x,y) ==> ~J(y,x)) ==> 
-    (forall x. P(x) ==> G(x))", Result = [| 12; 2 |])>]
-let ``meson002 slow`` f =
+    (forall x. P(x) ==> G(x))", Result = [| 12; 2 |], Category = "LongRunning")>]
+let ``meson002 all`` f =
     parse f
     |> meson002
     |> List.toArray

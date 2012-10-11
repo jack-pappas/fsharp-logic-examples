@@ -75,7 +75,7 @@ print_fol_formula_list (complete_and_simplify ["1"; "*"; "i"] [parse @"i(a) * (a
 // Auxiliary result used to justify extension of language for cancellation.  //
 // ------------------------------------------------------------------------- //
 
-(meson002 >>|> equalitize) (parse @"
+(meson002 << equalitize) (parse @"
     (forall x y z. x * y = x * z ==> y = z) <=> 
     (forall x z. exists w. forall y. z = x * y ==> w = y)");;
 
@@ -116,7 +116,7 @@ print_fol_formula_list (complete_and_simplify ["1"; "*"; "i"] eqs002);;
 // Auxiliary result used to justify extension for example 9.                 //
 // ------------------------------------------------------------------------- //
 
-(meson002 >>|> equalitize) (parse @"
+(meson002 << equalitize) (parse @"
     (forall x y z. x * y = x * z ==> y = z) <=> (forall x z. exists w. forall y. z = x * y ==> w = y)");;
 
 print_fol_formula (skolemize (parse @"

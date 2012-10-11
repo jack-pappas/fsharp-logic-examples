@@ -199,7 +199,7 @@ List.map anglicize_syllogism all_valid_syllogisms
 let all_valid_syllogisms' = List.filter aedecide all_possible_syllogisms'
 print_fol_formula_list all_valid_syllogisms'
 List.length all_valid_syllogisms'
-List.map (anglicize_syllogism >>|> consequent) all_valid_syllogisms'
+List.map (anglicize_syllogism << consequent) all_valid_syllogisms'
 
 // pg. 323
 // ------------------------------------------------------------------------- //
