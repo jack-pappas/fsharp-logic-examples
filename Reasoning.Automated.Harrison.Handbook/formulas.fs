@@ -126,11 +126,13 @@ and parse_quant (ifn, afn) vs qcon x inp =
 // OCaml: val parse_formula : (string list -> string list -> 'a formula * string list) * (string list -> string list -> 'a formula * string list) -> string list -> string list -> 'a formula * string list = <fun>
 // F#:    val parse_formula : (string list -> string list -> 'a formula * string list) * (string list -> string list -> 'a formula * string list) -> string list -> string list -> 'a formula * string list
 and parse_formula (ifn, afn) vs inp =
-    parse_right_infix "<=>" Iff
-        (parse_right_infix "==>" Imp
-            (parse_right_infix "\\/" Or
-                (parse_right_infix "/\\" And
-                    (parse_atomic_formula (ifn, afn) vs)))) inp
+    parse_atomic_formula (ifn, afn) vs
+    |> parse_right_infix "/\\" And
+    |> parse_right_infix "\\/" Or
+    |> parse_right_infix "==>" Imp
+    |> parse_right_infix "<=>" Iff
+    <| inp
+
 
 // pg. 626
 // ------------------------------------------------------------------------- //
