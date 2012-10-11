@@ -45,7 +45,7 @@ open complex
 // Formal derivative of polynomial.                                          //
 // ------------------------------------------------------------------------- //
 
-// TODO : Optimize using continuation-passing style.
+// OPTIMIZE : Optimize using continuation-passing style.
 let rec poly_diffn x n p =
     match p with
     | Fn ("+", [c; Fn ("*", [y; q])])
@@ -93,6 +93,7 @@ let inferpsign (pd, qd) =
 // Condense subdivision by removing points with no relevant zeros.           //
 // ------------------------------------------------------------------------- //
 
+// OPTIMIZE : Optimize with CPS.
 let rec condense ps =
     match ps with
     | int :: pt :: other ->
@@ -107,6 +108,7 @@ let rec condense ps =
 // Infer sign on intervals (use with infinities at end) and split if needed  //
 // ------------------------------------------------------------------------- //
 
+// OPTIMIZE : Optimize with CPS.
 let rec inferisign ps =
     match ps with
     | ((l::ls) as x) :: (_ :: ints) :: ((r :: rs) :: xs as pts) ->
@@ -242,6 +244,7 @@ let real_qelim =
     << lift_qelim polyatom (simplify004 << evalc) basic_real_qelim
            
 // pg. 377
+// OPTIMIZE : Optimize with CPS.
 let rec grpterm tm =
     match tm with
     | Var x -> tm

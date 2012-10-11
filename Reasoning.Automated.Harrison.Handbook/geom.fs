@@ -45,8 +45,8 @@ open grobner
 //  List of geometric properties with their coordinate translations.          // 
 //  ------------------------------------------------------------------------- // 
 
-let coordinations =
-    ["collinear", // * Points 1, 2 and 3 lie on a common line *// 
+let coordinations = [
+    "collinear", // * Points 1, 2 and 3 lie on a common line *// 
     (parse "(1_x - 2_x) * (2_y - 3_y) = (1_y - 2_y) * (2_x - 3_x)");
     "parallel", // * Lines (1,2) and (3,4) are parallel *// 
     (parse "(1_x - 2_x) * (3_y - 4_y) = (1_y - 2_y) * (3_x - 4_x)");
@@ -68,14 +68,16 @@ let coordinations =
 
 // OCaml: val coordinate : fol formula -> fol formula = <fun>
 // F#:    val coordinate : (formula<fol> -> formula<fol>)
-let coordinate = onatoms <| fun (R (a, args)) ->
-    let xtms,ytms =
-        // OPTIMIZE : Use List.fold so we don't have to unzip
-        List.unzip (List.map (fun (Var v) -> Var (v + "_x"), Var (v + "_y")) args)
-    // OPTIMIZE : Change these calls to List.map to use List.init instead.
-    let rec xs = List.map (fun n -> string n + "_x") [1 .. List.length args]
-    and ys = List.map (fun n -> string n + "_y") [1 .. List.length args]
-    subst (fpf (xs @ ys) (xtms @ ytms)) (assoc a coordinations)
+let coordinate =
+    onatoms <| fun (R (a, args)) ->
+        let xtms,ytms =
+            // OPTIMIZE : Use List.fold so we don't have to unzip
+            List.unzip (List.map (fun (Var v) -> Var (v + "_x"), Var (v + "_y")) args)
+        let rec xs =
+            List.init (List.length args) <| fun i -> string (i + 1) + "_x"
+        and ys =
+            List.init (List.length args) <| fun i -> string (i + 1) + "_y"
+        subst (fpf (xs @ ys) (xtms @ ytms)) (assoc a coordinations)
     
 // pg. 415
 //  ------------------------------------------------------------------------- // 
@@ -133,6 +135,7 @@ let invariant_under_shearing = invariant((parset "x + b * y"),(parset "y"))
 
 // OCaml : val pprove : string list -> term list -> term -> fol formula list  -> fol formula list = <fun>
 // F#:     val pprove : string list -> term list -> term -> formula<fol> list -> formula<fol> list
+// OPTIMIZE : Optimize with CPS.
 let rec pprove vars triang p degens =
     if p = zero then degens
     else
@@ -158,6 +161,7 @@ let rec pprove vars triang p degens =
 
 // OCaml: val triangulate : string list -> term list -> term list -> term list =  <fun>
 // F#:    val triangulate : string list -> term list -> term list -> term list
+// OPTIMIZE : Optimize with CPS.
 let rec triangulate vars consts pols =
     if vars = [] then pols else
     let cns, tpols = List.partition (is_constant vars) pols

@@ -44,6 +44,7 @@ open cooper
 // Basic arithmetic operations on canonical polynomials.                     //
 // ------------------------------------------------------------------------- //
 
+// OPTIMIZE : Optimize with CPS.
 let rec poly_add vars pol1 pol2 =
     match pol1, pol2 with
     | Fn ("+", [c; Fn ("*", [Var x; p])]), Fn ("+", [d; Fn ("*", [Var y; q])]) ->
@@ -111,25 +112,46 @@ let poly_var x =
 //  Convert term into canonical polynomial representative.                    //
 //  ------------------------------------------------------------------------- //
 
-let rec polynate vars tm =
+let rec private polynateImpl vars tm cont =
     match tm with
     | Var x ->
-        poly_var x
+        cont (poly_var x)
     | Fn ("-", [t]) ->
-        poly_neg (polynate vars t)
+        polynateImpl vars t <| fun poly_t ->
+            poly_neg poly_t
+            |> cont
     | Fn ("+", [s; t]) ->
-        poly_add vars (polynate vars s) (polynate vars t)
+        polynateImpl vars s <| fun poly_s ->
+        polynateImpl vars t <| fun poly_t ->
+            poly_add vars poly_s poly_t
+            |> cont
     | Fn ("-", [s; t]) ->
-        poly_sub vars (polynate vars s) (polynate vars t)
+        polynateImpl vars s <| fun poly_s ->
+        polynateImpl vars t <| fun poly_t ->
+            poly_sub vars poly_s poly_t
+            |> cont
     | Fn ("*", [s; t]) ->
-        poly_mul vars (polynate vars s) (polynate vars t)
+        polynateImpl vars s <| fun poly_s ->
+        polynateImpl vars t <| fun poly_t ->
+            poly_mul vars poly_s poly_t
+            |> cont
     | Fn ("/", [s; t]) ->
-        poly_div vars (polynate vars s) (polynate vars t)
+        polynateImpl vars s <| fun poly_s ->
+        polynateImpl vars t <| fun poly_t ->
+            poly_div vars poly_s poly_t
+            |> cont
     | Fn ("^", [p; Fn (n, [])]) ->
-        poly_pow vars (polynate vars p)  (System.Int32.Parse n)
-    | _ ->
-        if is_numeral tm then tm
-        else failwith "lint: unknown term"
+        polynateImpl vars p <| fun poly_p ->
+            poly_pow vars poly_p (System.Int32.Parse n)
+            |> cont
+    | tm ->
+        if is_numeral tm then
+            cont tm
+        else
+            failwith "lint: unknown term"
+
+let polynate vars tm =
+    polynateImpl vars tm id
 
 //  pg. 355
 //  ------------------------------------------------------------------------- //
@@ -148,6 +170,7 @@ let polyatom vars fm =
 //  Useful utility functions for polynomial terms.                            //
 //  ------------------------------------------------------------------------- //
 
+// OPTIMIZE : Optimize with CPS.
 let rec coefficients vars p =
     match p with
     | Fn ("+", [c; Fn ("*", [Var x; q])])
@@ -164,6 +187,7 @@ let inline is_constant vars p =
 let inline head vars p =
     last (coefficients vars p)
 
+// OPTIMIZE : Optimize with CPS.
 let rec behead vars p =
     match p with
     | Fn ("+", [c; Fn ("*", [Var x; p])])
@@ -178,6 +202,7 @@ let rec behead vars p =
 //  Get the constant multiple of the "maximal" monomial (implicit lex order)  //
 //  ------------------------------------------------------------------------- //
 
+// OPTIMIZE : Optimize with CPS.
 let rec poly_cmul k p =
     match p with
     | Fn ("+", [c; Fn ("*", [Var x; q])]) ->
@@ -327,6 +352,7 @@ let rec poly_nondiv vars sgns p s =
 //  Main reduction for exists x. all eqs = 0 and all neqs =/= 0, in context.  //
 //  ------------------------------------------------------------------------- //
 
+// OPTIMIZE : Optimize with CPS.
 let rec cqelim vars (eqs, neqs) sgns =
     match List.tryFind (is_constant vars) eqs with
     | Some c ->

@@ -87,6 +87,7 @@ let mpoly_const vars (c : num) =
 let mpoly_var vars x =
     [Int 1, List.map (fun y -> if y = x then 1 else 0) vars]
 
+// OPTIMIZE : Optimize with CPS.
 let rec mpoly_add l1 l2 =
     match l1, l2 with
     | [], x
@@ -107,6 +108,7 @@ let rec mpoly_add l1 l2 =
 let mpoly_sub l1 l2 =
     mpoly_add l1 (mpoly_neg l2)
 
+// OPTIMIZE : Optimize with CPS.
 let rec mpoly_mul l1 l2 =
     match l1 with
     | [] -> []
@@ -131,6 +133,7 @@ let inline mpoly_div p q =
 // Convert formula into canonical form.                                      //
 // ------------------------------------------------------------------------- //
 
+// OPTIMIZE : Optimize with CPS.
 let rec mpolynate vars tm =
     match tm with
     | Var x ->
@@ -182,6 +185,7 @@ let inline reduceb cm pols =
 // Reduction of a polynomial (always picking largest monomial possible).     //
 // ------------------------------------------------------------------------- //
 
+// OPTIMIZE : Optimize with CPS.
 let rec reduce pols pol =
     match pol with
     | [] -> []

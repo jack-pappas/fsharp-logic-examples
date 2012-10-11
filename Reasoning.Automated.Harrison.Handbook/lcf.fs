@@ -84,6 +84,7 @@ let rec occurs_in s t =
     | Fn (f, args) ->
         List.exists (occurs_in s) args
 
+// OPTIMIZE : Optimize with CPS.
 let rec free_in t fm =
     match fm with
     | False

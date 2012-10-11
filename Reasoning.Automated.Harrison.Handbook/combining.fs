@@ -189,6 +189,7 @@ let rec langpartition langs fms =
 // Turn an arrangement (partition) of variables into corresponding formula.  //
 // ------------------------------------------------------------------------- //
 
+// OPTIMIZE : Optimize with CPS.
 let rec arreq l =
     match l with
     | v1 :: v2 :: rest ->
