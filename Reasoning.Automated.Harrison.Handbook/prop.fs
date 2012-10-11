@@ -475,10 +475,24 @@ let list_disj = function
 // OCaml: val mk_lits : 'a formula list -> ('a -> bool) -> 'a formula = <fun>
 // F#:    val mk_lits : 'a formula list -> ('a -> bool) -> 'a formula when 'a : equality
 let mk_lits pvs v =
-    pvs
-    |> List.map (fun p ->
-        if eval p v then p else Not p)
-    |> list_conj
+//    pvs
+//    |> List.map (fun p ->
+//        if eval p v then p else Not p)
+//    |> list_conj
+    match pvs with
+    | [] ->
+        True
+    | hd :: tl ->
+        //
+        let inline eval_fm fm =
+            if eval fm v then fm else Not fm
+
+        // Map the first element so it can be used
+        // as the initial state of the fold.
+        (eval_fm hd, tl)
+        ||> List.fold (fun state p ->
+            eval_fm p
+            |> mk_and state)
         
 
 //
