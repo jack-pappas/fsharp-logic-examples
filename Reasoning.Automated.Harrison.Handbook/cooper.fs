@@ -163,7 +163,7 @@ let linform vars fm =
 // Post-NNF transformation eliminating negated inequalities.                 //
 // ------------------------------------------------------------------------- //
     
-let rec posineq fm =
+let posineq fm =
     match fm with
     | Not (Atom (R ("<", [Fn ("0", []); t]))) ->
         Atom (R ("<", [zero; linear_sub [] (Fn ("1", [])) t]))
@@ -320,28 +320,30 @@ let cooper vars fm =
         let stage j = list_disj (linrep vars x (mk_numeral j) p_inf :: List.map (p_element j) bs)
         let fol_list = List.map stage js
         list_disj fol_list
-    | _ -> failwith "cooper: not an existential formula"
+    | _ ->
+        failwith "cooper: not an existential formula"
   
 // pg.347
 // ------------------------------------------------------------------------- //
 // Evaluation of constant expressions.                                       //
 // ------------------------------------------------------------------------- //
 
-let operations = [  "=", (=);
-                    "<", (<); 
-                    ">", (>);
-                    "<=", (<=);
-                    ">=", (>=);
-                    "divides", (fun x y -> y % x = GenericZero); ]
+let operations = [
+    "=", (=);
+    "<", (<); 
+    ">", (>);
+    "<=", (<=);
+    ">=", (>=);
+    "divides", (fun x y -> y % x = GenericZero); ]
 
-let evalc = 
-    let v1 = (fun (R(p,[s;t]) as at) ->
+let evalc =
+    let v1 (R(p,[s;t]) as at) =
         try 
             if assoc p operations (dest_numeral s) (dest_numeral t)
-            then True 
+            then True
             else False
-        with 
-        | Failure _ -> Atom at)
+        with Failure _ ->
+            Atom at
     onatoms v1
          
 // pg.349
