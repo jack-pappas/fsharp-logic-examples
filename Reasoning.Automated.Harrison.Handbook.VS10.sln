@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Reasoning.Automated.Harrison.Handbook", "Reasoning.Automated.Harrison.Handbook\Reasoning.Automated.Harrison.Handbook.fsproj", "{CF42D6D9-75FD-4B6F-81CA-6DB9CB2231A3}"
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Reasoning.Automated.Harrison.Handbook.VS10", "Reasoning.Automated.Harrison.Handbook\Reasoning.Automated.Harrison.Handbook.VS10.fsproj", "{CF42D6D9-75FD-4B6F-81CA-6DB9CB2231A3}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Examples", "Examples", "{F3B5AF8C-FE04-4366-B04F-290C5F5519EB}"
 	ProjectSection(SolutionItems) = preProject
@@ -56,7 +56,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{2D15CC
 		.nuget\NuGet.targets = .nuget\NuGet.targets
 	EndProjectSection
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Reasoning.Automated.Harrison.Handbook.Tests", "Reasoning.Automated.Harrison.Handbook.Tests\Reasoning.Automated.Harrison.Handbook.Tests.fsproj", "{841B64FF-8F9D-4D0E-9D4F-CD23B12B102D}"
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Reasoning.Automated.Harrison.Handbook.Tests.VS10", "Reasoning.Automated.Harrison.Handbook.Tests\Reasoning.Automated.Harrison.Handbook.Tests.VS10.fsproj", "{841B64FF-8F9D-4D0E-9D4F-CD23B12B102D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

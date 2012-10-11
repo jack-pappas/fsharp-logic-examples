@@ -10,7 +10,7 @@
     <RootNamespace>Reasoning.Automated.Harrison.Handbook.Tests</RootNamespace>
     <AssemblyName>Reasoning.Automated.Harrison.Handbook.Tests</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
-    <Name>Reasoning.Automated.Harrison.Handbook.Tests</Name>
+    <Name>Reasoning.Automated.Harrison.Handbook.Tests.VS10</Name>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
     <RestorePackages>true</RestorePackages>
   </PropertyGroup>
@@ -99,8 +99,10 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Numerics" />
-    <ProjectReference Include="..\Reasoning.Automated.Harrison.Handbook\Reasoning.Automated.Harrison.Handbook.fsproj">
-      <Name>Reasoning.Automated.Harrison.Handbook</Name>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Reasoning.Automated.Harrison.Handbook\Reasoning.Automated.Harrison.Handbook.VS10.fsproj">
+      <Name>Reasoning.Automated.Harrison.Handbook.VS10</Name>
       <Project>{cf42d6d9-75fd-4b6f-81ca-6db9cb2231a3}</Project>
       <Private>True</Private>
     </ProjectReference>
