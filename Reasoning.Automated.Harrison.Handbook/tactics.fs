@@ -55,33 +55,37 @@ type goals = Goals of ((string * formula<fol>) list * formula<fol>)list * (thm l
 // Printer for goals (just shows first goal plus total number).              //
 // ------------------------------------------------------------------------- //
 
-let print_goal : goals -> unit =
-    let print_hyp (l, fm) =
+let fprint_goal sw =
+    let fprint_hyp (l, fm) =
         //open_hbox ()
-        printf "%s: " l
-        print_formula print_atom fm
-        printfn ""
+        fprintf sw "%s: " l
+        fprint_formula sw (fprint_atom sw) fm
+        fprintfn sw ""
         //close_box ()
 
     fun (Goals (gls, jfn)) ->
         match gls with
         | [] ->
-            printf "No subgoals"
+            fprintf sw "No subgoals"
         | (asl, w) :: ogls ->
-            printfn ""
+            fprintfn sw ""
 
             if ogls = [] then
-                printf "1 subgoal:"
+                fprintf sw "1 subgoal:"
             else
-                printf "%i subgoals starting with" (List.length gls)
+                fprintf sw "%i subgoals starting with" (List.length gls)
 
-            printfn ""
-            List.iter print_hyp (List.rev asl)
-            printf "---> "
+            fprintfn sw ""
+            List.iter fprint_hyp (List.rev asl)
+            fprintf sw "---> "
             //open_hvbox 0
-            print_formula print_atom w
+            fprint_formula sw (fprint_atom sw) w
             //close_box ()
-            printfn ""
+            fprintfn sw ""
+
+// Add printing facility
+let inline print_goal g = fprint_goal stdout g
+let inline sprint_goal g = writeToString (fun sw -> fprint_goal sw g)
     
 // pg. 508
 // ------------------------------------------------------------------------- //
