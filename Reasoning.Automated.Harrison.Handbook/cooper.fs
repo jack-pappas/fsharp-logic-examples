@@ -121,7 +121,7 @@ let rec lint vars tm =
     match tm with
     | Var _ ->
         Fn ("+", [Fn ("*", [Fn ("1", []); tm]); zero])
-    | Fn ("~", [t]) ->
+    | Fn ("-", [t]) ->
         linear_neg (lint vars t)
     | Fn ("+", [s; t]) ->
         linear_add vars (lint vars s) (lint vars t)
@@ -156,7 +156,8 @@ let linform vars fm =
     | Atom (R (">=", [s; t])) ->
         mkatom vars "<" (Fn ("-", [Fn ("+", [s; Fn ("1", [])]); t]))
     | _ -> fm
-  
+
+
 // pg.341
 // ------------------------------------------------------------------------- //
 // Post-NNF transformation eliminating negated inequalities.                 //
