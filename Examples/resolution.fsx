@@ -15,6 +15,9 @@ open FSharpx.Books.AutomatedReasoning.unif
 open FSharpx.Books.AutomatedReasoning.tableaux
 open FSharpx.Books.AutomatedReasoning.resolution
 
+fsi.AddPrinter sprint_term
+fsi.AddPrinter sprint_fol_formula
+
 // pg. 181
 // ------------------------------------------------------------------------- //
 // Barber's paradox is an example of why we need factoring.                  //
@@ -390,6 +393,7 @@ let davis_putnam_examplep = time presolution (parse @"
 // Example                                                                   //
 // ------------------------------------------------------------------------- //
 
+// Real: 00:00:11.829, CPU: 00:00:11.812, GC gen0: 71, gen1: 71, gen2: 0
 let gilmore_1 = time resolution003 (parse @"
 	exists x. forall y z. 
         ((F(y) ==> G(y)) <=> F(x)) /\ 
@@ -595,28 +599,30 @@ let p42r = time resolution003 (parse @"
 //	(forall x y. Q(x,y) <=> forall z. P(z,x) <=> P(z,y)) 
 //    ==> forall x y. Q(x,y) <=> Q(y,x)");;
 
-//let p44r = time resolution003 (parse @"
-//	(forall x. P(x) ==> (exists y. G(y) /\ H(x,y)) /\ 
-//    (exists y. G(y) /\ ~H(x,y))) /\ 
-//    (exists x. J(x) /\ (forall y. G(y) ==> H(x,y))) ==> 
-//    (exists x. J(x) /\ ~P(x))");;
-//
-//let p45r = time resolution003 (parse @"
-//	(forall x. 
-//      P(x) /\ (forall y. G(y) /\ H(x,y) ==> J(x,y)) ==> 
-//        (forall y. G(y) /\ H(x,y) ==> R(y))) /\ 
-//    ~(exists y. L(y) /\ R(y)) /\ 
-//    (exists x. P(x) /\ (forall y. H(x,y) ==> 
-//      L(y)) /\ (forall y. G(y) /\ H(x,y) ==> J(x,y))) ==> 
-//    (exists x. P(x) /\ ~(exists y. G(y) /\ H(x,y)))");;
-//
-//let p46r = time resolution003 (parse @"
-//	(forall x. P(x) /\ (forall y. P(y) /\ H(y,x) ==> G(y)) ==> G(x)) /\ 
-//    ((exists x. P(x) /\ ~G(x)) ==> 
-//     (exists x. P(x) /\ ~G(x) /\ 
-//                (forall y. P(y) /\ ~G(y) ==> J(x,y)))) /\ 
-//    (forall x y. P(x) /\ P(y) /\ H(x,y) ==> ~J(y,x)) ==> 
-//    (forall x. P(x) ==> G(x))");;
+let p44r = time resolution003 (parse @"
+	(forall x. P(x) ==> (exists y. G(y) /\ H(x,y)) /\ 
+    (exists y. G(y) /\ ~H(x,y))) /\ 
+    (exists x. J(x) /\ (forall y. G(y) ==> H(x,y))) ==> 
+    (exists x. J(x) /\ ~P(x))");;
+
+// Real: 00:01:26.218, CPU: 00:01:26.140, GC gen0: 440, gen1: 62, gen2: 1
+let p45r = time resolution003 (parse @"
+	(forall x. 
+      P(x) /\ (forall y. G(y) /\ H(x,y) ==> J(x,y)) ==> 
+        (forall y. G(y) /\ H(x,y) ==> R(y))) /\ 
+    ~(exists y. L(y) /\ R(y)) /\ 
+    (exists x. P(x) /\ (forall y. H(x,y) ==> 
+      L(y)) /\ (forall y. G(y) /\ H(x,y) ==> J(x,y))) ==> 
+    (exists x. P(x) /\ ~(exists y. G(y) /\ H(x,y)))");;
+
+// Real: 00:00:20.876, CPU: 00:00:20.750, GC gen0: 108, gen1: 3, gen2: 1
+let p46r = time resolution003 (parse @"
+	(forall x. P(x) /\ (forall y. P(y) /\ H(y,x) ==> G(y)) ==> G(x)) /\ 
+    ((exists x. P(x) /\ ~G(x)) ==> 
+     (exists x. P(x) /\ ~G(x) /\ 
+                (forall y. P(y) /\ ~G(y) ==> J(x,y)))) /\ 
+    (forall x y. P(x) /\ P(y) /\ H(x,y) ==> ~J(y,x)) ==> 
+    (forall x. P(x) ==> G(x))");;
 
 // ------------------------------------------------------------------------- //
 // Example from Manthey and Bry, CADE-9.                                     //
@@ -661,6 +667,7 @@ let p60r = time resolution003 (parse @"
 // From Gilmore's classic paper.                                             //
 // ------------------------------------------------------------------------- //
 
+// Real: 00:00:12.059, CPU: 00:00:11.906, GC gen0: 71, gen1: 2, gen2: 0
 let gilmore_1r = time resolution003 (parse @"
 	exists x. forall y z. 
         ((F(y) ==> G(y)) <=> F(x)) /\ 
@@ -675,19 +682,19 @@ let gilmore_1r = time resolution003 (parse @"
 //        (F(x,z) <=> F(z,y)) /\ (F(z,y) <=> F(z,z)) /\ (F(x,y) <=> F(y,x)) 
 //        ==> (F(x,y) <=> F(x,z))");;
 
-//let gilmore_3r = time resolution003 (parse @"
-//    exists x. forall y z. 
-//        ((F(y,z) ==> (G(y) ==> H(x))) ==> F(x,x)) /\ 
-//        ((F(z,x) ==> G(x)) ==> H(z)) /\ 
-//        F(x,y) 
-//        ==> F(z,z)");;
-//
-//let gilmore_4r = time resolution003 (parse @"
-//    exists x. forall y z. 
-//        ((F(y,z) ==> (G(y) ==> H(x))) ==> F(x,x)) /\ 
-//        ((F(z,x) ==> G(x)) ==> H(z)) /\ 
-//        F(x,y) 
-//        ==> F(z,z)");;
+let gilmore_3r = time resolution003 (parse @"
+    exists x. forall y z. 
+        ((F(y,z) ==> (G(y) ==> H(x))) ==> F(x,x)) /\ 
+        ((F(z,x) ==> G(x)) ==> H(z)) /\ 
+        F(x,y) 
+        ==> F(z,z)");;
+
+let gilmore_4r = time resolution003 (parse @"
+    exists x. forall y z. 
+        ((F(y,z) ==> (G(y) ==> H(x))) ==> F(x,x)) /\ 
+        ((F(z,x) ==> G(x)) ==> H(z)) /\ 
+        F(x,y) 
+        ==> F(z,z)");;
 
 let gilmore_5r = time resolution003 (parse @"
 	(forall x. exists y. F(x,y) \/ F(y,x)) /\ 
@@ -732,10 +739,11 @@ let davis_putnam_exampler = time resolution003 (parse @"
 // ------------------------------------------------------------------------- //
 // The (in)famous Los problem.                                               //
 // ------------------------------------------------------------------------- //
-//
-//let losr = time resolution003 (parse @"
-//    (forall x y z. P(x,y) ==> P(y,z) ==> P(x,z)) /\ 
-//    (forall x y z. Q(x,y) ==> Q(y,z) ==> Q(x,z)) /\ 
-//    (forall x y. Q(x,y) ==> Q(y,x)) /\ 
-//    (forall x y. P(x,y) \/ Q(x,y)) 
-//    ==> (forall x y. P(x,y)) \/ (forall x y. Q(x,y))");;
+
+// Real: 00:00:14.421, CPU: 00:00:14.390, GC gen0: 76, gen1: 2, gen2: 0
+let losr = time resolution003 (parse @"
+    (forall x y z. P(x,y) ==> P(y,z) ==> P(x,z)) /\ 
+    (forall x y z. Q(x,y) ==> Q(y,z) ==> Q(x,z)) /\ 
+    (forall x y. Q(x,y) ==> Q(y,x)) /\ 
+    (forall x y. P(x,y) \/ Q(x,y)) 
+    ==> (forall x y. P(x,y)) \/ (forall x y. Q(x,y))");;
