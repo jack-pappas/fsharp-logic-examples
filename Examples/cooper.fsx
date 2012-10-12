@@ -240,7 +240,11 @@ time integer_qelim
 
 // cooper.p041
 time integer_qelim 
-    (parse @"forall z. z <= 7 ==> ((exists x y. x >= 0 /\ y >= 0 /\ 3 * x + 5 * y = z) <=> ~(exists x y. x >= 0 /\ y >= 0 /\ 3 * x + 5 * y = 7 - z))")
+    (parse @"
+        forall z.
+            z <= 7
+            ==> ((exists x y. x >= 0 /\ y >= 0 /\ 3 * x + 5 * y = z) <=>
+                ~(exists x y. x >= 0 /\ y >= 0 /\ 3 * x + 5 * y = 7 - z))")
     ;;
 
 // ------------------------------------------------------------------------- //
@@ -249,12 +253,16 @@ time integer_qelim
 
 // cooper.p042
 time integer_qelim 
-    (parse @"forall x. ~divides(2,x) /\ divides(3,x-1) <=> divides(12,x-1) \/ divides(12,x-7)")
+    (parse @"
+        forall x. ~divides(2,x) /\ divides(3,x-1) <=>
+            divides(12,x-1) \/ divides(12,x-7)")
     ;;
 
 // cooper.p043
 time integer_qelim 
-    (parse @"forall x. ~(exists m. x = 2 * m) /\ (exists m. x = 3 * m + 1) <=> (exists m. x = 12 * m + 1) \/ (exists m. x = 12 * m + 7)")
+    (parse @"
+        forall x. ~(exists m. x = 2 * m) /\ (exists m. x = 3 * m + 1) <=>
+            (exists m. x = 12 * m + 1) \/ (exists m. x = 12 * m + 7)")
     ;;
 
 // ------------------------------------------------------------------------- //
@@ -296,16 +304,28 @@ integer_qelim
 
 // cooper.p047
 integer_qelim
-    (parse @"exists a b. a > 1 /\ b > 1 /\ ((2 * b = a) \/ (2 * b = 3 * a + 1)) /\ (a = b)")
+    (parse @"
+        exists a b. a > 1 /\ b > 1 /\
+            ((2 * b = a) \/ (2 * b = 3 * a + 1)) /\
+            (a = b)")
     ;;
 
 // cooper.p048
 integer_qelim
-    (parse @"exists a b. a > 1 /\ b > 1 /\ ((2 * b = a) \/ (2 * b = 3 * a + 1)) /\ ((2 * a = b) \/ (2 * a = 3 * b + 1))")
+    (parse @"
+        exists a b. a > 1 /\ b > 1 /\ 
+            ((2 * b = a) \/ (2 * b = 3 * a + 1)) /\ 
+                ((2 * a = b) \/ (2 * a = 3 * b + 1))")
     ;;
 
 let fm001 = 
-    dnf (parse @"((2 * b = a) \/ (2 * b = 3 * a + 1)) /\ ((2 * c = b) \/ (2 * c = 3 * b + 1)) /\ ((2 * d = c) \/ (2 * d = 3 * c + 1)) /\ ((2 * e = d) \/ (2 * e = 3 * d + 1)) /\ ((2 * f = e) \/ (2 * f = 3 * e + 1)) /\ (f = a)");;
+    dnf (parse @"
+        ((2 * b = a) \/ (2 * b = 3 * a + 1)) /\
+        ((2 * c = b) \/ (2 * c = 3 * b + 1)) /\
+        ((2 * d = c) \/ (2 * d = 3 * c + 1)) /\
+        ((2 * e = d) \/ (2 * e = 3 * d + 1)) /\
+        ((2 * f = e) \/ (2 * f = 3 * e + 1)) /\
+        (f = a)");;
 
 let fms = 
     List.map (List.foldBack (fun x p -> Exists(x,And(Atom(R(">",[Var x; Fn("1",[])])),p))) ["b"; "c"; "d"; "e"; "f"]) (disjuncts fm001);;
