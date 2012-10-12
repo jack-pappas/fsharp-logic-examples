@@ -16,8 +16,6 @@ open formulas
 
 type prop = P of string
 
-// OCaml: val pname : prop -> string = <fun>
-// F#:    val pname : prop -> string
 let inline pname (P s) = s
 
 // pg. 29
@@ -25,8 +23,6 @@ let inline pname (P s) = s
 // Parsing of propositional formulas.                                        //
 // ------------------------------------------------------------------------- //
 
-// OCaml: val parse_propvar : 'a -> string list -> prop formula * string list = <fun>
-// F#:    val parse_propvar : 'a -> string list -> prop formula * string list
 let parse_propvar vs inp =
     match inp with
     | p :: oinp when p <> "(" ->
@@ -34,8 +30,6 @@ let parse_propvar vs inp =
     | _ ->
         failwith "parse_propvar"
         
-// OCaml: val parse_prop_formula : string -> prop formula = <fun>
-// F#:    val parse_prop_formula : (string -> prop formula)
 let parse_prop_formula =
     parse_formula ((fun _ _ -> failwith ""), parse_propvar) []
     |> make_parser
@@ -45,8 +39,6 @@ let parse_prop_formula =
 // Printer.                                                                  //
 // ------------------------------------------------------------------------- //
 
-// OCaml: val print_propvar : 'a -> prop -> unit = <fun>
-// F#:    val print_propvar : 'a -> prop -> unit
 let fprint_propvar sw prec p =
     fprintf sw "%O" (pname p)
 
@@ -61,20 +53,12 @@ let fprint_prop_formula sw =
 let inline print_prop_formula f = fprint_prop_formula stdout f
 let inline sprint_prop_formula f = writeToString (fun sw -> fprint_prop_formula sw f)
 
-// Added by EGT, updated by Phan
-let inline fprint_prop_list sw xs = List.iter (fprint_prop_formula sw) xs
-
-let inline print_prop_list fs = fprint_prop_list stdout fs
-let inline sprint_prop_list fs = writeToString (fun sw -> fprint_prop_list sw fs)
-
 // pg. 32
 // ------------------------------------------------------------------------- //
 // Interpretation of formulas.                                               //
 // ------------------------------------------------------------------------- //
 
-// Note: added cases for Exists and Forall to avoid compiler warning
-// OCaml: val eval : 'a formula -> ('a -> bool) -> bool = <fun>
-// F#:    val eval : 'a formula -> ('a -> bool) -> bool
+// NOTE: added cases for Exists and Forall to avoid compiler warning
 let rec eval fm v =
     match fm with
     | False -> false
@@ -99,8 +83,6 @@ let rec eval fm v =
 // Return the set of propositional variables in a formula.                   //
 // ------------------------------------------------------------------------- //
 
-// OCaml: val atoms : 'a formula -> 'a list = <fun>
-// F#:    val atoms : 'a formula -> 'a list when 'a : comparison
 let atoms fm = 
     atom_union (fun a -> [a]) fm
 
@@ -109,8 +91,6 @@ let atoms fm =
 // Code to print out truth tables.                                           //
 // ------------------------------------------------------------------------- //
 
-// OCaml: val onallvaluations : (('a -> bool) -> bool) -> ('a -> bool) -> 'a list -> bool = <fun>
-// F#:    val onallvaluations : (('a -> bool) -> bool) -> ('a -> bool) -> 'a list -> bool when 'a : equality
 let rec onallvaluations subfn v ats =
     match ats with
     | [] -> subfn v
@@ -121,8 +101,6 @@ let rec onallvaluations subfn v ats =
         onallvaluations subfn (v' false) ps
         && onallvaluations subfn (v' true) ps
             
-// OCaml: val print_truthtable : prop formula -> unit = <fun>
-// F#:    val print_truthtable : prop formula -> unit
 let print_truthtable fm =
     // [P "p"; P "q"; P "r"]
     let ats = atoms fm
@@ -148,8 +126,6 @@ let print_truthtable fm =
 // Recognizing tautologies.                                                  //
 // ------------------------------------------------------------------------- //
 
-// OCaml: val tautology : 'a formula -> bool = <fun>
-// F#:    val tautology : 'a formula -> bool when 'a : comparison
 let tautology fm =
     onallvaluations (eval fm) (fun s -> false) (atoms fm)
 
@@ -158,13 +134,9 @@ let tautology fm =
 // Related concepts.                                                         //
 // ------------------------------------------------------------------------- //
 
-// OCaml: val unsatisfiable : 'a formula -> bool = <fun>
-// F#:    val unsatisfiable : 'a formula -> bool when 'a : comparison
 let unsatisfiable fm = 
     tautology <| Not fm
         
-// OCaml: val satisfiable : 'a formula -> bool = <fun>
-// F#:    val satisfiable : 'a formula -> bool when 'a : comparison
 let satisfiable fm = 
     not <| unsatisfiable fm
 
@@ -173,8 +145,6 @@ let satisfiable fm =
 // Substitution operation.                                                   //
 // ------------------------------------------------------------------------- //
 
-// OCaml: val psubst : ('a, 'a formula) func -> 'a formula -> 'a formula = <fun>
-// F#:    val psubst : func<'a,'a formula>   -> ('a formula -> 'a formula) when 'a : comparison
 let psubst subfn =
     onatoms <| fun p ->
         tryapplyd subfn p (Atom p)
@@ -184,8 +154,6 @@ let psubst subfn =
 // Dualization.                                                              //
 // ------------------------------------------------------------------------- //
 
-// OCaml: val dual : 'a formula -> 'a formula = <fun>
-// F#:    val dual : 'a formula -> 'a formula
 let rec dual fm =
     match fm with
     | False -> True
@@ -206,8 +174,6 @@ let rec dual fm =
 // Routine simplification.                                                   //
 // ------------------------------------------------------------------------- //
 
-// OCaml: val psimplify1 : 'a formula -> 'a formula = <fun>
-// F#:    val psimplify1 : 'a formula -> 'a formula
 let psimplify1 fm =
     match fm with
     | Not True ->
@@ -241,8 +207,6 @@ let psimplify1 fm =
 
     | fm -> fm
         
-// OCaml: val psimplify : 'a formula -> 'a formula = <fun>
-// F#:    val psimplify : 'a formula -> 'a formula
 let rec psimplify fm =
     match fm with
     | Not p ->
@@ -262,18 +226,12 @@ let rec psimplify fm =
 // Some operations on literals.                                              //
 // ------------------------------------------------------------------------- //
 
-// OCaml: val negative : 'a formula -> bool = <fun>
-// F#:    val negative : 'a formula -> bool
 let negative = function
     | Not p -> true
     | _ -> false
     
-// OCaml: val positive : 'a formula -> bool
-// F#:    val positive : 'a formula -> bool
 let positive lit = not <| negative lit
     
-// OCaml: val negate : 'a formula -> 'a formula = <fun>
-// F#:    val negate : 'a formula -> 'a formula
 let negate = function
     | Not p -> p
     | p -> Not p
@@ -283,9 +241,7 @@ let negate = function
 // Negation normal form.                                                     //
 // ------------------------------------------------------------------------- //
 
-// Note: Changed name from nnf to nnfOrig to avoid F# compiler error.
-// OCaml: val nnf :     'a formula -> 'a formula = <fun>
-// F#:    val nnfOrig : 'a formula -> 'a formula
+// NOTE: Changed name from nnf to nnfOrig to avoid F# compiler error.
 let rec nnfOrig fm =
     match fm with
     | And (p, q) ->
@@ -315,8 +271,6 @@ let rec nnfOrig fm =
 // Roll in simplification.                                                   //
 // ------------------------------------------------------------------------- //
 
-// OCaml: val nnf : 'a formula -> 'a formula = <fun>
-// F#:    val nnf : 'a formula -> 'a formula
 let nnf fm =
     nnfOrig <| psimplify fm
 
@@ -325,9 +279,7 @@ let nnf fm =
 // Simple negation-pushing when we don't care to distinguish occurrences.    //
 // ------------------------------------------------------------------------- //
 
-// Note: Changed name from nenf to nenfOrig to avoid F# compiler error.
-// OCaml: val nenf :     'a formula -> 'a formula = <fun>
-// F#:    val nenfOrig : 'a formula -> 'a formula
+// NOTE: Changed name from nenf to nenfOrig to avoid F# compiler error.
 let rec nenfOrig fm =
     match fm with
     | Not (Not p) ->
@@ -350,8 +302,6 @@ let rec nenfOrig fm =
         Iff (nenfOrig p, nenfOrig q)
     | fm -> fm
         
-// OCaml: val nenf : 'a formula -> 'a formula = <fun>
-// F#:    val nenf : 'a formula -> 'a formula
 let nenf fm =
     nenfOrig <| psimplify fm
 
@@ -360,25 +310,17 @@ let nenf fm =
 // Disjunctive normal form (DNF) via truth tables.                           //
 // ------------------------------------------------------------------------- //
 
-// OCaml: val list_conj : 'a formula list -> 'a formula = <fun>
-// F#:    val list_conj : 'a formula list -> 'a formula when 'a : equality
 let list_conj l =
     if l = [] then True
     else end_itlist mk_and l
 
-// OCaml: val list_disj : 'a formula list -> 'a formula = <fun>
-// F#:    val list_disj : 'a formula list -> 'a formula when 'a : equality
 let list_disj l = 
     if l = [] then False 
     else end_itlist mk_or l
-        
-// OCaml: val mk_lits : 'a formula list -> ('a -> bool) -> 'a formula = <fun>
-// F#:    val mk_lits : 'a formula list -> ('a -> bool) -> 'a formula when 'a : equality
+   
 let mk_lits pvs v =
     list_conj (List.map (fun p -> if eval p v then p else Not p) pvs)
         
-// OCaml: val allsatvaluations : (('a -> bool) -> bool) -> ('a -> bool) -> 'a list -> ('a -> bool) list = <fun>
-// F#:    val allsatvaluations :  (('a -> bool) -> bool) -> ('a -> bool) -> 'a list -> ('a -> bool) list when 'a : equality
 let rec allsatvaluations subfn v pvs =
     match pvs with
     | [] ->
@@ -390,9 +332,7 @@ let rec allsatvaluations subfn v pvs =
         allsatvaluations subfn (v' false) ps @
         allsatvaluations subfn (v' true) ps
             
-// Note: Changed name from distrib to distribOrig to avoid F# compiler error.
-// OCaml: val dnf :     'a formula -> 'a formula = <fun>
-// F#:    val dnfOrig : 'a formula -> 'a formula when 'a : comparison
+// NOTE: Changed name from distrib to distribOrig to avoid F# compiler error.
 let dnfOrig fm =
     let pvs = atoms fm
     let satvals = allsatvaluations (eval fm) (fun s -> false) pvs
@@ -403,9 +343,7 @@ let dnfOrig fm =
 // DNF via distribution.                                                     //
 // ------------------------------------------------------------------------- //
 
-// Note: Changed name from distrib to distribOrig to avoid F# compiler error.
-// OCaml: val distrib :     'a formula -> 'a formula = <fun>
-// F#:    val distribOrig : 'a formula -> 'a formula
+// NOTE: Changed name from distrib to distribOrig to avoid F# compiler error.
 let rec distribOrig fm =
     match fm with
     | And (p, Or (q, r)) ->
@@ -413,9 +351,7 @@ let rec distribOrig fm =
     | And (Or (p, q), r) ->
         Or (distribOrig (And (p, r)), distribOrig (And (q, r)))
     | _ -> fm
-        
-// OCaml: val rawdnf : 'a formula -> 'a formula = <fun>
-// F#:    val rawdnf : 'a formula -> 'a formula
+ 
 let rec rawdnf fm =
     match fm with
     | And (p, q) ->
@@ -429,13 +365,9 @@ let rec rawdnf fm =
 // A version using a list representation.                                    //
 // ------------------------------------------------------------------------- //
 
-// OCaml: val distrib : 'a list list -> 'a list list -> 'a list list = <fun>
-// F#:    val distrib : 'a list list -> 'a list list -> 'a list list when 'a : comparison
 let distrib s1 s2 =
     setify <| allpairs union s1 s2
     
-// OCaml: val purednf : 'a formula -> 'a formula list list = <fun>
-// F#:    val purednf : 'a formula -> 'a formula list list when 'a : comparison
 let rec purednf fm =
     match fm with
     | And (p, q) ->
@@ -449,8 +381,6 @@ let rec purednf fm =
 // Filtering out trivial disjuncts (in this guise, contradictory).           //
 // ------------------------------------------------------------------------- //
 
-// OCaml: val trivial : 'a formula list -> bool = <fun>
-// F#:    val trivial : 'a formula list -> bool when 'a : comparison
 let trivial lits =
     let pos, neg = List.partition positive lits
     intersect pos (image negate neg) <> []
@@ -460,8 +390,6 @@ let trivial lits =
 // With subsumption checking, done very naively (quadratic).                 //
 // ------------------------------------------------------------------------- //
 
-// OCaml: val simpdnf : 'a formula -> 'a formula list list = <fun>
-// F#:    val simpdnf : 'a formula -> 'a formula list list when 'a : comparison
 let simpdnf fm =
     if fm = False then [] 
     elif fm = True then [[]] 
@@ -474,8 +402,6 @@ let simpdnf fm =
 // Mapping back to a formula.                                                //
 // ------------------------------------------------------------------------- //
 
-// OCaml: val dnf : 'a formula -> 'a formula = <fun>
-// F:     val dnf : 'a formula -> 'a formula when 'a : comparison
 let dnf fm =
     List.map list_conj (simpdnf fm)
     |> list_disj
@@ -485,12 +411,8 @@ let dnf fm =
 // Conjunctive normal form (CNF) by essentially the same code.               //
 // ------------------------------------------------------------------------- //
 
-// OCaml: val purecnf : 'a formula -> 'a formula list list = <fun>
-// F#:    val purecnf : 'a formula -> 'a formula list list when 'a : comparison
 let purecnf fm = image (image negate) (purednf (nnf (Not fm)))
     
-// OCaml: val simpcnf : 'a formula -> 'a formula list list = <fun>
-// F#:    val simpcnf : 'a formula -> 'a formula list list when 'a : comparison
 let simpcnf fm =
     if fm = False then [[]]
     elif fm = True then []
@@ -498,8 +420,6 @@ let simpcnf fm =
         let cjs = List.filter (non trivial) (purecnf fm)
         List.filter (fun c -> not (List.exists (fun c' -> psubset c' c) cjs)) cjs
             
-// OCaml: val cnf : 'a formula -> 'a formula = <fun>
-// F#:    val cnf : 'a formula -> 'a formula when 'a : comparison
 let cnf fm =
     List.map list_disj (simpcnf fm)
     |> list_conj
