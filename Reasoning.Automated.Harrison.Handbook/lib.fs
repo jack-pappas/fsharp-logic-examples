@@ -364,28 +364,28 @@ let decreasing f x y =
 // Eliminate repetitions of adjacent elements, with and without counting.    //
 // ------------------------------------------------------------------------- //
 
+////
+//let rec private repcount n l cont =
+//    match l with
+//    | [] ->
+//        failwith "repcount"
+//    | [x] ->
+//        cont [x,n]
+//    |  x :: (y :: _ as ys) ->
+//        if x = y then
+//            repcount (n + 1) ys cont
+//        else
+//            repcount 1 ys <| fun lst ->
+//                cont ((x, n) :: lst)
 //
-let rec private repcount n l cont =
-    match l with
-    | [] ->
-        failwith "repcount"
-    | [x] ->
-        cont [x,n]
-    |  x :: (y :: _ as ys) -> 
-        if compare y x = 0 then
-            repcount (n + 1) ys cont
-        else
-            repcount 1 ys <| fun lst ->
-                cont ((x, n) :: lst)
-
-// pg. ???
-// OCaml: val repetitions : 'a list -> ('a * int) list = <fun>
-// F#:    val repetitions : ('a list -> ('a * int) list) when 'a : comparison
-let repetitions l =
-    match l with
-    | [] -> []
-    | l ->
-        repcount 1 l id
+//// pg. ???
+//// OCaml: val repetitions : 'a list -> ('a * int) list = <fun>
+//// F#:    val repetitions : ('a list -> ('a * int) list) when 'a : comparison
+//let repetitions l =
+//    match l with
+//    | [] -> []
+//    | l ->
+//        repcount 1 l id
         
 // pg. 619
 // OCaml: val tryfind : ('a -> 'b)   -> 'a list -> 'b = <fun>
@@ -504,19 +504,11 @@ let unions s =
 // List membership. This does *not* assume the list is a set.                //
 // ------------------------------------------------------------------------- //
 
-//    // TODO : Replace 'mem' with the equivalent code:
-//    let inline mem x lis =
-//        List.exists ((=) x) lis
-
 // pg. 620
 // OCaml: val mem : 'a -> 'a list -> bool = <fun>
 // F#:    val mem : 'a -> 'a list -> bool when 'a : equality
-let rec mem x lis =
-    match lis with
-    | [] -> false
-    | hd :: tl ->
-        hd = x
-        || mem x tl
+    let inline mem x lis =
+        List.exists ((=) x) lis
 
 // ------------------------------------------------------------------------- //
 // Finding all subsets or all subsets of a given size.                       //
