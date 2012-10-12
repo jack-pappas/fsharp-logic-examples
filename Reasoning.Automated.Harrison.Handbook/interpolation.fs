@@ -61,11 +61,12 @@ let pinterpolate p q =
 // ------------------------------------------------------------------------- //
 
 let urinterpolate p q =
-    let fm = specialize (prenex (And (p, q)))
+    let fm = specialize (prenex (And (p, q)))    
+    let consts, funcs = herbfuns fm    
     let fvs = fv fm
-    let consts, funcs = herbfuns fm
-    let cntms = List.map (fun (c, _) -> Fn (c, [])) consts
-    let tups = dp_refine_loop (simpcnf fm) cntms funcs fvs 0 [] [] []
+    let tups =
+        let cntms = List.map (fun (c, _) -> Fn (c, [])) consts
+        dp_refine_loop (simpcnf fm) cntms funcs fvs 0 [] [] []
     let fmis = List.map (fun tup -> subst (fpf fvs tup) fm) tups
     let ps, qs = List.unzip (List.map (fun (And (p, q)) -> p, q) fmis)
     pinterpolate (list_conj (setify ps)) (list_conj (setify qs))

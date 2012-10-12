@@ -70,13 +70,20 @@ let coordinations = [
 // F#:    val coordinate : (formula<fol> -> formula<fol>)
 let coordinate =
     onatoms <| fun (R (a, args)) ->
-        let xtms,ytms =
-            // OPTIMIZE : Use List.fold so we don't have to unzip
-            List.unzip (List.map (fun (Var v) -> Var (v + "_x"), Var (v + "_y")) args)
+        let xtms, ytms =
+            let xtms_rev, ytms_rev =
+                (([], []), args)
+                ||> List.fold (fun (xtms, ytms) (Var v) ->
+                    (Var (v + "_x") :: xtms), (Var (v + "_y") :: ytms))
+
+            List.rev xtms_rev, List.rev ytms_rev
+
+        let argCount = List.length args
         let rec xs =
-            List.init (List.length args) <| fun i -> string (i + 1) + "_x"
+            [ for i = 1 to argCount do yield string i + "_x" ]
         and ys =
-            List.init (List.length args) <| fun i -> string (i + 1) + "_y"
+            [ for i = 1 to argCount do yield string i + "_y" ]
+
         subst (fpf (xs @ ys) (xtms @ ytms)) (assoc a coordinations)
     
 // pg. 415

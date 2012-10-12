@@ -282,63 +282,11 @@ let rec rev_assoc a l =
         failwith "rev_assoc"
     | (x, y) :: t ->
         if y = a then x
-        else rev_assoc a t        
+        else rev_assoc a t
 
 // ------------------------------------------------------------------------- //
-// Merging of sorted lists (maintaining repetitions).                        //
+// List sorting.                                                             //
 // ------------------------------------------------------------------------- //
-
-// pg. ???
-// OCaml: val merge : ('a -> 'a -> bool) -> 'a list -> 'a list -> 'a list = <fun>
-// F#:    val merge : ('a -> 'a -> bool) -> 'a list -> 'a list -> 'a list
-    // NOTE : 'comparer' returns bool, so it must implement either the
-    // (<=) or (>=) operators.
-//let private merge comparer l1 l2 =
-//    let rec mergeRec acc comparer l1 l2 =
-//        match l1, l2 with
-//        | [], [] ->
-//            // Reverse the accumulator list to put it
-//            // in the correct order before returning.
-//            List.rev acc
-//        | lst, []
-//        | [], lst ->
-//            // Add the remaining items to the accumulator.
-//            let acc =
-//                (acc, lst)
-//                ||> List.fold (fun acc el ->
-//                    el :: acc)
-//            mergeRec acc comparer [] []
-//        | (h1 :: t1 as l1), (h2 :: t2 as l2) ->
-//            // Add the lesser of the two head elements to the
-//            // accumulator list, then continue processing.
-//            if comparer h1 h2 then
-//                mergeRec (h1 :: acc) comparer t1 l2
-//            else
-//                mergeRec (h2 :: acc) comparer l1 t2
-//
-//    // Merge the lists.
-//    mergeRec [] comparer l1 l2
-
-// ------------------------------------------------------------------------- //
-// Bottom-up mergesort.                                                      //
-// ------------------------------------------------------------------------- //
-
-//let rec private mergepairs ord l1 l2 =
-//    match l1, l2 with
-//    | [s], [] -> s
-//    | l, [] ->
-//        mergepairs ord [] l
-//    | l, [s1] ->
-//        mergepairs ord (s1 :: l) []
-//    | l, s1 :: s2 :: ss ->
-//        mergepairs ord ((merge ord s1 s2) :: l) ss
-//
-//
-//let sort ord l =
-//    match l with
-//    | [] -> []
-//    | l ->
-//        mergepairs ord [] (List.map (fun x -> [x]) l)
 
 // pg. 619
 // OCaml: val sort : ('a -> 'a -> bool) -> 'a list -> 'a list = <fun>

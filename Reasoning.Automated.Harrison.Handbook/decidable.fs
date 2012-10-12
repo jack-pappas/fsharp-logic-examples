@@ -95,21 +95,29 @@ let rec private miniscopeImpl fm cont =
     match fm with
     | Not p ->
         miniscopeImpl p <| fun miniscoped_p ->
-            cont (Not miniscoped_p)
+            Not miniscoped_p
+            |> cont
     | And (p, q) ->
         miniscopeImpl p <| fun miniscoped_p ->
         miniscopeImpl q <| fun miniscoped_q ->
-            cont (And (miniscoped_p, miniscoped_q))
+            And (miniscoped_p, miniscoped_q)
+            |> cont
     | Or (p, q) ->
         miniscopeImpl p <| fun miniscoped_p ->
         miniscopeImpl q <| fun miniscoped_q ->
-            cont (Or (miniscoped_p, miniscoped_q))
+            Or (miniscoped_p, miniscoped_q)
+            |> cont
     | Forall (x, p) ->
         miniscopeImpl p <| fun miniscoped_p ->
-            cont (Not (pushquant x (Not miniscoped_p)))
+            Not miniscoped_p
+            |> pushquant x
+            |> Not
+            |> cont
     | Exists (x, p) ->
         miniscopeImpl p <| fun miniscoped_p ->
-            cont (pushquant x miniscoped_p)
+            miniscoped_p
+            |> pushquant x
+            |> cont
     | fm ->
         cont fm
 
