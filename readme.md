@@ -6,8 +6,10 @@ Logic Programming in F#
 
 ### Needed for Installation ###
 
-The solution uses F# 2.0 and .NET framework 4.0 inside [Visual Studio 2010] (http://www.microsoft.com/visualstudio/eng/products/visual-studio-overview).
+here are two solutions: `*.VS10.sln` and `*.VS11.sln` for Visual Studio 2010 and Visual Studio 2012 respectively.
+Both versions are targetting .NET framework 4.0; while the VS10 version uses F# 2.0, the VS11 version targets F# 3.0.
 
+We use NuGet to manage external packages, for example, NUnit/FsUnit for unit testing.
 You will need to install [NuGet] (http://nuget.codeplex.com/) to get additional required libraries. 
 After installing NuGet, make sure to enable "Allow NuGet to download missing packages during build". 
 [This setting](http://docs.nuget.org/docs/workflows/using-nuget-without-committing-packages) is under Options -> Package Manager -> General.
@@ -57,7 +59,7 @@ To run the unit test you will need to
  
 ### Writing unit tests ###
 A large set of unit tests is created based on available examples. 
-These test cases serve as a starting baseline for ensuring correcness when the code base is updated or optimized over time. 
+These test cases serve as an *evidence* of correctness when the code base is updated or optimized over time. 
 There are a few problems on implementing test cases though:
  - NUnit only accepts parameterized tests on primitive types. To compare sophisticated values, we have to put them into arrays and use indices as test parameters.
  - FsUnit uses type test to implement its DSL. Type inference doesn't work on this DSL, so make sure that two compared values belong to the same type.
