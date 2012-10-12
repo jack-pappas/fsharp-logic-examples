@@ -17,6 +17,9 @@ open FSharpx.Books.AutomatedReasoning.tableaux
 open FSharpx.Books.AutomatedReasoning.resolution
 open FSharpx.Books.AutomatedReasoning.prolog
 
+fsi.AddPrinter sprint_term
+fsi.AddPrinter sprint_fol_formula
+
 // pg. 208
 // ------------------------------------------------------------------------- //
 // A Horn example.                                                           //
@@ -35,7 +38,7 @@ let p32 =
 // ------------------------------------------------------------------------- //
 
 // System.Exception: non-Horn clause. - This is the expected result.
-hornprove (parse @"(p \/ q) /\ (~p \/ q) /\ (p \/ ~q) ==> ~(~q \/ ~q)");;
+//hornprove (parse @"(p \/ q) /\ (~p \/ q) /\ (p \/ ~q) ==> ~(~q \/ ~q)");;
 
 // pg. 210
 // ------------------------------------------------------------------------- //
@@ -46,7 +49,8 @@ let lerules = ["0 <= X"; "S(X) <= S(Y) :- X <= Y"];;
 
 simpleprolog lerules @"S(S(0)) <= S(S(S(0)))";;
 
-simpleprolog lerules @"S(S(0)) <= S(0)";;
+// System.Exception: tryfind - This is the expected result.
+//simpleprolog lerules @"S(S(0)) <= S(0)";;
 
 let env = simpleprolog lerules @"S(S(0)) <= X";;
 apply env "X";;
