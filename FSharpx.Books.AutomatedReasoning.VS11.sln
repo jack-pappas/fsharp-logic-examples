@@ -53,9 +53,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{2D15CC
 		.nuget\NuGet.targets = .nuget\NuGet.targets
 	EndProjectSection
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Reasoning.Automated.Harrison.Handbook.VS11", "Reasoning.Automated.Harrison.Handbook\Reasoning.Automated.Harrison.Handbook.VS11.fsproj", "{CF42D6D9-75FD-4B6F-81CA-6DB9CB2231A3}"
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "FSharpx.Books.AutomatedReasoning.VS11", "FSharpx.Books.AutomatedReasoning\FSharpx.Books.AutomatedReasoning.VS11.fsproj", "{CF42D6D9-75FD-4B6F-81CA-6DB9CB2231A3}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Reasoning.Automated.Harrison.Handbook.Tests.VS11", "Reasoning.Automated.Harrison.Handbook.Tests\Reasoning.Automated.Harrison.Handbook.Tests.VS11.fsproj", "{841B64FF-8F9D-4D0E-9D4F-CD23B12B102D}"
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "FSharpx.Books.AutomatedReasoning.Tests.VS11", "FSharpx.Books.AutomatedReasoning.Tests\FSharpx.Books.AutomatedReasoning.Tests.VS11.fsproj", "{841B64FF-8F9D-4D0E-9D4F-CD23B12B102D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

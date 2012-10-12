@@ -5,12 +5,12 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{841b64ff-8f9d-4d0e-9d4f-cd23b12b102d}</ProjectGuid>
+    <ProjectGuid>{cf42d6d9-75fd-4b6f-81ca-6db9cb2231a3}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>Reasoning.Automated.Harrison.Handbook.Tests</RootNamespace>
-    <AssemblyName>FSharpx.Books.AutomatedReasoning.Tests</AssemblyName>
+    <RootNamespace>FSharpx.Books.AutomatedReasoning</RootNamespace>
+    <AssemblyName>FSharpx.Books.AutomatedReasoning</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
-    <Name>Reasoning.Automated.Harrison.Handbook.Tests.VS10</Name>
+    <Name>FSharpx.Books.AutomatedReasoning.VS11</Name>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
     <RestorePackages>true</RestorePackages>
   </PropertyGroup>
@@ -20,14 +20,10 @@
     <Optimize>false</Optimize>
     <Tailcalls>false</Tailcalls>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
     <WarningLevel>3</WarningLevel>
-    <DocumentationFile>bin\Debug\Reasoning.Automated.Harrison.Handbook.Tests.XML</DocumentationFile>
-    <StartAction>Project</StartAction>
-    <StartProgram>
-    </StartProgram>
-    <StartArguments>
-    </StartArguments>
+    <DocumentationFile>bin\Debug\FSharpx.Books.AutomatedReasoning.XML</DocumentationFile>
+    <NoWarn>25</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -36,31 +32,35 @@
     <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <WarningLevel>3</WarningLevel>
-    <DocumentationFile>bin\Release\Reasoning.Automated.Harrison.Handbook.Tests.XML</DocumentationFile>
+    <DocumentationFile>bin\Release\FSharpx.Books.AutomatedReasoning.XML</DocumentationFile>
   </PropertyGroup>
-  <Import Project="$(MSBuildExtensionsPath32)\FSharp\1.0\Microsoft.FSharp.Targets" Condition="!Exists('$(MSBuildBinPath)\Microsoft.Build.Tasks.v4.0.dll')" />
-  <Import Project="$(MSBuildExtensionsPath32)\..\Microsoft F#\v4.0\Microsoft.FSharp.Targets" Condition=" Exists('$(MSBuildBinPath)\Microsoft.Build.Tasks.v4.0.dll')" />
+  <PropertyGroup>
+    <MinimumVisualStudioVersion Condition="'$(MinimumVisualStudioVersion)' == ''">11</MinimumVisualStudioVersion>
+  </PropertyGroup>
+  <Import Project="$(MSBuildExtensionsPath32)\..\Microsoft SDKs\F#\3.0\Framework\v4.0\Microsoft.FSharp.Targets" Condition="Exists('$(MSBuildExtensionsPath32)\..\Microsoft SDKs\F#\3.0\Framework\v4.0\Microsoft.FSharp.Targets')" />
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
   <ItemGroup>
-    <None Include="app.config" />
-    <None Include="packages.config" />
     <Compile Include="lib.fs" />
     <Compile Include="intro.fs" />
     <Compile Include="formulas.fs" />
     <Compile Include="prop.fs" />
     <Compile Include="propexamples.fs" />
+    <Compile Include="defcnf.fs" />
     <Compile Include="dp.fs" />
     <Compile Include="stal.fs" />
     <Compile Include="bdd.fs" />
     <Compile Include="fol.fs" />
+    <Compile Include="skolem.fs" />
     <Compile Include="herbrand.fs" />
     <Compile Include="unif.fs" />
     <Compile Include="tableaux.fs" />
     <Compile Include="resolution.fs" />
     <Compile Include="prolog.fs" />
     <Compile Include="meson.fs" />
+    <Compile Include="skolems.fs" />
     <Compile Include="equal.fs" />
     <Compile Include="cong.fs" />
+    <Compile Include="rewrite.fs" />
     <Compile Include="order.fs" />
     <Compile Include="completion.fs" />
     <Compile Include="eqelim.fs" />
@@ -74,38 +74,27 @@
     <Compile Include="geom.fs" />
     <Compile Include="interpolation.fs" />
     <Compile Include="combining.fs" />
+    <Compile Include="lcf.fs" />
     <Compile Include="lcfprop.fs" />
     <Compile Include="folderived.fs" />
     <Compile Include="lcffol.fs" />
     <Compile Include="tactics.fs" />
     <Compile Include="limitations.fs" />
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="FSharp.PowerPack, Version=2.0.0.0, Culture=neutral, PublicKeyToken=a19089b1c74d0809" />
+    <Reference Include="FSharp.PowerPack">
+      <HintPath>D:\Program Files (x86)\FSharpPowerPack-2.0.0.0\bin\FSharp.PowerPack.dll</HintPath>
+    </Reference>
     <Reference Include="FSharpx.Compatibility.OCaml">
       <HintPath>..\packages\FSharpx.Compatibility.OCaml.0.1.1\lib\net40\FSharpx.Compatibility.OCaml.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="FsUnit.NUnit">
-      <HintPath>..\packages\FsUnit.1.1.0.1\Lib\Net40\FsUnit.NUnit.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="mscorlib" />
     <Reference Include="FSharp.Core" />
-    <Reference Include="nunit.framework">
-      <HintPath>..\packages\NUnit.2.6.1\lib\nunit.framework.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Numerics" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Reasoning.Automated.Harrison.Handbook\Reasoning.Automated.Harrison.Handbook.VS10.fsproj">
-      <Name>Reasoning.Automated.Harrison.Handbook.VS10</Name>
-      <Project>{cf42d6d9-75fd-4b6f-81ca-6db9cb2231a3}</Project>
-      <Private>True</Private>
-    </ProjectReference>
   </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
 	     Other similar extension points exist, see Microsoft.Common.targets.
