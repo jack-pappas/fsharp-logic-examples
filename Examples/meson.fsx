@@ -171,7 +171,8 @@ let p20 =
     (exists z. R(z))");;
 
 let p21 = 
-    time meson002 (parse @"(exists x. P ==> Q(x)) /\ (exists x. Q(x) ==> P)
+    time meson002 (parse @"
+    (exists x. P ==> Q(x)) /\ (exists x. Q(x) ==> P)
    ==> (exists x. P <=> Q(x))");;
 
 let p22 = 
@@ -181,26 +182,30 @@ let p23 =
     time meson002 (parse @"(forall x. P \/ Q(x)) <=> P \/ (forall x. Q(x))");;
 
 let p24 = 
-    time meson002 (parse @"~(exists x. U(x) /\ Q(x)) /\ 
+    time meson002 (parse @"
+    ~(exists x. U(x) /\ Q(x)) /\ 
     (forall x. P(x) ==> Q(x) \/ R(x)) /\ 
     ~(exists x. P(x) ==> (exists x. Q(x))) /\ 
     (forall x. Q(x) /\ R(x) ==> U(x)) ==> 
     (exists x. P(x) /\ R(x))");;
 
 let p25 = 
-    time meson002 (parse @"(exists x. P(x)) /\ 
+    time meson002 (parse @"
+    (exists x. P(x)) /\ 
     (forall x. U(x) ==> ~G(x) /\ R(x)) /\ 
     (forall x. P(x) ==> G(x) /\ U(x)) /\ 
     ((forall x. P(x) ==> Q(x)) \/ (exists x. Q(x) /\ P(x))) ==> 
     (exists x. Q(x) /\ P(x))");;
 
 let p26 = 
-    time meson002 (parse @"((exists x. P(x)) <=> (exists x. Q(x))) /\ 
+    time meson002 (parse @"
+    ((exists x. P(x)) <=> (exists x. Q(x))) /\ 
     (forall x y. P(x) /\ Q(y) ==> (R(x) <=> U(y))) ==> 
     ((forall x. P(x) ==> R(x)) <=> (forall x. Q(x) ==> U(x)))");;
 
 let p27 = 
-    time meson002 (parse @"(exists x. P(x) /\ ~Q(x)) /\ 
+    time meson002 (parse @"
+    (exists x. P(x) /\ ~Q(x)) /\ 
     (forall x. P(x) ==> R(x)) /\ 
     (forall x. U(x) /\ V(x) ==> P(x)) /\ 
     (exists x. R(x) /\ ~Q(x)) ==> 
@@ -208,13 +213,15 @@ let p27 =
     (forall x. U(x) ==> ~V(x))");;
 
 let p28 = 
-    time meson002 (parse @"(forall x. P(x) ==> (forall x. Q(x))) /\ 
+    time meson002 (parse @"
+    (forall x. P(x) ==> (forall x. Q(x))) /\ 
     ((forall x. Q(x) \/ R(x)) ==> (exists x. Q(x) /\ R(x))) /\ 
     ((exists x. R(x)) ==> (forall x. L(x) ==> M(x))) ==> 
     (forall x. P(x) /\ L(x) ==> M(x))");;
 
 let p29 = 
-    time meson002 (parse @"(exists x. P(x)) /\ (exists x. G(x)) ==>
+    time meson002 (parse @"
+    (exists x. P(x)) /\ (exists x. G(x)) ==>
     ((forall x. P(x) ==> H(x)) /\ (forall x. G(x) ==> J(x)) <=>
     (forall x y. P(x) /\ G(y) ==> H(x) /\ J(y)))");;
 
