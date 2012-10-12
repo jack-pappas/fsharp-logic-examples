@@ -45,8 +45,6 @@ let fprint_propvar sw prec p =
 let inline print_propvar prec p = fprint_propvar stdout prec p
 let inline sprint_propvar prec p = writeToString (fun sw -> fprint_propvar sw prec p)
         
-// OCaml: val print_prop_formula : prop formula -> unit = <fun>
-// F#:    val print_prop_formula : (prop formula -> unit)
 let fprint_prop_formula sw = 
     fprint_qformula sw (fprint_propvar sw)
 

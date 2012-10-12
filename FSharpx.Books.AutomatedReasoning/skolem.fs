@@ -20,8 +20,6 @@ open fol
 // Routine simplification. Like "psimplify" but with quantifier clauses.     //
 // ------------------------------------------------------------------------- //
 
-// OCaml:  val simplify1 : expression  -> expression = <fun>
-// F#:     val simplify1 : fol formula -> fol formula
 let simplify1 fm =
     match fm with
     | Forall (x, p) ->
@@ -31,8 +29,6 @@ let simplify1 fm =
     | _ ->
         psimplify1 fm
 
-// OCaml: val simplify : expression  -> expression = <fun>
-// F#:    val simplify : fol formula -> fol formula
 let rec simplify fm =
     match fm with
     | Not p ->
