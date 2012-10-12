@@ -11,6 +11,8 @@ open FSharpx.Books.AutomatedReasoning.formulas
 open FSharpx.Books.AutomatedReasoning.prop
 open FSharpx.Books.AutomatedReasoning.propexamples
 
+fsi.AddPrinter sprint_prop_formula
+
 // pg. 63
 // ------------------------------------------------------------------------- //
 // Some currently tractable examples.                                        //
