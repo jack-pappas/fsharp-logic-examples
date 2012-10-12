@@ -42,12 +42,10 @@ hornprove (parse @"(p \/ q) /\ (~p \/ q) /\ (p \/ ~q) ==> ~(~q \/ ~q)");;
 // Ordering example.                                                         //
 // ------------------------------------------------------------------------- //
 
-// val lerules : string list = ["0 <= X"; "S(X) <= S(Y) :- X <= Y"]
 let lerules = ["0 <= X"; "S(X) <= S(Y) :- X <= Y"];;
 
 simpleprolog lerules @"S(S(0)) <= S(S(S(0)))";;
 
-// System.Exception: tryfind - This is the expected result.
 simpleprolog lerules @"S(S(0)) <= S(0)";;
 
 let env = simpleprolog lerules @"S(S(0)) <= X";;
@@ -58,8 +56,6 @@ apply env "X";;
 // Example again.                                                            //
 // ------------------------------------------------------------------------- //
    
-// val it : fol formula list =
-//   [Atom (R ("=",[Var "X"; Fn ("S",[Fn ("S",[Var "_3"])])]))]
 prolog lerules @"S(S(0)) <= X";;
 
 // pg. 211

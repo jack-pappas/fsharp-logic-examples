@@ -13,6 +13,6 @@ open FSharpx.Books.AutomatedReasoning.skolems
 
 fsi.AddPrinter sprint_fol_formula
 
-(skolemizes [
+skolemizes [
         parse @"exists x y. x + y = 2";
-        parse @"forall x. exists y. x + 1 = y"; ]);;
+        parse @"forall x. exists y. x + 1 = y"; ];;

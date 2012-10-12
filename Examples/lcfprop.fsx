@@ -17,22 +17,8 @@ fsi.AddPrinter sprint_thm
 // The examples in the text.                                                 //
 // ------------------------------------------------------------------------- //
 
-// val it : FSharpx.Books.AutomatedReasoning.lcf.ProverOperators.thm =
-//   Or
-//     (Imp (Atom (R ("p",[])),Atom (R ("q",[]))),
-//      Imp (Atom (R ("q",[])),Atom (R ("p",[]))))
 lcftaut (parse @"(p ==> q) \/ (q ==> p)") ;;
 
-// val it : FSharpx.Books.AutomatedReasoning.lcf.ProverOperators.thm =
-//   Iff
-//     (And (Atom (R ("p",[])),Atom (R ("q",[]))),
-//      Iff
-//        (Iff (Atom (R ("p",[])),Atom (R ("q",[]))),
-//         Or (Atom (R ("p",[])),Atom (R ("q",[])))))
 lcftaut (parse @"p /\ q <=> ((p <=> q) <=> p \/ q)");;
 
-// val it : FSharpx.Books.AutomatedReasoning.lcf.ProverOperators.thm =
-//   Iff
-//     (Iff (Iff (Atom (R ("p",[])),Atom (R ("q",[]))),Atom (R ("r",[]))),
-//      Iff (Atom (R ("p",[])),Iff (Atom (R ("q",[])),Atom (R ("r",[])))))
 lcftaut (parse @"((p <=> q) <=> r) <=> (p <=> (q <=> r))");;

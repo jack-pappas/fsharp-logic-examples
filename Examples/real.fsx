@@ -99,4 +99,4 @@ let basic_real_qelim vars = function
 
 let real_qelim = simplify << evalc << lift_qelim polyatom (simplify << evalc) basic_real_qelim;;
 
-let real_qelim' = simplify << evalc << lift_qelim polyatom (dnf << cnnf id << evalc) basic_real_qelim
+let real_qelim' = simplify << evalc << lift_qelim polyatom (dnf << cnnf id << evalc) basic_real_qelim;;

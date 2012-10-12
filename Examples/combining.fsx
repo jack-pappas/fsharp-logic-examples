@@ -20,11 +20,9 @@ fsi.AddPrinter sprint_fol_formula
 // Running example if we magically knew the interpolant.                     //
 // ------------------------------------------------------------------------- //
     
-// val it : FSharpx.Books.AutomatedReasoning.formulas.formula<fol> = True
 (integer_qelim << generalize) (parse
     "(u + 1 = v /\ v_1 + 1 = u - 1 /\ v_2 - 1 = v + 1 /\ v_3 = v - 1) ==> u = v_3 /\ ~(v_1 = v_2)");;
 
-// val it : bool = true
 ccvalid (parse
     "(v_2 = f(v_3) /\ v_1 = f(u)) ==> ~(u = v_3 /\ ~(v_1 = v_2))");;
         
@@ -41,7 +39,6 @@ nelop001 (add_default [int_lang]) (parse
 // Bell numbers show the size of our case analysis.                          //
 // ------------------------------------------------------------------------- //
 
-// val it : int list = [1; 2; 5; 15; 52; 203; 877; 4140; 21147; 115975]
 let bell n = List.length (allpartitions (1 -- n))
 List.map bell (1 -- 10);;
             
@@ -69,9 +66,6 @@ List.map (real_qelim << generalize) [
     parse "x * y = 0 /\ z = 0 ==> x = z";
     parse "x * y = 0 /\ z = 0 ==> y = z"; ];;
 
-// val it :
-//   FSharpx.Books.AutomatedReasoning.formulas.formula<fol> list =
-//   [True; False; False]
 List.map (integer_qelim << generalize) [
     parse "0 <= x /\ x < 2 /\ y = 0 /\ z = 1 ==> x = y \/ x = z";
     parse "0 <= x /\ x < 2 /\ y = 0 /\ z = 1 ==> x = y";

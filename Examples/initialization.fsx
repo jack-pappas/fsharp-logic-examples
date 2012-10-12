@@ -9,7 +9,7 @@
 
 #I @".\..\FSharpx.Books.AutomatedReasoning\bin\Debug"
 #r @"FSharpx.Books.AutomatedReasoning.dll"
-#r @"FSharpx.Compatibility.Ocaml.dll"
+#r @"FSharpx.Compatibility.OCaml.dll"
 #r @"FSharp.PowerPack.dll"
 
 // Reduce margins

@@ -22,30 +22,10 @@ fsi.AddPrinter sprint_goal
 // A simple example.                                                         //
 // ------------------------------------------------------------------------- //
 
-// 1 subgoal:
-// ---> (forall x. x <=x) /\
-//      (forall x y z. x <=y /\ y <=z ==> x <=z) /\
-//      (forall x y. f(x) <=y <=> x <=g(y)) ==>
-//      (forall x y. x <=y ==> f(x) <=f(y)) /\
-//      (forall x y. x <=y ==> g(x) <=g(y))
-// val it : unit = ()
 let g0 = set_goal (parse @"(forall x. x <= x) /\ (forall x y z. x <= y /\ y <= z ==> x <= z) /\ (forall x y. f(x) <= y <=> x <= g(y)) ==> (forall x y. x <= y ==> f(x) <= f(y)) /\ (forall x y. x <= y ==> g(x) <= g(y))");;
 
-// 1 subgoal:
-// ant: (forall x. x <=x) /\
-//      (forall x y z. x <=y /\ y <=z ==> x <=z) /\
-//      (forall x y. f(x) <=y <=> x <=g(y))
-// ---> (forall x y. x <=y ==> f(x) <=f(y)) /\
-//      (forall x y. x <=y ==> g(x) <=g(y))
-// val it : unit = ()
 let g1 = imp_intro_tac "ant" g0;;
 
-// 2 subgoals starting with
-// ant: (forall x. x <=x) /\
-//      (forall x y z. x <=y /\ y <=z ==> x <=z) /\
-//      (forall x y. f(x) <=y <=> x <=g(y))
-// ---> forall x y. x <=y ==> f(x) <=f(y)
-// val it : unit = ()
 let g2 = conj_intro_tac g1;;
 
 // TODO: Finish running examples and recording output.

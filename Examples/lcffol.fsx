@@ -16,7 +16,6 @@ fsi.AddPrinter sprint_thm
 
 // pg. 501
 
-// Fixed this: System.Exception: lcftab: no proof
 lcfrefute (parse @"p(1) /\ ~q(1) /\ (forall x. p(x) ==> q(x))") 1 simpcont;;
 
 lcfrefute (parse @"(exists x. ~p(x)) /\ (forall x. p(x))") 1 simpcont;;
