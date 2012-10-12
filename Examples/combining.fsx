@@ -126,9 +126,10 @@ time (nelop (add_default [int_lang])) (parse
 
 // ** Shostak's "A Practical Decision Procedure..." paper
 // *** No longer works since I didn't do predicates in congruence closure
+// F# valid result: KeyNotFoundException
 // combining.p016
-time (nelop (add_default [int_lang])) (parse
-    "x < f(y) + 1 /\ f(y) <= x ==> (P(x,y) <=> P(f(y),y))");;
+//time (nelop (add_default [int_lang])) (parse
+//    "x < f(y) + 1 /\ f(y) <= x ==> (P(x,y) <=> P(f(y),y))");;
 
 //** Shostak's "Practical..." paper again, using extra clauses for MAX
 // combining.p017
@@ -152,9 +153,10 @@ time (nelop (add_default [int_lang])) (parse
 
 // ** My former running example in the text; seems too slow.
 // *** Anyway this also needs extra predicates in CC
+// F# valid result: KeyNotFoundException
 // combining.p021
-time (nelop (add_default [real_lang])) (parse
-    "x^2 = y^2 /\ x < y /\ z^2 = z /\ x < x * z /\ P(f(1 + z)) ==> P(f(x + y) - f(0))");;
+//time (nelop (add_default [real_lang])) (parse
+//    "x^2 = y^2 /\ x < y /\ z^2 = z /\ x < x * z /\ P(f(1 + z)) ==> P(f(x + y) - f(0))");;
 
 // ** An example where the "naive" procedure is slow but feasible
 // combining.p022
