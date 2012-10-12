@@ -4,13 +4,13 @@
 // (See "LICENSE.txt" for details.)                                          //
 // ========================================================================= //
 
-module Reasoning.Automated.Harrison.Handbook.Tests.grobner
+module FSharpx.Books.AutomatedReasoning.Tests.grobner
 
-open Reasoning.Automated.Harrison.Handbook.lib
-open Reasoning.Automated.Harrison.Handbook.formulas
-open Reasoning.Automated.Harrison.Handbook.fol
-open Reasoning.Automated.Harrison.Handbook.complex
-open Reasoning.Automated.Harrison.Handbook.grobner
+open FSharpx.Books.AutomatedReasoning.lib
+open FSharpx.Books.AutomatedReasoning.formulas
+open FSharpx.Books.AutomatedReasoning.fol
+open FSharpx.Books.AutomatedReasoning.complex
+open FSharpx.Books.AutomatedReasoning.grobner
 open NUnit.Framework
 open FsUnit
 

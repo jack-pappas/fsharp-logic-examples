@@ -4,7 +4,7 @@
 // (See "LICENSE.txt" for details.)                                          //
 // ========================================================================= //
 
-module Reasoning.Automated.Harrison.Handbook.paramodulation
+module FSharpx.Books.AutomatedReasoning.paramodulation
 
 open intro
 open formulas

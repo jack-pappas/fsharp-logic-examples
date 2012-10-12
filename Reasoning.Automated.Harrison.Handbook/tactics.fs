@@ -8,7 +8,7 @@
 // Goals, LCF-like tactics and Mizar-like proofs.                            //
 // ========================================================================= //
 
-module Reasoning.Automated.Harrison.Handbook.tactics
+module FSharpx.Books.AutomatedReasoning.tactics
 
 open intro
 open formulas

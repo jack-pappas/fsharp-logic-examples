@@ -4,7 +4,7 @@
 // (See "LICENSE.txt" for details.)                                          //
 // ========================================================================= //
 
-module Reasoning.Automated.Harrison.Handbook.formulas
+module FSharpx.Books.AutomatedReasoning.formulas
 
 // pg. 26
 // ========================================================================= //

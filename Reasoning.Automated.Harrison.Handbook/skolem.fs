@@ -4,7 +4,7 @@
 // (See "LICENSE.txt" for details.)                                          //
 // ========================================================================= //
 
-module Reasoning.Automated.Harrison.Handbook.skolem
+module FSharpx.Books.AutomatedReasoning.skolem
 
 open intro
 open formulas

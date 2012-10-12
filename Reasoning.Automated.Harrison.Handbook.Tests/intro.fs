@@ -4,10 +4,10 @@
 // (See "LICENSE.txt" for details.)                                          //
 // ========================================================================= //
 
-module Reasoning.Automated.Harrison.Handbook.Tests.intro
+module FSharpx.Books.AutomatedReasoning.Tests.intro
 
-open Reasoning.Automated.Harrison.Handbook.lib
-open Reasoning.Automated.Harrison.Handbook.intro
+open FSharpx.Books.AutomatedReasoning.lib
+open FSharpx.Books.AutomatedReasoning.intro
 open NUnit.Framework
 open FsUnit
 

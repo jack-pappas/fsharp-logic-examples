@@ -6,11 +6,11 @@
 
 #load "initialization.fsx"
 
-open Reasoning.Automated.Harrison.Handbook.lib
-open Reasoning.Automated.Harrison.Handbook.formulas
-open Reasoning.Automated.Harrison.Handbook.fol
-open Reasoning.Automated.Harrison.Handbook.equal
-open Reasoning.Automated.Harrison.Handbook.complex
+open FSharpx.Books.AutomatedReasoning.lib
+open FSharpx.Books.AutomatedReasoning.formulas
+open FSharpx.Books.AutomatedReasoning.fol
+open FSharpx.Books.AutomatedReasoning.equal
+open FSharpx.Books.AutomatedReasoning.complex
 
 fsi.AddPrinter sprint_term
 fsi.AddPrinter sprint_fol_formula

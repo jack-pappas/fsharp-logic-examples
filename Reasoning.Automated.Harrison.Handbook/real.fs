@@ -8,7 +8,7 @@
 // Real quantifier elimination (using Cohen-Hormander algorithm).            //
 // ========================================================================= //
 
-module Reasoning.Automated.Harrison.Handbook.real
+module FSharpx.Books.AutomatedReasoning.real
 
 open FSharpx.Compatibility.OCaml.Num
 

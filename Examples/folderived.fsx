@@ -6,9 +6,9 @@
 
 #load "initialization.fsx"
 
-open Reasoning.Automated.Harrison.Handbook.fol
-open Reasoning.Automated.Harrison.Handbook.lcf
-open Reasoning.Automated.Harrison.Handbook.folderived
+open FSharpx.Books.AutomatedReasoning.fol
+open FSharpx.Books.AutomatedReasoning.lcf
+open FSharpx.Books.AutomatedReasoning.folderived
 
 fsi.AddPrinter sprint_thm
 
@@ -17,7 +17,7 @@ fsi.AddPrinter sprint_thm
 // Example.                                                                  //
 // ------------------------------------------------------------------------- //
 
-// val it : Reasoning.Automated.Harrison.Handbook.lcf.ProverOperators.thm =
+// val it : FSharpx.Books.AutomatedReasoning.lcf.ProverOperators.thm =
 //   Imp
 //     (Atom (R ("=",[Var "s"; Var "t"])),
 //      Atom
@@ -38,7 +38,7 @@ icongruence (parset @"s") (parset @"t") (parset @"f(s,g(s,t,s),u,h(h(s)))")
 // An example.                                                               //
 // ------------------------------------------------------------------------- //
 
-// val it : Reasoning.Automated.Harrison.Handbook.lcf.ProverOperators.thm =
+// val it : FSharpx.Books.AutomatedReasoning.lcf.ProverOperators.thm =
 //   Imp
 //     (Forall
 //        ("x",
@@ -64,7 +64,7 @@ ispec (parset @"y") (parse @"forall x y z. x + y + z = z + y + x");;
 // Additional tests not in main text.                                        //
 // ------------------------------------------------------------------------- //
 
-// val it : Reasoning.Automated.Harrison.Handbook.lcf.ProverOperators.thm =
+// val it : FSharpx.Books.AutomatedReasoning.lcf.ProverOperators.thm =
 //   Imp
 //     (Atom
 //        (R ("=",
@@ -79,7 +79,7 @@ ispec (parset @"y") (parse @"forall x y z. x + y + z = z + y + x");;
 isubst (parset @"x + x") (parset @"2 * x")
         (parse @"x + x = x ==> x = 0") (parse @"2 * x = x ==> x = 0");;
 
-// val it : Reasoning.Automated.Harrison.Handbook.lcf.ProverOperators.thm =
+// val it : FSharpx.Books.AutomatedReasoning.lcf.ProverOperators.thm =
 //   Imp
 //     (Atom
 //        (R ("=",
@@ -107,7 +107,7 @@ isubst (parset @"x + x")  (parset @"2 * x")
         (parse @"(x + x = y + y) ==> (y + y + y = x + x + x)")
         (parse @"2 * x = y + y ==> y + y + y = x + 2 * x");;
 
-// val it : Reasoning.Automated.Harrison.Handbook.lcf.ProverOperators.thm =
+// val it : FSharpx.Books.AutomatedReasoning.lcf.ProverOperators.thm =
 //   Imp
 //     (Forall
 //        ("x",
@@ -129,13 +129,13 @@ isubst (parset @"x + x")  (parset @"2 * x")
 //                   Fn ("+",[Var "y"; Fn ("+",[Var "z"; Var "z"])])])))))
 ispec (parset @"x") (parse @"forall x y z. x + y + z = y + z + z") ;;
 
-// val it : Reasoning.Automated.Harrison.Handbook.lcf.ProverOperators.thm =
+// val it : FSharpx.Books.AutomatedReasoning.lcf.ProverOperators.thm =
 //   Imp
 //     (Forall ("x",Atom (R ("=",[Var "x"; Var "x"]))),
 //      Atom (R ("=",[Var "x"; Var "x"])))
 ispec (parset @"x") (parse @"forall x. x = x") ;;
 
-// val it : Reasoning.Automated.Harrison.Handbook.lcf.ProverOperators.thm =
+// val it : FSharpx.Books.AutomatedReasoning.lcf.ProverOperators.thm =
 //   Imp
 //     (Forall
 //        ("x",
@@ -160,7 +160,7 @@ ispec (parset @"x") (parse @"forall x. x = x") ;;
 //                   Fn ("+",[Var "y'"; Fn ("+",[Var "z'"; Var "z'"])])])))))
 ispec (parset @"w + y + z") (parse @"forall x y z. x + y + z = y + z + z") ;;
 
-// val it : Reasoning.Automated.Harrison.Handbook.lcf.ProverOperators.thm =
+// val it : FSharpx.Books.AutomatedReasoning.lcf.ProverOperators.thm =
 //   Imp
 //     (Forall
 //        ("x",
@@ -185,20 +185,20 @@ ispec (parset @"w + y + z") (parse @"forall x y z. x + y + z = y + z + z") ;;
 //                  Fn ("+",[Var "y'"; Fn ("+",[Var "z'"; Var "z'"])])])))))
 ispec (parset @"x + y + z") (parse @"forall x y z. x + y + z = y + z + z") ;;
 
-// val it : Reasoning.Automated.Harrison.Handbook.lcf.ProverOperators.thm =
+// val it : FSharpx.Books.AutomatedReasoning.lcf.ProverOperators.thm =
 //   Imp
 //     (Forall ("x",Forall ("y",Forall ("z",Atom (R ("nothing_much",[]))))),
 //      Forall ("y",Forall ("z",Atom (R ("nothing_much",[])))))
 ispec (parset @"x + y + z") (parse @"forall x y z. nothing_much") ;;
 
 // val it :
-//   (Reasoning.Automated.Harrison.Handbook.formulas.formula<fol> ->
-//      Reasoning.Automated.Harrison.Handbook.lcf.ProverOperators.thm) =
+//   (FSharpx.Books.AutomatedReasoning.formulas.formula<fol> ->
+//      FSharpx.Books.AutomatedReasoning.lcf.ProverOperators.thm) =
 //   <fun:it@292>
 isubst (parset @"x + x") (parset @"2 * x")
         (parse @"(x + x = y + y) <=> (something \/ y + y + y = x + x + x)");;
 
-// val it : Reasoning.Automated.Harrison.Handbook.lcf.ProverOperators.thm =
+// val it : FSharpx.Books.AutomatedReasoning.lcf.ProverOperators.thm =
 //   Imp
 //     (Atom
 //        (R ("=",
@@ -224,7 +224,7 @@ isubst (parset @"x + x")  (parset @"2 * x")
         (parse @"(exists x. x = 2) <=> exists y. y + x + x = y + y + y")
         (parse @"(exists x. x = 2) <=> (exists y. y + 2 * x = y + y + y)");;
 
-// val it : Reasoning.Automated.Harrison.Handbook.lcf.ProverOperators.thm =
+// val it : FSharpx.Books.AutomatedReasoning.lcf.ProverOperators.thm =
 //   Imp
 //     (Atom (R ("=",[Var "x"; Var "y"])),
 //      Imp
@@ -246,7 +246,7 @@ isubst (parset @"x")  (parset @"y")
 // The bug is now fixed.                                                     //
 // ------------------------------------------------------------------------- //
 
-// val it : Reasoning.Automated.Harrison.Handbook.lcf.ProverOperators.thm =
+// val it : FSharpx.Books.AutomatedReasoning.lcf.ProverOperators.thm =
 //   Imp
 //     (Forall
 //        ("x",
@@ -268,7 +268,7 @@ isubst (parset @"x")  (parset @"y")
 //                   Fn ("0",[])])))))
 ispec (parset @"x'") (parse @"forall x x' x''. x + x' + x'' = 0");;
 
-// val it : Reasoning.Automated.Harrison.Handbook.lcf.ProverOperators.thm =
+// val it : FSharpx.Books.AutomatedReasoning.lcf.ProverOperators.thm =
 //   Imp
 //     (Forall
 //        ("x",
@@ -290,7 +290,7 @@ ispec (parset @"x'") (parse @"forall x x' x''. x + x' + x'' = 0");;
 //                   Fn ("0",[])])))))
 ispec (parset @"x''") (parse @"forall x x' x''. x + x' + x'' = 0");;
 
-// val it : Reasoning.Automated.Harrison.Handbook.lcf.ProverOperators.thm =
+// val it : FSharpx.Books.AutomatedReasoning.lcf.ProverOperators.thm =
 //   Imp
 //     (Forall
 //        ("x",
@@ -314,7 +314,7 @@ ispec (parset @"x''") (parse @"forall x x' x''. x + x' + x'' = 0");;
 //                       Fn ("+",[Var "x'''"; Var "x''''"])]); Fn ("0",[])])))))
 ispec (parset @"x' + x''") (parse @"forall x x' x''. x + x' + x'' = 0");;
 
-// val it : Reasoning.Automated.Harrison.Handbook.lcf.ProverOperators.thm =
+// val it : FSharpx.Books.AutomatedReasoning.lcf.ProverOperators.thm =
 //   Imp
 //     (Forall
 //        ("x",
@@ -338,7 +338,7 @@ ispec (parset @"x' + x''") (parse @"forall x x' x''. x + x' + x'' = 0");;
 //                       Fn ("+",[Var "x'''"; Var "x''''"])]); Fn ("0",[])])))))
 ispec (parset @"x + x' + x''") (parse @"forall x x' x''. x + x' + x'' = 0");;
 
-// val it : Reasoning.Automated.Harrison.Handbook.lcf.ProverOperators.thm =
+// val it : FSharpx.Books.AutomatedReasoning.lcf.ProverOperators.thm =
 //   Imp
 //     (Forall
 //        ("x",

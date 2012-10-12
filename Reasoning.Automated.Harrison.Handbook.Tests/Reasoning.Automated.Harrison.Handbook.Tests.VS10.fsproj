@@ -8,7 +8,7 @@
     <ProjectGuid>{841b64ff-8f9d-4d0e-9d4f-cd23b12b102d}</ProjectGuid>
     <OutputType>Library</OutputType>
     <RootNamespace>Reasoning.Automated.Harrison.Handbook.Tests</RootNamespace>
-    <AssemblyName>Reasoning.Automated.Harrison.Handbook.Tests</AssemblyName>
+    <AssemblyName>FSharpx.Books.AutomatedReasoning.Tests</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <Name>Reasoning.Automated.Harrison.Handbook.Tests.VS10</Name>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>

@@ -11,7 +11,7 @@
 // in our context.                                                           //
 // ========================================================================= //
 
-module Reasoning.Automated.Harrison.Handbook.interpolation
+module FSharpx.Books.AutomatedReasoning.interpolation
 
 open FSharpx.Compatibility.OCaml.Num
 

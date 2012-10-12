@@ -5,7 +5,7 @@
 // ========================================================================= //
 
 [<CompilationRepresentation(CompilationRepresentationFlags.ModuleSuffix)>]
-module Reasoning.Automated.Harrison.Handbook.fol
+module FSharpx.Books.AutomatedReasoning.fol
  
 open intro
 open formulas

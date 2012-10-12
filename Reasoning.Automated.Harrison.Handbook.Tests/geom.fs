@@ -4,17 +4,17 @@
 // (See "LICENSE.txt" for details.)                                          //
 // ========================================================================= //
 
-module Reasoning.Automated.Harrison.Handbook.Tests.geom
+module FSharpx.Books.AutomatedReasoning.Tests.geom
 
-open Reasoning.Automated.Harrison.Handbook.lib
-open Reasoning.Automated.Harrison.Handbook.formulas
-open Reasoning.Automated.Harrison.Handbook.fol
-open Reasoning.Automated.Harrison.Handbook.equal
-open Reasoning.Automated.Harrison.Handbook.cooper
-open Reasoning.Automated.Harrison.Handbook.complex
-open Reasoning.Automated.Harrison.Handbook.real
-open Reasoning.Automated.Harrison.Handbook.grobner
-open Reasoning.Automated.Harrison.Handbook.geom
+open FSharpx.Books.AutomatedReasoning.lib
+open FSharpx.Books.AutomatedReasoning.formulas
+open FSharpx.Books.AutomatedReasoning.fol
+open FSharpx.Books.AutomatedReasoning.equal
+open FSharpx.Books.AutomatedReasoning.cooper
+open FSharpx.Books.AutomatedReasoning.complex
+open FSharpx.Books.AutomatedReasoning.real
+open FSharpx.Books.AutomatedReasoning.grobner
+open FSharpx.Books.AutomatedReasoning.geom
 open NUnit.Framework
 open FsUnit
 

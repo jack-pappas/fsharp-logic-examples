@@ -8,15 +8,15 @@
 
 open FSharpx.Compatibility.OCaml
 
-open Reasoning.Automated.Harrison.Handbook.lib
-open Reasoning.Automated.Harrison.Handbook.formulas
-open Reasoning.Automated.Harrison.Handbook.fol
-open Reasoning.Automated.Harrison.Handbook.meson
-open Reasoning.Automated.Harrison.Handbook.lcf
-open Reasoning.Automated.Harrison.Handbook.lcfprop
-open Reasoning.Automated.Harrison.Handbook.folderived
-open Reasoning.Automated.Harrison.Handbook.tactics
-open Reasoning.Automated.Harrison.Handbook.limitations
+open FSharpx.Books.AutomatedReasoning.lib
+open FSharpx.Books.AutomatedReasoning.formulas
+open FSharpx.Books.AutomatedReasoning.fol
+open FSharpx.Books.AutomatedReasoning.meson
+open FSharpx.Books.AutomatedReasoning.lcf
+open FSharpx.Books.AutomatedReasoning.lcfprop
+open FSharpx.Books.AutomatedReasoning.folderived
+open FSharpx.Books.AutomatedReasoning.tactics
+open FSharpx.Books.AutomatedReasoning.limitations
 
 fsi.AddPrinter sprint_thm
 

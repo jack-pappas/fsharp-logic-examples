@@ -4,15 +4,15 @@
 // (See "LICENSE.txt" for details.)                                          //
 // ========================================================================= //
 
-module Reasoning.Automated.Harrison.Handbook.Tests.herbrand
+module FSharpx.Books.AutomatedReasoning.Tests.herbrand
 
-open Reasoning.Automated.Harrison.Handbook.lib    
-open Reasoning.Automated.Harrison.Handbook.formulas
-open Reasoning.Automated.Harrison.Handbook.prop
-open Reasoning.Automated.Harrison.Handbook.dp
-open Reasoning.Automated.Harrison.Handbook.fol
-open Reasoning.Automated.Harrison.Handbook.skolem
-open Reasoning.Automated.Harrison.Handbook.herbrand
+open FSharpx.Books.AutomatedReasoning.lib    
+open FSharpx.Books.AutomatedReasoning.formulas
+open FSharpx.Books.AutomatedReasoning.prop
+open FSharpx.Books.AutomatedReasoning.dp
+open FSharpx.Books.AutomatedReasoning.fol
+open FSharpx.Books.AutomatedReasoning.skolem
+open FSharpx.Books.AutomatedReasoning.herbrand
 
 open NUnit.Framework
 open FsUnit

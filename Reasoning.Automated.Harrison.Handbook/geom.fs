@@ -8,7 +8,7 @@
 //  Geometry theorem proving.                                                 // 
 //  ========================================================================= // 
 
-module Reasoning.Automated.Harrison.Handbook.geom
+module FSharpx.Books.AutomatedReasoning.geom
 
 open intro
 open formulas

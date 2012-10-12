@@ -4,7 +4,7 @@
 // (See "LICENSE.txt" for details.)                                          //
 // ========================================================================= //
 
-module Reasoning.Automated.Harrison.Handbook.defcnf
+module FSharpx.Books.AutomatedReasoning.defcnf
 
 open LanguagePrimitives
 open FSharpx.Compatibility.OCaml.Num

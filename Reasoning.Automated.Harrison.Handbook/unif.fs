@@ -4,7 +4,7 @@
 // (See "LICENSE.txt" for details.)                                          //
 // ========================================================================= //
 
-module Reasoning.Automated.Harrison.Handbook.unif
+module FSharpx.Books.AutomatedReasoning.unif
 
 open intro
 open fol

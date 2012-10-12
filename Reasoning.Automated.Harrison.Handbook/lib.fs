@@ -6,7 +6,7 @@
 
 /// Misc library functions to set up a nice environment.
 [<AutoOpen>]
-module Reasoning.Automated.Harrison.Handbook.lib
+module FSharpx.Books.AutomatedReasoning.lib
 
 open LanguagePrimitives
 open FSharpx.Compatibility.OCaml.Num

@@ -6,9 +6,9 @@
 
 #load "initialization.fsx"
 
-open Reasoning.Automated.Harrison.Handbook.fol
-open Reasoning.Automated.Harrison.Handbook.lcf
-open Reasoning.Automated.Harrison.Handbook.lcfprop
+open FSharpx.Books.AutomatedReasoning.fol
+open FSharpx.Books.AutomatedReasoning.lcf
+open FSharpx.Books.AutomatedReasoning.lcfprop
 
 fsi.AddPrinter sprint_thm
         
@@ -17,13 +17,13 @@ fsi.AddPrinter sprint_thm
 // The examples in the text.                                                 //
 // ------------------------------------------------------------------------- //
 
-// val it : Reasoning.Automated.Harrison.Handbook.lcf.ProverOperators.thm =
+// val it : FSharpx.Books.AutomatedReasoning.lcf.ProverOperators.thm =
 //   Or
 //     (Imp (Atom (R ("p",[])),Atom (R ("q",[]))),
 //      Imp (Atom (R ("q",[])),Atom (R ("p",[]))))
 lcftaut (parse @"(p ==> q) \/ (q ==> p)") |> sprint_thm;;
 
-// val it : Reasoning.Automated.Harrison.Handbook.lcf.ProverOperators.thm =
+// val it : FSharpx.Books.AutomatedReasoning.lcf.ProverOperators.thm =
 //   Iff
 //     (And (Atom (R ("p",[])),Atom (R ("q",[]))),
 //      Iff
@@ -31,7 +31,7 @@ lcftaut (parse @"(p ==> q) \/ (q ==> p)") |> sprint_thm;;
 //         Or (Atom (R ("p",[])),Atom (R ("q",[])))))
 lcftaut (parse @"p /\ q <=> ((p <=> q) <=> p \/ q)") |> sprint_thm;;
 
-// val it : Reasoning.Automated.Harrison.Handbook.lcf.ProverOperators.thm =
+// val it : FSharpx.Books.AutomatedReasoning.lcf.ProverOperators.thm =
 //   Iff
 //     (Iff (Iff (Atom (R ("p",[])),Atom (R ("q",[]))),Atom (R ("r",[]))),
 //      Iff (Atom (R ("p",[])),Iff (Atom (R ("q",[])),Atom (R ("r",[])))))

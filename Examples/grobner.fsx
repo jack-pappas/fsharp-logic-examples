@@ -6,10 +6,10 @@
 
 #load "initialization.fsx"
 
-open Reasoning.Automated.Harrison.Handbook.lib
-open Reasoning.Automated.Harrison.Handbook.fol
-open Reasoning.Automated.Harrison.Handbook.complex
-open Reasoning.Automated.Harrison.Handbook.grobner
+open FSharpx.Books.AutomatedReasoning.lib
+open FSharpx.Books.AutomatedReasoning.fol
+open FSharpx.Books.AutomatedReasoning.complex
+open FSharpx.Books.AutomatedReasoning.grobner
 
 // pg. 413
 // ------------------------------------------------------------------------- //

@@ -6,7 +6,7 @@
 
 #load "initialization.fsx"
 
-open Reasoning.Automated.Harrison.Handbook.lib
+open FSharpx.Books.AutomatedReasoning.lib
 
 // pg. 621
 

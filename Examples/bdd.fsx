@@ -6,11 +6,11 @@
 
 #load "initialization.fsx"
 
-open Reasoning.Automated.Harrison.Handbook.lib
-open Reasoning.Automated.Harrison.Handbook.formulas
-open Reasoning.Automated.Harrison.Handbook.prop
-open Reasoning.Automated.Harrison.Handbook.propexamples
-open Reasoning.Automated.Harrison.Handbook.bdd
+open FSharpx.Books.AutomatedReasoning.lib
+open FSharpx.Books.AutomatedReasoning.formulas
+open FSharpx.Books.AutomatedReasoning.prop
+open FSharpx.Books.AutomatedReasoning.propexamples
+open FSharpx.Books.AutomatedReasoning.bdd
 
 // pg. 105
 // ------------------------------------------------------------------------- //

@@ -4,7 +4,7 @@
 // (See "LICENSE.txt" for details.)                                          //
 // ========================================================================= //
 
-module Reasoning.Automated.Harrison.Handbook.qelim
+module FSharpx.Books.AutomatedReasoning.qelim
 
 open intro
 open formulas

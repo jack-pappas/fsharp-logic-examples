@@ -8,7 +8,7 @@
 // Grobner basis algorithm.                                                  //
 // ========================================================================= //
 
-module Reasoning.Automated.Harrison.Handbook.grobner
+module FSharpx.Books.AutomatedReasoning.grobner
 
 open FSharpx.Compatibility.OCaml.Num
 

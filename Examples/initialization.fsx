@@ -7,8 +7,8 @@
 (* Tweak F# default state ready for theorem proving code.                    *)
 (* ========================================================================= *)
 
-#I @".\..\Reasoning.Automated.Harrison.Handbook\bin\Debug"
-#r @"Reasoning.Automated.Harrison.Handbook.dll"
+#I @".\..\FSharpx.Books.AutomatedReasoning\bin\Debug"
+#r @"FSharpx.Books.AutomatedReasoning.dll"
 #r @"FSharpx.Compatibility.Ocaml.dll"
 #r @"FSharp.PowerPack.dll"
 

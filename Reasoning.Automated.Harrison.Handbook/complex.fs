@@ -4,7 +4,7 @@
 // (See "LICENSE.txt" for details.)                                          //
 // ========================================================================= //
 
-module Reasoning.Automated.Harrison.Handbook.complex
+module FSharpx.Books.AutomatedReasoning.complex
 
 open LanguagePrimitives
 

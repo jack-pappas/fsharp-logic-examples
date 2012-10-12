@@ -4,7 +4,7 @@
 // (See "LICENSE.txt" for details.)                                          //
 // ========================================================================= //
 
-module Reasoning.Automated.Harrison.Handbook.resolution
+module FSharpx.Books.AutomatedReasoning.resolution
 
 open formulas
 open prop

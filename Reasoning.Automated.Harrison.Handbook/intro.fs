@@ -4,7 +4,7 @@
 // (See "LICENSE.txt" for details.)                                          //
 // ========================================================================= //
 
-module Reasoning.Automated.Harrison.Handbook.intro
+module FSharpx.Books.AutomatedReasoning.intro
 
 open System
 

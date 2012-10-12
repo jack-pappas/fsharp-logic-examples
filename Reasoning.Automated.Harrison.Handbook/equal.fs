@@ -4,7 +4,7 @@
 // (See "LICENSE.txt" for details.)                                          //
 // ========================================================================= //
 
-module Reasoning.Automated.Harrison.Handbook.equal
+module FSharpx.Books.AutomatedReasoning.equal
 
 open formulas
 open fol

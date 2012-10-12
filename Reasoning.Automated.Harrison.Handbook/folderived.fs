@@ -8,7 +8,7 @@
 // First-order derived rules in the LCF setup.                               //
 // ========================================================================= //
 
-module Reasoning.Automated.Harrison.Handbook.folderived
+module FSharpx.Books.AutomatedReasoning.folderived
 
 open intro
 open formulas

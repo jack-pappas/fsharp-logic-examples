@@ -4,7 +4,7 @@
 // (See "LICENSE.txt" for details.)                                          //
 // ========================================================================= //
 
-module Reasoning.Automated.Harrison.Handbook.prolog
+module FSharpx.Books.AutomatedReasoning.prolog
 
 open intro
 open formulas

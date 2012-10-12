@@ -4,7 +4,7 @@
 // (See "LICENSE.txt" for details.)                                          //
 // ========================================================================= //
 
-module Reasoning.Automated.Harrison.Handbook.decidable
+module FSharpx.Books.AutomatedReasoning.decidable
 
 open intro
 open formulas

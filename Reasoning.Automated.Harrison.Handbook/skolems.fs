@@ -4,7 +4,7 @@
 // (See "LICENSE.txt" for details.)                                          //
 // ========================================================================= //
 
-module Reasoning.Automated.Harrison.Handbook.skolems
+module FSharpx.Books.AutomatedReasoning.skolems
 
 open fol
 open skolem

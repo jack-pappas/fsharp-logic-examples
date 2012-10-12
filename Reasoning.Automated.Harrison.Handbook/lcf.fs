@@ -8,7 +8,7 @@
 // LCF-style basis for Tarski-style Hilbert system of first order logic.     //
 // ========================================================================= //
 
-module Reasoning.Automated.Harrison.Handbook.lcf
+module FSharpx.Books.AutomatedReasoning.lcf
 
 open intro
 open formulas

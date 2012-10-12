@@ -8,7 +8,7 @@
 // Nelson-Oppen combined decision procedure.                                 //
 // ========================================================================= //
 
-module Reasoning.Automated.Harrison.Handbook.combining
+module FSharpx.Books.AutomatedReasoning.combining
 
 open FSharpx.Compatibility.OCaml.Num
 

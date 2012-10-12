@@ -6,11 +6,11 @@
 
 #load "initialization.fsx"
 
-open Reasoning.Automated.Harrison.Handbook.lib
-open Reasoning.Automated.Harrison.Handbook.fol
-open Reasoning.Automated.Harrison.Handbook.lcf
-open Reasoning.Automated.Harrison.Handbook.lcfprop
-open Reasoning.Automated.Harrison.Handbook.lcffol
+open FSharpx.Books.AutomatedReasoning.lib
+open FSharpx.Books.AutomatedReasoning.fol
+open FSharpx.Books.AutomatedReasoning.lcf
+open FSharpx.Books.AutomatedReasoning.lcfprop
+open FSharpx.Books.AutomatedReasoning.lcffol
 
 fsi.AddPrinter sprint_thm
 

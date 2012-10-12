@@ -4,9 +4,9 @@
 // (See "LICENSE.txt" for details.)                                          //
 // ========================================================================= //
 
-module Reasoning.Automated.Harrison.Handbook.Tests.lib
+module FSharpx.Books.AutomatedReasoning.Tests.lib
 
-open Reasoning.Automated.Harrison.Handbook.lib
+open FSharpx.Books.AutomatedReasoning.lib
 open NUnit.Framework
 open FsUnit
 

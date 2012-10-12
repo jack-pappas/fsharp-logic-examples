@@ -4,7 +4,7 @@
 // (See "LICENSE.txt" for details.)                                          //
 // ========================================================================= //
 
-module Reasoning.Automated.Harrison.Handbook.rewrite
+module FSharpx.Books.AutomatedReasoning.rewrite
 
 open formulas
 open fol

@@ -8,7 +8,7 @@
 // Propositional reasoning by derived rules atop the LCF core.               //
 // ========================================================================= //
 
-module Reasoning.Automated.Harrison.Handbook.lcfprop
+module FSharpx.Books.AutomatedReasoning.lcfprop
 
 open intro
 open formulas

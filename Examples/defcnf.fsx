@@ -6,11 +6,11 @@
 
 #load "initialization.fsx"
 
-open Reasoning.Automated.Harrison.Handbook.lib
-open Reasoning.Automated.Harrison.Handbook.intro
-open Reasoning.Automated.Harrison.Handbook.formulas
-open Reasoning.Automated.Harrison.Handbook.prop
-open Reasoning.Automated.Harrison.Handbook.defcnf
+open FSharpx.Books.AutomatedReasoning.lib
+open FSharpx.Books.AutomatedReasoning.intro
+open FSharpx.Books.AutomatedReasoning.formulas
+open FSharpx.Books.AutomatedReasoning.prop
+open FSharpx.Books.AutomatedReasoning.defcnf
 
 open LanguagePrimitives
 open FSharpx.Compatibility.OCaml.Num

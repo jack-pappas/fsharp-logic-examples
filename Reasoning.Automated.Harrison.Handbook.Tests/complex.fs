@@ -4,15 +4,15 @@
 // (See "LICENSE.txt" for details.)                                          //
 // ========================================================================= //
 
-module Reasoning.Automated.Harrison.Handbook.Tests.complex
+module FSharpx.Books.AutomatedReasoning.Tests.complex
 
 open NUnit.Framework
 open FsUnit
-open Reasoning.Automated.Harrison.Handbook.lib
-open Reasoning.Automated.Harrison.Handbook.formulas
-open Reasoning.Automated.Harrison.Handbook.fol
-open Reasoning.Automated.Harrison.Handbook.cooper
-open Reasoning.Automated.Harrison.Handbook.complex
+open FSharpx.Books.AutomatedReasoning.lib
+open FSharpx.Books.AutomatedReasoning.formulas
+open FSharpx.Books.AutomatedReasoning.fol
+open FSharpx.Books.AutomatedReasoning.cooper
+open FSharpx.Books.AutomatedReasoning.complex
 
 (* ------------------------------------------------------------------------- *)
 (* Sanity check.                                                             *)

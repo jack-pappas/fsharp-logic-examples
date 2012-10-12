@@ -6,12 +6,12 @@
 
 #load "initialization.fsx"
 
-open Reasoning.Automated.Harrison.Handbook.formulas
-open Reasoning.Automated.Harrison.Handbook.prop
-open Reasoning.Automated.Harrison.Handbook.fol
-open Reasoning.Automated.Harrison.Handbook.skolem
-open Reasoning.Automated.Harrison.Handbook.meson
-open Reasoning.Automated.Harrison.Handbook.interpolation
+open FSharpx.Books.AutomatedReasoning.formulas
+open FSharpx.Books.AutomatedReasoning.prop
+open FSharpx.Books.AutomatedReasoning.fol
+open FSharpx.Books.AutomatedReasoning.skolem
+open FSharpx.Books.AutomatedReasoning.meson
+open FSharpx.Books.AutomatedReasoning.interpolation
 
 fsi.AddPrinter sprint_fol_formula
 

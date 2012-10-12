@@ -4,7 +4,7 @@
 // (See "LICENSE.txt" for details.)                                          //
 // ========================================================================= //
 
-module Reasoning.Automated.Harrison.Handbook.order
+module FSharpx.Books.AutomatedReasoning.order
 
 open intro
 open formulas

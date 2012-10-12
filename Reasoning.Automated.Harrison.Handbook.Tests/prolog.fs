@@ -4,18 +4,18 @@
 // (See "LICENSE.txt" for details.)                                          //
 // ========================================================================= //
 
-module Reasoning.Automated.Harrison.Handbook.Tests.prolog
+module FSharpx.Books.AutomatedReasoning.Tests.prolog
 
-open Reasoning.Automated.Harrison.Handbook.lib
-open Reasoning.Automated.Harrison.Handbook.intro
-open Reasoning.Automated.Harrison.Handbook.formulas
-open Reasoning.Automated.Harrison.Handbook.prop
-open Reasoning.Automated.Harrison.Handbook.fol
-open Reasoning.Automated.Harrison.Handbook.skolem
-open Reasoning.Automated.Harrison.Handbook.unif
-open Reasoning.Automated.Harrison.Handbook.tableaux
-open Reasoning.Automated.Harrison.Handbook.resolution
-open Reasoning.Automated.Harrison.Handbook.prolog
+open FSharpx.Books.AutomatedReasoning.lib
+open FSharpx.Books.AutomatedReasoning.intro
+open FSharpx.Books.AutomatedReasoning.formulas
+open FSharpx.Books.AutomatedReasoning.prop
+open FSharpx.Books.AutomatedReasoning.fol
+open FSharpx.Books.AutomatedReasoning.skolem
+open FSharpx.Books.AutomatedReasoning.unif
+open FSharpx.Books.AutomatedReasoning.tableaux
+open FSharpx.Books.AutomatedReasoning.resolution
+open FSharpx.Books.AutomatedReasoning.prolog
 
 open NUnit.Framework
 open FsUnit
