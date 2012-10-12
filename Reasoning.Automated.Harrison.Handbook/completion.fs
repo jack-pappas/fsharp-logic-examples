@@ -36,10 +36,11 @@ let renamepair (fm1,fm2) =
     let fvs1 = fv fm1
     let fvs2 = fv fm2
     let nms1, nms2 =
-        List.init (List.length fvs1 + List.length fvs2)
-        <| fun i ->
-            Var ("x" + string i)
-        |> chop_list (List.length fvs1)
+        let fvs1_len = List.length fvs1
+        let fvs2_len = List.length fvs2
+        [ for i = 0 to fvs1_len + fvs2_len - 1 do
+            yield Var ("x" + string i) ]
+        |> chop_list fvs1_len
 
     subst (fpf fvs1 nms1) fm1, subst (fpf fvs2 nms2) fm2
   
