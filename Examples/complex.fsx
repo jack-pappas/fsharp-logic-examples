@@ -681,7 +681,7 @@ time complex_qelim (parse
     (-(1152) * u^8 - 1008 * u^6 - 840 * u^4 - 630 * u^2 - 315) *
     (u^2 + v^2 - 1)");;
 
-// complex.p07`
+// complex.p070
 time complex_qelim (parse
     @"forall u v.
         u^2 + v^2 = 1
@@ -852,4 +852,3 @@ time complex_qelim (parse
 complex_qelim (parse
     @"forall x1 y1 x2 y2. exists a b.
         ~(a = 0 /\ b = 0) /\ a * x1 + b * y1 = 0 /\ a * x2 + b * y2 = 0");;
-
