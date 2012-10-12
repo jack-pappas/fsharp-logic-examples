@@ -507,8 +507,8 @@ let unions s =
 // pg. 620
 // OCaml: val mem : 'a -> 'a list -> bool = <fun>
 // F#:    val mem : 'a -> 'a list -> bool when 'a : equality
-    let inline mem x lis =
-        List.exists ((=) x) lis
+let inline mem x lis =
+    List.exists ((=) x) lis
 
 // ------------------------------------------------------------------------- //
 // Finding all subsets or all subsets of a given size.                       //
