@@ -66,11 +66,11 @@ let rec unify_refute djs (acc : func<string, term>) : func<string, term> =
 let rec prawitz_loop djs0 fvs djs n =
     let djs1 =
         let inst =
-            let newvars =
-                // OPTIMIZE : Change this call to List.map to use List.init instead.
-                let l = List.length fvs
-                List.map (fun k -> "_" + string (n * l + k)) [1 .. l]
-            fpf fvs (List.map Var newvars)
+            let l = List.length fvs
+            [ for k = 1 to l do
+                let varName = "_" + string (n * l + k)
+                yield Var varName ]
+            |> fpf fvs
         distrib (image (image (subst inst)) djs0) djs
 
     try unify_refute djs1 undefined,(n + 1)
