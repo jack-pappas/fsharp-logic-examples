@@ -163,7 +163,6 @@ let fprintert tw tm =
     fprint_term tw 0 tm
     fprintf tw "|>>"
 
-// Actual function for printing
 let inline print_term t = fprintert stdout t
 let inline sprint_term t = writeToString (fun sw -> fprintert sw t)
 
@@ -178,7 +177,6 @@ let fprint_atom tw prec (R (p, args)) : unit =
     else
         fprint_fargs tw p args
 
-// Actual function for printing
 let inline print_atom prec arg = fprint_atom stdout prec arg
 let inline sprint_atom prec arg = writeToString (fun sw -> fprint_atom sw prec arg)
 
