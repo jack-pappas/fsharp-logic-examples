@@ -95,7 +95,6 @@ let trigger =
             match fm with
             | Not (Not p) -> p
             | _ -> fm
-        // TODO: Figure out how to use match with with this let to remove warning
         let inst_fn [x; y; z] =
             let subfn = fpf [P"p"; P"q"; P"r"] [x; y; z]
             ddnegate << psubst subfn

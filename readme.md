@@ -11,7 +11,7 @@ The solution uses F# 2.0 and .NET framework 4.0 inside [Visual Studio 2010] (htt
 You will need to install [NuGet] (http://nuget.codeplex.com/) to get additional required libraries. 
 After installing NuGet, make sure to enable "Allow NuGet to download missing packages during build". 
 [This setting](http://docs.nuget.org/docs/workflows/using-nuget-without-committing-packages) is under Options -> Package Manager -> General.
-You will have to build the application once you have NuGet installed and the solution open in Visual Studio.
+You will have to build the application once you have NuGet installed and the solution opened in Visual Studio.
 
 The test cases have been tested with *NUnit 2.6 x86* and *TestDriven.NET-3.4.2803* x86 test runners. 
 **We recommend you to use x86 versions of the test runners.** 
@@ -55,9 +55,11 @@ To run the unit test you will need to
  - Run a few examples with 16MB stack (the default limit set by OCaml version) using `runWith16MBStack` in `initialization.fsx`. These examples result in `StackOverflowException` in F# on Windows due to small 1MB stack (see extensive discussion [here](http://stackoverflow.com/questions/7947446/why-does-f-impose-a-low-limit-on-stack-size)).
  - Redefined `Failure` active patterns to accommodate `KeyNotFoundException`, `ArgumentException`, etc. The OCaml version makes use of `Failure` as a control flow; the F# version throws different kinds of exceptions which weren't caught by default `Failure`. The active pattern might be updated to handle other exceptions later (see the detailed function in the beginning of `lib.fs`).
  
-### Unit tests ###
-A large set of unit tests is created based on available examples. These test cases serve as proofs of correctness when the code base is updated or optimized over time. There are a few problems on implementing test cases though:
+### Writing unit tests ###
+A large set of unit tests is created based on available examples. 
+These test cases serve as a starting baseline for ensuring correcness when the code base is updated or optimized over time. 
+There are a few problems on implementing test cases though:
  - NUnit only accepts parameterized tests on primitive types. To compare sophisticated values, we have to put them into arrays and use indices as test parameters.
- - FsUnit uses type test to implement its DSL. Type inference doesn't work on this DSL, so make sure that `expected` and `result` belong to the same type.
+ - FsUnit uses type test to implement its DSL. Type inference doesn't work on this DSL, so make sure that two compared values belong to the same type.
  - FsUnit and the library have some clashed constraints, namely `True` and `False`. To create tests correctly, one might need to use detailed type annotation, such as `formula<fol>.True` and `formula<fol>.False` for literals in first-order logic.
  - A few slow tests are put into `LongRunning` category. They aren't recommended to run on the development basis. Their purposes are to validate the project upon release.

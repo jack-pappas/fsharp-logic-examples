@@ -56,9 +56,8 @@ nelop (add_default [int_lang]) (parse
 nelop (add_default [int_lang]) (parse
     "x = y /\ y >= z /\ z >= x ==> f(z) = f(x)");;
 
-// TODO: Fix this - too slow
-//nelop (add_default [int_lang]) (parse
-//    "a <= b /\ b <= f(a) /\ f(a) <= 1 ==> a + b <= 1 \/ b + f(b) <= 1 \/ f(f(b)) <= f(a)");;
+nelop (add_default [int_lang]) (parse
+    "a <= b /\ b <= f(a) /\ f(a) <= 1 ==> a + b <= 1 \/ b + f(b) <= 1 \/ f(f(b)) <= f(a)");;
 
 // pg. 447
 // ------------------------------------------------------------------------- //
