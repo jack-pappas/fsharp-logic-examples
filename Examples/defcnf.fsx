@@ -12,10 +12,6 @@ open FSharpx.Books.AutomatedReasoning.formulas
 open FSharpx.Books.AutomatedReasoning.prop
 open FSharpx.Books.AutomatedReasoning.defcnf
 
-open LanguagePrimitives
-open FSharpx.Compatibility.OCaml.Num
-
-
 fsi.AddPrinter sprint_prop_formula
 
 // pg. 74
