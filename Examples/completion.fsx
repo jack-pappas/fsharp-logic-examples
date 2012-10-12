@@ -42,7 +42,6 @@ let ord = lpo_ge (weight ["1"; "*"; "i"]);;
 // Real: 00:00:32.964, CPU: 00:00:32.937, GC gen0: 165, gen1: 4, gen2: 0
 let eqs' = complete ord (eqs, [], unions (allpairs critical_pairs eqs eqs));;
 
-// Real: 00:00:00.017, CPU: 00:00:00.015, GC gen0: 0, gen1: 0, gen2: 0
 rewrite eqs' (parset @"i(x * i(x)) * (i(i((y * z) * u) * y) * i(u))");;
 
 // pg. 283
