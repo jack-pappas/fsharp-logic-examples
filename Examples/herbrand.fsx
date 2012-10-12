@@ -30,22 +30,26 @@ let sfm = skolemize(Not (parse @"exists x. forall y. P(x) ==> P(y)"));;
 // Quick example.                                                            //
 // ------------------------------------------------------------------------- //
 
-let p24 = gilmore (parse @"~(exists x. U(x) /\ Q(x)) 
-/\ (forall x. P(x) ==> Q(x) \/ R(x)) 
-/\ ~(exists x. P(x) ==> (exists x. Q(x))) 
-/\ (forall x. Q(x) 
-/\ R(x) ==> U(x)) ==> (exists x. P(x) /\ R(x))");;
+let p24 = gilmore (parse @"
+    ~(exists x. U(x) /\ Q(x)) 
+    /\ (forall x. P(x) ==> Q(x) \/ R(x)) 
+    /\ ~(exists x. P(x) ==> (exists x. Q(x))) 
+    /\ (forall x. Q(x) 
+    /\ R(x) ==> U(x)) ==> (exists x. P(x) /\ R(x))");;
 
 // pg. 162
 // ------------------------------------------------------------------------- //
 // Slightly less easy example.                                               //
 // ------------------------------------------------------------------------- //
 
-let p45 = Initialization.runWithEnlargedStack (fun () -> gilmore (parse @"(forall x. P(x) 
-                            /\ (forall y. G(y) /\ H(x,y) ==> J(x,y)) ==> (forall y. G(y) /\ H(x,y) ==> R(y))) 
-                            /\ ~(exists y. L(y) /\ R(y)) 
-                            /\ (exists x. P(x) /\ (forall y. H(x,y) ==> L(y)) 
-                            /\ (forall y. G(y) /\ H(x,y) ==> J(x,y))) ==> (exists x. P(x) /\ ~(exists y. G(y) /\ H(x,y)))"));;
+// Real: 00:00:27.907, CPU: 00:00:27.906, GC gen0: 7, gen1: 6, gen2: 1
+let p45 = Initialization.runWithEnlargedStack (fun () -> 
+    gilmore (parse @"
+        (forall x. P(x) 
+        /\ (forall y. G(y) /\ H(x,y) ==> J(x,y)) ==> (forall y. G(y) /\ H(x,y) ==> R(y))) 
+        /\ ~(exists y. L(y) /\ R(y)) 
+        /\ (exists x. P(x) /\ (forall y. H(x,y) ==> L(y)) 
+        /\ (forall y. G(y) /\ H(x,y) ==> J(x,y))) ==> (exists x. P(x) /\ ~(exists y. G(y) /\ H(x,y)))"));;
 
 // pg. 162
 // ------------------------------------------------------------------------- //
@@ -60,14 +64,18 @@ let p45 = Initialization.runWithEnlargedStack (fun () -> gilmore (parse @"(foral
 // Show how much better than the Gilmore procedure this can be.              //
 // ------------------------------------------------------------------------- //
 
-let p20dp = davisputnam (parse @"(forall x y. exists z. forall w. P(x) /\ Q(y) ==> R(z) /\ U(w))
-==> (exists x y. P(x) /\ Q(y)) ==> (exists z. R(z))");;
+let p20dp = davisputnam (parse @"
+    (forall x y. exists z. forall w. P(x) /\ Q(y) ==> R(z) /\ U(w))
+    ==> (exists x y. P(x) /\ Q(y)) ==> (exists z. R(z))");;
 
-let p36 = davisputnam' (parse @"(forall x. exists y. P(x,y)) 
-/\ (forall x. exists y. G(x,y)) 
-/\ (forall x y. P(x,y) \/ G(x,y) ==> (forall z. P(y,z) \/ G(y,z) ==> H(x,z)))
-==> (forall x. exists y. H(x,y))");;
+let p36 = davisputnam' (parse @"
+    (forall x. exists y. P(x,y)) 
+    /\ (forall x. exists y. G(x,y)) 
+    /\ (forall x y. P(x,y) \/ G(x,y) ==> (forall z. P(y,z) \/ G(y,z) ==> H(x,z)))
+    ==> (forall x. exists y. H(x,y))");;
 
-let p29 = davisputnam' (parse @"(exists x. P(x)) /\ (exists x. G(x)) ==>
-((forall x. P(x) ==> H(x)) /\ (forall x. G(x) ==> J(x)) <=>
-(forall x y. P(x) /\ G(y) ==> H(x) /\ J(y)))");;
+// Real: 00:01:50.847, CPU: 00:01:50.687, GC gen0: 382, gen1: 111, gen2: 1
+let p29 = davisputnam' (parse @"
+    (exists x. P(x)) /\ (exists x. G(x)) ==>
+    ((forall x. P(x) ==> H(x)) /\ (forall x. G(x) ==> J(x)) <=>
+    (forall x y. P(x) /\ G(y) ==> H(x) /\ J(y)))");;
