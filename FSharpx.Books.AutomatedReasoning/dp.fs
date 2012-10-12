@@ -20,7 +20,7 @@ open defcnf
 // The DP procedure.                                                         //
 // ------------------------------------------------------------------------- //    
       
-// Note: Signature difference because of use of F# List.tryFind
+// NOTE: Signature difference because of use of F# List.tryFind
 // OCaml : 'a formula list list -> 'a formula list list = <fun>
 // F#    : 'a formula list list -> 'a formula list list option
 let one_literal_rule clauses =
@@ -37,7 +37,7 @@ let one_literal_rule clauses =
         |> image (fun cl -> subtract cl [u'])
         |> Some
         
-// Note signature difference because of use of F# Some and None
+// NOTE: signature difference because of use of F# Some and None
 // OCaml : 'a formula list list -> 'a formula list list = <fun>
 // F#    : 'a formula list list -> 'a formula list list option
 let affirmative_negative_rule clauses =

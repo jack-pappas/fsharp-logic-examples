@@ -66,8 +66,6 @@ let coordinations =
 //  Convert formula into coordinate form.                                     // 
 //  ------------------------------------------------------------------------- // 
 
-// OCaml: val coordinate : fol formula -> fol formula = <fun>
-// F#:    val coordinate : (formula<fol> -> formula<fol>)
 let coordinate = onatoms <| fun (R (a, args)) ->
     let xtms,ytms = List.unzip (List.map (fun (Var v) -> Var (v + "_x"), Var (v + "_y")) args)
     let rec xs = List.map (fun n -> string n + "_x") (1 -- List.length args)
@@ -79,8 +77,6 @@ let coordinate = onatoms <| fun (R (a, args)) ->
 //  Verify equivalence under rotation.                                        // 
 //  ------------------------------------------------------------------------- // 
 
-// OCaml: val invariant : term * term -> string * fol formula -> fol formula = <fun>
-// F#:    val invariant : term * term -> string * formula<fol> -> formula<fol>
 let invariant (x', y') (s : string, z) =
     let m n f =
         let rec x = string n + "_x"
@@ -89,12 +85,8 @@ let invariant (x', y') (s : string, z) =
         (x |-> tsubst i x') ((y |-> tsubst i y') f)
     Iff (z,subst (List.foldBack m (1 -- 5) undefined) z)
 
-// OCaml: val invariant_under_translation : string * fol formula -> fol formula = <fun>
-// F#:    val invariant_under_translation : (string * formula<fol> -> formula<fol>)
 let invariant_under_translation = invariant ((parset "x + X"),(parset "y + Y"))
 
-// OCaml: val invariant_under_rotation : string * fol formula -> fol formula = <fun>
-// F#:    val invariant_under_rotation : string * formula<fol> -> formula<fol>
 let invariant_under_rotation fm =
     Imp((parse "s^2 + c^2 = 1"),
         invariant ((parset "c * x - s * y"),(parset "s * x + c * y")) fm)
@@ -104,8 +96,6 @@ let invariant_under_rotation fm =
 //  Choose one point to be the origin and rotate to zero another y coordinate // 
 //  ------------------------------------------------------------------------- // 
 
-// OCaml: val originate : fol formula -> fol formula = <fun>
-// F#:    val originate : formula<fol> -> formula<fol>
 let originate fm =
     let a :: b :: ovs = fv fm
     subst (fpf [a + "_x"; a + "_y"; b + "_y"] [zero; zero; zero]) (coordinate fm)
@@ -118,8 +108,6 @@ let originate fm =
 let invariant_under_scaling fm =
     Imp((parse "~(A = 0)"),invariant((parset "A * x"),(parset "A * y")) fm)
 
-// OCaml: val invariant_under_shearing : string * fol formula -> fol formula = <fun>
-// F#:    val invariant_under_shearing : (string * formula<fol> -> formula<fol>)
 let invariant_under_shearing = invariant((parset "x + b * y"),(parset "y"))
     
 // pg. 421
@@ -127,8 +115,6 @@ let invariant_under_shearing = invariant((parset "x + b * y"),(parset "y"))
 //  Reduce p using triangular set, collecting degenerate conditions.          // 
 //  ------------------------------------------------------------------------- // 
 
-// OCaml : val pprove : string list -> term list -> term -> fol formula list  -> fol formula list = <fun>
-// F#:     val pprove : string list -> term list -> term -> formula<fol> list -> formula<fol> list
 let rec pprove vars triang p degens =
     if p = zero then degens
     else
@@ -152,8 +138,6 @@ let rec pprove vars triang p degens =
 //  Triangulate a set of polynomials.                                         // 
 //  ------------------------------------------------------------------------- // 
 
-// OCaml: val triangulate : string list -> term list -> term list -> term list =  <fun>
-// F#:    val triangulate : string list -> term list -> term list -> term list
 let rec triangulate vars consts pols =
     if vars = [] then pols else
     let cns, tpols = List.partition (is_constant vars) pols
@@ -169,8 +153,6 @@ let rec triangulate vars consts pols =
 //  Trivial version of Wu's method based on repeated pseudo-division.         // 
 //  ------------------------------------------------------------------------- // 
 
-// OCaml: val wu : fol formula -> string list -> string list -> fol formula list = <fun>
-// F#:    val wu : formula<fol> -> string list -> string list -> formula<fol> list
 let wu fm vars zeros =
     let gfm0 = coordinate fm
     let gfm = subst(List.foldBack (fun v -> v |-> zero) zeros undefined) gfm0

@@ -24,8 +24,6 @@ type expression =
 // Simplification example.                                                   //
 // ------------------------------------------------------------------------- //
 
-// OCaml: val simplify1 : expression -> expression
-// F#:    val simplify1 : expression -> expression
 let simplify1 expr =
     match expr with
     | Mul (Const 0, x)
@@ -42,8 +40,6 @@ let simplify1 expr =
         Const (m * n)
     | _ -> expr
 
-// OCaml: val simplify : expression -> expression = <fun>
-// F#:    val simplify : expression -> expression
 let rec simplify expr =
     match expr with
     | Add (e1, e2) ->
@@ -60,8 +56,6 @@ let rec simplify expr =
 // Lexical analysis.                                                         //
 // ------------------------------------------------------------------------- //
 
-// OCaml: val matches : string -> string -> bool = <fun>
-// F#:    val matches : string -> (string -> bool)
 let matches str (c : string) =
     // Preconditions
     if String.length c > 1 then
@@ -79,28 +73,16 @@ let matches str (c : string) =
 
     foundMatch
         
-// OCaml: val space : string -> bool = <fun>
-// F#:    val space : (string -> bool)
 let space = matches " \t\n\r"
 
-// OCaml: val punctuation : string -> bool = <fun>
-// F#:    val punctuation : (string -> bool)
 let punctuation = matches "()[]{},"
 
-// OCaml: val symbolic : string -> bool = <fun>
-// F#:    val symbolic : (string -> bool)
 let symbolic = matches "~`!@#$%^&*-+=|\\:;<>.?/"
 
-// OCaml: val numeric : string -> bool = <fun>
-// F#:    val numeric : (string -> bool)
 let numeric = matches "0123456789"
 
-// OCaml: val alphanumeric : string -> bool = <fun>
-// F#:    val alphanumeric : (string -> bool)
 let alphanumeric = matches "abcdefghijklmnopqrstuvwxyz_'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
 
-// OCaml: val lexwhile : (string -> bool) -> string list -> string * string list = <fun>
-// F#:    val lexwhile : (string -> bool) -> string list -> string * string list
 let rec lexwhile prop inp =
     match inp with
     | c :: cs when prop c ->
@@ -108,8 +90,6 @@ let rec lexwhile prop inp =
         c + tok, rest
     | _ -> "", inp
 
-// OCaml: val lex : string list -> string list = <fun>
-// F#:    val lex : string list -> string list
 let rec lex inp =
     match snd <| lexwhile space inp with
     | [] -> []
@@ -126,8 +106,6 @@ let rec lex inp =
 // Parsing.                                                                  //
 // ------------------------------------------------------------------------- //
 
-// OCaml: val parse_expression : string list -> expression * string list = <fun>
-// F#:    val parse_expression : string list -> expression * string list
 let rec parse_expression i =
     match parse_product i with
     | e1, "+" :: i1 ->
@@ -135,8 +113,6 @@ let rec parse_expression i =
         Add (e1, e2), i2
     | x -> x
 
-// OCaml: val parse_product : string list -> expression * string list = <fun>
-// F#:    val parse_product : string list -> expression * string list
 and parse_product i =
     match parse_atom i with
     | e1, "*" :: i1 ->
@@ -144,8 +120,6 @@ and parse_product i =
         Mul (e1, e2), i2
     | x -> x
 
-// OCaml: val parse_atom : string list -> expression * string list = <fun>
-// F#:    val parse_atom : string list -> expression * string list
 and parse_atom i =
     match i with
     | [] ->
@@ -164,8 +138,6 @@ and parse_atom i =
 // Generic function to impose lexing and exhaustion checking on a parser.    //
 // ------------------------------------------------------------------------- //
 
-// OCaml: val make_parser : (string list -> 'a * 'b list) -> string -> 'a = <fun>
-// F#:    val make_parser : (string list -> 'a * 'b list) -> string -> 'a
 let make_parser pfn (s : string) =
     let tokens =
         // Replace newlines with spaces so the lexer and parser
@@ -194,8 +166,6 @@ let parse_exp =
 // Conservatively bracketing first attempt at printer.                       //
 // ------------------------------------------------------------------------- //
 
-// OCaml: val string_of_exp : expression -> string = <fun>
-// F#:    val string_of_exp : expression -> string
 let rec string_of_exp e =
     match e with
     | Var s -> s
@@ -210,8 +180,6 @@ let rec string_of_exp e =
 // Somewhat better attempt.                                                  //
 // ------------------------------------------------------------------------- //
 
-// OCaml: val string_of_exp   : int -> expression -> string = <fun>
-// F#:    val string_of_exp_2 : int -> expression -> string
 let rec string_of_exp_2 pr e =
     match e with
     | Var s -> s
@@ -225,7 +193,5 @@ let rec string_of_exp_2 pr e =
         if 4 < pr then "(" + s + ")" 
         else s
 
-// OCaml: val print_exp : expression -> unit = <fun>
-// F#:    val print_exp : expression -> unit
 let print_exp e =
     printfn "%O" ("<<" + string_of_exp_2 0 e + ">>")

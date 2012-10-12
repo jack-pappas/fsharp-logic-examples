@@ -104,8 +104,6 @@ let rec find_nvsubterm fm =
 // Replacement (substitution for non-variable) in term and literal.          //
 // ------------------------------------------------------------------------- //
 
-// OCaml: val replacet : (term, term) func      -> term -> term = <fun>
-// F#:  val replacet : func<term,term>        -> term -> term
 let rec replacet rfn tm =
     try apply rfn tm
     with Failure _ ->

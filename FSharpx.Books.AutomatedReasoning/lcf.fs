@@ -211,17 +211,9 @@ module ProverOperators =
 // A printer for theorems.                                                   //
 // ------------------------------------------------------------------------- //
 
-//    include Proven;;
-
 let fprint_thm sw th =
-//        open_box 0
     fprintf sw "|- " // write on the same line
-//        print_space ()
-//        open_box 0
     fprint_formula sw (fprint_atom sw) (concl th)
-//        close_box ()
-//        close_box ()
 
-// Add printing facility
 let inline print_thm th = fprint_thm stdout th
 let inline sprint_thm th = writeToString (fun sw -> fprint_thm sw th)
