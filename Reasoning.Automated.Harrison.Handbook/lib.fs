@@ -10,8 +10,7 @@ module Reasoning.Automated.Harrison.Handbook.lib
 
 open LanguagePrimitives
 open OptimizedClosures
-open FSharpx.Compatibility.OCaml
-open Num
+open FSharpx.Compatibility.OCaml.Num
 
 // The exception fired by failwith is used as a control flow.
 // KeyNotFoundException is not recognized in many cases, so we have to use redefine Failure for compatibility.
@@ -241,7 +240,7 @@ let insertat i x l =
         
 // pg. 619
 // OCaml: val index : 'a -> 'a list -> int = <fun>
-// F#:    val index : 'a -> ('a list -> int) when 'a : comparison
+// F#:    val index : 'a -> ('a list -> int) when 'a : equality
 let inline index x =
     List.findIndex ((=) x)
 
@@ -251,13 +250,13 @@ let inline index x =
 
 // pg. 619
 // OCaml: val earlier : 'a list -> 'a -> 'a -> bool = <fun>
-// F#:    val earlier : 'a list -> 'a -> 'a -> bool when 'a : comparison
+// F#:    val earlier : 'a list -> 'a -> 'a -> bool when 'a : equality
 let rec earlier l x y =
     match l with
     | [] -> false
     | h :: t ->
-        compare h y <> 0
-        && (compare h x = 0 || earlier t x y)
+        h <> y
+        && (h = x || earlier t x y)
 
 // ------------------------------------------------------------------------- //
 // Association lists.                                                        //
@@ -265,7 +264,7 @@ let rec earlier l x y =
 
 // pg. 620
 // OCaml: val assoc : 'a -> ('a * 'b) list -> 'b = <fun>
-// F#:    val assoc : 'a -> ('a * 'b) list -> 'b when 'a : comparison
+// F#:    val assoc : 'a -> ('a * 'b) list -> 'b when 'a : equality
 let rec assoc a l =
     match l with
     | [] ->
@@ -276,7 +275,7 @@ let rec assoc a l =
 
 // pg. ???
 // OCaml: val rev_assoc : 'a -> ('b * 'a) list -> 'b = <fun>
-// F#:    val rev_assoc : 'a -> ('b * 'a) list -> 'b when 'a : comparison
+// F#:    val rev_assoc : 'a -> ('b * 'a) list -> 'b when 'a : equality
 let rec rev_assoc a l =
     match l with
     | [] ->
