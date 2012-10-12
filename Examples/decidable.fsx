@@ -53,7 +53,7 @@ let los =
     (forall x y. P(x,y) ==> P(y,x)) /\ 
     (forall x y. P(x,y) \/ Q(x,y)) 
     ==> (forall x y. P(x,y)) \/ (forall x y. Q(x,y))")
-print_fol_formula los
+//print_fol_formula los
 
 skolemize(Not los)
 skolemize(Not los)
@@ -143,7 +143,6 @@ nnf fm002
 // It works well on simple monadic formulas.                                 //
 // ------------------------------------------------------------------------- //
 
-// val it : bool = true
 wang
     (parse @"
     (forall x y. exists z. forall w. P(x) /\ Q(y) ==> R(z) /\ U(w))
