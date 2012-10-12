@@ -644,7 +644,7 @@ time complex_qelim (parse
 //*** No hope for this one I think
 // complex.p066
 // long running
-//Initialization.runWith16MBStack (fun () -> 
+//Initialization.runWithEnlargedStack (fun () -> 
 //    complex_qelim (parse
 //        @"forall a b c d e f g.
 //        (exists x. a * x^3 + b * x^2 + c * x + d = 0 /\ e * x^2 + f * x + g = 0) \/

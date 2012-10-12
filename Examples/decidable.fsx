@@ -86,7 +86,7 @@ pnf fm001
 // ------------------------------------------------------------------------- //
 
 // Real: 00:03:13.533, CPU: 00:05:45.906, GC gen0: 35, gen1: 20, gen2: 0
-Initialization.runWith16MBStack (fun () ->
+Initialization.runWithEnlargedStack (fun () ->
     aedecide (parse @"
     (forall x. P(1,x,x)) /\ (forall x. P(x,x,1)) /\
     (forall u v w x y z.
@@ -94,7 +94,7 @@ Initialization.runWith16MBStack (fun () ->
     ==> forall a b c. P(a,b,c) ==> P(b,a,c)"))
   
 // Real: 00:11:45.855, CPU: 00:11:43.421, GC gen0: 55, gen1: 19, gen2: 1
-Initialization.runWith16MBStack (fun () ->
+Initialization.runWithEnlargedStack (fun () ->
     aedecide (parse @"
     (forall x. P(x,x,1)) /\
     (forall u v w x y z.
@@ -106,7 +106,7 @@ Initialization.runWith16MBStack (fun () ->
 // A bigger example.                                                         //
 // ------------------------------------------------------------------------- //
 
-Initialization.runWith16MBStack (fun () -> 
+Initialization.runWithEnlargedStack (fun () -> 
     aedecide (parse @"
     (exists x. P(x)) /\ (exists x. G(x))
     ==> ((forall x. P(x) ==> H(x)) /\ (forall x. G(x) ==> J(x)) <=>
@@ -196,7 +196,7 @@ decide_fmp
 
 //** This fails to terminate: has countermodels, but only infinite ones
 // Process is terminated due to StackOverflowException, even with 16MB stack
-Initialization.runWith16MBStack (fun () -> 
+Initialization.runWithEnlargedStack (fun () -> 
     decide_fmp (parse @"
     ~((forall x. ~R(x,x)) /\ 
     (forall x. exists z. R(x,z)) /\ 
