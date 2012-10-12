@@ -268,9 +268,10 @@ let rec earlier l x y =
 // F#:    val assoc : 'a -> ('a * 'b) list -> 'b when 'a : comparison
 let rec assoc a l =
     match l with
-    | [] -> failwith "find"
+    | [] ->
+        failwith "assoc"
     | (x, y) :: t ->
-        if compare x a = 0 then y
+        if x = a then y
         else assoc a t
 
 // pg. ???
@@ -278,11 +279,11 @@ let rec assoc a l =
 // F#:    val rev_assoc : 'a -> ('b * 'a) list -> 'b when 'a : comparison
 let rec rev_assoc a l =
     match l with
-    | [] -> failwith "find"
+    | [] ->
+        failwith "rev_assoc"
     | (x, y) :: t ->
-        if compare y a = 0 then x
-        else rev_assoc a t
-        
+        if y = a then x
+        else rev_assoc a t        
 
 // ------------------------------------------------------------------------- //
 // Merging of sorted lists (maintaining repetitions).                        //
@@ -293,7 +294,7 @@ let rec rev_assoc a l =
 // F#:    val merge : ('a -> 'a -> bool) -> 'a list -> 'a list -> 'a list
     // NOTE : 'comparer' returns bool, so it must implement either the
     // (<=) or (>=) operators.
-let merge comparer l1 l2 =
+let private merge comparer l1 l2 =
     let rec mergeRec acc comparer l1 l2 =
         match l1, l2 with
         | [], [] ->
@@ -363,29 +364,6 @@ let decreasing f x y =
 // ------------------------------------------------------------------------- //
 // Eliminate repetitions of adjacent elements, with and without counting.    //
 // ------------------------------------------------------------------------- //
-
-////
-//let rec private repcount n l cont =
-//    match l with
-//    | [] ->
-//        failwith "repcount"
-//    | [x] ->
-//        cont [x,n]
-//    |  x :: (y :: _ as ys) ->
-//        if x = y then
-//            repcount (n + 1) ys cont
-//        else
-//            repcount 1 ys <| fun lst ->
-//                cont ((x, n) :: lst)
-//
-//// pg. ???
-//// OCaml: val repetitions : 'a list -> ('a * int) list = <fun>
-//// F#:    val repetitions : ('a list -> ('a * int) list) when 'a : comparison
-//let repetitions l =
-//    match l with
-//    | [] -> []
-//    | l ->
-//        repcount 1 l id
         
 // pg. 619
 // OCaml: val tryfind : ('a -> 'b)   -> 'a list -> 'b = <fun>
