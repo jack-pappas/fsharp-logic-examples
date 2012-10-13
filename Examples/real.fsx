@@ -48,9 +48,13 @@ real_qelim (parse @"forall a b c. (exists x. a * x^2 + b * x + c = 0) <=> a = 0 
 
 real_qelim (parse @"1 < 2 /\ (forall x. 1 < x ==> 1 < x^2) /\ (forall x y. 1 < x /\ 1 < y ==> 1 < x * (1 + 2 * y))");;
 
+// Real: 00:00:31.254, CPU: 00:00:31.109, GC gen0: 169, gen1: 168, gen2: 1
 let eqs = complete_and_simplify ["1"; "*"; "i"] [(parse @"1 * x = x"); (parse @"i(x) * x = 1"); (parse @"(x * y) * z = x * y * z")];;
+
 let fm = list_conj (List.map grpform eqs);;
-real_qelim fm;;
+
+Initialization.runWithEnlargedStack (fun () ->
+    real_qelim fm);;
 
 real_qelim' (parse @"forall d. (exists c. forall a b. (a = d /\ b = c) \/ (a = c /\ b = 1) ==> a^2 = b) <=> d^4 = 1");;
 
@@ -80,7 +84,7 @@ and matrix vars pols cont sgns =
     let gs = List.map (pdivide_pos vars sgns p) qs
     let cont' m = cont(List.map (fun l -> insertat i (List.head l) (List.tail l)) m)
     casesplit vars [] (qs@gs) (dedmatrix cont') sgns
-//
+
 and monicize vars pols cont sgns =
     let mols,swaps = List.unzip(List.map monic pols)
     let sols = setify mols

@@ -47,16 +47,19 @@ meson002
 // Examples.                                                                 //
 // ------------------------------------------------------------------------- //
 
+// Real: 00:02:25.021, CPU: 00:02:24.406, GC gen0: 2891, gen1: 1055, gen2: 2
 time bmeson 
     (parse @"
     (exists x. x = f(g(x)) /\ forall x'. x' = f(g(x')) ==> x = x') <=>
     (exists y. y = g(f(y)) /\ forall y'. y' = g(f(y')) ==> y = y')");;          
-                                                       
+
+// Real: 00:00:20.737, CPU: 00:00:20.625, GC gen0: 251, gen1: 2, gen2: 0                                                       
 time emeson 
     (parse @"
     (exists x. x = f(g(x)) /\ forall x'. x' = f(g(x')) ==> x = x') <=>
     (exists y. y = g(f(y)) /\ forall y'. y' = g(f(y')) ==> y = y')");;        
-                                                     
+
+// Real: 00:18:19.207, CPU: 00:18:16.640, GC gen0: 19293, gen1: 110, gen2: 11                                                     
 time bmeson 
     (parse @"
     (forall x y z. x * (y * z) = (x * y) * z) /\ 
@@ -97,15 +100,21 @@ let group2 =
 time bmeson ewd;;
 time emeson ewd;;
 
+// Real: 00:02:36.719, CPU: 00:02:36.406, GC gen0: 2891, gen1: 17, gen2: 1
 time bmeson wishnu;;
+
+// Real: 00:00:21.639, CPU: 00:00:21.625, GC gen0: 253, gen1: 4, gen2: 1
 time emeson wishnu;;
 
+// Real: 00:06:01.715, CPU: 00:06:01.156, GC gen0: 6088, gen1: 37, gen2: 3
 time bmeson group1;;
+
 // long running
 //time emeson group1;;
 
 // long running
 //time bmeson group2;;
+
 // long running
 //time emeson group2;;
 
@@ -142,6 +151,7 @@ meson002 (parse @"
 // See how efficiency drops when we assert completeness.                     //
 // ------------------------------------------------------------------------- //
 
+// Real: 00:00:38.932, CPU: 00:00:38.890, GC gen0: 569, gen1: 4, gen2: 0
 meson002 (parse @"
     (forall x. P(1,x,x)) /\ 
     (forall x. P(x,x,1)) /\ 

@@ -57,11 +57,9 @@ type goals = Goals of ((string * formula<fol>) list * formula<fol>)list * (thm l
 
 let fprint_goal sw =
     let fprint_hyp (l, fm) =
-        //open_hbox ()
         fprintf sw "%s: " l
         fprint_formula sw (fprint_atom sw) fm
         fprintfn sw ""
-        //close_box ()
 
     fun (Goals (gls, jfn)) ->
         match gls with
@@ -78,12 +76,9 @@ let fprint_goal sw =
             fprintfn sw ""
             List.iter fprint_hyp (List.rev asl)
             fprintf sw "---> "
-            //open_hvbox 0
             fprint_formula sw (fprint_atom sw) w
-            //close_box ()
             fprintfn sw ""
 
-// Add printing facility
 let inline print_goal g = fprint_goal stdout g
 let inline sprint_goal g = writeToString (fun sw -> fprint_goal sw g)
     

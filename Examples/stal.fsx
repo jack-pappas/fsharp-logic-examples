@@ -8,14 +8,14 @@
 
 open FSharpx.Books.AutomatedReasoning.lib
 open FSharpx.Books.AutomatedReasoning.formulas
+open FSharpx.Books.AutomatedReasoning.fol
 open FSharpx.Books.AutomatedReasoning.prop
 open FSharpx.Books.AutomatedReasoning.propexamples
 open FSharpx.Books.AutomatedReasoning.defcnf
 open FSharpx.Books.AutomatedReasoning.dp
 open FSharpx.Books.AutomatedReasoning.stal
 
-open FSharpx.Compatibility.OCaml
-open Num
+fsi.AddPrinter sprint_prop_formula
 
 // pg. 94
 // ------------------------------------------------------------------------- //
@@ -29,4 +29,5 @@ triggers (parse_prop_formula @"p <=> (q /\ r)");;
 // Examples.                                                                 //
 // ------------------------------------------------------------------------- //
 
+// Real: 00:01:35.050, CPU: 00:01:34.906, GC gen0: 449, gen1: 281, gen2: 1
 time stalmarck (mk_adder_test 6 3);;

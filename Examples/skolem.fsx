@@ -23,28 +23,36 @@ fsi.AddPrinter sprint_fol_formula
 // Example.                                                                  //
 // ------------------------------------------------------------------------- //
 
-simplify (parse @"(forall x y. P(x) \/ (P(y) /\ false)) ==> exists z. Q");;
+simplify (parse @"
+    (forall x y. P(x) \/ (P(y) /\ false)) 
+        ==> exists z. Q");;
 
 // pg. 141
 // ------------------------------------------------------------------------- //
 // Example of NNF function in action.                                        //
 // ------------------------------------------------------------------------- //
 
-nnf (parse @"(forall x. P(x)) ==> ((exists y. Q(y)) <=> exists z. P(z) /\ Q(z))");;
+nnf (parse @"
+    (forall x. P(x)) 
+        ==> ((exists y. Q(y)) <=> exists z. P(z) /\ Q(z))");;
 
 // pg. 144
 // ------------------------------------------------------------------------- //
 // Example.                                                                  //
 // ------------------------------------------------------------------------- //
 
-pnf (parse @"(forall x. P(x) \/ R(y)) ==> exists y z. Q(y) \/ ~(exists z. P(z) /\ Q(z))");;
+pnf (parse @"
+    (forall x. P(x) \/ R(y)) 
+        ==> exists y z. Q(y) \/ ~(exists z. P(z) /\ Q(z))");;
 
 // pg. 150
 // ------------------------------------------------------------------------- //
 // Example.                                                                  //
 // ------------------------------------------------------------------------- //
 
-skolemize (parse @"exists y. x < y ==> forall u. exists v. x * u < y * v");;
+skolemize (parse @"
+    exists y. x < y 
+        ==> forall u. exists v. x * u < y * v");;
 
 skolemize
      (parse @"forall x. P(x)

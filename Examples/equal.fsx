@@ -48,6 +48,8 @@ let wishnu =
     equalitize (parse @"
         (exists x. x = f(g(x)) /\ forall x'. x' = f(g(x')) ==> x = x') <=>
         (exists y. y = g(f(y)) /\ forall y'. y' = g(f(y')) ==> y = y')");;
+
+// Real: 00:00:22.030, CPU: 00:00:21.968, GC gen0: 253, gen1: 252, gen2: 1
 time meson002 wishnu;;
 
 // pg. 248
