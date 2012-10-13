@@ -4,10 +4,19 @@ Logic Programming in F#
 
 ---
 
+### Purpose
+
+The purpose this site is to allow someone to learn automated theorem provers and proof assistants using John's book but instead of using OCaml, they can use F#. While OCaml is a perfectly valid language, F# is a first class language of Visual Studio and Mono thus allowing one the use of a powerful Iteractive Development Environment.
+
+When converting the code from OCaml to F# the main goal was to keep the F# code as close as possible to the OCaml code presented in the book so that one did not have to spend time trying to understand what code changes were made.
+
+
+---
+
 ### Needed for Installation ###
 
 There are two solutions: `*.VS10.sln` and `*.VS11.sln` for Visual Studio 2010 and Visual Studio 2012 respectively.
-Both solutions are targetting .NET framework 4.0; while the VS10 version uses F# 2.0, the VS11 version targets F# 3.0.
+Both solutions are targeting .NET framework 4.0; while the VS10 version uses F# 2.0, the VS11 version targets F# 3.0.
 
 We use NuGet to manage external packages, for example, NUnit/FsUnit for unit testing.
 You will need to install [NuGet] (http://nuget.codeplex.com/) to get additional required libraries. 
@@ -31,7 +40,7 @@ To run the unit test you will need to
 5. Within NUnit *File -> Open Project*, navigate to directory with FSharpx.Books.AutomatedReasoning.Tests.dll
 6. Double click FSharpx.Books.AutomatedReasoning.Tests.dll
 9. Click *Categories* tab on left side of NUnit
-10. Double click LongRunning, click *Add* and select *Exclude these categories*
+10. Double click LongRunning, and select *Exclude these categories*
 13. Click *Tests* tab on left side of NUnit and hit *Run*
 
 
@@ -57,6 +66,37 @@ To run the unit test you will need to
  - Run a few examples with 16MB stack (the default limit set by OCaml version) using `runWithEnlargedStack` in `initialization.fsx`. 
 These examples emit `StackOverflowException`s in F# on Windows due to small 1MB stack (see extensive discussion [here](http://stackoverflow.com/questions/7947446/why-does-f-impose-a-low-limit-on-stack-size)).
  - Redefined `Failure` active patterns to accommodate `KeyNotFoundException`, `ArgumentException`, etc. The OCaml version makes use of `Failure` as a control flow; the F# version throws different kinds of exceptions which weren't caught by default `Failure`. The active pattern might be updated to handle other exceptions later (see the detailed function in the beginning of `lib.fs`).
+
+### OCaml Quotations
+
+[OCaml Quotations](http://caml.inria.fr/pub/docs/tutorial-camlp4/tutorial004.html)
+
+Since F# does not support the OCaml French-style \<\< quotation \>\>,
+the parser will be explicitly invoked and the printer will be invoked via fsi.AddPrinter.  
+As such the use of default_parser and default_printer does not appear in the F# code.
+
+> OCaml: \<\<x + 3 * y\>\>;;
+
+> F#: parse_exp "x + 3 * y";;
+
+> OCaml: \<\<p ==> q <=> r /\ s \/ (t <=> ~ ~u /\ v)\>\>;;
+
+> F#: parse_prop_formula "p ==> q <=> r /\ s \/ (t <=> ~ ~u /\ v)";;
+
+### Duplicate names
+
+Since OCaml shadows names and F# does not allow duplicate names, any function name causing a duplicate name error will have the name appended with an increasing sequential number.
+
+> OCaml:  let a = ...;; let a = ...;; let a = ...;;
+
+> F#: let a001 = ...;; let a002 = ...;; let a003 = ...;;
+
+For some of the test strings such as in tableaux.fsx, the same name is used multiple times. To avoid duplicate name errors some of the names have a character appended.
+
+> OCaml: let p20 = prawitx ...;; let p20 = compare ...;;  let p20 = splittab ...;;
+
+> F#:   let p20p = prawitx ...;; let p20c = compare ...;; let p20s = splittab ...;;
+
  
 ### Writing unit tests ###
 A large set of unit tests is created based on available examples. 
