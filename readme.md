@@ -36,6 +36,27 @@ The OCaml code from [resource page] (http://www.cl.cam.ac.uk/~jrh13/atp/) combin
 
 As you read through the book the OCaml code and example scripts are identified by bounding rectangles. Scripts starting with # are typically found in the Examples directory and code without the # is typically found in the library project.
 
+### Running Examples ###  
+
+To run the examples you must have built the solution first.  
+
+The Examples are broken down into script files based on the name of the original OCaml file. The examples appear sequentially as they appear in the book and we include page numbers from the book as comments in the examples to make cross-referencing easier.  
+
+When first opening an example script file, run the #load, open and fsi.AddPriter statements at the top of the script file to setup the interactive environment for the following examples.  
+
+It is suggested that when running the examples that you run each one separately so as not to lose track of which example produced which result. Some of the examples rely on statements earlier in the script so if you skip ahead you may get errors.  
+
+Since the examples are for demonstrating certain aspects of automated reasoning and automated reasoning is an ongoing science, some of the examples will demonstrate failures with a failure, exception, or never returning.  
+
+Additionally automated reasoning is based on AI techniques and the search for the solution can be fast, slow, not be found with a computer due to limited resources such as stack space, not finish in a reasonable amount of time such as a day, or not even know if a solution can be found with this code. So when running the examples we have tried to provide as much feedback as possible on what to expect, but sometimes we just have to give up during the running of the example.  
+
+The feedback takes the following form for each example run:  
+1. Under 10 seconds - no comment.  
+2. more than 10 seconds and completes - result of FSI #time;; directive. i.e. Real: 02:37:35.586, CPU: 02:37:31.718, GC gen0: 50200, gen1: 1376, gen2: 98.  
+3. More than several minutes and we gave up on letting it finish - comment with long running.  
+4. Exception - comment noting expected exception.  
+5. Failure - comment noting expected failure reason.  
+
 
 ### Instructions on running tests with NUnit ###
 
