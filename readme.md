@@ -4,6 +4,15 @@ Logic Programming in F#
 
 ---
 
+### Purpose
+
+The purpose this site is to allow someone to learn automated theorem provers and proof assistants using John's book but instead of using OCaml, they can use F#. While OCaml is a perfectly valid language, F# is a first class language of Visual Studio and Mono thus allowing one the use of a powerful Iterative Development Environment.
+
+When converting the code from OCaml to F# the main goal was to keep the F# code as close as possible to the OCaml code presented in the book so that one did not have to spend time trying to understand what code changes were made.
+
+
+---
+
 ### Needed for Installation ###
 
 There are two solutions: `*.VS10.sln` and `*.VS11.sln` for Visual Studio 2010 and Visual Studio 2012 respectively.
