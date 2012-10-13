@@ -36,7 +36,7 @@ The OCaml code from [resource page] (http://www.cl.cam.ac.uk/~jrh13/atp/) combin
 
 As you read through the book the OCaml code and example scripts are identified by bounding rectangles. Scripts starting with # are typically found in the Examples directory and code without the # is typically found in the library project.
 
-### Running Examples ###  
+### Running Examples ###
 
 To run the examples you must have built the solution first.  
 
