@@ -68,12 +68,11 @@ let irredundant rel eqs =
     irredundantImpl rel eqs id
 
 let consequences peq fm eqs =
-    let follows (r, s) =
-        Imp (And (Iff peq, fm), Iff (r, s))
-        |> tautology
-
+    let and_iff_peq_fm = And (Iff peq, fm)
     eqs
-    |> List.filter follows
+    |> List.filter (fun (r, s) ->
+        Imp (and_iff_peq_fm, Iff (r, s))
+        |> tautology)
     |> irredundant (equate2 peq unequal)
 
 let triggers fm =
