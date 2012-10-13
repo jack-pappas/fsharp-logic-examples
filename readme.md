@@ -57,6 +57,37 @@ To run the unit test you will need to
  - Run a few examples with 16MB stack (the default limit set by OCaml version) using `runWithEnlargedStack` in `initialization.fsx`. 
 These examples emit `StackOverflowException`s in F# on Windows due to small 1MB stack (see extensive discussion [here](http://stackoverflow.com/questions/7947446/why-does-f-impose-a-low-limit-on-stack-size)).
  - Redefined `Failure` active patterns to accommodate `KeyNotFoundException`, `ArgumentException`, etc. The OCaml version makes use of `Failure` as a control flow; the F# version throws different kinds of exceptions which weren't caught by default `Failure`. The active pattern might be updated to handle other exceptions later (see the detailed function in the beginning of `lib.fs`).
+
+### OCaml Quotations
+
+[OCaml Quotations](http://caml.inria.fr/pub/docs/tutorial-camlp4/tutorial004.html)
+
+Since F# does not support the OCaml French-style \<\< quotation \>\>,
+the parser and printer will be explicitly invoked. As such the use of 
+default_parser and default_printer does not appear in the F# code.
+
+> OCaml: \<\<x + 3 * y\>\>;;
+
+> F#: print_exp (parse_exp "x + 3 * y");;
+
+> OCaml: \<\<p ==> q <=> r /\ s \/ (t <=> ~ ~u /\ v)\>\>;;
+
+> F#: print_prop_formula (parse_prop_formula "p ==> q <=> r /\ s \/ (t <=> ~ ~u /\ v)");;
+
+### Duplicate names
+
+Since OCaml shadows names and F# does not allow duplicate names, any function name causing a duplicate name error will have the name appended with an increasing sequential number.
+
+> OCaml:  let a = ...;; let a = ...;; let a = ...;;
+
+> F#: let a001 = ...;; let a002 = ...;; let a003 = ...;;
+
+For some of the test strings such as in tableaux.fsx, the same name is used multiple times. To avoid duplicate name errors some of the names have a character appended.
+
+> OCaml: let p20 = prawitx ...;; let p20 = compare ...;;  let p20 = splittab ...;;
+
+> F#:   let p20p = prawitx ...;; let p20c = compare ...;; let p20s = splittab ...;;
+
  
 ### Writing unit tests ###
 A large set of unit tests is created based on available examples. 
