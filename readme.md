@@ -30,6 +30,13 @@ The test cases have been executed with *NUnit 2.6 x86* and *TestDriven.NET-3.4.2
 Although 1MB stack limit is enough for 32-bit test processes, the test cases will soon result in `StackOverflowException` on a 64-bit process. 
 The reason is that many library functions are *non-tail-recursive* and many types double their sizes on x64 platform.
 
+### When reading along with the book ###
+
+The OCaml code from [resource page] (http://www.cl.cam.ac.uk/~jrh13/atp/) combines the code and examples in one script. For F# the code is in the library project FSharpx.Books.AutomatedReasoning.VS10 and the example scripts are in the Examples directory.
+
+As you read through the book the OCaml code and example scripts are identified by bounding rectangles. Scripts starting with # are typically found in the Examples directory and code without the # is typically found in the library project.
+
+
 ### Instructions on running tests with NUnit ###
 
 To run the unit test you will need to
