@@ -36,6 +36,8 @@ lex (explode @"if //p1-- == *p2++) then f() else g()");;
 
 parse_exp @"x + 1";;
 
+fsi.AddPrinter sprint_exp;;
+
 // pg. 21
 // ------------------------------------------------------------------------- //
 // Demonstrate automatic installation.                                       //
@@ -50,17 +52,17 @@ parse_exp @"(x1 + x2 + x3) * (1 + 2 + 3 * x + y)";;
 
 string_of_exp (parse_exp @"x + 3 * y");;
 
-print_exp (parse_exp @"x + 3 * y");;
+parse_exp @"x + 3 * y";;
 
-print_exp (parse_exp @"(x + 3) * y");;
+parse_exp @"(x + 3) * y";;
 
-print_exp (parse_exp @"1 + 2 + 3");;
+parse_exp @"1 + 2 + 3";;
 
-print_exp (parse_exp @"((1 + 2) + 3) + 4");;
+parse_exp @"((1 + 2) + 3) + 4";;
 
 // pg. 22
 // ------------------------------------------------------------------------- //
 // Example shows the problem.                                                //
 // ------------------------------------------------------------------------- //
 
-print_exp (parse_exp @"(x1 + x2 + x3 + x4 + x5 + x6 + x7 + x8 + x9 + x10) * (y1 + y2 + y3 + y4 + y5 + y6 + y7 + y8 + y9 + y10)" );;
+parse_exp @"(x1 + x2 + x3 + x4 + x5 + x6 + x7 + x8 + x9 + x10) * (y1 + y2 + y3 + y4 + y5 + y6 + y7 + y8 + y9 + y10)";;

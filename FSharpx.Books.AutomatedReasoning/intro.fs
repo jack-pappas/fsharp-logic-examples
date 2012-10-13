@@ -195,3 +195,6 @@ let rec string_of_exp_2 pr e =
 
 let print_exp e =
     printfn "%O" ("<<" + string_of_exp_2 0 e + ">>")
+
+let sprint_exp e =
+    "<<" + string_of_exp_2 0 e + ">>"
