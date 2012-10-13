@@ -21,9 +21,9 @@ fsi.AddPrinter sprint_prop_formula
 let fm001 = parse_prop_formula @"p ==> q <=> r /\ s \/ (t <=> ~ ~u /\ v)";;
 
 // pg. 30
-(And (fm001, fm001));;
+And (fm001, fm001);;
 
-(And (Or (fm001, fm001), fm001));;
+And (Or (fm001, fm001), fm001);;
 
 // pg. 33
 false && false;;
@@ -131,23 +131,23 @@ List.forall tautology [
 // Example.                                                                  //
 // ------------------------------------------------------------------------- //
 
-(dual (parse_prop_formula @"p \/ ~p"));;
+dual (parse_prop_formula @"p \/ ~p");;
 
 // pg. 51
 // ------------------------------------------------------------------------- //
 // Example.                                                                  //
 // ------------------------------------------------------------------------- //
 
-(psimplify (parse_prop_formula @"(true ==> (x <=> false)) ==> ~(y \/ false /\ z)"));;
+psimplify (parse_prop_formula @"(true ==> (x <=> false)) ==> ~(y \/ false /\ z)");;
 
-(psimplify (parse_prop_formula @"((x ==> y) ==> true) \/ ~false"));;
+psimplify (parse_prop_formula @"((x ==> y) ==> true) \/ ~false");;
 
 // pg. 53
 // ------------------------------------------------------------------------- //
 // Example of NNF function in action.                                        //
 // ------------------------------------------------------------------------- //
 
-let fm003 = (parse_prop_formula (@"(p <=> q) <=> ~(r ==> s)"));;
+let fm003 = parse_prop_formula (@"(p <=> q) <=> ~(r ==> s)");;
 
 let fm003' = nnf fm003;;
 
@@ -167,13 +167,13 @@ tautology (parse_prop_formula (@"(p ==> p') /\ (q ==> q') ==> (p \/ q ==> p' \/ 
 // Examples.                                                                 //
 // ------------------------------------------------------------------------- //
 
-let fm004 = (parse_prop_formula (@"(p \/ q /\ r) /\ (~p \/ ~r)"));;
+let fm004 = parse_prop_formula (@"(p \/ q /\ r) /\ (~p \/ ~r)");;
 
-(dnfOrig fm004);;
+dnfOrig fm004;;
 
 print_truthtable fm004;;
 
-(dnfOrig (parse_prop_formula (@"p /\ q /\ r /\ s /\ t /\ u \/ u /\ v")));;
+dnfOrig (parse_prop_formula (@"p /\ q /\ r /\ s /\ t /\ u \/ u /\ v"));;
 
 // pg. 58
 // ------------------------------------------------------------------------- //
@@ -181,7 +181,7 @@ print_truthtable fm004;;
 // ------------------------------------------------------------------------- //
 //
 
-(rawdnf (parse_prop_formula (@"(p \/ q /\ r) /\ (~p \/ ~r)")));;
+rawdnf (parse_prop_formula (@"(p \/ q /\ r) /\ (~p \/ ~r)"));;
 
 // pg. 58
 // ------------------------------------------------------------------------- //
@@ -202,9 +202,9 @@ List.filter (non trivial) (purednf (parse_prop_formula (@"(p \/ q /\ r) /\ (~p \
 // Example.                                                                  //
 // ------------------------------------------------------------------------- //
 
-let fm005 = (parse_prop_formula (@"(p \/ q /\ r) /\ (~p \/ ~r)"));;
+let fm005 = parse_prop_formula (@"(p \/ q /\ r) /\ (~p \/ ~r)");;
 
-(dnf fm005);;
+dnf fm005;;
 
 tautology(Iff(fm005,dnf fm005));;
 
@@ -213,8 +213,8 @@ tautology(Iff(fm005,dnf fm005));;
 // Example.                                                                  //
 // ------------------------------------------------------------------------- //
 
-let fm006 = (parse_prop_formula (@"(p \/ q /\ r) /\ (~p \/ ~r)"));;
+let fm006 = parse_prop_formula (@"(p \/ q /\ r) /\ (~p \/ ~r)");;
 
-(cnf fm006);;
+cnf fm006;;
 
 tautology(Iff(fm006,cnf fm006));;

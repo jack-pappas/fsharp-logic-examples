@@ -30,8 +30,7 @@ tautology(ramsey 3 3 6);;
 // ------------------------------------------------------------------------- //
 
 let [x; y; out; c] = List.map mk_index ["X"; "Y"; "OUT"; "C"];;
-let pfn = (fun prec p -> print_propvar prec p);;
-print_formula pfn ( ripplecarry x y c out 2 );;
+ripplecarry x y c out 2;;
 
 // pg. 72
 // ------------------------------------------------------------------------- //
