@@ -7,7 +7,7 @@ Logic Programming in F#
 ### Needed for Installation ###
 
 There are two solutions: `*.VS10.sln` and `*.VS11.sln` for Visual Studio 2010 and Visual Studio 2012 respectively.
-Both solutions are targetting .NET framework 4.0; while the VS10 version uses F# 2.0, the VS11 version targets F# 3.0.
+Both solutions are targeting .NET framework 4.0; while the VS10 version uses F# 2.0, the VS11 version targets F# 3.0.
 
 We use NuGet to manage external packages, for example, NUnit/FsUnit for unit testing.
 You will need to install [NuGet] (http://nuget.codeplex.com/) to get additional required libraries. 
@@ -31,7 +31,7 @@ To run the unit test you will need to
 5. Within NUnit *File -> Open Project*, navigate to directory with FSharpx.Books.AutomatedReasoning.Tests.dll
 6. Double click FSharpx.Books.AutomatedReasoning.Tests.dll
 9. Click *Categories* tab on left side of NUnit
-10. Double click LongRunning, click *Add* and select *Exclude these categories*
+10. Double click LongRunning, and select *Exclude these categories*
 13. Click *Tests* tab on left side of NUnit and hit *Run*
 
 
