@@ -63,16 +63,16 @@ These examples emit `StackOverflowException`s in F# on Windows due to small 1MB 
 [OCaml Quotations](http://caml.inria.fr/pub/docs/tutorial-camlp4/tutorial004.html)
 
 Since F# does not support the OCaml French-style \<\< quotation \>\>,
-the parser and printer will be explicitly invoked. As such the use of 
-default_parser and default_printer does not appear in the F# code.
+the parser will be explicitly invoked and the printer will be invoked via fsi.AddPrinter.  
+As such the use of default_parser and default_printer does not appear in the F# code.
 
 > OCaml: \<\<x + 3 * y\>\>;;
 
-> F#: print_exp (parse_exp "x + 3 * y");;
+> F#: parse_exp "x + 3 * y";;
 
 > OCaml: \<\<p ==> q <=> r /\ s \/ (t <=> ~ ~u /\ v)\>\>;;
 
-> F#: print_prop_formula (parse_prop_formula "p ==> q <=> r /\ s \/ (t <=> ~ ~u /\ v)");;
+> F#: parse_prop_formula "p ==> q <=> r /\ s \/ (t <=> ~ ~u /\ v)";;
 
 ### Duplicate names
 
