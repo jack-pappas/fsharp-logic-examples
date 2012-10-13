@@ -51,13 +51,8 @@ let inline non p x =
 
 // pg. ???
 let check p x =
-    #if DEBUG
     assert (p x)
     x
-    #else
-    if p x then x
-    else failwith "check"
-    #endif
 
 // ------------------------------------------------------------------------- //
 // Repetition of a function.                                                 //
