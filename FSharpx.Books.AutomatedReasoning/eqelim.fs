@@ -37,16 +37,13 @@ open completion
 // Brand's S and T modifications on clauses.                                 //
 // ------------------------------------------------------------------------- //
 
-// val modify_S : fol formula list -> fol formula list list
 let rec modify_S cl =
-        // val dest_eq : fol formula -> (term * term) option
         let dest_eq fm =
             match fm with
             | Atom (R ("=", [s;t])) ->
                 Some(s, t)
             | _ -> None
 
-        // val tryfind : ('a -> ('b * 'c) option) -> 'a list -> ('b * 'c) option
         let rec tryfind dest_eq l =
             match l with
             | [] -> None
