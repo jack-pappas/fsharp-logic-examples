@@ -6,7 +6,8 @@ Logic Programming in F#
 
 ### Purpose
 
-The purpose this site is to allow someone to learn automated theorem provers and proof assistants using John's book but instead of using OCaml, they can use F#. While OCaml is a perfectly valid language, F# is a first class language of Visual Studio thus allowing one the use of a powerful Iteractive Development Environment.
+The purpose this site is to allow someone to learn automated theorem provers and proof assistants using John's book but instead of using OCaml, they can use F#.
+Since F# is a first class functional programming language in Visual Studio, it allows one to use of a powerful IDE and well-supported .NET frameworks.
 
 When converting the code from OCaml to F# the main goal was to keep the F# code as close as possible to the OCaml code presented in the book so that one did not have to spend time trying to understand what code changes were made.
 
@@ -50,7 +51,34 @@ To run the unit test you will need to
 - OCaml exceptions changed to F# `'T option`.
   
     This only works sometimes -- when the exception doesn't return any (useful) information. When the exception does return information, it's necessary to use `Choice<_,_>`. Also, changing functions to use `'T option` or `Choice<_,_>` instead of exceptions can also alter their type signatures, which can cause the code to suddenly fail to compile.
-- Preprocessor doesn't exist. i.e. camlp4 / camlp5
+- Preprocessors i.e. [camlp4 / camlp5](http://caml.inria.fr/pub/docs/tutorial-camlp4/tutorial004.html) don't exist in F#.
+Since F# does not support the OCaml French-style \<\< quotation \>\>,
+the parser will be explicitly invoked.
+As such the use of default_parser and default_printer does not appear in the F# code.
+
+        // OCaml:
+        <<x + 3 * y>>;;
+        // F#: 
+        parse_exp "x + 3 * y";;
+        // OCaml: 
+        <<p ==> q <=> r /\ s \/ (t <=> ~ ~u /\ v)>>;;
+        // F#: 
+        parse_prop_formula "p ==> q <=> r /\ s \/ (t <=> ~ ~u /\ v)";;
+
+- Duplicated names are avoided.
+Since OCaml shadows names and F# does not allow duplicate names, any function name causing a duplicate name error will have the name appended with an increasing sequential number.
+
+         // OCaml:  
+         let a = ...;; let a = ...;; let a = ...;;
+         // F#: 
+         let a001 = ...;; let a002 = ...;; let a003 = ...;;
+For some of the test strings such as in tableaux.fsx, the same name is used multiple times. To avoid duplicate name errors some of the names have a character appended.
+
+         // OCaml: 
+         let p20 = prawitx ...;; let p20 = compare ...;;  let p20 = splittab ...;;
+         // F#:   
+         let p20p = prawitx ...;; let p20c = compare ...;; let p20s = splittab ...;;
+
 - OCaml top-level commands such as #trace and #install-printer don't exist.
 
 	The OCaml REPL directive:
@@ -67,37 +95,6 @@ To run the unit test you will need to
 These examples emit `StackOverflowException`s in F# on Windows due to small 1MB stack (see extensive discussion [here](http://stackoverflow.com/questions/7947446/why-does-f-impose-a-low-limit-on-stack-size)).
  - Redefined `Failure` active patterns to accommodate `KeyNotFoundException`, `ArgumentException`, etc. The OCaml version makes use of `Failure` as a control flow; the F# version throws different kinds of exceptions which weren't caught by default `Failure`. The active pattern might be updated to handle other exceptions later (see the detailed function in the beginning of `lib.fs`).
 
-### OCaml Quotations
-
-[OCaml Quotations](http://caml.inria.fr/pub/docs/tutorial-camlp4/tutorial004.html)
-
-Since F# does not support the OCaml French-style \<\< quotation \>\>,
-the parser will be explicitly invoked and the printer will be invoked via fsi.AddPrinter.  
-As such the use of default_parser and default_printer does not appear in the F# code.
-
-> OCaml: \<\<x + 3 * y\>\>;;
-
-> F#: parse_exp "x + 3 * y";;
-
-> OCaml: \<\<p ==> q <=> r /\ s \/ (t <=> ~ ~u /\ v)\>\>;;
-
-> F#: parse_prop_formula "p ==> q <=> r /\ s \/ (t <=> ~ ~u /\ v)";;
-
-### Duplicate names
-
-Since OCaml shadows names and F# does not allow duplicate names, any function name causing a duplicate name error will have the name appended with an increasing sequential number.
-
-> OCaml:  let a = ...;; let a = ...;; let a = ...;;
-
-> F#: let a001 = ...;; let a002 = ...;; let a003 = ...;;
-
-For some of the test strings such as in tableaux.fsx, the same name is used multiple times. To avoid duplicate name errors some of the names have a character appended.
-
-> OCaml: let p20 = prawitx ...;; let p20 = compare ...;;  let p20 = splittab ...;;
-
-> F#:   let p20p = prawitx ...;; let p20c = compare ...;; let p20s = splittab ...;;
-
- 
 ### Writing unit tests ###
 A large set of unit tests is created based on available examples. 
 These test cases serve as an **evidence** of correctness when the code base is updated or optimized over time. 
