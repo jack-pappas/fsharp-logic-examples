@@ -112,22 +112,30 @@ There are a few important points to note when implementing new test cases:
 
     ```ocaml
     (* OCaml *)
-    let a = ...;; let a = ...;; let a = ...;;
+    let a = ...;;
+    let a = ...;;
+    let a = ...;;
     ```
     ```fsharp
     // F#
-    let a001 = ...;; let a002 = ...;; let a003 = ...;;
+    let a001 = ...;;
+    let a002 = ...;;
+    let a003 = ...;;
     ```
      
     For some of the test strings such as in tableaux.fsx, the same name is used multiple times. To avoid duplicate name errors some of the names have a character appended.
 
     ```ocaml
     (* OCaml *)
-    let p20 = prawitx ...;; let p20 = compare ...;;  let p20 = splittab ...;;
+    let p20 = prawitx ...;;
+    let p20 = compare ...;;
+    let p20 = splittab ...;;
     ```
     ```fsharp
     // F#
-    let p20p = prawitx ...;; let p20c = compare ...;; let p20s = splittab ...;;
+    let p20p = prawitx ...;;
+    let p20c = compare ...;;
+    let p20s = splittab ...;;
     ```
 
   - Some OCaml toplevel commands such as `#trace` and `#install-printer` don't exist in F# Interactive (`fsi`). In some cases, the functionality can be replicated:
