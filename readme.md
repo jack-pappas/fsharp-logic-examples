@@ -91,56 +91,53 @@ There are a few important points to note when implementing new test cases:
     Examples:
 
     ```ocaml
-    // OCaml:
+    (* OCaml *)
     <<x + 3 * y>>;;
     ```
     ```fsharp
-    // F#: 
+    // F#
     parse_exp "x + 3 * y";;
     ```
 
     ```ocaml
-    // OCaml: 
+    (* OCaml *)
     <<p ==> q <=> r /\ s \/ (t <=> ~ ~u /\ v)>>;;
     ```
     ```fsharp
-    // F#: 
+    // F#
     parse_prop_formula "p ==> q <=> r /\ s \/ (t <=> ~ ~u /\ v)";;
     ```
 
   - Duplicated names are avoided. Since OCaml shadows names and F# does not allow duplicate names, any function name causing a duplicate name error will have the name appended with an increasing sequential number.
 
     ```ocaml
-    // OCaml:  
+    (* OCaml *)
     let a = ...;; let a = ...;; let a = ...;;
     ```
     ```fsharp
-    // F#: 
+    // F#
     let a001 = ...;; let a002 = ...;; let a003 = ...;;
     ```
      
     For some of the test strings such as in tableaux.fsx, the same name is used multiple times. To avoid duplicate name errors some of the names have a character appended.
 
     ```ocaml
-    // OCaml: 
+    (* OCaml *)
     let p20 = prawitx ...;; let p20 = compare ...;;  let p20 = splittab ...;;
     ```
     ```fsharp
-    // F#:   
+    // F#
     let p20p = prawitx ...;; let p20c = compare ...;; let p20s = splittab ...;;
     ```
 
   - Some OCaml toplevel commands such as `#trace` and `#install-printer` don't exist in F# Interactive (`fsi`). In some cases, the functionality can be replicated:
 
-    The OCaml toplevel directive:
-
     ```ocaml
+    (* OCaml toplevel *)
     #install_printer my_printer;;
     ```
-
-    has the equivalent F# (in F# interactive):
-
     ```fsharp
+    // F# (fsi)
     fsi.AddPrinter my_printer;;   // my_printer : 'T -> string
     ```
 
