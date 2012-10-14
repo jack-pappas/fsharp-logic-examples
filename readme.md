@@ -130,7 +130,7 @@ There are a few important points to note when implementing new test cases:
     let p20p = prawitx ...;; let p20c = compare ...;; let p20s = splittab ...;;
     ```
 
-  - OCaml top-level commands such as #trace and #install-printer don't exist.
+  - Some OCaml toplevel commands such as `#trace` and `#install-printer` don't exist in F# Interactive (`fsi`). In some cases, the functionality can be replicated:
 
     The OCaml toplevel directive:
 
