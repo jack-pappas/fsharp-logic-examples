@@ -47,11 +47,11 @@ In order to demonstrate certain aspects and limitations of automated reasoning, 
 
 Each of the examples fall into one of the following categories (with the associated special comment, if applicable):
 
-  1.*Completes successfully in <10 seconds.*
+  1. *Completes successfully in <10 seconds.*
 
   No special comment. **Most examples fall into this category.**
 
-  2.*Completes successfully in >10 seconds, but <5 minutes.*
+  2. *Completes successfully in <5 minutes.*
 
   Includes a comment with the result of the `fsi` `#time` directive when the example is run on an average machine. For example:
 
@@ -59,15 +59,15 @@ Each of the examples fall into one of the following categories (with the associa
   // Real: 00:04:35.586, CPU: 00:04:31.718, GC gen0: 5020, gen1: 137, gen2: 9
   ```
 
-  3.*Runs for an unknown or infinite length of time*
+  3. *Runs for an unknown or infinite length of time*
 
   Some examples take a very long time to run. These are marked with the comment `LongRunning`.
 
-  4.*Failure*
+  4. *Failure*
 
   Marked with a comment noting the expected reason for failure.
 
-  5.*Exception*
+  5. *Exception*
 
   Examples that raise a non-Failure exception; marked with a comment noting the expected type of the exception.
 
