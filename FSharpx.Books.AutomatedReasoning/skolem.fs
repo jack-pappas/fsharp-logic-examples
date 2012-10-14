@@ -33,30 +33,44 @@ let rec private simplifyImpl fm cont =
     match simplify1 fm with
     (* Cases which need to be recursively simplified. *)
     | Not p ->
-        simplifyImpl p <| fun p' ->
-            cont (simplify1 (Not p'))
+        simplifyImpl p <| fun simpl_p ->
+            Not simpl_p
+            |> simplify1
+            |> cont
     | And (p, q) ->
-        simplifyImpl p <| fun p' ->
-        simplifyImpl q <| fun q' ->
-            cont (simplify1 (And (p', q')))
+        simplifyImpl p <| fun simpl_p ->
+        simplifyImpl q <| fun simpl_q ->
+            And (simpl_p, simpl_q)
+            |> simplify1
+            |> cont
     | Or (p, q) ->
-        simplifyImpl p <| fun p' ->
-        simplifyImpl q <| fun q' ->
-            cont (simplify1 (Or (p', q')))
+        simplifyImpl p <| fun simpl_p ->
+        simplifyImpl q <| fun simpl_q ->
+            Or (simpl_p, simpl_q)
+            |> simplify1
+            |> cont
     | Imp (p, q) ->
-        simplifyImpl p <| fun p' ->
-        simplifyImpl q <| fun q' ->
-            cont (simplify1 (Imp (p', q')))
+        simplifyImpl p <| fun simpl_p ->
+        simplifyImpl q <| fun simpl_q ->
+            Imp (simpl_p, simpl_q)
+            |> simplify1
+            |> cont
     | Iff (p, q) ->
-        simplifyImpl p <| fun p' ->
-        simplifyImpl q <| fun q' ->
-            cont (simplify1 (Iff (p', q')))
+        simplifyImpl p <| fun simpl_p ->
+        simplifyImpl q <| fun simpl_q ->
+            Iff (simpl_p, simpl_q)
+            |> simplify1
+            |> cont
     | Forall (x, p) ->
-        simplifyImpl p <| fun p' ->
-            cont (simplify1 (Forall (x, p')))
+        simplifyImpl p <| fun simpl_p ->
+            Forall (x, simpl_p)
+            |> simplify1
+            |> cont
     | Exists (x, p) ->
-        simplifyImpl p <| fun p' ->
-            cont (simplify1 (Exists (x, p')))
+        simplifyImpl p <| fun simpl_p ->
+            Exists (x, simpl_p)
+            |> simplify1
+            |> cont
 
     (* This formula can't be simplified any further. *)
     | fm ->
@@ -75,53 +89,67 @@ let rec private nnfImpl fm cont =
     | And (p, q) ->
         nnfImpl p <| fun nnf_p ->
         nnfImpl q <| fun nnf_q ->
-            cont (And (nnf_p, nnf_q))
+            And (nnf_p, nnf_q)
+            |> cont
     | Or (p, q) ->
         nnfImpl p <| fun nnf_p ->
         nnfImpl q <| fun nnf_q ->
-            cont (Or (nnf_p, nnf_q))
+            Or (nnf_p, nnf_q)
+            |> cont
     | Imp (p, q) ->
         nnfImpl (Not p) <| fun nnf_not_p ->
         nnfImpl q <| fun nnf_q ->
-            cont (Or (nnf_not_p, nnf_q))
+            Or (nnf_not_p, nnf_q)
+            |> cont
     | Iff (p, q) ->
         nnfImpl p <| fun nnf_p ->
         nnfImpl q <| fun nnf_q ->
         nnfImpl (Not p) <| fun nnf_not_p ->
         nnfImpl (Not q) <| fun nnf_not_q ->
-            cont (Or (And (nnf_p, nnf_q), And (nnf_not_p, nnf_not_q)))
+            Or (And (nnf_p, nnf_q),
+                And (nnf_not_p, nnf_not_q))
+            |> cont
     | Not (Not p) ->
         nnfImpl p cont
     | Not (And (p, q)) ->
         nnfImpl (Not p) <| fun nnf_not_p ->
         nnfImpl (Not q) <| fun nnf_not_q ->
-            cont (Or (nnf_not_p, nnf_not_q))
+            Or (nnf_not_p, nnf_not_q)
+            |> cont
     | Not (Or (p, q)) ->
         nnfImpl (Not p) <| fun nnf_not_p ->
         nnfImpl (Not q) <| fun nnf_not_q ->
-            cont (And (nnf_not_p, nnf_not_q))
+            And (nnf_not_p, nnf_not_q)
+            |> cont
     | Not (Imp (p, q)) ->
         nnfImpl p <| fun nnf_p ->
         nnfImpl (Not q) <| fun nnf_not_q ->
-            cont (And (nnf_p, nnf_not_q))
+            And (nnf_p, nnf_not_q)
+            |> cont
     | Not (Iff (p, q)) ->
         nnfImpl p <| fun nnf_p ->
         nnfImpl (Not q) <| fun nnf_not_q ->
         nnfImpl (Not p) <| fun nnf_not_p ->
         nnfImpl q <| fun nnf_q ->
-            cont (Or (And (nnf_p, nnf_not_q), And (nnf_not_p, nnf_q)))
+            Or (And (nnf_p, nnf_not_q),
+                And (nnf_not_p, nnf_q))
+            |> cont
     | Forall (x, p) ->
         nnfImpl p <| fun nnf_p ->
-            cont (Forall (x, nnf_p))
+            Forall (x, nnf_p)
+            |> cont
     | Exists (x, p) ->
         nnfImpl p <| fun nnf_p ->
-            cont (Exists (x, nnf_p))
+            Exists (x, nnf_p)
+            |> cont
     | Not (Forall (x, p)) ->
         nnfImpl (Not p) <| fun nnf_not_p ->
-            cont (Exists (x, nnf_not_p))
+            Exists (x, nnf_not_p)
+            |> cont
     | Not (Exists (x, p)) ->
         nnfImpl (Not p) <| fun nnf_not_p ->
-            cont (Forall (x, nnf_not_p))
+            Forall (x, nnf_not_p)
+            |> cont
     | fm ->
         cont fm
 
@@ -173,18 +201,24 @@ let rec private prenexImpl fm cont =
     match fm with
     | Forall (x, p) ->
         prenexImpl p <| fun p' ->
-            cont (Forall (x, p'))
+            Forall (x, p')
+            |> cont
     | Exists (x, p) ->
         prenexImpl p <| fun p' ->
-            cont (Exists (x, p'))
+            Exists (x, p')
+            |> cont
     | And (p, q) ->
         prenexImpl p <| fun p' ->
         prenexImpl q <| fun q' ->
-            cont (pullquants (And (p', q')))
+            And (p', q')
+            |> pullquants
+            |> cont
     | Or (p, q) ->
         prenexImpl p <| fun p' ->
         prenexImpl q <| fun q' ->
-            cont (pullquants (Or (p', q')))
+            Or (p', q')
+            |> pullquants
+            |> cont
     | _ ->
         cont fm
 
