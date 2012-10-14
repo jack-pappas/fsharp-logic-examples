@@ -1,10 +1,10 @@
 Logic Programming in F#
 ===
-### Code and Examples from John Harrison's "[Handbook of Practical Logic and Automated Reasoning](https://www.cl.cam.ac.uk/~jrh13/atp/index.html)"
+### Code and Examples from John Harrison's "[Handbook of Practical Logic and Automated Reasoning](https://www.cl.cam.ac.uk/~jrh13/atp/index.html)" ###
 
 ---
 
-### Purpose
+### Purpose ###
 
 [Handbook of Practical Logic and Automated Reasoning](https://www.cl.cam.ac.uk/~jrh13/atp/index.html) is a book designed to teach the fundamental aspects of propositional logic, automated theorem proving, and proof assistants. It includes a large number of examples written in OCaml, which we have translated and adapted to F# in order to take advantage of Visual Studio and the .NET Framework.
 
@@ -22,6 +22,8 @@ Both solutions target .NET 4.0.
 The solution uses the *Package Restore* feature of NuGet to automatically download any missing packages when the project is built. This requires that you have the "[Allow NuGet to download missing packages during build](http://docs.nuget.org/docs/workflows/using-nuget-without-committing-packages)" setting enabled; in Visual Studio, you can find the setting under `Options -> Package Manager -> General`.
 
 Once NuGet is installed and configured, you should be able to build the solution.
+
+---
 
 ### When reading along with the book ###
 
