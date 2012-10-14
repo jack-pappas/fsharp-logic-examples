@@ -82,49 +82,66 @@ There are a few important points to note when implementing new test cases:
 
 ### Notable differences between the OCaml and F# code ###
 
-- In a few places, errors are handled using the `Option` type instead of exceptions. This is because:
-  - Exceptions in F#/.NET are much slower than in OCaml
-  - Recursive functions which throw and/or catch exceptions don't play nicely with type inference (in both F# and OCaml); the output type of such functions cannot be unified, so it will always be shown as a generic parameter (e.g., `'b`) instead of the true output type of the function (e.g., `int` or `bool`). These functions also make it *extremely* difficult to locate the source of an error.
+  - In a few places, errors are handled using the `Option` type instead of exceptions. This is because:
+    - Exceptions in F#/.NET are much slower than in OCaml
+    - Recursive functions which throw and/or catch exceptions don't play nicely with type inference (in both F# and OCaml); the output type of such functions cannot be unified, so it will always be shown as a generic parameter (e.g., `'b`) instead of the true output type of the function (e.g., `int` or `bool`). These functions also make it *extremely* difficult to locate the source of an error.
 
-- Preprocessors such as [camlp4 / camlp5](http://caml.inria.fr/pub/docs/tutorial-camlp4/tutorial004.html) don't exist for F#. The original OCaml code for the book uses `camlp5` quotations (`<<` and `>>`) to transparently call the parsing functions for formula and term strings. Our F# code adds explicit calls to the parsing functions; as such, no uses of `default_parser` and `default_printer` appear in the F# code.
+  - Preprocessors such as [camlp4 / camlp5](http://caml.inria.fr/pub/docs/tutorial-camlp4/tutorial004.html) don't exist for F#. The original OCaml code for the book uses `camlp5` quotations (`<<` and `>>`) to transparently call the parsing functions for formula and term strings. Our F# code adds explicit calls to the parsing functions; as such, no uses of `default_parser` and `default_printer` appear in the F# code.
 
     Examples:
 
-        // OCaml:
-        <<x + 3 * y>>;;
-        // F#: 
-        parse_exp "x + 3 * y";;
+    ```ocaml
+    // OCaml:
+    <<x + 3 * y>>;;
+    ```
+    ```fsharp
+    // F#: 
+    parse_exp "x + 3 * y";;
+    ```
 
-        // OCaml: 
-        <<p ==> q <=> r /\ s \/ (t <=> ~ ~u /\ v)>>;;
-        // F#: 
-        parse_prop_formula "p ==> q <=> r /\ s \/ (t <=> ~ ~u /\ v)";;
+    ```ocaml
+    // OCaml: 
+    <<p ==> q <=> r /\ s \/ (t <=> ~ ~u /\ v)>>;;
+    ```
+    ```fsharp
+    // F#: 
+    parse_prop_formula "p ==> q <=> r /\ s \/ (t <=> ~ ~u /\ v)";;
+    ```
 
-- Duplicated names are avoided. Since OCaml shadows names and F# does not allow duplicate names, any function name causing a duplicate name error will have the name appended with an increasing sequential number.
+  - Duplicated names are avoided. Since OCaml shadows names and F# does not allow duplicate names, any function name causing a duplicate name error will have the name appended with an increasing sequential number.
 
-         // OCaml:  
-         let a = ...;; let a = ...;; let a = ...;;
-         // F#: 
-         let a001 = ...;; let a002 = ...;; let a003 = ...;;
-For some of the test strings such as in tableaux.fsx, the same name is used multiple times. To avoid duplicate name errors some of the names have a character appended.
+    ```ocaml
+    // OCaml:  
+    let a = ...;; let a = ...;; let a = ...;;
+    ```
+    ```fsharp
+    // F#: 
+    let a001 = ...;; let a002 = ...;; let a003 = ...;;
+    ```
+     
+    For some of the test strings such as in tableaux.fsx, the same name is used multiple times. To avoid duplicate name errors some of the names have a character appended.
 
-         // OCaml: 
-         let p20 = prawitx ...;; let p20 = compare ...;;  let p20 = splittab ...;;
-         // F#:   
-         let p20p = prawitx ...;; let p20c = compare ...;; let p20s = splittab ...;;
+    ```ocaml
+    // OCaml: 
+    let p20 = prawitx ...;; let p20 = compare ...;;  let p20 = splittab ...;;
+    ```
+    ```fsharp
+    // F#:   
+    let p20p = prawitx ...;; let p20c = compare ...;; let p20s = splittab ...;;
+    ```
 
-- OCaml top-level commands such as #trace and #install-printer don't exist.
+  - OCaml top-level commands such as #trace and #install-printer don't exist.
 
-	The OCaml toplevel directive:
+    The OCaml toplevel directive:
 
     ```ocaml
     #install_printer my_printer;;
     ```
 
-	has the equivalent F# (in F# interactive):
+    has the equivalent F# (in F# interactive):
 
     ```fsharp
-    fsi.AddPrinter my_printer;;		// my_printer : 'T -> string
+    fsi.AddPrinter my_printer;;   // my_printer : 'T -> string
     ```
 
 ---
