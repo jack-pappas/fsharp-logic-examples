@@ -131,7 +131,7 @@ let miniscope fm =
 // ------------------------------------------------------------------------- //
 
 let wang fm =
-    simplify004 fm
+    simplify fm
     |> nnf
     |> miniscope
     |> aedecide

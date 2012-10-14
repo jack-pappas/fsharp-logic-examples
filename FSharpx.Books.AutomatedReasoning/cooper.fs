@@ -394,7 +394,7 @@ let cooper vars fm =
 
         let bs = bset x p
         let stage j =
-            let p_inf = simplify004 (minusinf x p)
+            let p_inf = simplify (minusinf x p)
             list_disj (linrep vars x (mk_numeral j) p_inf :: List.map (p_element j) bs)
 
         // OPTIMIZE : Implement a special version of List.init which uses
@@ -435,7 +435,7 @@ let evalc =
 // ------------------------------------------------------------------------- //
 
 let integer_qelim = 
-    simplify004
+    simplify
     << evalc
     << lift_qelim linform (cnnf posineq << evalc) cooper
 

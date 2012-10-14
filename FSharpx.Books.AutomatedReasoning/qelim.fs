@@ -97,7 +97,7 @@ let lift_qelim afn nfn qfn =
 
     fun fm ->
         qelift (fv fm) (miniscope fm) id
-        |> simplify004
+        |> simplify
   
 // pg. 333
 //  ------------------------------------------------------------------------- // 
@@ -162,8 +162,8 @@ let cnnf lfn =
             cont (lfn fm)
 
     fun fm ->
-        cnnf (simplify004 fm) id
-        |> simplify004
+        cnnf (simplify fm) id
+        |> simplify
   
 // pg. 334
 //  ------------------------------------------------------------------------- // 

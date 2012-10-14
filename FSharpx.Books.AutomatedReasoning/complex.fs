@@ -413,7 +413,7 @@ let basic_complex_qelim vars (Exists (x, p)) =
 //  ------------------------------------------------------------------------- //
 
 let complex_qelim =
-    simplify004
+    simplify
     << evalc
     << lift_qelim polyatom (dnf << cnnf id << evalc) basic_complex_qelim
 

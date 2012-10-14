@@ -34,37 +34,35 @@ let rec private simplifyImpl fm cont =
     (* Cases which need to be recursively simplified. *)
     | Not p ->
         simplifyImpl p <| fun p' ->
-            cont (simplify003 (Not p'))
+            cont (simplify1 (Not p'))
     | And (p, q) ->
         simplifyImpl p <| fun p' ->
         simplifyImpl q <| fun q' ->
-            cont (simplify003 (And (p', q')))
+            cont (simplify1 (And (p', q')))
     | Or (p, q) ->
         simplifyImpl p <| fun p' ->
         simplifyImpl q <| fun q' ->
-            cont (simplify003 (Or (p', q')))
+            cont (simplify1 (Or (p', q')))
     | Imp (p, q) ->
         simplifyImpl p <| fun p' ->
         simplifyImpl q <| fun q' ->
-            cont (simplify003 (Imp (p', q')))
+            cont (simplify1 (Imp (p', q')))
     | Iff (p, q) ->
         simplifyImpl p <| fun p' ->
         simplifyImpl q <| fun q' ->
-            cont (simplify003 (Iff (p', q')))
+            cont (simplify1 (Iff (p', q')))
     | Forall (x, p) ->
         simplifyImpl p <| fun p' ->
-            cont (simplify003 (Forall (x, p')))
+            cont (simplify1 (Forall (x, p')))
     | Exists (x, p) ->
         simplifyImpl p <| fun p' ->
-            cont (simplify003 (Exists (x, p')))
+            cont (simplify1 (Exists (x, p')))
 
     (* This formula can't be simplified any further. *)
     | fm ->
         cont fm
 
-// OCaml: val simplify : 'a formula -> 'a formula = <fun>
-// F#:    val simplify004 : 'a formula -> 'a formula
-let simplify004 fm =
+let simplify fm =
     simplifyImpl fm id
 
 // pg. 141
@@ -194,7 +192,7 @@ let prenex fm =
     prenexImpl fm id
 
 let pnf fm =
-    simplify004 fm
+    simplify fm
     |> nnf
     |> prenex
 
@@ -256,7 +254,7 @@ let skolem2 cons (p, q) fns =
 let askolemize fm =
     functions fm
     |> List.map fst
-    |> skolem (simplify004 fm |> nnf)
+    |> skolem (simplify fm |> nnf)
     |> fst
 
 let rec specialize fm =

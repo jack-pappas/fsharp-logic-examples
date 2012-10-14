@@ -51,7 +51,7 @@ let inline non p x =
 // ------------------------------------------------------------------------- //
 
 // pg. ???
-let check p x =
+let inline check p x =
     assert (p x)
     x
 
@@ -87,12 +87,6 @@ let rec repeat f x =
 // Handy list operations.                                                    //
 // ------------------------------------------------------------------------- //
 
-// pg. 618
-let inline (--) (m : int) (n : int) = [m..n]
-
-// pg.618
-let inline (---) (m : num) (n : num) = [m..n]
-
 // pg. 619
 // NOTE: map2 has been replaced with the equivalent built-in F# function List.map2.
 
@@ -109,17 +103,11 @@ let inline (---) (m : num) (n : num) = [m..n]
 // NOTE: itlist has been replaced with the equivalent built-in F# function List.foldBack.
         
 // pg. 619
-let rec end_itlist f l =
-    match l with
-    | [] -> failwith "end_itlist"
-    | [x] -> x
-    | hd :: tl ->
-        f hd (end_itlist f tl)
+// NOTE: end_itlist has been replaced with the equivalent built-in F# function List.reduceBack.
         
 // pg. 619
 // NOTE: itlist2 has been replaced with the equivalent built-in F# function List.foldBack2.
 
-        
 // pg. 619
 // NOTE: zip has been replaced with the equivalent built-in F# function List.zip.
 
@@ -131,11 +119,9 @@ let rec end_itlist f l =
         
 // pg. 619
 // NOTE: partition has been replaced with the equivalent built-in F# function List.partition.
-
         
 // pg. 619
 // NOTE: filter has been replaced with the equivalent built-in F# function List.filter.
-
     
 // pg. 619
 // NOTE: length has been replaced with the equivalent built-in F# function List.length.
@@ -148,19 +134,9 @@ let rec last l =
     | [x] -> x
     | _ :: tl ->
         last tl
-
-// pg. 619
-let butlast l =
-    butlastImpl l id
         
 // pg. 619
 // NOTE: find has been replaced with the equivalent built-in F# function List.find.
-
-// In comparing exceptions in terms of computing time, 
-// Ocaml's exceptions are inexpensive in comparison with F# exceptions.
-// To avoid exceptions from F# List.find, use F# List.tryFind which
-// does not return an exception if an item is not found.
-
         
 // pg. 619
 // NOTE: el has been replaced with the equivalent built-in F# function List.nth.
@@ -252,9 +228,7 @@ let chop_list n l =
 // pg. 619
 // NOTE: replicate has been replaced with the equivalent built-in F# function List.replicate.
 
-// OCaml: val butlast : 'a list -> 'a list = <fun>
-// F#:    val butlast : 'a list -> 'a list
-// val butlast : 'a list -> 'a list
+// pg. 619
 let butlast l =
     chop_list (List.length l - 1) l
     |> fst
@@ -282,6 +256,8 @@ let insertat i x l =
         
 // pg. 619
 // NOTE: forall2 has been replaced with the equivalent built-in F# function List.forall2.
+
+// pg. 619
 let inline index x =
     List.findIndex ((=) x)
 
@@ -292,7 +268,8 @@ let inline index x =
 // pg. 619
 let rec earlier l x y =
     match l with
-    | [] -> false
+    | [] ->
+        false
     | h :: t ->
         h <> y
         && (h = x || earlier t x y)
@@ -340,11 +317,14 @@ let sort ord l =
 
 // pg. 619
 let increasing f x y =
-    compare (f x) (f y) < 0
+//    compare (f x) (f y) < 0
+    (f x) < (f y)
     
 // pg. 619
 let decreasing f x y =
-    compare (f x) (f y) > 0
+//    compare (f x) (f y) > 0
+    (f x) > (f y)
+    
 
 // ------------------------------------------------------------------------- //
 // Eliminate repetitions of adjacent elements, with and without counting.    //
@@ -401,11 +381,10 @@ let subtract s1 s2 =
     |> Set.toList
         
 // pg. 620
-// Determines if s1 is a subset of s2.
 let subset s1 s2 =
     Set.isSubset (Set.ofList s1) (Set.ofList s2)
 
-// Determines if s1 is a proper subset of s2.
+// pg. 620
 let psubset s1 s2 =
     Set.isProperSubset (Set.ofList s1) (Set.ofList s2)
 

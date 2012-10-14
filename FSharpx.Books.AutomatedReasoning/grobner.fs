@@ -264,7 +264,7 @@ let grobner_trivial fms =
     |> List.isEmpty
 
 let grobner_decide fm =
-    simplify004 fm
+    simplify fm
     |> nnf
     |> prenex
     |> specialize
