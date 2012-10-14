@@ -6,73 +6,68 @@ Logic Programming in F#
 
 ### Purpose
 
-The purpose this site is to allow someone to learn automated theorem provers and proof assistants using John's book but instead of using OCaml, they can use F#.
-Since F# is a first class functional programming language in Visual Studio, it allows one the use of a powerful IDE and well-supported .NET frameworks.
+[Handbook of Practical Logic and Automated Reasoning](https://www.cl.cam.ac.uk/~jrh13/atp/index.html) is a book designed to teach the fundamental aspects of propositional logic, automated theorem proving, and proof assistants. It includes a large number of examples written in OCaml, which we have translated and adapted to F# in order to take advantage of Visual Studio and the .NET Framework.
 
-When converting the code from OCaml to F# the main goal was to keep the F# code as close as possible to the OCaml code presented in the book so that one did not have to spend time trying to understand what code changes were made.
-
+Our ported F# code aims to stay as close as possible to the original OCaml to make it easy to follow along with the book.
 
 ---
 
-### Needed for Installation ###
+### Setup / Installation ###
 
-There are two solutions: `*.VS10.sln` and `*.VS11.sln` for Visual Studio 2010 and Visual Studio 2012 respectively.
-Both solutions are targeting .NET framework 4.0; while the VS10 version uses F# 2.0, the VS11 version targets F# 3.0.
+There are two solutions: `*.VS10.sln` and `*.VS11.sln` for Visual Studio 2010 and Visual Studio 2012, respectively.
+Both solutions target .NET 4.0.
 
-We use NuGet to manage external packages, for example, NUnit/FsUnit for unit testing.
-You will need to install [NuGet] (http://nuget.codeplex.com/) to get additional required libraries. 
-After installing NuGet, make sure to enable "Allow NuGet to download missing packages during build". 
-[This setting](http://docs.nuget.org/docs/workflows/using-nuget-without-committing-packages) is under Options -> Package Manager -> General.
-You will have to build the application once you have NuGet installed and the solution opened in Visual Studio.
+[NuGet](http://nuget.org) is used to manage external packages; the easiest way to [install NuGet](http://visualstudiogallery.msdn.microsoft.com/27077b70-9dad-4c64-adcf-c7cf6bc9970c) is by downloading it (for free) from the [Visual Studio Extension Gallery](http://visualstudiogallery.msdn.microsoft.com/27077b70-9dad-4c64-adcf-c7cf6bc9970c). If you do not have NuGet, or are running a version prior to `2.0`, you *must* install it (or upgrade) before you will be able to build the projects.
 
-The test cases have been executed with *NUnit 2.6 x86* and *TestDriven.NET-3.4.2803* x86 test runners. 
-**We recommend you to use x86 versions of the test runners.** 
-Although 1MB stack limit is enough for 32-bit test processes, the test cases will soon result in `StackOverflowException` on a 64-bit process. 
-The reason is that many library functions are *non-tail-recursive* and many types double their sizes on x64 platform.
+The solution uses the *Package Restore* feature of NuGet to automatically download any missing packages when the project is built. This requires that you have the "[Allow NuGet to download missing packages during build](http://docs.nuget.org/docs/workflows/using-nuget-without-committing-packages)" setting enabled; in Visual Studio, you can find the setting under `Options -> Package Manager -> General`.
+
+Once NuGet is installed and configured, you should be able to build the solution.
 
 ### When reading along with the book ###
 
-The OCaml code from [resource page] (http://www.cl.cam.ac.uk/~jrh13/atp/) combines the code and examples in one script. For F# the code is in the library project FSharpx.Books.AutomatedReasoning.VS10 and the example scripts are in the Examples directory.
+The OCaml code from [resource page](http://www.cl.cam.ac.uk/~jrh13/atp/) combines the code and examples in one script. We have separated them in our ported F# code to simplify development and testing; all library code has been placed into the `FSharpx.Books.AutomatedReasoning` project, and the examples put into F# scripts (`.fsx`) in the `Examples` folder.
 
-As you read through the book the OCaml code and example scripts are identified by bounding rectangles. Scripts starting with # are typically found in the Examples directory and code without the # is typically found in the library project.
+In the book, OCaml code and example scripts are identified by bounding boxes. Example code typically starts with an `#`, indicating it is being run in the OCaml REPL; the ported code for these are typically found in the Examples directory and code without the # is typically found in the library project.
 
 ### Running Examples ###
 
-To run the examples you must have built the solution first.  
+To run the examples you must have built the solution first.
 
-The Examples are broken down into script files based on the name of the original OCaml file. The examples appear sequentially as they appear in the book and we include page numbers from the book as comments in the examples to make cross-referencing easier.  
+The Examples are broken down into script files based on the name of the original OCaml file. The examples appear sequentially as they appear in the book and we include page numbers from the book as comments in the examples to make cross-referencing easier.
 
-When first opening an example script file, run the #load, open and fsi.AddPriter statements at the top of the script file to setup the interactive environment for the following examples.  
+When first opening an example script file, run the #load, open and fsi.AddPriter statements at the top of the script file to setup the interactive environment for the following examples.
 
-It is suggested that when running the examples that you run each one separately so as not to lose track of which example produced which result. Some of the examples rely on statements earlier in the script so if you skip ahead you may get errors.  
+It is suggested that when running the examples that you run each one separately so as not to lose track of which example produced which result. Some of the examples rely on statements earlier in the script so if you skip ahead you may get errors.
 
 Since the examples are for demonstrating certain aspects of automated reasoning and automated reasoning is an ongoing science, some of the examples will demonstrate failures with a failure, exception, or never returning.  
 
 Additionally automated reasoning is based on AI techniques and the search for the solution can be fast, slow, not be found with a computer due to limited resources such as stack space, not finish in a reasonable amount of time such as a day, or not even know if a solution can be found with this code. So when running the examples we have tried to provide as much feedback as possible on what to expect, but sometimes we just have to give up during the running of the example.  
 
-The feedback takes the following form for each example run:  
-1. Under 10 seconds - no comment.  
-2. more than 10 seconds and completes - result of FSI #time;; directive. i.e. Real: 02:37:35.586, CPU: 02:37:31.718, GC gen0: 50200, gen1: 1376, gen2: 98.  
-3. More than several minutes and we gave up on letting it finish - comment with long running.  
-4. Exception - comment noting expected exception.  
-5. Failure - comment noting expected failure reason.  
+The feedback takes the following form for each example run:
+
+  1. Under 10 seconds - no comment.
+  2. more than 10 seconds and completes - result of FSI #time;; directive. i.e. Real: 02:37:35.586, CPU: 02:37:31.718, GC gen0: 50200, gen1: 1376, gen2: 98.
+  3. More than several minutes and we gave up on letting it finish - comment with long running.
+  4. Exception - comment noting expected exception.
+  5. Failure - comment noting expected failure reason.
 
 
-### Instructions on running tests with NUnit ###
+### Unit Testing ###
 
-To run the unit test you will need to
+The `FSharpx.Books.AutomatedReasoning.Tests` project contains all of the examples from the book (plus some additional examples from John Harrison's website), converted into unit test cases with **NUnit 2.6.1** and **FsUnit**.
 
-1. Download and install NUnit
-2. Download repository, unpack if necessary, open with Visual Studio 2010, and build the solution
-4. Start NUnit x86 (Note: on 64-bit systems the system menu will use 64-bit version of NUnit. 
-   The x86 version of NUnit is nunit-x86 which can be found in the NUnit bin directory)
-5. Within NUnit *File -> Open Project*, navigate to directory with FSharpx.Books.AutomatedReasoning.Tests.dll
-6. Double click FSharpx.Books.AutomatedReasoning.Tests.dll
-9. Click *Categories* tab on left side of NUnit
-10. Double click LongRunning, and select *Exclude these categories*
-13. Click *Tests* tab on left side of NUnit and hit *Run*
+You can execute the tests by building the `FSharpx.Books.AutomatedReasoning.Tests` project, then loading the compiled assembly into a test runner like **NUnit GUI** or **TestDriven.NET 3.4.2803 (Beta 3)**.
 
+*We strongly recommend using the x86 versions of the test runners.* The CLR's default maximum stack size of 1MB is enough for 32-bit processes, but the test cases reliably crash with a `StackOverflowException` on a 64-bit process. This is because many of the library functions are recursive, but not *tail-recursive* -- and since many types double in size on an x64 platform, these functions quickly consume the stack and crash the process.
 
+NOTE: On a 64-bit machine, the NUnit installer only creates a Start Menu shortcut for the 64-bit version so you must create your own shortcut (e.g., on the Desktop) to the x86 version; the x86 version is normally found at `C:\Program Files (x86)\NUnit 2.6.1\bin\nunit-x86.exe`.
+
+Once you have installed NUnit, built the `FSharpx.Books.AutomatedReasoning.Tests` project, and opened the NUnit (x86) GUI, follow these steps to run the tests:
+
+  1. In the NUnit GUI, go to `File -> Open Project`. Find the `FSharpx.Books.AutomatedReasoning.Tests.dll` in the `FSharpx.Books.AutomatedReasoning.Tests\bin\Debug` folder in your repository folder (i.e., the folder you cloned the repository into). Double-click the file, or select it and press the 'Open' button.
+  2. Click the *Categories* tab on left side of the NUnit GUI window.
+  3. Double-click 'LongRunning', then check the box labeled *Exclude these categories*.
+  4. Click the *Tests* tab on left side of the NUnit GUI window and press the 'Run' button.
 
 ### Interesting changes from OCaml to F# ###
 
