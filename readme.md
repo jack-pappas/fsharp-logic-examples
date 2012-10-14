@@ -101,7 +101,7 @@ Each of the examples fall into one of the following categories (with the associa
     parse_prop_formula "p ==> q <=> r /\ s \/ (t <=> ~ ~u /\ v)";;
     ```
 
-  - Duplicated names are avoided. Since OCaml shadows names and F# does not allow duplicate names, any function name causing a duplicate name error will have the name appended with an increasing sequential number.
+  - Duplicate names are avoided. Since OCaml shadows names and F# does not allow duplicate names, any function name causing a duplicate name error will have the name appended with an increasing sequential number.
 
     ```ocaml
     (* OCaml *)
