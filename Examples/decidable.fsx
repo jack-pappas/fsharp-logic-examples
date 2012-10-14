@@ -6,18 +6,18 @@
 
 #load "initialization.fsx"
 
-open Reasoning.Automated.Harrison.Handbook.lib
-open Reasoning.Automated.Harrison.Handbook.formulas
-open Reasoning.Automated.Harrison.Handbook.prop
-open Reasoning.Automated.Harrison.Handbook.dp
-open Reasoning.Automated.Harrison.Handbook.fol
-open Reasoning.Automated.Harrison.Handbook.skolem
-open Reasoning.Automated.Harrison.Handbook.herbrand
-open Reasoning.Automated.Harrison.Handbook.tableaux
-open Reasoning.Automated.Harrison.Handbook.resolution
-open Reasoning.Automated.Harrison.Handbook.meson
-open Reasoning.Automated.Harrison.Handbook.equal
-open Reasoning.Automated.Harrison.Handbook.decidable
+open FSharpx.Books.AutomatedReasoning.lib
+open FSharpx.Books.AutomatedReasoning.formulas
+open FSharpx.Books.AutomatedReasoning.prop
+open FSharpx.Books.AutomatedReasoning.dp
+open FSharpx.Books.AutomatedReasoning.fol
+open FSharpx.Books.AutomatedReasoning.skolem
+open FSharpx.Books.AutomatedReasoning.herbrand
+open FSharpx.Books.AutomatedReasoning.tableaux
+open FSharpx.Books.AutomatedReasoning.resolution
+open FSharpx.Books.AutomatedReasoning.meson
+open FSharpx.Books.AutomatedReasoning.equal
+open FSharpx.Books.AutomatedReasoning.decidable
 
 fsi.AddPrinter sprint_fol_formula
 
@@ -53,7 +53,7 @@ let los =
     (forall x y. P(x,y) ==> P(y,x)) /\ 
     (forall x y. P(x,y) \/ Q(x,y)) 
     ==> (forall x y. P(x,y)) \/ (forall x y. Q(x,y))")
-print_fol_formula los
+//print_fol_formula los
 
 skolemize(Not los)
 skolemize(Not los)
@@ -86,7 +86,7 @@ pnf fm001
 // ------------------------------------------------------------------------- //
 
 // Real: 00:03:13.533, CPU: 00:05:45.906, GC gen0: 35, gen1: 20, gen2: 0
-Initialization.runWith16MBStack (fun () ->
+Initialization.runWithEnlargedStack (fun () ->
     aedecide (parse @"
     (forall x. P(1,x,x)) /\ (forall x. P(x,x,1)) /\
     (forall u v w x y z.
@@ -94,7 +94,7 @@ Initialization.runWith16MBStack (fun () ->
     ==> forall a b c. P(a,b,c) ==> P(b,a,c)"))
   
 // Real: 00:11:45.855, CPU: 00:11:43.421, GC gen0: 55, gen1: 19, gen2: 1
-Initialization.runWith16MBStack (fun () ->
+Initialization.runWithEnlargedStack (fun () ->
     aedecide (parse @"
     (forall x. P(x,x,1)) /\
     (forall u v w x y z.
@@ -106,7 +106,7 @@ Initialization.runWith16MBStack (fun () ->
 // A bigger example.                                                         //
 // ------------------------------------------------------------------------- //
 
-Initialization.runWith16MBStack (fun () -> 
+Initialization.runWithEnlargedStack (fun () -> 
     aedecide (parse @"
     (exists x. P(x)) /\ (exists x. G(x))
     ==> ((forall x. P(x) ==> H(x)) /\ (forall x. G(x) ==> J(x)) <=>
@@ -143,7 +143,6 @@ nnf fm002
 // It works well on simple monadic formulas.                                 //
 // ------------------------------------------------------------------------- //
 
-// val it : bool = true
 wang
     (parse @"
     (forall x y. exists z. forall w. P(x) /\ Q(y) ==> R(z) /\ U(w))
@@ -196,7 +195,7 @@ decide_fmp
 
 //** This fails to terminate: has countermodels, but only infinite ones
 // Process is terminated due to StackOverflowException, even with 16MB stack
-Initialization.runWith16MBStack (fun () -> 
+Initialization.runWithEnlargedStack (fun () -> 
     decide_fmp (parse @"
     ~((forall x. ~R(x,x)) /\ 
     (forall x. exists z. R(x,z)) /\ 

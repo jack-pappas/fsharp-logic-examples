@@ -3,35 +3,59 @@
 // (See "LICENSE.txt" for details.)                                          //
 // ========================================================================= //
 
-(* ========================================================================= *)
-(* Tweak F# default state ready for theorem proving code.                    *)
-(* ========================================================================= *)
+// ========================================================================= //
+// Tweak F# default state for theorem proving code.                          //
+// ========================================================================= //
 
-#I @".\..\Reasoning.Automated.Harrison.Handbook\bin\Debug"
-#r @"Reasoning.Automated.Harrison.Handbook.dll"
-#r @"FSharpx.Compatibility.Ocaml.dll"
+#I @".\..\FSharpx.Books.AutomatedReasoning\bin\Debug"
+#r @"FSharpx.Books.AutomatedReasoning.dll"
+#r @"FSharpx.Compatibility.OCaml.dll"
 #r @"FSharp.PowerPack.dll"
 
-fsi.PrintWidth <- 72;;                                   (* Reduce margins     *)
-//open Format;;                                          (* Open formatting    *)
-open FSharpx.Compatibility.OCaml;;                       (* Open bignums       *)
+// Reduce margins
+fsi.PrintWidth <- 72;;
+
+// Open formatting
+//open Format;;
+
+// Open bignums
+open FSharpx.Compatibility.OCaml;;
 open FSharpx.Compatibility.OCaml.Num;;
 
-fsi.AddPrinter (fun (n : Num) -> n.ToString ());;        (* Avoid range limit  *)
-                                                         (* when printing nums *)
+// Print the full value of a Num instead of truncating it.
+fsi.AddPrinter (fun (n : Num) -> n.ToString ());;
 
-let [<Literal>] STACK_LIMIT = 16777216;; // 16MB
+/// The greatest maximum-stack-size that should be used
+/// with the 'runWithStackFrame' function.
+let [<Literal>] STACK_LIMIT = 16777216;;
 
-/// Run a function with custom stack size in byte
-let runWithStackFrame stackSize fn =
-    let result = ref Unchecked.defaultof<'T> // ref cell to hold return value
-    let thread = System.Threading.Thread((fun () -> result := fn()), stackSize)
-    thread.Start()
-    thread.Join() // thread finishes
+/// Run a function with a custom maximum stack size.
+/// This is necessary for some functions to execute
+/// without raising a StackOverflowException.
+let runWithCustomStackSize maxStackSize fn =
+    // Preconditions
+    if maxStackSize < 1048576 then
+        invalidArg "stackSize" "Functions should not be executed with a \
+            maximum stack size of less than 1048576 bytes (1MB)."
+    elif maxStackSize > STACK_LIMIT then
+        invalidArg "stackSize" "The maximum size of the stack frame should \
+            not exceed 16777216 bytes (16MB)."
+
+    /// Holds the return value of the function.
+    let result = ref Unchecked.defaultof<'T>
+
+    // Create a thread with the specified maximum stack size,
+    // then immediately execute the function on it.
+    let thread = System.Threading.Thread ((fun () -> result := fn()), maxStackSize)
+    thread.Start ()
+
+    // Wait for the function/thread to finish and return the result.
+    thread.Join ()
     !result;;
 
-let inline runWith16MBStack fn =
-    runWithStackFrame STACK_LIMIT fn;;
+/// Runs a function within a thread which has an enlarged maximum-stack-size.
+let inline runWithEnlargedStack fn =
+    runWithCustomStackSize STACK_LIMIT fn;;
 (* TEMP :   These operators were removed from the 'lib' module.
             Eventually, they should be replaced in the example code
             by their standard F# equivalents. *)

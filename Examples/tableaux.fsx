@@ -6,13 +6,13 @@
 
 #load "initialization.fsx"
 
-open Reasoning.Automated.Harrison.Handbook.lib
-open Reasoning.Automated.Harrison.Handbook.formulas
-open Reasoning.Automated.Harrison.Handbook.prop
-open Reasoning.Automated.Harrison.Handbook.fol
-open Reasoning.Automated.Harrison.Handbook.skolem
-open Reasoning.Automated.Harrison.Handbook.herbrand
-open Reasoning.Automated.Harrison.Handbook.tableaux
+open FSharpx.Books.AutomatedReasoning.lib
+open FSharpx.Books.AutomatedReasoning.formulas
+open FSharpx.Books.AutomatedReasoning.prop
+open FSharpx.Books.AutomatedReasoning.fol
+open FSharpx.Books.AutomatedReasoning.skolem
+open FSharpx.Books.AutomatedReasoning.herbrand
+open FSharpx.Books.AutomatedReasoning.tableaux
 
 fsi.AddPrinter sprint_fol_formula
 
@@ -79,6 +79,12 @@ let p38t = tab (parse @"
 // ------------------------------------------------------------------------- //
 // Example: the Andrews challenge.                                           //
 // ------------------------------------------------------------------------- //
+
+let p34 = splittab (parse @"
+    ((exists x. forall y. P(x) <=> P(y)) <=>
+        ((exists x. Q(x)) <=> (forall y. Q(y)))) <=>
+    ((exists x. forall y. Q(x) <=> Q(y)) <=>
+        ((exists x. P(x)) <=> (forall y. P(y))))");;
 
 // pg. 179
 // ------------------------------------------------------------------------- //
@@ -233,7 +239,7 @@ let p33 = time splittab (parse @"
 	(forall x. P(a) /\ (P(x) ==> P(b)) ==> P(c)) <=> 
     (forall x. P(a) ==> P(x) \/ P(c)) /\ (P(a) ==> P(b) ==> P(c))");;
 
-let p34 = time splittab (parse @"
+let p34t = time splittab (parse @"
 	((exists x. forall y. P(x) <=> P(y)) <=>
      ((exists x. Q(x)) <=> (forall y. Q(y)))) <=>
     ((exists x. forall y. Q(x) <=> Q(y)) <=>
@@ -354,20 +360,25 @@ let p60 = time splittab (parse @"
 // From Gilmore's classic paper.                                             //
 // ------------------------------------------------------------------------- //
 
-////**** This is still too hard for us! Amazing...
-//let gilmore_1 = time splittab (parse @"
-//	exists x. forall y z. 
-//        ((F(y) ==> G(y)) <=> F(x)) /\ 
-//        ((F(y) ==> H(y)) <=> G(x)) /\ 
-//        (((F(y) ==> G(y)) ==> H(y)) <=> H(x)) 
-//        ==> F(z) /\ G(z) /\ H(z)");;
+//**** This is still too hard for us! Amazing...
+// long running
+//let gilmore_1 =
+//    time Initialization.runWithEnlargedStack (fun () ->
+//        splittab (parse @"
+//            exists x. forall y z. 
+//            ((F(y) ==> G(y)) <=> F(x)) /\ 
+//            ((F(y) ==> H(y)) <=> G(x)) /\ 
+//            (((F(y) ==> G(y)) ==> H(y)) <=> H(x)) 
+//            => F(z) /\ G(z) /\ H(z)"));;
 
-////** This is not valid, according to Gilmore
-// Takes a long time to run; > 10 minutes. Did not wait for result.
-//let gilmore_2 = time splittab (parse @"
-//    exists x y. forall z. 
-//        (F(x,z) <=> F(z,y)) /\ (F(z,y) <=> F(z,z)) /\ (F(x,y) <=> F(y,x)) 
-//        ==> (F(x,y) <=> F(x,z))");;
+//** This is not valid, according to Gilmore
+// long running
+//let gilmore_2 = 
+//    time Initialization.runWithEnlargedStack (fun () ->
+//        splittab (parse @"
+//            exists x y. forall z. 
+//            (F(x,z) <=> F(z,y)) /\ (F(z,y) <=> F(z,z)) /\ (F(x,y) <=> F(y,x)) 
+//            ==> (F(x,y) <=> F(x,z))"));;
 
 let gilmore_3 = time splittab (parse @"
     exists x. forall y z. 

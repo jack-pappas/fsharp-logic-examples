@@ -6,15 +6,15 @@
 
 #load "initialization.fsx"
 
-open Reasoning.Automated.Harrison.Handbook.lib
-open Reasoning.Automated.Harrison.Handbook.formulas
-open Reasoning.Automated.Harrison.Handbook.prop
-open Reasoning.Automated.Harrison.Handbook.fol
-open Reasoning.Automated.Harrison.Handbook.skolem
-open Reasoning.Automated.Harrison.Handbook.resolution
-open Reasoning.Automated.Harrison.Handbook.equal
-open Reasoning.Automated.Harrison.Handbook.completion
-open Reasoning.Automated.Harrison.Handbook.paramodulation
+open FSharpx.Books.AutomatedReasoning.lib
+open FSharpx.Books.AutomatedReasoning.formulas
+open FSharpx.Books.AutomatedReasoning.prop
+open FSharpx.Books.AutomatedReasoning.fol
+open FSharpx.Books.AutomatedReasoning.skolem
+open FSharpx.Books.AutomatedReasoning.resolution
+open FSharpx.Books.AutomatedReasoning.equal
+open FSharpx.Books.AutomatedReasoning.completion
+open FSharpx.Books.AutomatedReasoning.paramodulation
  
 // pg. 302
 // ------------------------------------------------------------------------- //

@@ -1,8 +1,8 @@
-#OS junk files
+# OS junk files
 [Tt]humbs.db
 *.DS_Store
 
-#Visual Studio files
+# Visual Studio files
 *.[Oo]bj
 *.exe
 *.pdb
@@ -35,27 +35,25 @@ obj/
 Ankh.NoLoad
 *.gpState
 
-#Tooling
+# MonoDevelop
+*.userprefs
+
+# Tooling
 _ReSharper*/
 *.resharper
 [Tt]est[Rr]esult*
 *.nvuser
 
-#Project files
+# Project files
 #[Bb]uild/
 
-#Subversion files
+# Subversion files
 .svn
 
-#NuGet packages
-[Pp]ackages/
+# NuGet packages
+!.nuget/*
+[Pp]ackages/*
 ![Pp]ackages/repositories.config
 
 # Office Temp Files
 ~$*
-
-# Assemblies built for deployment
-[Dd]eploy*/
-
-# Installer cache files
-Installers/*-cache/

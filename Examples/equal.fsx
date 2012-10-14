@@ -6,12 +6,12 @@
 
 #load "initialization.fsx"
 
-open Reasoning.Automated.Harrison.Handbook.lib
-open Reasoning.Automated.Harrison.Handbook.formulas
-open Reasoning.Automated.Harrison.Handbook.fol
-open Reasoning.Automated.Harrison.Handbook.skolem
-open Reasoning.Automated.Harrison.Handbook.meson
-open Reasoning.Automated.Harrison.Handbook.equal
+open FSharpx.Books.AutomatedReasoning.lib
+open FSharpx.Books.AutomatedReasoning.formulas
+open FSharpx.Books.AutomatedReasoning.fol
+open FSharpx.Books.AutomatedReasoning.skolem
+open FSharpx.Books.AutomatedReasoning.meson
+open FSharpx.Books.AutomatedReasoning.equal
 
 fsi.AddPrinter sprint_fol_formula
 
@@ -48,6 +48,8 @@ let wishnu =
     equalitize (parse @"
         (exists x. x = f(g(x)) /\ forall x'. x' = f(g(x')) ==> x = x') <=>
         (exists y. y = g(f(y)) /\ forall y'. y' = g(f(y')) ==> y = y')");;
+
+// Real: 00:00:22.030, CPU: 00:00:21.968, GC gen0: 253, gen1: 252, gen2: 1
 time meson002 wishnu;;
 
 // pg. 248

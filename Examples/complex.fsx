@@ -6,11 +6,11 @@
 
 #load "initialization.fsx"
 
-open Reasoning.Automated.Harrison.Handbook.lib
-open Reasoning.Automated.Harrison.Handbook.formulas
-open Reasoning.Automated.Harrison.Handbook.fol
-open Reasoning.Automated.Harrison.Handbook.equal
-open Reasoning.Automated.Harrison.Handbook.complex
+open FSharpx.Books.AutomatedReasoning.lib
+open FSharpx.Books.AutomatedReasoning.formulas
+open FSharpx.Books.AutomatedReasoning.fol
+open FSharpx.Books.AutomatedReasoning.equal
+open FSharpx.Books.AutomatedReasoning.complex
 
 fsi.AddPrinter sprint_term
 fsi.AddPrinter sprint_fol_formula
@@ -644,7 +644,7 @@ time complex_qelim (parse
 //*** No hope for this one I think
 // complex.p066
 // long running
-//Initialization.runWith16MBStack (fun () -> 
+//Initialization.runWithEnlargedStack (fun () -> 
 //    complex_qelim (parse
 //        @"forall a b c d e f g.
 //        (exists x. a * x^3 + b * x^2 + c * x + d = 0 /\ e * x^2 + f * x + g = 0) \/
@@ -681,7 +681,7 @@ time complex_qelim (parse
     (-(1152) * u^8 - 1008 * u^6 - 840 * u^4 - 630 * u^2 - 315) *
     (u^2 + v^2 - 1)");;
 
-// complex.p07`
+// complex.p070
 time complex_qelim (parse
     @"forall u v.
         u^2 + v^2 = 1
@@ -852,4 +852,3 @@ time complex_qelim (parse
 complex_qelim (parse
     @"forall x1 y1 x2 y2. exists a b.
         ~(a = 0 /\ b = 0) /\ a * x1 + b * y1 = 0 /\ a * x2 + b * y2 = 0");;
-

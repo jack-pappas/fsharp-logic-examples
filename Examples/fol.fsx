@@ -6,12 +6,13 @@
 
 #load "initialization.fsx"
 
-open Reasoning.Automated.Harrison.Handbook.lib
-open Reasoning.Automated.Harrison.Handbook.intro
-open Reasoning.Automated.Harrison.Handbook.formulas
-open Reasoning.Automated.Harrison.Handbook.prop
-open Reasoning.Automated.Harrison.Handbook.fol
+open FSharpx.Books.AutomatedReasoning.lib
+open FSharpx.Books.AutomatedReasoning.intro
+open FSharpx.Books.AutomatedReasoning.formulas
+open FSharpx.Books.AutomatedReasoning.prop
+open FSharpx.Books.AutomatedReasoning.fol
 
+fsi.AddPrinter sprint_term
 fsi.AddPrinter sprint_fol_formula
 
 // pg. 119
@@ -20,8 +21,8 @@ fsi.AddPrinter sprint_fol_formula
 // ------------------------------------------------------------------------- //
 
 Fn("sqrt",[Fn("-",[Fn("1",[]);
-                   Fn("cos",[Fn("power",[Fn("+",[Var "x"; Var "y"]);
-                                        Fn("2",[])])])])]);;
+                   Fn("power",[Fn("cos",[Fn("+",[Var "x"; Var "y"])]);
+                               Fn("2",[])])])]);; // From errata
 
 // pg. 119
 // ------------------------------------------------------------------------- //

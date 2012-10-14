@@ -6,16 +6,17 @@
 
 #load "initialization.fsx"
 
-open Reasoning.Automated.Harrison.Handbook.lib
-open Reasoning.Automated.Harrison.Handbook.intro
-open Reasoning.Automated.Harrison.Handbook.formulas
-open Reasoning.Automated.Harrison.Handbook.prop
-open Reasoning.Automated.Harrison.Handbook.fol
-open Reasoning.Automated.Harrison.Handbook.completion
-open Reasoning.Automated.Harrison.Handbook.qelim
-open Reasoning.Automated.Harrison.Handbook.cooper
-open Reasoning.Automated.Harrison.Handbook.complex
-open Reasoning.Automated.Harrison.Handbook.real
+open FSharpx.Books.AutomatedReasoning.lib
+open FSharpx.Books.AutomatedReasoning.intro
+open FSharpx.Books.AutomatedReasoning.formulas
+open FSharpx.Books.AutomatedReasoning.prop
+open FSharpx.Books.AutomatedReasoning.fol
+open FSharpx.Books.AutomatedReasoning.skolem
+open FSharpx.Books.AutomatedReasoning.completion
+open FSharpx.Books.AutomatedReasoning.qelim
+open FSharpx.Books.AutomatedReasoning.cooper
+open FSharpx.Books.AutomatedReasoning.complex
+open FSharpx.Books.AutomatedReasoning.real
 
 fsi.AddPrinter sprint_fol_formula
 
@@ -24,16 +25,13 @@ fsi.AddPrinter sprint_fol_formula
 // First examples.                                                           //
 // ------------------------------------------------------------------------- //
 
-// TODO: Fix these. Incorrect result, returns: System.Exception: pdivide_pos: zero head coefficient
 real_qelim (parse @"exists x. x^4 + x^2 + 1 = 0");;
 
 real_qelim (parse @"exists x. x^3 - x^2 + x - 1 = 0");;
 
 real_qelim (parse @"exists x y. x^3 - x^2 + x - 1 = 0 /\ y^3 - y^2 + y - 1 = 0 /\ ~(x = y)");;
 
-//#trace testform;;
 real_qelim (parse @"exists x. x^2 - 3 * x + 2 = 0 /\ 2 * x - 3 = 0");;
-//#untrace testform;;
 
 real_qelim (parse @"forall a f k. (forall e. k < e ==> f < a * e) ==> f <= a * k");;
 
@@ -50,9 +48,13 @@ real_qelim (parse @"forall a b c. (exists x. a * x^2 + b * x + c = 0) <=> a = 0 
 
 real_qelim (parse @"1 < 2 /\ (forall x. 1 < x ==> 1 < x^2) /\ (forall x y. 1 < x /\ 1 < y ==> 1 < x * (1 + 2 * y))");;
 
+// Real: 00:00:31.254, CPU: 00:00:31.109, GC gen0: 169, gen1: 168, gen2: 1
 let eqs = complete_and_simplify ["1"; "*"; "i"] [(parse @"1 * x = x"); (parse @"i(x) * x = 1"); (parse @"(x * y) * z = x * y * z")];;
+
 let fm = list_conj (List.map grpform eqs);;
-real_qelim fm;;
+
+Initialization.runWithEnlargedStack (fun () ->
+    real_qelim fm);;
 
 real_qelim' (parse @"forall d. (exists c. forall a b. (a = d /\ b = c) \/ (a = c /\ b = 1) ==> a^2 = b) <=> d^4 = 1");;
 
@@ -82,7 +84,7 @@ and matrix vars pols cont sgns =
     let gs = List.map (pdivide_pos vars sgns p) qs
     let cont' m = cont(List.map (fun l -> insertat i (List.head l) (List.tail l)) m)
     casesplit vars [] (qs@gs) (dedmatrix cont') sgns
-//
+
 and monicize vars pols cont sgns =
     let mols,swaps = List.unzip(List.map monic pols)
     let sols = setify mols
@@ -91,13 +93,14 @@ and monicize vars pols cont sgns =
     let cont' mat = cont(List.map transform mat)
     matrix vars sols cont' sgns;;
 
-let basic_real_qelim vars (Exists(x,p)) =
-    let pols = atom_union (function (R(a,[t;Fn("0",[])])) -> [t] | _ -> []) p
-    let cont mat = if List.exists (fun m -> testform (List.zip pols m) p) mat
-                    then True else False
-    casesplit (x::vars) [] pols cont init_sgns;;
+let basic_real_qelim vars = function 
+    | (Exists(x,p)) ->
+        let pols = atom_union (function (R(a,[t;Fn("0",[])])) -> [t] | _ -> []) p
+        let cont mat = if List.exists (fun m -> testform (List.zip pols m) p) mat
+                        then True else False
+        casesplit (x::vars) [] pols cont init_sgns
+    | _ -> failwith "malformed input";;
 
-// TODO: Fix so they compile
-//let real_qelim = simplify << evalc << lift_qelim polyatom (simplify << evalc) basic_real_qelim;;
-//
-//let real_qelim' = simplify << evalc << lift_qelim polyatom (dnf << cnnf (fun x -> x) << evalc) basic_real_qelim
+let real_qelim = simplify << evalc << lift_qelim polyatom (simplify << evalc) basic_real_qelim;;
+
+let real_qelim' = simplify << evalc << lift_qelim polyatom (dnf << cnnf id << evalc) basic_real_qelim;;

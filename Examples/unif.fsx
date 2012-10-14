@@ -6,9 +6,9 @@
 
 #load "initialization.fsx"
 
-open Reasoning.Automated.Harrison.Handbook.lib
-open Reasoning.Automated.Harrison.Handbook.fol
-open Reasoning.Automated.Harrison.Handbook.unif
+open FSharpx.Books.AutomatedReasoning.lib
+open FSharpx.Books.AutomatedReasoning.fol
+open FSharpx.Books.AutomatedReasoning.unif
 
 fsi.AddPrinter sprint_term
 
@@ -21,7 +21,8 @@ unify_and_apply [(parset @"f(x,g(y))"),(parset @"f(f(z),w)")];;
 
 unify_and_apply [(parset @"f(x,y)"),(parset @"f(y,x)")];;
 
-unify_and_apply [(parset @"f(x,g(y))"),(parset @"f(y,x)")];;
+// System.Exceptino: cyclic. - This is the expected result.
+//unify_and_apply [(parset @"f(x,g(y))"),(parset @"f(y,x)")];;
 
 unify_and_apply [(parset @"x_0"),(parset @"f(x_1,x_1)");
                  (parset @"x_1"),(parset @"f(x_2,x_2)");

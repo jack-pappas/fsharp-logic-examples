@@ -6,16 +6,19 @@
 
 #load "initialization.fsx"
 
-open Reasoning.Automated.Harrison.Handbook.lib
-open Reasoning.Automated.Harrison.Handbook.intro
-open Reasoning.Automated.Harrison.Handbook.formulas
-open Reasoning.Automated.Harrison.Handbook.prop
-open Reasoning.Automated.Harrison.Handbook.fol
-open Reasoning.Automated.Harrison.Handbook.skolem
-open Reasoning.Automated.Harrison.Handbook.unif
-open Reasoning.Automated.Harrison.Handbook.tableaux
-open Reasoning.Automated.Harrison.Handbook.resolution
-open Reasoning.Automated.Harrison.Handbook.prolog
+open FSharpx.Books.AutomatedReasoning.lib
+open FSharpx.Books.AutomatedReasoning.intro
+open FSharpx.Books.AutomatedReasoning.formulas
+open FSharpx.Books.AutomatedReasoning.prop
+open FSharpx.Books.AutomatedReasoning.fol
+open FSharpx.Books.AutomatedReasoning.skolem
+open FSharpx.Books.AutomatedReasoning.unif
+open FSharpx.Books.AutomatedReasoning.tableaux
+open FSharpx.Books.AutomatedReasoning.resolution
+open FSharpx.Books.AutomatedReasoning.prolog
+
+fsi.AddPrinter sprint_term
+fsi.AddPrinter sprint_fol_formula
 
 // pg. 208
 // ------------------------------------------------------------------------- //
@@ -35,20 +38,19 @@ let p32 =
 // ------------------------------------------------------------------------- //
 
 // System.Exception: non-Horn clause. - This is the expected result.
-hornprove (parse @"(p \/ q) /\ (~p \/ q) /\ (p \/ ~q) ==> ~(~q \/ ~q)");;
+//hornprove (parse @"(p \/ q) /\ (~p \/ q) /\ (p \/ ~q) ==> ~(~q \/ ~q)");;
 
 // pg. 210
 // ------------------------------------------------------------------------- //
 // Ordering example.                                                         //
 // ------------------------------------------------------------------------- //
 
-// val lerules : string list = ["0 <= X"; "S(X) <= S(Y) :- X <= Y"]
 let lerules = ["0 <= X"; "S(X) <= S(Y) :- X <= Y"];;
 
 simpleprolog lerules @"S(S(0)) <= S(S(S(0)))";;
 
 // System.Exception: tryfind - This is the expected result.
-simpleprolog lerules @"S(S(0)) <= S(0)";;
+//simpleprolog lerules @"S(S(0)) <= S(0)";;
 
 let env = simpleprolog lerules @"S(S(0)) <= X";;
 apply env "X";;
@@ -58,8 +60,6 @@ apply env "X";;
 // Example again.                                                            //
 // ------------------------------------------------------------------------- //
    
-// val it : fol formula list =
-//   [Atom (R ("=",[Var "X"; Fn ("S",[Fn ("S",[Var "_3"])])]))]
 prolog lerules @"S(S(0)) <= X";;
 
 // pg. 211

@@ -6,15 +6,15 @@
 
 #load "initialization.fsx"
 
-open Reasoning.Automated.Harrison.Handbook.lib
-open Reasoning.Automated.Harrison.Handbook.formulas
-open Reasoning.Automated.Harrison.Handbook.prop
-open Reasoning.Automated.Harrison.Handbook.fol
-open Reasoning.Automated.Harrison.Handbook.skolem
-open Reasoning.Automated.Harrison.Handbook.tableaux
-open Reasoning.Automated.Harrison.Handbook.prolog
-open Reasoning.Automated.Harrison.Handbook.meson
-open Reasoning.Automated.Harrison.Handbook.skolem
+open FSharpx.Books.AutomatedReasoning.lib
+open FSharpx.Books.AutomatedReasoning.formulas
+open FSharpx.Books.AutomatedReasoning.prop
+open FSharpx.Books.AutomatedReasoning.fol
+open FSharpx.Books.AutomatedReasoning.skolem
+open FSharpx.Books.AutomatedReasoning.tableaux
+open FSharpx.Books.AutomatedReasoning.prolog
+open FSharpx.Books.AutomatedReasoning.meson
+open FSharpx.Books.AutomatedReasoning.skolem
 
 fsi.AddPrinter sprint_fol_formula
 
@@ -23,29 +23,37 @@ fsi.AddPrinter sprint_fol_formula
 // Example.                                                                  //
 // ------------------------------------------------------------------------- //
 
-(simplify (parse @"(forall x y. P(x) \/ (P(y) /\ false)) ==> exists z. Q"));;
+simplify (parse @"
+    (forall x y. P(x) \/ (P(y) /\ false)) 
+        ==> exists z. Q");;
 
 // pg. 141
 // ------------------------------------------------------------------------- //
 // Example of NNF function in action.                                        //
 // ------------------------------------------------------------------------- //
 
-(nnf (parse @"(forall x. P(x)) ==> ((exists y. Q(y)) <=> exists z. P(z) /\ Q(z))"));;
+nnf (parse @"
+    (forall x. P(x)) 
+        ==> ((exists y. Q(y)) <=> exists z. P(z) /\ Q(z))");;
 
 // pg. 144
 // ------------------------------------------------------------------------- //
 // Example.                                                                  //
 // ------------------------------------------------------------------------- //
 
-(pnf (parse @"(forall x. P(x) \/ R(y)) ==> exists y z. Q(y) \/ ~(exists z. P(z) /\ Q(z))"));;
+pnf (parse @"
+    (forall x. P(x) \/ R(y)) 
+        ==> exists y z. Q(y) \/ ~(exists z. P(z) /\ Q(z))");;
 
 // pg. 150
 // ------------------------------------------------------------------------- //
 // Example.                                                                  //
 // ------------------------------------------------------------------------- //
 
-(skolemize (parse @"exists y. x < y ==> forall u. exists v. x * u < y * v"));;
+skolemize (parse @"
+    exists y. x < y 
+        ==> forall u. exists v. x * u < y * v");;
 
-(skolemize
- (parse @"forall x. P(x)
-             ==> (exists y z. Q(y) \/ ~(exists z. P(z) /\ Q(z)))"));;
+skolemize
+     (parse @"forall x. P(x)
+                 ==> (exists y z. Q(y) \/ ~(exists z. P(z) /\ Q(z)))");;

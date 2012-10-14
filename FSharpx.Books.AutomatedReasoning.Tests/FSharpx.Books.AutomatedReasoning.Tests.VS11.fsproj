@@ -1,0 +1,119 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{841b64ff-8f9d-4d0e-9d4f-cd23b12b102d}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>FSharpx.Books.AutomatedReasoning.Tests</RootNamespace>
+    <AssemblyName>FSharpx.Books.AutomatedReasoning.Tests</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <Name>FSharpx.Books.AutomatedReasoning.VS11</Name>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <Tailcalls>false</Tailcalls>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <WarningLevel>3</WarningLevel>
+    <DocumentationFile>bin\Debug\FSharpx.Books.AutomatedReasoning.Tests.XML</DocumentationFile>
+    <StartAction>Project</StartAction>
+    <StartProgram>
+    </StartProgram>
+    <StartArguments>
+    </StartArguments>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <Tailcalls>true</Tailcalls>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <WarningLevel>3</WarningLevel>
+    <DocumentationFile>bin\Release\FSharpx.Books.AutomatedReasoning.Tests.XML</DocumentationFile>
+  </PropertyGroup>
+  <PropertyGroup>
+    <MinimumVisualStudioVersion Condition="'$(MinimumVisualStudioVersion)' == ''">11</MinimumVisualStudioVersion>
+  </PropertyGroup>
+  <Import Project="$(MSBuildExtensionsPath32)\..\Microsoft SDKs\F#\3.0\Framework\v4.0\Microsoft.FSharp.Targets" Condition="Exists('$(MSBuildExtensionsPath32)\..\Microsoft SDKs\F#\3.0\Framework\v4.0\Microsoft.FSharp.Targets')" />
+  <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="packages.config" />
+    <Compile Include="lib.fs" />
+    <Compile Include="intro.fs" />
+    <Compile Include="formulas.fs" />
+    <Compile Include="prop.fs" />
+    <Compile Include="propexamples.fs" />
+    <Compile Include="dp.fs" />
+    <Compile Include="stal.fs" />
+    <Compile Include="bdd.fs" />
+    <Compile Include="fol.fs" />
+    <Compile Include="herbrand.fs" />
+    <Compile Include="unif.fs" />
+    <Compile Include="tableaux.fs" />
+    <Compile Include="resolution.fs" />
+    <Compile Include="prolog.fs" />
+    <Compile Include="meson.fs" />
+    <Compile Include="equal.fs" />
+    <Compile Include="cong.fs" />
+    <Compile Include="order.fs" />
+    <Compile Include="completion.fs" />
+    <Compile Include="eqelim.fs" />
+    <Compile Include="paramodulation.fs" />
+    <Compile Include="decidable.fs" />
+    <Compile Include="qelim.fs" />
+    <Compile Include="cooper.fs" />
+    <Compile Include="complex.fs" />
+    <Compile Include="real.fs" />
+    <Compile Include="grobner.fs" />
+    <Compile Include="geom.fs" />
+    <Compile Include="interpolation.fs" />
+    <Compile Include="combining.fs" />
+    <Compile Include="lcfprop.fs" />
+    <Compile Include="folderived.fs" />
+    <Compile Include="lcffol.fs" />
+    <Compile Include="tactics.fs" />
+    <Compile Include="limitations.fs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="FSharp.PowerPack, Version=2.0.0.0, Culture=neutral, PublicKeyToken=a19089b1c74d0809" />
+    <Reference Include="FSharpx.Compatibility.OCaml">
+      <HintPath>..\packages\FSharpx.Compatibility.OCaml.0.1.1\lib\net40\FSharpx.Compatibility.OCaml.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="FsUnit.NUnit">
+      <HintPath>..\packages\FsUnit.1.1.0.1\Lib\Net40\FsUnit.NUnit.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="mscorlib" />
+    <Reference Include="FSharp.Core" />
+    <Reference Include="nunit.framework">
+      <HintPath>..\packages\NUnit.2.6.1\lib\nunit.framework.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Numerics" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\FSharpx.Books.AutomatedReasoning\FSharpx.Books.AutomatedReasoning.VS11.fsproj">
+      <Name>FSharpx.Books.AutomatedReasoning.VS11</Name>
+      <Project>{cf42d6d9-75fd-4b6f-81ca-6db9cb2231a3}</Project>
+      <Private>True</Private>
+    </ProjectReference>
+  </ItemGroup>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+	     Other similar extension points exist, see Microsoft.Common.targets.
+	<Target Name="BeforeBuild">
+	</Target>
+	<Target Name="AfterBuild">
+	</Target>
+	-->
+</Project>

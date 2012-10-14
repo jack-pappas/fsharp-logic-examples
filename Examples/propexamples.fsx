@@ -6,10 +6,12 @@
 
 #load "initialization.fsx"
 
-open Reasoning.Automated.Harrison.Handbook.lib
-open Reasoning.Automated.Harrison.Handbook.formulas
-open Reasoning.Automated.Harrison.Handbook.prop
-open Reasoning.Automated.Harrison.Handbook.propexamples
+open FSharpx.Books.AutomatedReasoning.lib
+open FSharpx.Books.AutomatedReasoning.formulas
+open FSharpx.Books.AutomatedReasoning.prop
+open FSharpx.Books.AutomatedReasoning.propexamples
+
+fsi.AddPrinter sprint_prop_formula
 
 // pg. 63
 // ------------------------------------------------------------------------- //
@@ -28,8 +30,7 @@ tautology(ramsey 3 3 6);;
 // ------------------------------------------------------------------------- //
 
 let [x; y; out; c] = List.map mk_index ["X"; "Y"; "OUT"; "C"];;
-let pfn = (fun prec p -> print_propvar prec p);;
-print_formula pfn ( ripplecarry x y c out 2 );;
+ripplecarry x y c out 2;;
 
 // pg. 72
 // ------------------------------------------------------------------------- //
