@@ -57,9 +57,9 @@ The feedback takes the following form for each example run:
 
 ### Unit Testing ###
 
-The `FSharpx.Books.AutomatedReasoning.Tests` project contains all of the examples from the book (plus some additional examples from John Harrison's website), converted into unit test cases with **NUnit 2.6.1** and **FsUnit**. These test cases serve as **evidence** (but not proof!) of correctness as the code base is updated or optimized over time.
+The `FSharpx.Books.AutomatedReasoning.Tests` project contains all of the examples from the book (plus some additional examples from John Harrison's website), converted into unit test cases with NUnit 2.6.1 and FsUnit. These test cases serve as **evidence** (but not proof!) of correctness as the code base is updated or optimized over time.
 
-You can execute the tests by building the `FSharpx.Books.AutomatedReasoning.Tests` project, then loading the compiled assembly into a test runner like **NUnit GUI** or **TestDriven.NET 3.4.2803 (Beta 3)**.
+You can execute the tests by building the `FSharpx.Books.AutomatedReasoning.Tests` project, then loading the compiled assembly into a test runner like **[NUnit GUI](http://www.nunit.org/)** or **[TestDriven.NET 3.4.2803 (Beta 3)](http://www.testdriven.net/)**.
 
 *We strongly recommend using the x86 versions of the test runners.* The CLR's default maximum stack size of 1MB is enough for 32-bit processes, but the test cases reliably crash with a `StackOverflowException` on a 64-bit process. This is because many of the library functions are recursive, but not *tail-recursive* -- and since many types double in size on an x64 platform, these functions quickly consume the stack and crash the process.
 
@@ -117,15 +117,15 @@ For some of the test strings such as in tableaux.fsx, the same name is used mult
 
 	The OCaml toplevel directive:
 
-        ```ocaml
-		#install_printer my_printer;;
-        ```
+    ```ocaml
+    #install_printer my_printer;;
+    ```
 
 	has the equivalent F# (in F# interactive):
 
-        ```fsharp
-		fsi.AddPrinter my_printer;;		// my_printer : 'T -> string
-        ```
+    ```fsharp
+    fsi.AddPrinter my_printer;;		// my_printer : 'T -> string
+    ```
 
 ---
 
