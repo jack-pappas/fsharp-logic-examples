@@ -29,6 +29,8 @@ The OCaml code from [resource page](http://www.cl.cam.ac.uk/~jrh13/atp/) combine
 
 In the book, OCaml code and example scripts are identified by bounding boxes. Example code typically starts with an `#`, indicating it is being run in the OCaml REPL; the ported code for these are typically found in the Examples directory and code without the # is typically found in the library project.
 
+---
+
 ### Running Examples ###
 
 To run the examples you must have built the solution first.
@@ -51,10 +53,11 @@ The feedback takes the following form for each example run:
   4. Exception - comment noting expected exception.
   5. Failure - comment noting expected failure reason.
 
+---
 
 ### Unit Testing ###
 
-The `FSharpx.Books.AutomatedReasoning.Tests` project contains all of the examples from the book (plus some additional examples from John Harrison's website), converted into unit test cases with **NUnit 2.6.1** and **FsUnit**.
+The `FSharpx.Books.AutomatedReasoning.Tests` project contains all of the examples from the book (plus some additional examples from John Harrison's website), converted into unit test cases with **NUnit 2.6.1** and **FsUnit**. These test cases serve as **evidence** (but not proof!) of correctness as the code base is updated or optimized over time.
 
 You can execute the tests by building the `FSharpx.Books.AutomatedReasoning.Tests` project, then loading the compiled assembly into a test runner like **NUnit GUI** or **TestDriven.NET 3.4.2803 (Beta 3)**.
 
@@ -69,27 +72,35 @@ Once you have installed NUnit, built the `FSharpx.Books.AutomatedReasoning.Tests
   3. Double-click 'LongRunning', then check the box labeled *Exclude these categories*.
   4. Click the *Tests* tab on left side of the NUnit GUI window and press the 'Run' button.
 
-### Interesting changes from OCaml to F# ###
+There are a few important points to note when implementing new test cases:
+  - NUnit only accepts parameterized tests on primitive types. To compare sophisticated values, we have to put them into arrays and use indices as test parameters.
+  - FsUnit uses type test to implement its DSL. Type inference doesn't work on this DSL, so make sure that two compared values belong to the same type.
+  - FsUnit and the library have some clashed constraints, namely `True` and `False`. To create tests correctly, one might need to use detailed type annotation such as `formula<fol>.True` and `formula<fol>.False` for literals in first-order logic.
+  - A few slow tests are put into `LongRunning` category. These aren't recommended for normal development -- they're in place solely to validate the ported code on release.
 
-- OCaml exceptions changed to F# `'T option`.
-  
-    This only works sometimes -- when the exception doesn't return any (useful) information. When the exception does return information, it's necessary to use `Choice<_,_>`. Also, changing functions to use `'T option` or `Choice<_,_>` instead of exceptions can also alter their type signatures, which can cause the code to suddenly fail to compile.
-- Preprocessors i.e. [camlp4 / camlp5](http://caml.inria.fr/pub/docs/tutorial-camlp4/tutorial004.html) don't exist in F#.
-Since F# does not support the OCaml French-style \<\< quotation \>\>,
-the parser will be explicitly invoked.
-As such the use of default_parser and default_printer does not appear in the F# code.
+---
+
+### Notable differences between the OCaml and F# code ###
+
+- In a few places, errors are handled using the `Option` type instead of exceptions. This is because:
+  - Exceptions in F#/.NET are much slower than in OCaml
+  - Recursive functions which throw and/or catch exceptions don't play nicely with type inference (in both F# and OCaml); the output type of such functions cannot be unified, so it will always be shown as a generic parameter (e.g., `'b`) instead of the true output type of the function (e.g., `int` or `bool`). These functions also make it *extremely* difficult to locate the source of an error.
+
+- Preprocessors such as [camlp4 / camlp5](http://caml.inria.fr/pub/docs/tutorial-camlp4/tutorial004.html) don't exist for F#. The original OCaml code for the book uses `camlp5` quotations (`<<` and `>>`) to transparently call the parsing functions for formula and term strings. Our F# code adds explicit calls to the parsing functions; as such, no uses of `default_parser` and `default_printer` appear in the F# code.
+
+    Examples:
 
         // OCaml:
         <<x + 3 * y>>;;
         // F#: 
         parse_exp "x + 3 * y";;
+
         // OCaml: 
         <<p ==> q <=> r /\ s \/ (t <=> ~ ~u /\ v)>>;;
         // F#: 
         parse_prop_formula "p ==> q <=> r /\ s \/ (t <=> ~ ~u /\ v)";;
 
-- Duplicated names are avoided.
-Since OCaml shadows names and F# does not allow duplicate names, any function name causing a duplicate name error will have the name appended with an increasing sequential number.
+- Duplicated names are avoided. Since OCaml shadows names and F# does not allow duplicate names, any function name causing a duplicate name error will have the name appended with an increasing sequential number.
 
          // OCaml:  
          let a = ...;; let a = ...;; let a = ...;;
@@ -104,25 +115,22 @@ For some of the test strings such as in tableaux.fsx, the same name is used mult
 
 - OCaml top-level commands such as #trace and #install-printer don't exist.
 
-	The OCaml REPL directive:
+	The OCaml toplevel directive:
 
+        ```ocaml
 		#install_printer my_printer;;
+        ```
 
 	has the equivalent F# (in F# interactive):
 
+        ```fsharp
 		fsi.AddPrinter my_printer;;		// my_printer : 'T -> string
+        ```
 
-### F# porting notes ###
+---
+
+### F#-specific porting notes ###
  - Turned off the F# compiler warning `FS0025` (about incomplete pattern matches). These matches are found throughout the original OCaml code and eliminating them *correctly* would require extensive changes to the code; so, for compatibility purposes, the code has been left as-is and the warning disabled to promote readability.
  - Run a few examples with 16MB stack (the default limit set by OCaml version) using `runWithEnlargedStack` in `initialization.fsx`. 
 These examples emit `StackOverflowException`s in F# on Windows due to small 1MB stack (see extensive discussion [here](http://stackoverflow.com/questions/7947446/why-does-f-impose-a-low-limit-on-stack-size)).
  - Redefined `Failure` active patterns to accommodate `KeyNotFoundException`, `ArgumentException`, etc. The OCaml version makes use of `Failure` as a control flow; the F# version throws different kinds of exceptions which weren't caught by default `Failure`. The active pattern might be updated to handle other exceptions later (see the detailed function in the beginning of `lib.fs`).
-
-### Writing unit tests ###
-A large set of unit tests is created based on available examples. 
-These test cases serve as an **evidence** of correctness when the code base is updated or optimized over time. 
-There are a few problems on implementing test cases though:
- - NUnit only accepts parameterized tests on primitive types. To compare sophisticated values, we have to put them into arrays and use indices as test parameters.
- - FsUnit uses type test to implement its DSL. Type inference doesn't work on this DSL, so make sure that two compared values belong to the same type.
- - FsUnit and the library have some clashed constraints, namely `True` and `False`. To create tests correctly, one might need to use detailed type annotation, such as `formula<fol>.True` and `formula<fol>.False` for literals in first-order logic.
- - A few slow tests are put into `LongRunning` category. They aren't recommended to run on the development basis. Their purposes are to validate the project upon release.
