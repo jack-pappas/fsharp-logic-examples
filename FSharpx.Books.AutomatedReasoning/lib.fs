@@ -428,6 +428,30 @@ let inline mem x lis =
 // Finding all subsets or all subsets of a given size.                       //
 // ------------------------------------------------------------------------- //
 
+//
+[<RequireQualifiedAccess>]
+module private ResizeArray =
+    (* From the F# PowerPack *)
+
+    let length (arr: ResizeArray<'T>) =  arr.Count
+    let get (arr: ResizeArray<'T>) (n: int) =  arr.[n]
+
+    let iter f (arr: ResizeArray<_>) = 
+        for i = 0 to arr.Count - 1 do
+            f arr.[i]
+
+    let forall f (arr: ResizeArray<_>) =
+        let len = length arr
+        let rec loop i = i >= len || (f arr.[i] && loop (i+1))
+        loop 0
+
+    let fold (f : 'State -> 'T -> 'State) (acc: 'State) (arr: ResizeArray<'T>) =
+        let mutable res = acc 
+        let len = length arr 
+        for i = 0 to len - 1 do 
+            res <- f res (get arr i)
+        res
+
 // TODO : Once we change over to use F# Set<_> instead of list to represent
 // sets, this function can be used directly (simply rename it to 'allsets').
 let private allsetsImpl n (s : Set<_>) : Set<Set<_>> =
