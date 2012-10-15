@@ -451,6 +451,23 @@ module private ResizeArray =
             res <- f res (get arr i)
         res
 
+
+(* OPTIMIZE :   The 'allsets', 'allsubsets', and 'allnonemptysubsets' functions
+                are normally used to produce a list/set of sets, which is immediately
+                passed to another function which has to re-traverse it.
+                Instead, create submodules here (one module for each of the functions)
+                containing versions of these functions which take an additional argument
+                (a function), then applies that function to each subset (for example).
+                This'll avoid not only the additional traversal, but some intermediate
+                data structures as well.
+
+                For example:
+                    AllSubsets.fold
+                    AllSubsets.exists
+                    AllSubsets.forall
+                    ...
+*)
+
 // TODO : Once we change over to use F# Set<_> instead of list to represent
 // sets, this function can be used directly (simply rename it to 'allsets').
 let private allsetsImpl n (s : Set<_>) : Set<Set<_>> =
