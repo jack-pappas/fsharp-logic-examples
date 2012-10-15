@@ -281,6 +281,7 @@ let rec earlier l x y =
 // pg. 619
 // NOTE: do_list has been replaced with the built-in F# function List.iter.
 
+// ------------------------------------------------------------------------- //
 // Association lists.                                                        //
 // ------------------------------------------------------------------------- //
 
@@ -317,12 +318,10 @@ let sort ord l =
 
 // pg. 619
 let increasing f x y =
-//    compare (f x) (f y) < 0
     (f x) < (f y)
     
 // pg. 619
 let decreasing f x y =
-//    compare (f x) (f y) > 0
     (f x) > (f y)
     
 
@@ -433,8 +432,8 @@ let inline mem x lis =
 module private ResizeArray =
     (* From the F# PowerPack *)
 
-    let length (arr: ResizeArray<'T>) =  arr.Count
-    let get (arr: ResizeArray<'T>) (n: int) =  arr.[n]
+    let inline length (arr: ResizeArray<'T>) =  arr.Count
+    let inline get (arr: ResizeArray<'T>) (n: int) =  arr.[n]
 
     let iter f (arr: ResizeArray<_>) = 
         for i = 0 to arr.Count - 1 do
@@ -726,17 +725,7 @@ let inline fpf xs ys : func<_,_> =
 // Grab an arbitrary element.                                                //
 // ------------------------------------------------------------------------- //
 
-// pg. ???
-let choose (t : func<_,_>) =
-    Map.toSeq t
-    |> Seq.head
-
-// ------------------------------------------------------------------------- //
-// Install a (trivial) printer for finite partial functions.                 //
-// ------------------------------------------------------------------------- //
-
-// pg. ???
-let print_fpf (f : func<'a,'b>) = printf "<func>"
+// NOTE : 'choose' was removed -- it's not used anywhere.
 
 // ------------------------------------------------------------------------- //
 // Related stuff for standard functions.                                     //
