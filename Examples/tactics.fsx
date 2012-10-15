@@ -108,8 +108,8 @@ let lemma (s,p) = function
             Goals((asl,p)::((s,p)::asl,w)::gls,
                 function (thp::thw::oths) ->
                             jfn(imp_unduplicate(imp_trans thp (shunt thw)) :: oths)
-                       | _ -> failwith "malform input")
-        | _ -> failwith "malform lemma"
+                       | _ -> failwith "malformed input")
+        | _ -> failwith "malformed lemma"
 
 prove (parse @"
     (exists x. p(x)) ==> (forall x. p(x) ==> p(f(x)))
