@@ -31,6 +31,8 @@ The OCaml code from [resource page](http://www.cl.cam.ac.uk/~jrh13/atp/) combine
 
 In the book, OCaml code and example scripts are identified by bounding boxes. Example code typically starts with an `#`, indicating it is being run in the OCaml REPL; the ported code for these are typically found in the Examples directory and code without the # is typically found in the library project.
 
+In the OCaml code, the examples are demarked by `START_INTERACTIVE` and `END_INTERACTIVE`.
+
 ---
 
 ### Running Examples ###
