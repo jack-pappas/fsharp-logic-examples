@@ -23,6 +23,8 @@ The solution uses the *Package Restore* feature of NuGet to automatically downlo
 
 Once NuGet is installed and configured, you should be able to build the solution.
 
+See [Install NuGet](https://github.com/jack-pappas/fsharp-logic-examples/wiki/Install-NuGet) in the wiki pages for step by step instructions.
+
 ---
 
 ### When reading along with the book ###
