@@ -62,6 +62,7 @@ Each of the examples fall into one of the following categories (with the associa
   ```fsharp
   // Real: 00:04:35.586, CPU: 00:04:31.718, GC gen0: 5020, gen1: 137, gen2: 9
   ```
+     Note: F# Interactive #time directive either truncates or wraps values when the time is > 24 hours.
 
   3. *Runs for an unknown or infinite length of time*
 
