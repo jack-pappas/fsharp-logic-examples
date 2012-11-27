@@ -84,7 +84,7 @@
   </ItemGroup>
   <ItemGroup>
     <Reference Include="FSharp.Compatibility.OCaml">
-      <HintPath>..\packages\FSharp.Compatibility.OCaml.0.1.8\lib\net40\FSharp.Compatibility.OCaml.dll</HintPath>
+      <HintPath>..\packages\FSharp.Compatibility.OCaml.0.1.9\lib\net40\FSharp.Compatibility.OCaml.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="mscorlib" />
