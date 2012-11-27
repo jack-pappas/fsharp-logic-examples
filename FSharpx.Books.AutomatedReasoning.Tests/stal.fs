@@ -15,7 +15,7 @@ open FSharpx.Books.AutomatedReasoning.propexamples
 open FSharpx.Books.AutomatedReasoning.defcnf
 open FSharpx.Books.AutomatedReasoning.dp
 open FSharpx.Books.AutomatedReasoning.stal
-open FSharpx.Compatibility.OCaml
+open FSharp.Compatibility.OCaml
 open Num
 
 // pg. 94

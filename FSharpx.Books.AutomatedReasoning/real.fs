@@ -10,7 +10,7 @@
 
 module FSharpx.Books.AutomatedReasoning.real
 
-open FSharpx.Compatibility.OCaml.Num
+open FSharp.Compatibility.OCaml.Num
 
 open intro
 open formulas

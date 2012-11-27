@@ -9,7 +9,7 @@
 module FSharpx.Books.AutomatedReasoning.lib
 
 open LanguagePrimitives
-open FSharpx.Compatibility.OCaml.Num
+open FSharp.Compatibility.OCaml.Num
 
 // The exception fired by failwith is used as a control flow.
 // KeyNotFoundException is not recognized in many cases, so we have to use redefine Failure for compatibility.

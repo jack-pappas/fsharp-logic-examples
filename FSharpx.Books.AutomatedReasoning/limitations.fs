@@ -7,7 +7,7 @@
 module FSharpx.Books.AutomatedReasoning.limitations
 
 open LanguagePrimitives
-open FSharpx.Compatibility.OCaml.Num
+open FSharp.Compatibility.OCaml.Num
 
 open lib
 open intro

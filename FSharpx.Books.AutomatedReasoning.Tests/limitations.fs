@@ -15,7 +15,7 @@ open FSharpx.Books.AutomatedReasoning.lcfprop
 open FSharpx.Books.AutomatedReasoning.folderived
 open FSharpx.Books.AutomatedReasoning.tactics
 open FSharpx.Books.AutomatedReasoning.limitations
-open FSharpx.Compatibility.OCaml
+open FSharp.Compatibility.OCaml
 open NUnit.Framework
 open FsUnit
 

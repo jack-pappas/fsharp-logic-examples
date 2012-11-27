@@ -7,7 +7,7 @@
 module FSharpx.Books.AutomatedReasoning.defcnf
 
 open LanguagePrimitives
-open FSharpx.Compatibility.OCaml.Num
+open FSharp.Compatibility.OCaml.Num
 
 open intro
 open formulas

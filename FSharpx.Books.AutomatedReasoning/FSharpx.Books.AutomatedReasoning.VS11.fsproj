@@ -83,11 +83,8 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="FSharp.PowerPack">
-      <HintPath>D:\Program Files (x86)\FSharpPowerPack-2.0.0.0\bin\FSharp.PowerPack.dll</HintPath>
-    </Reference>
-    <Reference Include="FSharpx.Compatibility.OCaml">
-      <HintPath>..\packages\FSharpx.Compatibility.OCaml.0.1.2\lib\net40\FSharpx.Compatibility.OCaml.dll</HintPath>
+    <Reference Include="FSharp.Compatibility.OCaml">
+      <HintPath>..\packages\FSharp.Compatibility.OCaml.0.1.8\lib\net40\FSharp.Compatibility.OCaml.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="mscorlib" />
