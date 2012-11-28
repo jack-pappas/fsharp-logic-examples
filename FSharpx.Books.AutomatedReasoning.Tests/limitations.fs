@@ -15,197 +15,738 @@ open FSharpx.Books.AutomatedReasoning.lcfprop
 open FSharpx.Books.AutomatedReasoning.folderived
 open FSharpx.Books.AutomatedReasoning.tactics
 open FSharpx.Books.AutomatedReasoning.limitations
+
 open FSharp.Compatibility.OCaml
+
 open NUnit.Framework
 open FsUnit
 
-// pg. 534
-// ------------------------------------------------------------------------- //
-// One explicit example.                                                     //
-// ------------------------------------------------------------------------- //
-[<Test>]
-let ``gform 1``() = 
-    gform (parse @"~(x = 0)")
-    |> should equal (Num.Big_int 2116574771128325487937994357299494I)
+let private godelFormulaValues = [| 
+    // limitations.p001  // idx 0
+    ("~(x = 0)", (Num.Big_int 2116574771128325487937994357299494I));
+    // limitations.p002  // idx 1
+    ("x = x", (Num.Big_int 735421674029290002I))
+    // limitations.p003  // idx 2
+    ("0 < 0", (Num.Big_int 1767I))
+    |]
 
-// pg. 534
-// ------------------------------------------------------------------------- //
-// Some more examples of things in or not in the set of true formulas.       //
-// ------------------------------------------------------------------------- //
+// limitations.p001
+[<TestCase(0, TestName = "limitation.p001")>]
 
-[<Test>]
-let ``gform 2``() = 
-    gform (parse @"x = x")
-    |> should equal (Num.Big_int 735421674029290002I)
+// limitations.p002
+[<TestCase(1, TestName = "limitation.p002")>]
 
-[<Test>]
-let ``gform 3``() = 
-    gform (parse @"0 < 0")
-    |> should equal (Num.Big_int 1767I)
-
-// pg. 538
-[<Test>]
-let ``diag001 1``() = 
-    diag001(@"p(x)")
-    |> should equal "p(`p(x)')"
+// limitations.p003
+[<TestCase(2, TestName = "limitation.p003")>]
 
 [<Test>]
-let ``diag001 2``() = 
-    diag001(@"This string is diag(x)")
-    |> should equal "This string is diag(`This string is diag(x)')"
+let ``Godel Formula`` idx = 
+    let (formula, _) = godelFormulaValues.[idx]
+    let (_, result) = godelFormulaValues.[idx]
+    gform (parse formula)
+    |> should equal result
     
-// pg. 538
-// ------------------------------------------------------------------------- //
-// Analogous construct in natural language.                                  //
-// ------------------------------------------------------------------------- //
+
+let private diag001Values = [| 
+    // limitations.p004  // idx 0
+    ("p(x)",
+     "p(`p(x)')");
+    // limitations.p005  // idx 1
+    ("This string is diag(x)",
+     "This string is diag(`This string is diag(x)')")
+    // limitations.p006  // idx 2
+    ("The result of substituting the quotation of x for `x' in x \ has property P",
+     "The result of substituting the quotation of `The result of substituting the quotation of x for `x' in x \ has property P' for `x' in `The result of substituting the quotation of x for `x' in x \ has property P' \ has property P")
+    |]
+
+// limitations.p004
+[<TestCase(0, TestName = "limitation.p004")>]
+
+// limitations.p005
+[<TestCase(1, TestName = "limitation.p005")>]
+
+// limitations.p006
+[<TestCase(2, TestName = "limitation.p006")>]
 
 [<Test>]
-let ``diag001 3``() = 
-    diag001(@"The result of substituting the quotation of x for `x' in x \ has property P")
-    |> should equal "The result of substituting the quotation of `The result of substituting the quotation of x for `x' in x \ has property P' for `x' in `The result of substituting the quotation of x for `x' in x \ has property P' \ has property P"
+let ``diag001 test`` idx =
+    let (value, _) = diag001Values.[idx]
+    let (_, result) = diag001Values.[idx]
+    diag001 value
+    |> should equal result
 
-// pg. 549
-// ------------------------------------------------------------------------- //
-// Examples.                                                                 //
-// ------------------------------------------------------------------------- //
+let private dholdsValues = [| 
+    // limitations.p007  // idx 0
+    (100, false);
+    // limitations.p008  // idx 1
+    (101, true)
+    |]
 
-let prime_form p = subst("p" |=> numeral p) (parse @"S(S(0)) <= p /\ forall n. n < p ==> (exists x. x <= p /\ p = n * x) ==> n = S(0)")
+// limitations.p007
+[<TestCase(0, TestName = "limitation.p007")>]
+
+// limitations.p008
+[<TestCase(1, TestName = "limitation.p008")>]
 
 [<Test>]
-let ``dholds 1``() = 
-    dholds undefined (prime_form (Num.Int 100))
-    |> should be False
-
-[<Test>]
-let ``dholds 2``() = 
-    dholds undefined (prime_form (Num.Int 101))
-    |> should be True
+let ``dholds prime`` idx =
+    let (value, _) = dholdsValues.[idx]
+    let (_, result) = dholdsValues.[idx]
+    let prime_form p = subst("p" |=> numeral p) (parse @"S(S(0)) <= p /\ forall n. n < p ==> (exists x. x <= p /\ p = n * x) ==> n = S(0)")
+    dholds undefined (prime_form (Num.Int value))
+    |> should equal result
             
-// pg. 551
-// ------------------------------------------------------------------------- //
-// Example.                                                                  //
-// ------------------------------------------------------------------------- //
-
+// limitations.p009
 [<Test>]
 let ``classify``() = 
     classify Sigma 1 (parse @"forall x. x < 2 ==> exists y z. forall w. w < x + 2 ==> w + x + y + z = 42")
     |> should be True
 
-// pg. 552
-// ------------------------------------------------------------------------- //
-// Example.                                                                  //
-// ------------------------------------------------------------------------- //
-
+// limitations.p010
 [<Test>]
-let ``sigma_bound``() = 
+let ``sigma bound``() = 
     sigma_bound (parse @"exists p x. p < x /\ (S(S(0)) <= p /\ forall n. n < p ==> (exists x. x <= p /\ p = n * x) ==> n = S(0)) /\ ~(x = 0) /\ forall z. z <= x ==> (exists w. w <= x /\ x = z * w) ==> z = S(0) \/ exists x. x <= z /\ z = p * x")
     |> should equal (Num.Int 4)
             
-// pg. 561
-// ------------------------------------------------------------------------- //
-// Example program (successor).                                              //
-// ------------------------------------------------------------------------- //
+let prog_suc = 
+    List.foldBack (fun m -> m)
+        [(1,Blank) |-> (Blank,Right,2);  
+        (2,One) |-> (One,Right,2);  
+        (2,Blank) |-> (One,Right,3); 
+        (3,Blank) |-> (Blank,Left,4); 
+        (3,One) |-> (Blank,Left,4); 
+        (4,One) |-> (One,Left,4); 
+        (4,Blank) |-> (Blank,Stay,0)]  
+        undefined;;
 
-let prog_suc = List.foldBack (fun m -> m) [(1,Blank) |-> (Blank,Right,2);  (2,One) |-> (One,Right,2);  (2,Blank) |-> (One,Right,3); (3,Blank) |-> (Blank,Left,4); (3,One) |-> (Blank,Left,4); (4,One) |-> (One,Left,4); (4,Blank) |-> (Blank,Stay,0)]  undefined
-
+// limitations.p011
 [<Test>]
 let ``prog_suc 1``() = 
     exec prog_suc [0]
     |> should equal 1
 
+// limitations.p012
 [<Test>]
 let ``prog_suc 2``() = 
     exec prog_suc [1]
     |> should equal 2
 
+// limitations.p013
 [<Test>]
 let ``prog_suc 3``() = 
     exec prog_suc [19]
     |> should equal 20
 
-// pg. 566
-// ------------------------------------------------------------------------- //
-// Example.                                                                  //
-// ------------------------------------------------------------------------- //
+let private robEvalValues : (string * thm ) [] = [| 
+    // limitations.p014  // idx 0
+    (   @"S(0) + (S(S(0)) * ((S(0) + S(S(0)) + S(0))))",
+        Imp
+            (And
+               (Forall
+                    ("m",
+                    Forall
+                        ("n",
+                        Imp
+                            (Atom (R ("=",[Fn ("S",[Var "m"]); Fn ("S",[Var "n"])])),
+                                Atom (R ("=",[Var "m"; Var "n"]))))),
+                And
+                    (Forall
+                        ("n",
+                        Iff
+                            (Not (Atom (R ("=",[Var "n"; Fn ("0",[])]))),
+                            Exists
+                                ("m",Atom (R ("=",[Var "n"; Fn ("S",[Var "m"])]))))),
+                    And
+                        (Forall
+                            ("n",
+                            Atom
+                                (R ("=",[Fn ("+",[Fn ("0",[]); Var "n"]); Var "n"]))),
+                        And
+                            (Forall
+                                ("m",
+                                Forall
+                                    ("n",
+                                    Atom
+                                        (R ("=",
+                                            [Fn ("+",[Fn ("S",[Var "m"]); Var "n"]);
+                                            Fn ("S",[Fn ("+",[Var "m"; Var "n"])])])))),
+                            And
+                                (Forall
+                                    ("n",
+                                    Atom
+                                        (R ("=",
+                                            [Fn ("*",[Fn ("0",[]); Var "n"]);
+                                            Fn ("0",[])]))),
+                                And
+                                    (Forall
+                                        ("m",
+                                        Forall
+                                            ("n",
+                                            Atom
+                                                (R ("=",
+                                                    [Fn
+                                                        ("*",[Fn ("S",[Var "m"]); Var "n"]);
+                                                    Fn
+                                                        ("+",
+                                                            [Var "n";
+                                                            Fn ("*",[Var "m"; Var "n"])])])))),
+                                    And
+                                        (Forall
+                                            ("m",
+                                            Forall
+                                                ("n",
+                                                Iff
+                                                    (Atom (R ("<=",[Var "m"; Var "n"])),
+                                                    Exists
+                                                        ("d",
+                                                            Atom
+                                                                (R ("=",
+                                                                    [Fn ("+",[Var "m"; Var "d"]);
+                                                                        Var "n"])))))),
+                                        Forall
+                                            ("m",
+                                            Forall
+                                                ("n",
+                                                Iff
+                                                    (Atom (R ("<",[Var "m"; Var "n"])),
+                                                    Atom
+                                                        (R ("<=",
+                                                            [Fn ("S",[Var "m"]); Var "n"])))))))))))),
+             Atom
+                (R ("=",
+                    [Fn
+                        ("+",
+                        [Fn ("S",[Fn ("0",[])]);
+                        Fn
+                            ("*",
+                                [Fn ("S",[Fn ("S",[Fn ("0",[])])]);
+                                Fn
+                                    ("+",
+                                        [Fn ("S",[Fn ("0",[])]);
+                                        Fn
+                                            ("+",
+                                                [Fn ("S",[Fn ("S",[Fn ("0",[])])]);
+                                                Fn ("S",[Fn ("0",[])])])])])]);
+                    Fn
+                        ("S",
+                            [Fn
+                                ("S",
+                                [Fn
+                                    ("S",
+                                    [Fn
+                                        ("S",
+                                        [Fn
+                                            ("S",
+                                            [Fn
+                                                ("S",
+                                                [Fn
+                                                    ("S",
+                                                    [Fn
+                                                        ("S",[Fn ("S",[Fn ("0",[])])])])])])])])])])])))
+    )
+    |]
+
+// limitations.p014
+[<TestCase(0, TestName = "limitation.p014")>]
 
 [<Test>]
-let ``robeval``() =
-    robeval (parset "S(0) + (S(S(0)) * ((S(0) + S(S(0)) + S(0))))") 
-    |> should equal (parse @"(forall m n. S(m) = S(n) ==> m = n) /\
-                                (forall n. ~n = 0 <=> (exists m. n = S(m))) /\
-                                (forall n. 0 + n = n) /\
-                                (forall m n. S(m) + n = S(m + n)) /\
-                                (forall n. 0 * n = 0) /\
-                                (forall m n. S(m) * n = n + m * n) /\
-                                (forall m n. m <= n <=> (exists d. m + d = n)) /\ (forall m n. m < n <=> S(m) <= n) ==> S(0) + S(S(0)) *
-                                (S(0) + S(S(0)) + S(0)) = S(S(S(S(S(S(S(S(S(0)))))))))")
+let ``Robinson eval`` idx =
+    let (tm, _) = robEvalValues.[idx]
+    let (_, result) = robEvalValues.[idx]
+    robeval (parset tm) 
+    |> should equal result
+
+let private robNeValues : (string * string * thm ) [] = [| 
+    // limitations.p015  // idx 0
+    (   @"S(0) + S(0) + S(0)",
+        @"S(S(0)) * S(S(0))",
+        Imp
+            (And
+                (Forall
+                    ("m",
+                    Forall
+                        ("n",
+                        Imp
+                            (Atom (R ("=",[Fn ("S",[Var "m"]); Fn ("S",[Var "n"])])),
+                                Atom (R ("=",[Var "m"; Var "n"]))))),
+                And
+                    (Forall
+                        ("n",
+                        Iff
+                            (Not (Atom (R ("=",[Var "n"; Fn ("0",[])]))),
+                                Exists
+                                    ("m",Atom (R ("=",[Var "n"; Fn ("S",[Var "m"])]))))),
+                    And
+                        (Forall
+                            ("n",
+                            Atom
+                                (R ("=",[Fn ("+",[Fn ("0",[]); Var "n"]); Var "n"]))),
+                        And
+                            (Forall
+                                ("m",
+                                Forall
+                                    ("n",
+                                    Atom
+                                        (R ("=",
+                                            [Fn ("+",[Fn ("S",[Var "m"]); Var "n"]);
+                                            Fn ("S",[Fn ("+",[Var "m"; Var "n"])])])))),
+                            And
+                                (Forall
+                                    ("n",
+                                    Atom
+                                        (R ("=",
+                                            [Fn ("*",[Fn ("0",[]); Var "n"]);
+                                            Fn ("0",[])]))),
+                                    And
+                                        (Forall
+                                            ("m",
+                                            Forall
+                                                ("n",
+                                                    Atom
+                                                        (R ("=",
+                                                            [Fn
+                                                                ("*",[Fn ("S",[Var "m"]); Var "n"]);
+                                                            Fn
+                                                                ("+",
+                                                                    [Var "n";
+                                                                    Fn ("*",[Var "m"; Var "n"])])])))),
+                                        And
+                                            (Forall
+                                                ("m",
+                                                Forall
+                                                    ("n",
+                                                        Iff
+                                                            (Atom (R ("<=",[Var "m"; Var "n"])),
+                                                            Exists
+                                                                ("d",
+                                                                Atom
+                                                                    (R ("=",
+                                                                        [Fn ("+",[Var "m"; Var "d"]);
+                                                                            Var "n"])))))),
+                                            Forall
+                                                ("m",
+                                                Forall
+                                                    ("n",
+                                                        Iff
+                                                            (Atom (R ("<",[Var "m"; Var "n"])),
+                                                            Atom
+                                                                (R ("<=",
+                                                                    [Fn ("S",[Var "m"]); Var "n"])))))))))))),
+                Imp
+                    (Atom
+                        (R ("=",
+                            [Fn
+                                ("+",
+                                [Fn ("S",[Fn ("0",[])]);
+                                Fn
+                                    ("+",
+                                        [Fn ("S",[Fn ("0",[])]); Fn ("S",[Fn ("0",[])])])]);
+                            Fn
+                                ("*",
+                                    [Fn ("S",[Fn ("S",[Fn ("0",[])])]);
+                                    Fn ("S",[Fn ("S",[Fn ("0",[])])])])])),formula<fol>.False))
+    );
+    // limitations.p016  // idx 1
+    (   @"0 + 0 * S(0)",
+        @"S(S(0)) + 0",
+        Imp
+            (And
+                (Forall
+                    ("m",
+                    Forall
+                        ("n",
+                        Imp
+                            (Atom (R ("=",[Fn ("S",[Var "m"]); Fn ("S",[Var "n"])])),
+                                Atom (R ("=",[Var "m"; Var "n"]))))),
+                And
+                    (Forall
+                        ("n",
+                        Iff
+                            (Not (Atom (R ("=",[Var "n"; Fn ("0",[])]))),
+                                Exists
+                                    ("m",Atom (R ("=",[Var "n"; Fn ("S",[Var "m"])]))))),
+                    And
+                        (Forall
+                            ("n",
+                            Atom
+                                (R ("=",[Fn ("+",[Fn ("0",[]); Var "n"]); Var "n"]))),
+                        And
+                            (Forall
+                                ("m",
+                                Forall
+                                    ("n",
+                                    Atom
+                                        (R ("=",
+                                            [Fn ("+",[Fn ("S",[Var "m"]); Var "n"]);
+                                            Fn ("S",[Fn ("+",[Var "m"; Var "n"])])])))),
+                            And
+                                (Forall
+                                    ("n",
+                                    Atom
+                                        (R ("=",
+                                            [Fn ("*",[Fn ("0",[]); Var "n"]);
+                                            Fn ("0",[])]))),
+                                And
+                                    (Forall
+                                        ("m",
+                                        Forall
+                                            ("n",
+                                                Atom
+                                                    (R ("=",
+                                                        [Fn
+                                                            ("*",[Fn ("S",[Var "m"]); Var "n"]);
+                                                        Fn
+                                                            ("+",
+                                                                [Var "n";
+                                                                Fn ("*",[Var "m"; Var "n"])])])))),
+                                    And
+                                        (Forall
+                                            ("m",
+                                            Forall
+                                                ("n",
+                                                Iff
+                                                    (Atom (R ("<=",[Var "m"; Var "n"])),
+                                                    Exists
+                                                        ("d",
+                                                        Atom
+                                                            (R ("=",
+                                                                [Fn ("+",[Var "m"; Var "d"]);
+                                                                    Var "n"])))))),
+                                            Forall
+                                                ("m",
+                                                Forall
+                                                    ("n",
+                                                        Iff
+                                                            (Atom (R ("<",[Var "m"; Var "n"])),
+                                                            Atom
+                                                                (R ("<=",
+                                                                    [Fn ("S",[Var "m"]); Var "n"])))))))))))),
+                    Imp
+                        (Atom
+                            (R ("=",
+                                [Fn
+                                    ("+",
+                                    [Fn ("0",[]);
+                                    Fn ("*",[Fn ("0",[]); Fn ("S",[Fn ("0",[])])])]);
+                                Fn ("+",[Fn ("S",[Fn ("S",[Fn ("0",[])])]); Fn ("0",[])])])),formula<fol>.False))
+    );
+    // limitations.p017  // idx 2
+    (   @"S(S(0)) + 0",
+        @"0 + 0 + 0 * 0",
+        Imp
+            (And
+                (Forall
+                    ("m",
+                    Forall
+                        ("n",
+                        Imp
+                            (Atom (R ("=",[Fn ("S",[Var "m"]); Fn ("S",[Var "n"])])),
+                                Atom (R ("=",[Var "m"; Var "n"]))))),
+                And
+                    (Forall
+                        ("n",
+                        Iff
+                            (Not (Atom (R ("=",[Var "n"; Fn ("0",[])]))),
+                                Exists
+                                    ("m",Atom (R ("=",[Var "n"; Fn ("S",[Var "m"])]))))),
+                    And
+                        (Forall
+                            ("n",
+                                Atom
+                                    (R ("=",[Fn ("+",[Fn ("0",[]); Var "n"]); Var "n"]))),
+                        And
+                            (Forall
+                                ("m",
+                                Forall
+                                    ("n",
+                                    Atom
+                                        (R ("=",
+                                            [Fn ("+",[Fn ("S",[Var "m"]); Var "n"]);
+                                            Fn ("S",[Fn ("+",[Var "m"; Var "n"])])])))),
+                                And
+                                    (Forall
+                                        ("n",
+                                        Atom
+                                            (R ("=",
+                                                [Fn ("*",[Fn ("0",[]); Var "n"]);
+                                                Fn ("0",[])]))),
+                                    And
+                                        (Forall
+                                            ("m",
+                                            Forall
+                                                ("n",
+                                                    Atom
+                                                        (R ("=",
+                                                            [Fn
+                                                                ("*",[Fn ("S",[Var "m"]); Var "n"]);
+                                                            Fn
+                                                                ("+",
+                                                                    [Var "n";
+                                                                    Fn ("*",[Var "m"; Var "n"])])])))),
+                                        And
+                                            (Forall
+                                                ("m",
+                                                Forall
+                                                    ("n",
+                                                    Iff
+                                                        (Atom (R ("<=",[Var "m"; Var "n"])),
+                                                        Exists
+                                                            ("d",
+                                                            Atom
+                                                                (R ("=",
+                                                                    [Fn ("+",[Var "m"; Var "d"]);
+                                                                        Var "n"])))))),
+                                            Forall
+                                                ("m",
+                                                Forall
+                                                    ("n",
+                                                    Iff
+                                                        (Atom (R ("<",[Var "m"; Var "n"])),
+                                                        Atom
+                                                            (R ("<=",
+                                                                [Fn ("S",[Var "m"]); Var "n"])))))))))))),
+                Imp
+                    (Atom
+                        (R ("=",
+                            [Fn ("+",[Fn ("S",[Fn ("S",[Fn ("0",[])])]); Fn ("0",[])]);
+                            Fn
+                                ("+",
+                                    [Fn ("0",[]);
+                                    Fn
+                                        ("+",
+                                            [Fn ("0",[]); Fn ("*",[Fn ("0",[]); Fn ("0",[])])])])])),formula<fol>.False))
+    )
+    |]
 
 // pg. 570
-[<Test>]
-let ``rob_ne 1``() =
-    rob_ne (parset "S(0) + S(0) + S(0)") (parset "S(S(0)) * S(S(0))") 
-    |> should equal (parse @"(forall m n. S(m) = S(n) ==> m = n) /\
-                                (forall n. ~n = 0 <=> (exists m. n = S(m))) /\ (forall n. 0 + n = n) /\
-                                (forall m n. S(m) + n = S(m + n)) /\
-                                (forall n. 0 * n = 0) /\
-                                (forall m n. S(m) * n = n + m * n) /\
-                                (forall m n. m <= n <=> (exists d. m + d = n)) /\ (forall m n. m < n <=> S(m) <= n) ==>
-                                S(0) + S(0) + S(0) = S(S(0)) * S(S(0)) ==> false")
+// limitations.p015
+[<TestCase(0, TestName = "limitation.p015")>]
+
+// limitations.p016
+[<TestCase(1, TestName = "limitation.p016")>]
+
+// limitations.p017
+[<TestCase(2, TestName = "limitation.p017")>]
 
 [<Test>]
-let ``rob_ne 2``() =
-    rob_ne (parset "0 + 0 * S(0)") (parset "S(S(0)) + 0") 
-    |> should equal (parse @"(forall m n. S(m) = S(n) ==> m = n) /\
-                                (forall n. ~n = 0 <=> (exists m. n = S(m))) /\ (forall n. 0 + n = n) /\
-                                (forall m n. S(m) + n = S(m + n)) /\
-                                (forall n. 0 * n = 0) /\
-                                (forall m n. S(m) * n = n + m * n) /\
-                                (forall m n. m <= n <=> (exists d. m + d = n)) /\ (forall m n. m < n <=> S(m) <= n) ==>
-                                0 + 0 * S(0) = S(S(0)) + 0 ==> false")
+let ``Robinson ne`` idx =
+    let (s, _, _) = robNeValues.[idx]
+    let (_, t, _) = robNeValues.[idx]
+    let (_, _, result) = robNeValues.[idx]
+    rob_ne (parset s) (parset t)
+    |> should equal result
 
-[<Test>]
-let ``rob_ne 3``() =
-    rob_ne (parset "S(S(0)) + 0") (parset "0 + 0 + 0 * 0") 
-    |> should equal (parse @"(forall m n. S(m) = S(n) ==> m = n) /\
-                                (forall n. ~n = 0 <=> (exists m. n = S(m))) /\ (forall n. 0 + n = n) /\
-                                (forall m n. S(m) + n = S(m + n)) /\
-                                (forall n. 0 * n = 0) /\
-                                (forall m n. S(m) * n = n + m * n) /\
-                                (forall m n. m <= n <=> (exists d. m + d = n)) /\ (forall m n. m < n <=> S(m) <= n) ==>
-                                S(S(0)) + 0 = 0 + 0 + 0 * 0 ==> false")
 // pg. 573
 // ------------------------------------------------------------------------- //
 // Example in the text.                                                      //
 // ------------------------------------------------------------------------- //
 
-[<Test>]
-let ``sigma_prove``() =
-    sigma_prove (parse @"exists p. S(S(0)) <= p /\ forall n. n < p ==> (exists x. x <= p /\ p = n * x) ==> n = S(0)")
-    |> should equal (parse @"(forall m n. S(m) = S(n) ==> m = n) /\
-                            (forall n. ~n = 0 <=> (exists m. n = S(m))) /\ (forall n. 0 + n = n) /\
-                            (forall m n. S(m) + n = S(m + n)) /\
-                            (forall n. 0 * n = 0) /\
-                            (forall m n. S(m) * n = n + m * n) /\
-                            (forall m n. m <= n <=> (exists d. m + d = n)) /\ (forall m n. m < n <=> S(m) <= n) ==>
-                            (exists p.
-                                S(S(0)) <= p /\
-                            (forall n. n < p ==> (exists x. x <= p /\ p = n * x) ==> n = S(0)))")
-// pg. 576
-// ------------------------------------------------------------------------- //
-// The essence of Goedel's first theorem.                                    //
-// ------------------------------------------------------------------------- //
+let private sigmaValues = [| 
+    // limitations.p018  // idx 0
+    ( @"exists p. S(S(0)) <= p /\ forall n. n < p ==> (exists x. x <= p /\ p = n * x) ==> n = S(0)",
+        Imp
+            (And
+               (Forall
+                  ("m",
+                   Forall
+                     ("n",
+                      Imp
+                        (Atom (R ("=",[Fn ("S",[Var "m"]); Fn ("S",[Var "n"])])),
+                         Atom (R ("=",[Var "m"; Var "n"]))))),
+                And
+                  (Forall
+                     ("n",
+                      Iff
+                        (Not (Atom (R ("=",[Var "n"; Fn ("0",[])]))),
+                         Exists
+                           ("m",Atom (R ("=",[Var "n"; Fn ("S",[Var "m"])]))))),
+                   And
+                     (Forall
+                        ("n",
+                         Atom
+                           (R ("=",[Fn ("+",[Fn ("0",[]); Var "n"]); Var "n"]))),
+                      And
+                        (Forall
+                           ("m",
+                            Forall
+                              ("n",
+                               Atom
+                                 (R ("=",
+                                     [Fn ("+",[Fn ("S",[Var "m"]); Var "n"]);
+                                      Fn ("S",[Fn ("+",[Var "m"; Var "n"])])])))),
+                         And
+                           (Forall
+                              ("n",
+                               Atom
+                                 (R ("=",
+                                     [Fn ("*",[Fn ("0",[]); Var "n"]);
+                                      Fn ("0",[])]))),
+                            And
+                              (Forall
+                                 ("m",
+                                  Forall
+                                    ("n",
+                                     Atom
+                                       (R ("=",
+                                           [Fn
+                                              ("*",[Fn ("S",[Var "m"]); Var "n"]);
+                                            Fn
+                                              ("+",
+                                               [Var "n";
+                                                Fn ("*",[Var "m"; Var "n"])])])))),
+                               And
+                                 (Forall
+                                    ("m",
+                                     Forall
+                                       ("n",
+                                        Iff
+                                          (Atom (R ("<=",[Var "m"; Var "n"])),
+                                           Exists
+                                             ("d",
+                                              Atom
+                                                (R ("=",
+                                                    [Fn ("+",[Var "m"; Var "d"]);
+                                                     Var "n"])))))),
+                                  Forall
+                                    ("m",
+                                     Forall
+                                       ("n",
+                                        Iff
+                                          (Atom (R ("<",[Var "m"; Var "n"])),
+                                           Atom
+                                             (R ("<=",
+                                                 [Fn ("S",[Var "m"]); Var "n"])))))))))))),
+             Exists
+               ("p",
+                And
+                  (Atom (R ("<=",[Fn ("S",[Fn ("S",[Fn ("0",[])])]); Var "p"])),
+                   Forall
+                     ("n",
+                      Imp
+                        (Atom (R ("<",[Var "n"; Var "p"])),
+                         Imp
+                           (Exists
+                              ("x",
+                               And
+                                 (Atom (R ("<=",[Var "x"; Var "p"])),
+                                  Atom
+                                    (R ("=",
+                                        [Var "p"; Fn ("*",[Var "n"; Var "x"])])))),
+                            Atom (R ("=",[Var "n"; Fn ("S",[Fn ("0",[])])]))))))))
+    )
+    |]
 
+// limitations.p018
+[<TestCase(0, TestName = "limitation.p018")>]
+
+[<Test>]
+let ``sigma prove`` idx =
+    let (formula, _) = sigmaValues.[idx]
+    let (_, result) = sigmaValues.[idx]
+    sigma_prove (parse formula)
+    |> should equal result
+    
+// limitations.p019
 [<Test>]
 let ``meson002``() =
     meson002 (parse @"(True(G) <=> ~(|--(G))) /\ Pi(G) /\ (forall p. Sigma(p) ==> (|--(p) <=> True(p))) /\ (forall p. True(Not(p)) <=> ~True(p)) /\  (forall p. Pi(p) ==> Sigma(Not(p))) ==> (|--(Not(G)) <=> |--(G))")
     |> should equal [5; 5]
-// pg. 577
-// ------------------------------------------------------------------------- //
-// Godel's second theorem.                                                   //
-// ------------------------------------------------------------------------- //
+
+let private godelValues = [| 
+    // limitations.p020  // idx 0
+    Imp 
+        (And
+            (Forall
+                ("p",
+                Imp
+                    (Atom (R ("|--",[Var "p"])),
+                    Atom (R ("|--",[Fn ("Pr",[Var "p"])])))),
+            And
+                (Forall
+                    ("p",
+                    Forall
+                        ("q",
+                            Atom
+                                (R ("|--",
+                                    [Fn
+                                        ("imp",
+                                        [Fn ("Pr",[Fn ("imp",[Var "p"; Var "q"])]);
+                                            Fn
+                                                ("imp",
+                                                [Fn ("Pr",[Var "p"]); Fn ("Pr",[Var "q"])])])])))),
+                Forall
+                    ("p",
+                        Atom
+                            (R ("|--",
+                                [Fn
+                                    ("imp",
+                                    [Fn ("Pr",[Var "p"]);
+                                        Fn ("Pr",[Fn ("Pr",[Var "p"])])])]))))),
+        Imp
+            (And
+                (Forall
+                    ("p",
+                    Forall
+                        ("q",
+                            Imp
+                                (And
+                                    (Atom (R ("|--",[Fn ("imp",[Var "p"; Var "q"])])),
+                                    Atom (R ("|--",[Var "p"]))),
+                                Atom (R ("|--",[Var "q"]))))),
+                And
+                    (Forall
+                        ("p",
+                        Forall
+                            ("q",
+                                Atom
+                                    (R ("|--",
+                                        [Fn
+                                            ("imp",
+                                            [Var "q"; Fn ("imp",[Var "p"; Var "q"])])])))),
+                    Forall
+                        ("p",
+                        Forall
+                            ("q",
+                            Forall
+                                ("r",
+                                Atom
+                                    (R ("|--",
+                                        [Fn
+                                        ("imp",
+                                            [Fn
+                                            ("imp",
+                                                [Var "p";
+                                                Fn ("imp",[Var "q"; Var "r"])]);
+                                            Fn
+                                            ("imp",
+                                                [Fn ("imp",[Var "p"; Var "q"]);
+                                                Fn ("imp",[Var "p"; Var "r"])])])]))))))),
+            Imp
+                (And
+                    (Atom
+                        (R ("|--",
+                            [Fn
+                                ("imp",
+                                [Var "G";
+                                    Fn ("imp",[Fn ("Pr",[Var "G"]); Var "F"])])])),
+                    Atom
+                        (R ("|--",
+                            [Fn
+                                ("imp",
+                                [Fn ("imp",[Fn ("Pr",[Var "G"]); Var "F"]);
+                                    Var "G"])]))),
+                Imp
+                    (Atom
+                    (R ("|--",[Fn ("imp",[Fn ("Pr",[Var "F"]); Var "F"])])),
+                    Atom (R ("|--",[Var "F"]))))))
+    |]
+
+// limitations.p020
+[<TestCase(0, TestName = "limitations.p020")>]
 
 [<Test>]
-let ``Godel theorem``() =
+let ``Godel theorem`` idx =
+    let result = godelValues.[idx]
     prove (parse @"(forall p. |--(p) ==> |--(Pr(p))) /\ (forall p q. |--(imp(Pr(imp(p,q)),imp(Pr(p),Pr(q))))) /\ (forall p. |--(imp(Pr(p),Pr(Pr(p))))) ==> (forall p q. |--(imp(p,q)) /\ |--(p) ==> |--(q)) /\ (forall p q. |--(imp(q,imp(p,q)))) /\ (forall p q r. |--(imp(imp(p,imp(q,r)),imp(imp(p,q),imp(p,r))))) ==> |--(imp(G,imp(Pr(G),F))) /\ |--(imp(imp(Pr(G),F),G)) ==> |--(imp(Pr(F),F)) ==> |--(F)") 
         [assume
             ["lob1",(parse @"forall p. |--(p) ==> |--(Pr(p))"); 
@@ -224,9 +765,4 @@ let ``Godel theorem``() =
          so have (parse @"|--(Pr(G))") by ["lob1"; "logic"]; 
          so conclude (parse @"|--(F)") by ["L"; "logic"]; 
          qed]
-     |> should equal (parse @"(forall p. |--(p) ==> |--(Pr(p))) /\
-                                (forall p q. |--(imp(Pr(imp(p,q)),imp(Pr(p),Pr(q))))) /\
-                                (forall p. |--(imp(Pr(p),Pr(Pr(p))))) ==>
-                                (forall p q. |--(imp(p,q)) /\ |--(p) ==> |--(q)) /\
-                                (forall p q. |--(imp(q,imp(p,q)))) /\
-                                (forall p q r. |--(imp(imp(p,imp(q,r)),imp(imp(p,q),imp(p,r))))) ==> |--(imp(G,imp(Pr(G),F))) /\ |--(imp(imp(Pr(G),F),G)) ==> |--(imp(Pr(F),F)) ==> |--(F)")
+     |> should equal result

@@ -12,6 +12,7 @@ open FSharpx.Books.AutomatedReasoning.paramodulation
 open NUnit.Framework
 open FsUnit
 
+// paramodulation.p001
 [<Test>]
 let ``paramodulation``() =
     paramodulation (parse @"(forall x. f(f(x)) = f(x)) /\ (forall x. exists y. f(y) = x)

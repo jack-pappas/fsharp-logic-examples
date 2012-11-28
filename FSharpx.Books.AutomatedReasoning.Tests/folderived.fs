@@ -17,6 +17,7 @@ open FsUnit
 // Example.                                                                  //
 // ------------------------------------------------------------------------- //
 
+// folderived.p001
 [<Test>]
 let ``icongruence``() = 
     icongruence (parset @"s") (parset @"t") (parset @"f(s,g(s,t,s),u,h(h(s)))")
@@ -60,28 +61,58 @@ let private results = [|
                 @"(forall x x'. x + x' = x' + x) ==> (forall x'. 2 * x + x' = x' + 2 * x)"; // 14
         |]
 
+// folderived.p002
 [<TestCase(@"y", @"forall x y z. x + y + z = z + y + x", 0)>]
+
+// folderived.p005
 [<TestCase(@"x", @"forall x y z. x + y + z = y + z + z", 3)>]
+
+// folderived.p006
 [<TestCase(@"x", @"forall x. x = x", 4)>]
+
+// folderived.p007
 [<TestCase(@"w + y + z", @"forall x y z. x + y + z = y + z + z", 5)>]
+
+// folderived.p008
 [<TestCase(@"x + y + z", @"forall x y z. x + y + z = y + z + z", 6)>]
+
+// folderived.p009
 [<TestCase(@"x + y + z", @"forall x y z. nothing_much", 7)>]
+
+// folderived.p013
 [<TestCase(@"x'", @"forall x x' x''. x + x' + x'' = 0", 10)>]
+
+// folderived.p014
 [<TestCase(@"x''", @"forall x x' x''. x + x' + x'' = 0", 11)>]
+
+// folderived.p015
 [<TestCase(@"x' + x''", @"forall x x' x''. x + x' + x'' = 0", 12)>]
+
+// folderived.p016
 [<TestCase(@"x + x' + x''", @"forall x x' x''. x + x' + x'' = 0", 13)>]
+
+// folderived.p017
 [<TestCase(@"2 * x", @"forall x x'. x + x' = x' + x", 14)>]
+
 let ``ispec``(f, qf, idx) = 
     ispec (parset f) (parse qf)
     |> should equal (parse results.[idx])
 
+// folderived.p003
 [<TestCase(@"x + x", @"2 * x", @"x + x = x ==> x = 0", @"2 * x = x ==> x = 0", 1)>]
+
+// folderived.p004
 [<TestCase(@"x + x", @"2 * x", @"(x + x = y + y) ==> (y + y + y = x + x + x)", 
                     @"2 * x = y + y ==> y + y + y = x + 2 * x", 2)>]
+
+// folderived.p011
 [<TestCase(@"x + x", @"2 * x", @"(exists x. x = 2) <=> exists y. y + x + x = y + y + y", 
                     @"(exists x. x = 2) <=> (exists y. y + 2 * x = y + y + y)", 8)>]
+
+// folderived.p012
 [<TestCase(@"x", @"y", @"(forall z. x = z) <=> (exists x. y < z) /\ (forall y. y < x)", 
                     @"(forall z. y = z) <=> (exists x. y < z) /\ (forall y'. y' < y)", 9)>]
+
 let ``isubst``(f1, f2, qf1, qf2, idx) = 
     isubst (parset f1) (parset f2)
             (parse qf1) (parse qf2)

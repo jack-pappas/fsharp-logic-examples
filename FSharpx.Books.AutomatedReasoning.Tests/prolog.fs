@@ -25,8 +25,10 @@ open FsUnit
 // A Horn example.                                                           //
 // ------------------------------------------------------------------------- //
 
+// prolog.p001
+// Pelletier #32
 [<Test>]
-let ``hornprove``() =    
+let ``Pelletier #32``() =    
     hornprove (parse @" 
         (forall x. P(x) /\ (G(x) \/ H(x)) ==> Q(x)) /\ 
         (forall x. Q(x) /\ H(x) ==> J(x)) /\ 
@@ -41,6 +43,19 @@ let ``hornprove``() =
                             (112625,131072,Leaf (-843466767,[("_1", Var "_0")]),
                              Leaf (-843597839,[("_3", Var "_2")]))), 8)
 
+// pg. 208
+// ------------------------------------------------------------------------- //
+// A non-Horn example.                                                       //
+// ------------------------------------------------------------------------- //
+
+// prolog.p002
+// System.Exception: non-Horn clause. - This is the expected result.
+// Pelletier #09
+// TODO: Figure out how to get NUnit to work with exception
+//[<Test>]
+//let ``non-Horn``() = 
+//    hornprove (parse @"(p \/ q) /\ (~p \/ q) /\ (p \/ ~q) ==> ~(~q \/ ~q)") 
+
 // pg. 210
 // ------------------------------------------------------------------------- //
 // Ordering example.                                                         //
@@ -48,8 +63,9 @@ let ``hornprove``() =
 
 let lerules = ["0 <= X"; "S(X) <= S(Y) :- X <= Y"]
 
+// prolog.p003
 [<Test>]
-let ``simple prolog``() =  
+let ``backchaining``() =  
     simpleprolog lerules @"S(S(0)) <= S(S(S(0)))"
     |> should equal (Branch
                         (47089,65536,
@@ -64,6 +80,7 @@ let ``simple prolog``() =
                             Leaf (-843466767,[("_1", Fn ("S",[Fn ("S",[Fn ("0",[])])]))]),
                             Leaf (-843597839,[("_3", Fn ("S",[Fn ("0",[])]))]))))
 
+// prolog.p005
 [<Test>]
 let ``apply``() = 
     let env = simpleprolog lerules @"S(S(0)) <= X"
@@ -75,8 +92,9 @@ let ``apply``() =
 // Example again.                                                            //
 // ------------------------------------------------------------------------- //
    
+// prolog.p006
 [<Test>]
-let ``prolog all``() = 
+let ``binding``() = 
     prolog lerules @"S(S(0)) <= X"
     |> should equal [Atom (R ("=",[Var "X"; Fn ("S",[Fn ("S",[Var "_3"])])]))]
 
@@ -90,8 +108,9 @@ let appendrules = [
     @"append(nil,L,L)";
     @"append(H::T,L,H::A) :- append(T,L,A)";]
 
+// prolog.p007
 [<Test>]
-let ``prolog appenedrules 1``() = 
+let ``appened 1``() = 
     prolog appendrules @"append(1::2::nil,3::4::nil,Z)"
     |> should equal [Atom
                         (R ("=",
@@ -107,8 +126,9 @@ let ``prolog appenedrules 1``() =
                                         [Fn ("3",[]);
                                         Fn ("::",[Fn ("4",[]); Fn ("nil",[])])])])])]))]
 
+// prolog.p008
 [<Test>]
-let ``prolog appenedrules 2``() = 
+let ``appened 2``() = 
     prolog appendrules @"append(1::2::nil,Y,1::2::3::4::nil)"
     |> should equal [Atom
                             (R ("=",
@@ -116,8 +136,9 @@ let ``prolog appenedrules 2``() =
                                 Fn
                                 ("::",[Fn ("3",[]); Fn ("::",[Fn ("4",[]); Fn ("nil",[])])])]))]
 
+// prolog.p009
 [<Test>]
-let ``prolog appenedrules 3``() = 
+let ``appened 3``() = 
     prolog appendrules @"append(X,3::4::nil,1::2::3::4::nil)"
     |> should equal [Atom
                             (R ("=",
@@ -125,8 +146,9 @@ let ``prolog appenedrules 3``() =
                                 Fn
                                 ("::",[Fn ("1",[]); Fn ("::",[Fn ("2",[]); Fn ("nil",[])])])]))]
 
+// prolog.p010
 [<Test>]
-let ``prolog appenedrules 4``() = 
+let ``appened 4``() = 
     prolog appendrules @"append(X,Y,1::2::3::4::nil)"
     |> should equal [Atom (R ("=",[Var "X"; Fn ("nil",[])]));
                             Atom
@@ -143,3 +165,43 @@ let ``prolog appenedrules 4``() =
                                                 [Fn ("3",[]);
                                                 Fn ("::",[Fn ("4",[]); Fn ("nil",[])])])])])]))] 
 
+let sortrules = [
+    @"sort(X,Y) :- perm(X,Y),sorted(Y)";
+    @"sorted(nil)";
+    @"sorted(X::nil)";
+    @"sorted(X::Y::Z) :- X <= Y, sorted(Y::Z)";
+    @"perm(nil,nil)";
+    @"perm(X::Y,U::V) :- delete(U,X::Y,Z), perm(Z,V)";
+    @"delete(X,X::Y,Y)";
+    @"delete(X,Y::Z,Y::W) :- delete(X,Z,W)";
+    @"0 <= X";
+    @"S(X) <= S(Y) :- X <= Y"; ];;
+
+// prolog.p012
+[<Test>]
+let ``sort``() = 
+    prolog sortrules
+        @"sort(S(S(S(S(0))))::S(0)::0::S(S(0))::S(0)::nil,X)"
+    |> should equal [Atom
+     (R ("=",
+         [Var "X";
+          Fn
+            ("::",
+             [Fn ("0",[]);
+              Fn
+                ("::",
+                 [Fn ("S",[Fn ("0",[])]);
+                  Fn
+                    ("::",
+                     [Fn ("S",[Fn ("0",[])]);
+                      Fn
+                        ("::",
+                         [Fn ("S",[Fn ("S",[Fn ("0",[])])]);
+                          Fn
+                            ("::",
+                             [Fn
+                                ("S",
+                                 [Fn
+                                    ("S",
+                                     [Fn ("S",[Fn ("S",[Fn ("0",[])])])])]);
+                              Fn ("nil",[])])])])])])]))]

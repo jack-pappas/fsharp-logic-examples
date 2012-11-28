@@ -19,22 +19,31 @@ open FSharpx.Books.AutomatedReasoning.decidable
 open NUnit.Framework
 open FsUnit
 
+// decidable.p001
 [<Test>]
 let ``aedecide``() =
     aedecide (parse @"(forall x y z. P(x,y) /\ P(y,z) ==> P(x,z)) /\ (forall x y z. Q(x,y) /\ Q(y,z) ==> Q(x,z)) /\  (forall x y. P(x,y) ==> P(y,x)) /\ (forall x y. P(x,y) \/ Q(x,y)) ==> (forall x y. P(x,y)) \/ (forall x y. Q(x,y))")
     |> should be True
 
+// decidable.p016
+// Pelletier #20
 [<Test>]
 let ``wang``() =
     wang (parse @"(forall x y. exists z. forall w. P(x) /\ Q(y) ==> R(z) /\ U(w))
                     ==> (exists x y. P(x) /\ Q(y)) ==> (exists z. R(z))")
     |> should be True
 
+// decidable.p024
 [<TestCase(@"(forall x y. R(x,y) \/ R(y,x)) ==> forall x. R(x,x)", Result = true)>]
+
+// decidable.p025
 [<TestCase(@"(forall x y z. R(x,y) /\ R(y,z) ==> R(x,z)) ==> forall x. R(x,x)", Result = false)>]
+
 let ``decide_fmp`` f =
     decide_fmp (parse f)
 
+// decidable.p027
+// Pelletier #34
 [<Test>]
 let ``decide_monadic``() =
     decide_monadic (parse @"((exists x. forall y. P(x) <=> P(y)) <=>

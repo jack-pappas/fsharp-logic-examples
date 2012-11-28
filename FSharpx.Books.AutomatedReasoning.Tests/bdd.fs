@@ -20,6 +20,7 @@ open FsUnit
 // Examples.                                                                 //
 // ------------------------------------------------------------------------- //
 
+// bdd.p001
 [<Test>]
 let ``bddtaut``() =
     bddtaut (mk_adder_test 4 2)
@@ -30,11 +31,14 @@ let ``bddtaut``() =
 // Examples.                                                                 //
 // ------------------------------------------------------------------------- //
 
+// bdd.p002
+// Harrison #05 - prime
 [<Test>]
 let ``ebddtaut with prime``() =
     ebddtaut (prime 101)
     |> should be True
 
+// bdd.p003
 [<Test>]
 let ``ebddtaut with mk_adder_test``() =
     ebddtaut (mk_adder_test 9 5)

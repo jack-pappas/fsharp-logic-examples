@@ -16,16 +16,19 @@ open FsUnit
 // Example.                                                                  //
 // ------------------------------------------------------------------------- //
 
+// intro.p002
 [<Test>]
 let ``simplify``() =
     simplify (Add (Mul (Add (Mul (Const 0, Var "x"), Const 1), Const 3), Const 12)) 
     |> should equal (Const 15)
 
+// intro.p003
 [<Test>]
 let ``lex simple``() =
     lex (explode "2*((var_1 + x') + 11)")
     |> should equal ["2"; "*"; "("; "("; "var_1"; "+"; "x'"; ")"; "+"; "11"; ")"]
 
+// intro.p004
 [<Test>]
 let ``lex if-then-else``() =
     lex (explode "if //p1-- == *p2++) then f() else g()")
@@ -36,6 +39,7 @@ let ``lex if-then-else``() =
 // Our parser.                                                               //
 // ------------------------------------------------------------------------- //
 
+// intro.p005
 [<Test>]
 let ``parse_exp simple``() =
     parse_exp "x + 1"
@@ -46,6 +50,7 @@ let ``parse_exp simple``() =
 // Demonstrate automatic installation.                                       //
 // ------------------------------------------------------------------------- //
 
+// intro.p006
 [<Test>]
 let ``parse_exp complex``() =
     parse_exp "(x1 + x2 + x3) * (1 + 2 + 3 * x + y)"
@@ -57,6 +62,7 @@ let ``parse_exp complex``() =
 // Examples.                                                                 //
 // ------------------------------------------------------------------------- //
 
+// intro.p007
 [<Test>]
 let ``string_of_exp``() =
     string_of_exp (parse_exp "x + 3 * y")

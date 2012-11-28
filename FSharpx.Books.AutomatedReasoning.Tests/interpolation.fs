@@ -20,9 +20,13 @@ open FsUnit
 // Example.                                                                  //
 // ------------------------------------------------------------------------- //
 
+// interpolation.p001
 let p002 = prenex (parse @"(forall x. R(x,f(x))) /\ (forall x y. S(x,y) <=> R(x,y) \/ R(y,x))")
+
+// interpolation.p002
 let q002 = prenex (parse @"(forall x y z. S(x,y) /\ S(y,z) ==> T(x,z)) /\ ~T(0,0)")
     
+// interpolation.p003
 [<Test>]
 let ``urinterpolate``() = 
     let c002 = urinterpolate p002 q002
@@ -34,12 +38,17 @@ let ``urinterpolate``() =
 // The same example now gives a true interpolant.                            //
 // ------------------------------------------------------------------------- //
 
+// interpolation.p004
+// interpolation.p005
 [<Test>]
 let ``uinterpolate``() = 
     let c003 = uinterpolate p002 q002
     meson002(Imp(p002,c003)) |> should equal [4]
     meson002(Imp(q002,Not c003)) |> should equal [3]
 
+// interpolation.p009
+// interpolation.p010
+// interpolation.p011
 [<Test>]
 let ``interpolate 1``() = 
     let p004 = (parse @"(forall x. exists y. R(x,y)) /\ (forall x y. S(v,x,y) <=> R(x,y) \/ R(y,x))")
@@ -52,6 +61,10 @@ let ``interpolate 1``() =
 // More examples, not in the text.                                           //
 // ------------------------------------------------------------------------- //
 
+// interpolation.p012
+// interpolation.p013
+// interpolation.p014
+// interpolation.p015
 [<Test>]
 let ``interpolate 2``() = 
     let p005 = (parse @"(p ==> q /\ r)")
@@ -65,6 +78,10 @@ let ``interpolate 2``() =
 // A more interesting example.                                               //
 // ------------------------------------------------------------------------- //
 
+// interpolation.p016
+// interpolation.p017
+// interpolation.p018
+// interpolation.p019
 [<Test>]
 let ``interpolate 3``() = 
     let p006 = (parse @"(forall x. exists y. R(x,y)) /\ (forall x y. S(x,y) <=> R(x,y) \/ R(y,x))")
@@ -77,6 +94,11 @@ let ``interpolate 3``() =
 // ------------------------------------------------------------------------- //
 // A variant where u is free in both parts.                                  //
 // ------------------------------------------------------------------------- //
+
+// interpolation.p020
+// interpolation.p021
+// interpolation.p022
+// interpolation.p023
 [<Test>]
 let ``interpolate 4``() = 
     let p007 = (parse @"(forall x. exists y. R(x,y)) /\ (forall x y. S(x,y) <=> R(x,y) \/ R(y,x)) /\ (forall v. R(u,v) ==> Q(v,u))")
@@ -98,6 +120,8 @@ let test_interp fm =
     meson002(Imp(p,c)) |> ignore
     meson002(Imp(q,Not c)) |> ignore
     c
+
+// interpolation.p024
 [<Test>]
 let ``test interp``() =   
     test_interp (parse @"forall x. P(x) ==> exists y. forall z. P(z) ==> Q(y)")
@@ -110,6 +134,9 @@ let ``test interp``() =
 // Hintikka's examples.                                                      //
 // ------------------------------------------------------------------------- //
 
+// interpolation.p026
+// interpolation.p027
+// interpolation.p028
 [<Test>]
 let ``interpolate 5``() = 
     let p009 = (parse @"forall x. L(x,b)")
@@ -118,6 +145,9 @@ let ``interpolate 5``() =
     meson002(Imp(p009,c009)) |> should equal [1]
     meson002(Imp(q009,Not c009)) |> should equal [2]
 
+// interpolation.p030
+// interpolation.p031
+// interpolation.p032
 [<Test>]
 let ``interpolate 6``() = 
     let p010 = (parse @"(forall x. A(x) /\ C(x) ==> B(x)) /\ (forall x. D(x) \/ ~D(x) ==> C(x))")

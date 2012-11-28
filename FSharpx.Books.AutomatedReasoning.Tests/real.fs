@@ -20,7 +20,6 @@ open FSharpx.Books.AutomatedReasoning.cooper
 open FSharpx.Books.AutomatedReasoning.complex
 open FSharpx.Books.AutomatedReasoning.real
 
-
 (* ------------------------------------------------------------------------- *)
 (* First examples.                                                           *)
 (* ------------------------------------------------------------------------- *)
@@ -207,18 +206,34 @@ let private example_results_1 : formula<fol>[] = [|
     True;
     |]
 
+// real.p001
 [<TestCase(@"exists x. x^4 + x^2 + 1 = 0", 0)>]
+
+// real.p002
 [<TestCase(@"exists x. x^3 - x^2 + x - 1 = 0", 1)>]
+
+// real.p003
 [<TestCase(@"exists x y. x^3 - x^2 + x - 1 = 0 /\
                          y^3 - y^2 + y - 1 = 0 /\ ~(x = y)", 2)>]
+
+// real.p004
 [<TestCase(@"exists x. x^2 - 3 * x + 2 = 0 /\ 2 * x - 3 = 0", 3)>]
+
+// real.p005
 [<TestCase(@"forall a f k. (forall e. k < e ==> f < a * e) ==> f <= a * k", 4)>]
+
+// real.p006
 [<TestCase(@"exists x. a * x^2 + b * x + c = 0", 5)>]
+
+// real.p007
 [<TestCase(@"forall a b c. (exists x. a * x^2 + b * x + c = 0) <=>
                            b^2 >= 4 * a * c", 6)>]
+
+// real.p008
 [<TestCase(@"forall a b c. (exists x. a * x^2 + b * x + c = 0) <=>
                            a = 0 /\ (b = 0 ==> c = 0) \/
                            ~(a = 0) /\ b^2 >= 4 * a * c", 7)>]
+
 let ``examples 1`` (f, idx) =
     parse f
     |> real_qelim
@@ -229,6 +244,7 @@ let ``examples 1`` (f, idx) =
 (* Termination ordering for group theory completion.                         *)
 (* ------------------------------------------------------------------------- *)
 
+// real.p009
 [<Test>]
 let ``examples 2``() =
     @"1 < 2 /\ (forall x. 1 < x ==> 1 < x^2) /\
@@ -237,11 +253,11 @@ let ``examples 2``() =
     |> real_qelim
     |> should equal formula<fol>.True
 
-
 (* ------------------------------------------------------------------------- *)
 (* A case where using DNF is an improvement.                                 *)
 (* ------------------------------------------------------------------------- *)
 
+// real.p013
 [<Test>]
 let ``examples 3``() =
     @"forall d.
@@ -251,5 +267,3 @@ let ``examples 3``() =
     |> parse
     |> real_qelim'
     |> should equal formula<fol>.True
-
-

@@ -18,17 +18,20 @@ open FsUnit
 // Examples.                                                                 //
 // ------------------------------------------------------------------------- //
 
+// unify.p001
 [<Test>]
 let ``unify_and_apply 1``() =
     unify_and_apply [(parset "f(x,g(y))"),(parset "f(f(z),w)")]
     |> should equal [(Fn ("f",[Fn ("f",[Var "z"]); Fn ("g",[Var "y"])]),
                         Fn ("f",[Fn ("f",[Var "z"]); Fn ("g",[Var "y"])]))]
 
+// unify.p002
 [<Test>]
 let ``unify_and_apply 2``() =
     unify_and_apply [(parset "f(x,y)"),(parset "f(y,x)")]
     |> should equal [(Fn ("f",[Var "y"; Var "y"]), Fn ("f",[Var "y"; Var "y"]))]
 
+// unify.p004
 [<Test>]
 let ``unify_and_apply 3``() =
     unify_and_apply [(parset "x_0"),(parset "f(x_1,x_1)");

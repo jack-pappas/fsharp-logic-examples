@@ -22,6 +22,8 @@ open FsUnit
 // First example and a little tracing.                                       //
 // ------------------------------------------------------------------------- //
     
+// herbrand.p001
+// Harrison #07
 [<Test>]
 let ``gilmore simple``() =
     "exists x. forall y. P(x) ==> P(y)"
@@ -34,6 +36,8 @@ let ``gilmore simple``() =
 // Quick example.                                                            //
 // ------------------------------------------------------------------------- //
 
+// herbrand.p003
+// Pelletier #24
 [<Test>]
 let ``gilmore quick``() =
     @"~(exists x. U(x) /\ Q(x)) 
@@ -45,6 +49,9 @@ let ``gilmore quick``() =
     |> gilmore
     |> should equal 1
 
+
+// herbrand.p006
+// Pelletier #20
 [<Test>]
 let ``davis putnam``() =
     @"(forall x y. exists z. forall w. P(x) /\ Q(y) ==> R(z) /\ U(w))
@@ -53,10 +60,14 @@ let ``davis putnam``() =
     |> davisputnam
     |> should equal 19
 
+// herbrand.p007
+// Pelletier #36
 [<TestCase(@"(forall x. exists y. P(x,y)) 
         /\ (forall x. exists y. G(x,y)) 
         /\ (forall x y. P(x,y) \/ G(x,y) ==> (forall z. P(y,z) \/ G(y,z) ==> H(x,z)))
         ==> (forall x. exists y. H(x,y))", Result = 3)>]
+// herbrand.p008
+// Pelletier #29
 [<TestCase(@"(exists x. P(x)) /\ (exists x. G(x)) ==>
         ((forall x. P(x) ==> H(x)) /\ (forall x. G(x) ==> J(x)) <=>
         (forall x y. P(x) /\ G(y) ==> H(x) /\ J(y)))",

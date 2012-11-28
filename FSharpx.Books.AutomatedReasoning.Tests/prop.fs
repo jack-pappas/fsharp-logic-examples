@@ -18,7 +18,10 @@ open FsUnit
 // Example of use.                                                           //
 // ------------------------------------------------------------------------- //
 
+// prop.p007
 [<TestCase(true, false, true, Result = true)>]
+// prop.p008
+// Harrison #01
 [<TestCase(true, true, false, Result = false)>]
 let ``eval``(p, q, r) =
     function
@@ -33,6 +36,7 @@ let ``eval``(p, q, r) =
 // Example.                                                                  //
 // ------------------------------------------------------------------------- //
 
+// prop.p009
 [<Test>]
 let ``atoms``() =
     atoms (parse_prop_formula "p /\ q \/ s ==> ~p \/ (r <=> s)")
@@ -43,9 +47,14 @@ let ``atoms``() =
 // Examples.                                                                 //
 // ------------------------------------------------------------------------- //
 
+// prop.p014
+// Pelletier #06
 [<TestCase(@"p \/ ~p", Result = true)>]
+// prop.p015
 [<TestCase(@"p \/ q ==> p", Result = false)>]
+// prop.p016
 [<TestCase(@"p \/ q ==> q \/ (p <=> q)", Result = false)>]
+// prop.p017
 [<TestCase(@"(p \/ q) /\ ~(p /\ q) ==> (~p <=> q)", Result = true)>]
 let ``tautology all`` formula  =
     tautology (parse_prop_formula formula)
@@ -55,11 +64,20 @@ let ``tautology all`` formula  =
 // Surprising tautologies including Dijkstra's "Golden rule".                //
 // ------------------------------------------------------------------------- //
 
+// prop.p019
+// Pelletier #16
 [<TestCase(@"(p ==> q) \/ (q ==> p)", Result = true)>]
+// prop.p020
 [<TestCase(@"p \/ (q <=> r) <=> (p \/ q <=> p \/ r)", Result = true)>]
+// prop.p021
+// Harrison #02 - Equations within equations
 [<TestCase(@"p /\ q <=> ((p <=> q) <=> p \/ q)", Result = true)>]
+// prop.p022
+// Harrison #03 - Equations within equations
 [<TestCase(@"(p ==> q) <=> (~q ==> ~p)", Result = true)>]
+// prop.p023
 [<TestCase(@"(p ==> ~q) <=> (q ==> ~p)", Result = true)>]
+// prop.p024
 [<TestCase(@"(p ==> q) <=> (q ==> p)", Result = false)>]
 let ``surprising tautology`` formula =
     tautology (parse_prop_formula formula)
@@ -69,6 +87,7 @@ let ``surprising tautology`` formula =
 // Some logical equivalences allowing elimination of connectives.            //
 // ------------------------------------------------------------------------- //
 
+// prop.p025
 [<Test>]
 let ``equivalences``() =
     List.forall tautology [
@@ -84,6 +103,7 @@ let ``equivalences``() =
 // Example of NNF function in action.                                        //
 // ------------------------------------------------------------------------- //
 
+// prop.p029
 [<Test>]
 let ``nnf``() =
     let fm003 = (parse_prop_formula ("(p <=> q) <=> ~(r ==> s)"))
@@ -96,7 +116,9 @@ let ``nnf``() =
 // Some tautologies remarked on.                                             //
 // ------------------------------------------------------------------------- //
 
+// prop.p030
 [<TestCase(@"(p ==> p') /\ (q ==> q') ==> (p /\ q ==> p' /\ q')", Result = true)>]
+// prop.p031
 [<TestCase(@"(p ==> p') /\ (q ==> q') ==> (p \/ q ==> p' \/ q')", Result = true)>]
 let ``remarked tautology`` formula  =
     tautology (parse_prop_formula formula)
@@ -106,6 +128,8 @@ let ``remarked tautology`` formula  =
 // Example.                                                                  //
 // ------------------------------------------------------------------------- //
 
+// prop.p036
+// Harrison #04 - dnf
 [<Test>]
 let ``purednf all``() =
     purednf (parse_prop_formula ("(p \/ q /\ r) /\ (~p \/ ~r)"))
@@ -119,6 +143,8 @@ let ``purednf all``() =
 // Example.                                                                  //
 // ------------------------------------------------------------------------- //
 
+// prop.p037
+// Harrison #04 - dnf
 [<Test>]
 let ``non-trivial purednf``() =
     List.filter (non trivial) (purednf (parse_prop_formula ("(p \/ q /\ r) /\ (~p \/ ~r)")))
@@ -130,6 +156,8 @@ let ``non-trivial purednf``() =
 // Example.                                                                  //
 // ------------------------------------------------------------------------- //
     
+// prop.p038
+// Harrison #04 - dnf
 [<Test>]
 let ``dnf``() =
     let fm005 = (parse_prop_formula ("(p \/ q /\ r) /\ (~p \/ ~r)"))
@@ -141,6 +169,8 @@ let ``dnf``() =
 // Example.                                                                  //
 // ------------------------------------------------------------------------- //
     
+// prop.p040
+// Harrison #04 - dnf
 [<Test>]
 let ``cnf``() =
     let fm006 = (parse_prop_formula ("(p \/ q /\ r) /\ (~p \/ ~r)"))

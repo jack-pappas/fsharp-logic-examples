@@ -17,23 +17,28 @@ open NUnit.Framework
 open FsUnit
 
 // pg. 126
-
+// fol.p007
+// Harrison #06 
 [<Test>]
 let ``holds with bool_interp``() =
     holds bool_interp undefined (parse "forall x. (x = 0) \/ (x = 1)")
     |> should be True
 
+// fol.p008
+// Harrison #06 
 [<Test>]
 let ``holds with mod_interp 1``() =
     holds (mod_interp 2) undefined (parse "forall x. (x = 0) \/ (x = 1)")
     |> should be True
 
+// fol.p009
+// Harrison #06 
 [<Test>]
 let ``holds with mod_interp 2``() =
     holds (mod_interp 3) undefined (parse "forall x. (x = 0) \/ (x = 1)")
     |> should be False    
 
-    
+// fol.p010
 [<Test>]
 let ``holds with a range of mod_interp``() =
     let fm = (parse "forall x. ~(x = 0) ==> exists y. x * y = 1")
@@ -42,11 +47,13 @@ let ``holds with a range of mod_interp``() =
 
 // pg. 129
 
+// fol.p011
 [<Test>]
 let ``holds with mod_interp 3``() =
     holds (mod_interp 3) undefined (parse "(forall x. x = 0) ==> 1 = 0")
     |> should be True
 
+// fol.p012
 [<Test>]
 let ``holds with mod_interp 4``() =
     holds (mod_interp 3) undefined (parse "forall x. x = 0 ==> 1 = 0")
@@ -57,8 +64,11 @@ let ``holds with mod_interp 4``() =
 // Variant function and examples.                                            //
 // ------------------------------------------------------------------------- //
 
+// fol.p013
 [<TestCase(@"x", "y", "z", Result = "x")>]
+// fol.p014
 [<TestCase(@"x", "x", "y", Result = "x'")>]
+// fol.p015
 [<TestCase(@"x", "x", "x'", Result = "x''")>]
 let ``variant``(x, y, z) =
     variant x [y; z]
@@ -71,7 +81,9 @@ let private subst_results = [|
                                    Atom (R ("=", [Var "x'"; Var "x''"])))));
                             |]
 
+// fol.p016
 [<TestCase(@"forall x. x = y", 0)>]
+// fol.p017
 [<TestCase(@"forall x x'. x = y ==> x = x'", 1)>]
 let ``subst`` (f, idx) =
     subst ("y" |=> Var "x") (parse f)

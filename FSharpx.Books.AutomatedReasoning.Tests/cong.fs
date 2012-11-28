@@ -24,14 +24,22 @@ open FsUnit
 // Example.                                                                  //
 // ------------------------------------------------------------------------- //
 
+// cong.p001
 [<Test>]
-let ``ccvalid 1``() =
+let ``Congruence closure 1``() =
     ccvalid (parse @"f(f(f(f(f(c))))) = c /\ f(f(f(c))) = c 
         ==> f(c) = c \/ f(g(c)) = g(f(c))")
     |> should be True
     
+// cong.p002
 [<Test>]
-let ``ccvalid 2``() =
+let ``Congruence closure 2``() =
     ccvalid (parse @"f(f(f(f(c)))) = c /\ f(f(c)) = c ==> f(c) = c")
     |> should be False
+    
+// cong.p003
+[<Test>]
+let ``Congruence closure 3``() =
+    ccvalid (parse @"f(a,b) = a ==> f(f(a,b), b) = a")
+    |> should be True
 

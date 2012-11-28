@@ -23,6 +23,7 @@ open Num
 // An example.                                                               //
 // ------------------------------------------------------------------------- //
 
+// stal.p001
 [<Test>]
 let ``triggers``() =
     triggers (parse_prop_formula "p <=> (q /\ r)")
@@ -42,6 +43,7 @@ let ``triggers``() =
 // Examples.                                                                 //
 // ------------------------------------------------------------------------- //
 
+// stal.p002
 [<Test>]
 let ``stalmarck``() =
     stalmarck (mk_adder_test 2 1) // use small example (2, 1) instead of (6, 3)

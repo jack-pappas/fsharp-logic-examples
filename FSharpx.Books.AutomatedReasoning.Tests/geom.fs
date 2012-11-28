@@ -15,14 +15,15 @@ open FSharpx.Books.AutomatedReasoning.complex
 open FSharpx.Books.AutomatedReasoning.real
 open FSharpx.Books.AutomatedReasoning.grobner
 open FSharpx.Books.AutomatedReasoning.geom
+
 open NUnit.Framework
 open FsUnit
-
 
 (* ------------------------------------------------------------------------- *)
 (* Trivial example.                                                          *)
 (* ------------------------------------------------------------------------- *)
 
+// geom.p001
 [<Test>]
 let ``examples 1``() =
     @"collinear(a,b,c) ==> collinear(b,a,c)"
@@ -51,41 +52,45 @@ let ``examples 1``() =
 (* Verify equivalence under rotation.                                        *)
 (* ------------------------------------------------------------------------- *)
 
+// geom.p002
 [<Test>]
 let ``examples 2``() =
     coordinations
     |> List.forall (grobner_decide << invariant_under_translation)
     |> should be True
 
+// geom.p003
 [<Test>]
 let ``examples 3``() =
     coordinations
     |> List.forall (grobner_decide << invariant_under_rotation)
     |> should be True
 
-
 (* ------------------------------------------------------------------------- *)
 (* And show we can always invent such a transformation to zero a y:          *)
 (* ------------------------------------------------------------------------- *)
 
-//// This test case results in StackOverflowException with 1MB stack limit
-//[<Test; Category("LongRunning")>]
-//let ``examples 4``() =
-//    @"forall x y. exists s c. s^2 + c^2 = 1 /\ s * x + c * y = 0"
-//    |> parse
-//    |> real_qelim
-//    |> should equal True
+// geom.p004
+// This test case results in StackOverflowException with 1MB stack limit
+[<Test; Category("LongRunning")>]
+let ``examples 4``() =
+    @"forall x y. exists s c. s^2 + c^2 = 1 /\ s * x + c * y = 0"
+    |> parse
+    |> real_qelim
+    |> should equal True
 
 (* ------------------------------------------------------------------------- *)
 (* Other interesting invariances.                                            *)
 (* ------------------------------------------------------------------------- *)
 
+// geom.p005
 [<Test>]
 let ``examples 5``() =
     coordinations
     |> List.forall (grobner_decide << invariant_under_scaling)
     |> should be True
 
+// geom.p006
 [<Test>]
 let ``examples 6``() =
     coordinations
@@ -165,6 +170,7 @@ let ``examples 6``() =
 (* One from "Algorithms for Computer Algebra"                                *)
 (* ------------------------------------------------------------------------- *)
 
+// geom.p007
 [<Test>]
 let ``examples 7``() =
     @"is_midpoint(m,a,c) /\ perpendicular(a,c,m,b)
@@ -173,11 +179,11 @@ let ``examples 7``() =
     |> (grobner_decide << originate)
     |> should be True
 
-
 (* ------------------------------------------------------------------------- *)
 (* Parallelogram theorem (Chou's expository example at the start).           *)
 (* ------------------------------------------------------------------------- *)
 
+// geom.p008
 [<Test>]
 let ``examples 8``() =
     @"parallel(a,b,d,c) /\ parallel(a,d,b,c) /\
@@ -187,6 +193,7 @@ let ``examples 8``() =
     |> (grobner_decide << originate)
     |> should be False
 
+// geom.p009
 [<Test>]
 let ``examples 9``() =
     @"parallel(a,b,d,c) /\ parallel(a,d,b,c) /\
@@ -221,6 +228,7 @@ let rec private simson_vars =
 and private simson_zeros =
     ["a_x"; "a_y"; "o_y"]
 
+// geom.p010
 [<Test>]
 let ``examples 10``() =
     wu simson simson_vars simson_zeros
@@ -342,6 +350,7 @@ let ``examples 10``() =
 (* Try without special coordinates.                                          *)
 (* ------------------------------------------------------------------------- *)
 
+// geom.p011
 [<Test>]
 let ``examples 11``() =
     wu simson (simson_vars @ simson_zeros) []
@@ -538,6 +547,7 @@ let rec private pappus_vars =
 and private pappus_zeros =
     ["a1_y"; "a2_y"; "a3_y"; "b1_x"; "b2_x"; "b3_x"]
 
+// geom.p012
 [<Test>]
 let ``examples 12``() =
     wu pappus pappus_vars pappus_zeros
@@ -621,6 +631,7 @@ and private butterfly_zeros =
  // This one is costly (too big for laptop, but doable in about 300M)
  // However, it gives exactly the same degenerate conditions as Chou
 
+ // geom.p013
 [<Test; Category("LongRunning")>]
 let ``examples 13``() =
     wu butterfly butterfly_vars butterfly_zeros
@@ -767,4 +778,3 @@ let ``examples 13``() =
                 [Fn ("+",[Fn ("0",[]); Fn ("*",[Var "e_y"; Fn ("1",[])])]);
                  Fn ("0",[])])));
        Not (Atom (R ("=",[Fn ("1",[]); Fn ("0",[])])))]
-

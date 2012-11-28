@@ -20,7 +20,10 @@ open FsUnit
 // Some currently tractable examples.                                        //
 // ------------------------------------------------------------------------- //
 
+// propexamples.p002
 [<TestCase(3, 3, 5, Result = false)>]
+
+// propexamples.p003
 [<TestCase(3, 3, 6, Result = true)>]
 let ``ramsey``(s, t, n) =
     tautology(ramsey s t n)
@@ -30,8 +33,12 @@ let ``ramsey``(s, t, n) =
 // Examples.                                                                 //
 // ------------------------------------------------------------------------- //
 
+// propexamples.p005
 [<TestCase(7, Result = true)>]
+// propexamples.p006
 [<TestCase(9, Result = false)>]
+// propexamples.p007
+// Harrison #05 - prime
 [<TestCase(11, Result = true)>]
 let ``prime`` p =
     tautology(prime p)

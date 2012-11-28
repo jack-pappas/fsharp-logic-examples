@@ -18,6 +18,7 @@ open FSharpx.Books.AutomatedReasoning.eqelim
 open NUnit.Framework
 open FsUnit
 
+// eqelim.p001
 [<Test>]
 let ``Abelian problem``() =
     meson002 
@@ -29,6 +30,7 @@ let ``Abelian problem``() =
               ==> P(b,a,c)")
     |> should equal [13]
 
+// eqelim.p002
 [<Test>]
 let ``Lemma for equivalence elimination``() =
     meson002 
@@ -38,6 +40,8 @@ let ``Lemma for equivalence elimination``() =
               <=> (forall x y. R(x,y) <=> (forall z. R(x,z) <=> R(y,z)))")
     |> should equal [4; 3; 9; 3; 2; 7]
 
+// eqelim.p003
+// Wishnu #1
 [<Test; Category("LongRunning")>]
 let ``examples 1``() =
     bmeson 
@@ -45,6 +49,8 @@ let ``examples 1``() =
               (exists y. y = g(f(y)) /\ forall y'. y' = g(f(y')) ==> y = y')")
     |> should equal [25; 25]
 
+// eqelim.p004
+// Wishnu #1
 [<Test>]
 let ``examples 2``() =
     emeson 
@@ -52,6 +58,7 @@ let ``examples 2``() =
               (exists y. y = g(f(y)) /\ forall y'. y' = g(f(y')) ==> y = y')")
     |> should equal [16; 16]
 
+// eqelim.p005
 [<Test; Category("LongRunning")>]
 let ``examples 3``() =
     bmeson 
