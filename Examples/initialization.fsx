@@ -9,14 +9,15 @@
 
 #I @".\..\FSharpx.Books.AutomatedReasoning\bin\Debug"
 #r @"FSharpx.Books.AutomatedReasoning.dll"
-#r @"FSharpx.Compatibility.OCaml.dll"
+#r @"FSharp.Compatibility.OCaml.dll"
 
 // Reduce margins
 fsi.PrintWidth <- 72;;
 
 // Open bignums
-open FSharpx.Compatibility.OCaml;;
-open FSharpx.Compatibility.OCaml.Num;;
+open FSharp.Compatibility.OCaml;;
+#nowarn "62";;
+open FSharp.Compatibility.OCaml.Num;;
 
 // Print the full value of a Num instead of truncating it.
 fsi.AddPrinter (fun (n : Num) -> n.ToString ());;
