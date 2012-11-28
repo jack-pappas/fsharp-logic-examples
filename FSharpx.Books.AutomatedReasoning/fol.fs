@@ -109,8 +109,6 @@ let parse =
 // Set up parsing of quotations.                                             //
 // ------------------------------------------------------------------------- //
 
-let default_parser = parse
-
 let secondary_parser = parset
 
 // pg. 629
