@@ -17,13 +17,17 @@ fsi.AddPrinter sprint_term
 // Examples.                                                                 //
 // ------------------------------------------------------------------------- //
 
+// unify.p001
 unify_and_apply [(parset @"f(x,g(y))"),(parset @"f(f(z),w)")];;
 
+// unify.p002
 unify_and_apply [(parset @"f(x,y)"),(parset @"f(y,x)")];;
 
+// unify.p003
 // System.Exceptino: cyclic. - This is the expected result.
 //unify_and_apply [(parset @"f(x,g(y))"),(parset @"f(y,x)")];;
 
+// unify.p004
 unify_and_apply [(parset @"x_0"),(parset @"f(x_1,x_1)");
                  (parset @"x_1"),(parset @"f(x_2,x_2)");
                  (parset @"x_2"),(parset @"f(x_3,x_3)")];;

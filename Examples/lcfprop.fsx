@@ -17,8 +17,14 @@ fsi.AddPrinter sprint_thm
 // The examples in the text.                                                 //
 // ------------------------------------------------------------------------- //
 
+// lcfprop.p001
+// Pelletier #16
 lcftaut (parse @"(p ==> q) \/ (q ==> p)") ;;
 
+// lcfprop.p002
+// Harrison #02 - Equations within equations
 lcftaut (parse @"p /\ q <=> ((p <=> q) <=> p \/ q)");;
 
+// lcfprop.p003
+// Pelletier #12
 lcftaut (parse @"((p <=> q) <=> r) <=> (p <=> (q <=> r))");;

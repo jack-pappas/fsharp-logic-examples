@@ -335,8 +335,8 @@ let fm002 =
 
 // cooper.p049
 // long running
-//integer_qelim fm002
-//    ;;
+integer_qelim fm002
+    ;;
 
 // ------------------------------------------------------------------------- //
 // Bob Constable's "stamp problem".                                          //
@@ -372,11 +372,11 @@ integer_qelim
 
 // cooper.p054
 // long running
-//integer_qelim
-//    (parse @"exists l.
-//        forall x. x >= l
-//            ==> exists u v. u >= 0 /\ v >= 0 /\ x = 7 * u + 8 * v")
-//    ;;
+integer_qelim
+    (parse @"exists l.
+        forall x. x >= l
+            ==> exists u v. u >= 0 /\ v >= 0 /\ x = 7 * u + 8 * v")
+    ;;
 
 // ------------------------------------------------------------------------- //
 // Example from reciprocal mult: (2622 * x)")16 = x/100 within a range.      //
@@ -384,13 +384,13 @@ integer_qelim
 
 // cooper.p055
 // long running
-//integer_qelim
-//    (parse @"forall x q1 q2 r1 r2.
-//        x < 4699 /\ 
-//        2622 * x = 65536 * q1 + r1 /\ 0 <= q1 /\ 0 <= r1 /\ r1 < 65536 /\ 
-//        x = 100 * q2 + r2 /\ 0 <= q2 /\ 0 <= r2 /\ r2 < 100
-//        ==> q1 = q2")
-//    ;;
+integer_qelim
+    (parse @"forall x q1 q2 r1 r2.
+        x < 4699 /\ 
+        2622 * x = 65536 * q1 + r1 /\ 0 <= q1 /\ 0 <= r1 /\ r1 < 65536 /\ 
+        x = 100 * q2 + r2 /\ 0 <= q2 /\ 0 <= r2 /\ r2 < 100
+        ==> q1 = q2")
+    ;;
 
 // ------------------------------------------------------------------------- //
 // Yet more.                                                                 //
@@ -406,20 +406,20 @@ integer_qelim
 // cooper.p057
 // long running
 //*** Landau trick! Is it too slow?
-//integer_qelim
-//    (parse @"forall n.
-//     0 < n /\ n < 2400
-//        ==> n <= 2 /\ 2 <= 2 * n \/
-//            n <= 3 /\ 3 <= 2 * n \/
-//            n <= 5 /\ 5 <= 2 * n \/
-//            n <= 7 /\ 7 <= 2 * n \/
-//            n <= 13 /\ 13 <= 2 * n \/
-//            n <= 23 /\ 23 <= 2 * n \/
-//            n <= 43 /\ 43 <= 2 * n \/
-//            n <= 83 /\ 83 <= 2 * n \/
-//            n <= 163 /\ 163 <= 2 * n \/
-//            n <= 317 /\ 317 <= 2 * n \/
-//            n <= 631 /\ 631 <= 2 * n \/
-//            n <= 1259 /\ 1259 <= 2 * n \/
-//            n <= 2503 /\ 2503 <= 2 * n")
-//    ;;
+integer_qelim
+    (parse @"forall n.
+     0 < n /\ n < 2400
+        ==> n <= 2 /\ 2 <= 2 * n \/
+            n <= 3 /\ 3 <= 2 * n \/
+            n <= 5 /\ 5 <= 2 * n \/
+            n <= 7 /\ 7 <= 2 * n \/
+            n <= 13 /\ 13 <= 2 * n \/
+            n <= 23 /\ 23 <= 2 * n \/
+            n <= 43 /\ 43 <= 2 * n \/
+            n <= 83 /\ 83 <= 2 * n \/
+            n <= 163 /\ 163 <= 2 * n \/
+            n <= 317 /\ 317 <= 2 * n \/
+            n <= 631 /\ 631 <= 2 * n \/
+            n <= 1259 /\ 1259 <= 2 * n \/
+            n <= 2503 /\ 2503 <= 2 * n")
+    ;;

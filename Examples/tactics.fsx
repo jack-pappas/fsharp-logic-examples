@@ -23,6 +23,8 @@ fsi.AddPrinter sprint_goal
 // A simple example.                                                         //
 // ------------------------------------------------------------------------- //
 
+// tactics.p001
+// Dijkstra #1
 let g0 = 
     set_goal (parse @"
         (forall x. x <= x) /\
@@ -30,10 +32,17 @@ let g0 =
         (forall x y. f(x) <= y <=> x <= g(y))
         ==> (forall x y. x <= y ==> f(x) <= f(y)) /\
             (forall x y. x <= y ==> g(x) <= g(y))");;
+
+// tactics.p002
 let g1 = imp_intro_tac "ant" g0;;
+
+// tactics.p003
 let g2 = conj_intro_tac g1;;
+
+// tactics.p004
 let g3 = funpow 2 (auto_tac by ["ant"]) g2;;
 
+// tactics.p005
 extract_thm g3;;
     
 // pg. 514
@@ -41,6 +50,8 @@ extract_thm g3;;
 // All packaged up together.                                                 //
 // ------------------------------------------------------------------------- //
 
+// tactics.p006
+// Dijkstra #1
 prove (parse @"
     (forall x. x <= x) /\
     (forall x y z. x <= y /\ y <= z ==> x <= z) /\
@@ -57,6 +68,8 @@ prove (parse @"
 // A simple example.                                                         //
 // ------------------------------------------------------------------------- //
 
+// tactics.p007
+// Dijkstra #3
 let ewd954 = 
     prove (parse @"
         (forall x y. x <= y <=> x * y = x) /\
@@ -84,6 +97,7 @@ let ewd954 =
 // More examples not in the main text.                                       //
 // ------------------------------------------------------------------------- //
 
+// tactics.p008
 prove (parse @"
         (exists x. p(x)) ==> (forall x. p(x) ==> p(f(x))) 
         ==> exists y. p(f(f(f(f(y)))))")
@@ -111,6 +125,7 @@ let lemma (s,p) = function
                        | _ -> failwith "malformed input")
         | _ -> failwith "malformed lemma"
 
+// tactics.p009
 prove (parse @"
     (exists x. p(x)) ==> (forall x. p(x) ==> p(f(x)))
     ==> exists y. p(f(f(f(f(y)))))")
@@ -129,6 +144,7 @@ prove (parse @"
 // Running a series of proof steps one by one on goals.                      //
 // ------------------------------------------------------------------------- //
 
+// tactics.p010
 let run prf g = List.foldBack id (List.rev prf) g
 
 // ------------------------------------------------------------------------- //
@@ -157,12 +173,14 @@ let b () =
 // Examples.                                                                 //
 // ------------------------------------------------------------------------- //
 
+// tactics.p011
 prove (parse @"
     p(a) ==> (forall x. p(x) ==> p(f(x)))
     ==> exists y. p(y) /\ p(f(y))")
     [our thesis at once;
     qed];;
 
+// tactics.p012
 prove (parse @"
     (exists x. p(x)) ==> (forall x. p(x) ==> p(f(x))) 
     ==> exists y. p(f(f(f(f(y)))))")
@@ -177,6 +195,7 @@ prove (parse @"
     so our thesis by ["C"];
     qed];;
 
+// tactics.p013
 prove (parse @"
     forall a. p(a) ==> (forall x. p(x) ==> p(f(x)))
         ==> exists y. p(y) /\ p(f(y))")
@@ -189,16 +208,19 @@ prove (parse @"
     so our thesis by ["C"; "A"];
     qed];;
 
+// tactics.p014
+// NOTE: Renamed 'c' to 'a' so that results are same as tactics.p011
 prove (parse @"
-    p(c) ==> (forall x. p(x) ==> p(f(x))) 
+    p(a) ==> (forall x. p(x) ==> p(f(x))) 
         ==> exists y. p(y) /\ p(f(y))")
-    [assume ["A",(parse @"p(c)")];
+    [assume ["A",(parse @"p(a)")];
     assume ["B",(parse @"forall x. p(x) ==> p(f(x))")];
-    take (parset @"c");
-    conclude (parse @"p(c)") by ["A"];
+    take (parset @"a");
+    conclude (parse @"p(a)") by ["A"];
     our thesis by ["A"; "B"];
     qed];;
 
+// tactics.p015
 prove (parse @"
     forall a. p(a) ==> (forall x. p(x) ==> p(f(x)))
         ==> exists y. p(y) /\ p(f(y))")
@@ -211,6 +233,7 @@ prove (parse @"
     our thesis by ["C"; "A"];
     qed];;
 
+// tactics.p016
 prove (parse @"
     forall a. p(a) ==> (forall x. p(x) ==> p(f(x))) 
         ==> exists y. p(y) /\ p(f(y))")
@@ -223,6 +246,7 @@ prove (parse @"
     our thesis by ["C"; "A"; "D"];
     qed];;
 
+// tactics.p017
 prove (parse @"
     (p(a) \/ p(b)) ==> q ==> exists y. p(y)")
     [assume ["A",(parse @"p(a) \/ p(b)")];
@@ -234,7 +258,8 @@ prove (parse @"
         take (parset @"b");
         so our thesis at once;
         qed];;
-        
+       
+// tactics.p018 
 prove (parse @"
     (p(a) \/ p(b)) /\ (forall x. p(x) ==> p(f(x))) ==> exists y. p(f(y))")
     [assume ["base",(parse @"p(a) \/ p(b)");
@@ -249,6 +274,7 @@ prove (parse @"
         so our thesis by ["Step"];
         qed];;
 
+// tactics.p019
 prove (parse @"
     (exists x. p(x)) ==> (forall x. p(x) ==> p(f(x))) ==> exists y. p(f(y))")
     [assume ["A",(parse @"exists x. p(x)")];
@@ -259,6 +285,7 @@ prove (parse @"
     our thesis by ["concl"];
     qed];;
 
+// tactics.p020
 prove (parse @"
     (forall x. p(x) ==> q(x)) ==> (forall x. q(x) ==> p(x))
         ==> (p(a) <=> q(a))")
@@ -292,14 +319,26 @@ prove (parse @"
 // Some amusing efficiency tests versus a "direct" spec.                     //
 // ------------------------------------------------------------------------- //
 
+// tactics.p021
+// Real: 00:00:06.499, CPU: 00:00:06.484, GC gen0: 14, gen1: 1, gen2: 0
 test002 10;;
+
+// tactics.p022
 // Real: 00:00:14.016, CPU: 00:00:13.953, GC gen0: 29, gen1: 2, gen2: 0
 test002 11;;
+
+// tactics.p023
 // Real: 00:00:29.456, CPU: 00:00:29.390, GC gen0: 59, gen1: 4, gen2: 1
 test002 12;;
+
+// tactics.p024
 // Real: 00:01:02.199, CPU: 00:01:02.187, GC gen0: 117, gen1: 6, gen2: 1
 test002 13;;
+
+// tactics.p025
 // Real: 00:02:10.840, CPU: 00:02:10.781, GC gen0: 233, gen1: 14, gen2: 1
 test002 14;;
+
+// tactics.p026
 // Real: 00:04:40.929, CPU: 00:04:40.187, GC gen0: 467, gen1: 25, gen2: 3
 test002 15;;

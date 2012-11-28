@@ -22,6 +22,7 @@ fsi.AddPrinter sprint_prop_formula
 // An example.                                                               //
 // ------------------------------------------------------------------------- //
 
+// stal.p001
 triggers (parse_prop_formula @"p <=> (q /\ r)");;
 
 // pg. 99
@@ -29,5 +30,6 @@ triggers (parse_prop_formula @"p <=> (q /\ r)");;
 // Examples.                                                                 //
 // ------------------------------------------------------------------------- //
 
+// stal.p002
 // Real: 00:01:35.050, CPU: 00:01:34.906, GC gen0: 449, gen1: 281, gen2: 1
 time stalmarck (mk_adder_test 6 3);;

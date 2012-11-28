@@ -23,6 +23,7 @@ fsi.AddPrinter sprint_fol_formula
 // Example.                                                                  //
 // ------------------------------------------------------------------------- //
 
+// skolem.p001
 simplify (parse @"
     (forall x y. P(x) \/ (P(y) /\ false)) 
         ==> exists z. Q");;
@@ -32,6 +33,7 @@ simplify (parse @"
 // Example of NNF function in action.                                        //
 // ------------------------------------------------------------------------- //
 
+// skolem.p002
 nnf (parse @"
     (forall x. P(x)) 
         ==> ((exists y. Q(y)) <=> exists z. P(z) /\ Q(z))");;
@@ -41,6 +43,7 @@ nnf (parse @"
 // Example.                                                                  //
 // ------------------------------------------------------------------------- //
 
+// skolem.p003
 pnf (parse @"
     (forall x. P(x) \/ R(y)) 
         ==> exists y z. Q(y) \/ ~(exists z. P(z) /\ Q(z))");;
@@ -50,10 +53,12 @@ pnf (parse @"
 // Example.                                                                  //
 // ------------------------------------------------------------------------- //
 
+// skolem.p004
 skolemize (parse @"
     exists y. x < y 
         ==> forall u. exists v. x * u < y * v");;
 
+// skolem.p005
 skolemize
      (parse @"forall x. P(x)
                  ==> (exists y z. Q(y) \/ ~(exists z. P(z) /\ Q(z)))");;

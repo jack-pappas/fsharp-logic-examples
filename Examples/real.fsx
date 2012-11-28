@@ -25,20 +25,28 @@ fsi.AddPrinter sprint_fol_formula
 // First examples.                                                           //
 // ------------------------------------------------------------------------- //
 
+// real.p001
 real_qelim (parse @"exists x. x^4 + x^2 + 1 = 0");;
 
+// real.p002
 real_qelim (parse @"exists x. x^3 - x^2 + x - 1 = 0");;
 
+// real.p003
 real_qelim (parse @"exists x y. x^3 - x^2 + x - 1 = 0 /\ y^3 - y^2 + y - 1 = 0 /\ ~(x = y)");;
 
+// real.p004
 real_qelim (parse @"exists x. x^2 - 3 * x + 2 = 0 /\ 2 * x - 3 = 0");;
 
+// real.p005
 real_qelim (parse @"forall a f k. (forall e. k < e ==> f < a * e) ==> f <= a * k");;
 
+// real.p006
 real_qelim (parse @"exists x. a * x^2 + b * x + c = 0");;
 
+// real.p007
 real_qelim (parse @"forall a b c. (exists x. a * x^2 + b * x + c = 0) <=> b^2 >= 4 * a * c");;
 
+// real.p008
 real_qelim (parse @"forall a b c. (exists x. a * x^2 + b * x + c = 0) <=> a = 0 /\ (b = 0 ==> c = 0) \/ ~(a = 0) /\ b^2 >= 4 * a * c");;
 
 // pg. 377
@@ -46,16 +54,21 @@ real_qelim (parse @"forall a b c. (exists x. a * x^2 + b * x + c = 0) <=> a = 0 
 // Termination ordering for group theory completion.                         //
 // ------------------------------------------------------------------------- //
 
+// real.p009
 real_qelim (parse @"1 < 2 /\ (forall x. 1 < x ==> 1 < x^2) /\ (forall x y. 1 < x /\ 1 < y ==> 1 < x * (1 + 2 * y))");;
 
+// real.p010
 // Real: 00:00:31.254, CPU: 00:00:31.109, GC gen0: 169, gen1: 168, gen2: 1
 let eqs = complete_and_simplify ["1"; "*"; "i"] [(parse @"1 * x = x"); (parse @"i(x) * x = 1"); (parse @"(x * y) * z = x * y * z")];;
 
+// real.p011
 let fm = list_conj (List.map grpform eqs);;
 
+// real.p012
 Initialization.runWithEnlargedStack (fun () ->
     real_qelim fm);;
 
+// real.p013
 real_qelim' (parse @"forall d. (exists c. forall a b. (a = d /\ b = c) \/ (a = c /\ b = 1) ==> a^2 = b) <=> d^4 = 1");;
 
 // Not in book.
@@ -101,6 +114,8 @@ let basic_real_qelim vars = function
         casesplit (x::vars) [] pols cont init_sgns
     | _ -> failwith "malformed input";;
 
+// real.p00
 let real_qelim = simplify << evalc << lift_qelim polyatom (simplify << evalc) basic_real_qelim;;
 
+// real.p00
 let real_qelim' = simplify << evalc << lift_qelim polyatom (dnf << cnnf id << evalc) basic_real_qelim;;

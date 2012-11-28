@@ -19,6 +19,7 @@ fsi.AddPrinter sprint_term
 // Example: 3 * 2 + 4 in successor notation.                                 //
 // ------------------------------------------------------------------------- //
 
+// rewrite.p001
 rewrite 
     [
     parse @"0 + x = x";

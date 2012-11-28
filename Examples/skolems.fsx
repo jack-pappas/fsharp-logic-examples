@@ -13,6 +13,11 @@ open FSharpx.Books.AutomatedReasoning.skolems
 
 fsi.AddPrinter sprint_fol_formula
 
+// TODO: skolems is missing unit test.
+
+// pg. 226
+
+// skolems.p001
 skolemizes [
         parse @"exists x y. x + y = 2";
         parse @"forall x. exists y. x + 1 = y"; ];;

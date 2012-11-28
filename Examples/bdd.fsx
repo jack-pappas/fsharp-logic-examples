@@ -17,6 +17,7 @@ open FSharpx.Books.AutomatedReasoning.bdd
 // Examples.                                                                 //
 // ------------------------------------------------------------------------- //
 
+// bdd.p001
 bddtaut (mk_adder_test 4 2);;
 
 // pg. 107
@@ -24,6 +25,9 @@ bddtaut (mk_adder_test 4 2);;
 // Examples.                                                                 //
 // ------------------------------------------------------------------------- //
 
+// bdd.p002
+// Harrison #05 - prime
 ebddtaut (prime 101);;
 
+// bdd.p003
 ebddtaut (mk_adder_test 9 5);;

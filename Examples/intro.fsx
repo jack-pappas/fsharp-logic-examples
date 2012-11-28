@@ -14,6 +14,7 @@ open FSharpx.Books.AutomatedReasoning.intro
 // Trivial example of using the type constructors.                           //
 // ------------------------------------------------------------------------- //
 
+// intro.p001
 Add (Mul (Const 2, Var "x"), Var "y");;
 
 // pg. 16
@@ -23,10 +24,13 @@ Add (Mul (Const 2, Var "x"), Var "y");;
 
 let e = Add (Mul (Add (Mul (Const 0, Var "x"), Const 1), Const 3), Const 12);;
 
+// intro.p002
 simplify e;;
 
+// intro.p003
 lex (explode @"2*((var_1 + x') + 11)");;
 
+// intro.p004
 lex (explode @"if //p1-- == *p2++) then f() else g()");;
 
 // pg. 20
@@ -34,6 +38,7 @@ lex (explode @"if //p1-- == *p2++) then f() else g()");;
 // Our parser.                                                               //
 // ------------------------------------------------------------------------- //
 
+// intro.p005
 parse_exp @"x + 1";;
 
 fsi.AddPrinter sprint_exp;;
@@ -43,6 +48,7 @@ fsi.AddPrinter sprint_exp;;
 // Demonstrate automatic installation.                                       //
 // ------------------------------------------------------------------------- //
 
+// intro.p006
 parse_exp @"(x1 + x2 + x3) * (1 + 2 + 3 * x + y)";;
 
 // pg. 21
@@ -50,14 +56,19 @@ parse_exp @"(x1 + x2 + x3) * (1 + 2 + 3 * x + y)";;
 // Examples.                                                                 //
 // ------------------------------------------------------------------------- //
 
+// intro.p007
 string_of_exp (parse_exp @"x + 3 * y");;
 
+// intro.p008
 parse_exp @"x + 3 * y";;
 
+// intro.p009
 parse_exp @"(x + 3) * y";;
 
+// intro.p010
 parse_exp @"1 + 2 + 3";;
 
+// intro.p011
 parse_exp @"((1 + 2) + 3) + 4";;
 
 // pg. 22
@@ -65,4 +76,5 @@ parse_exp @"((1 + 2) + 3) + 4";;
 // Example shows the problem.                                                //
 // ------------------------------------------------------------------------- //
 
+// intro.p012
 parse_exp @"(x1 + x2 + x3 + x4 + x5 + x6 + x7 + x8 + x9 + x10) * (y1 + y2 + y3 + y4 + y5 + y6 + y7 + y8 + y9 + y10)";;

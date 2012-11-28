@@ -23,10 +23,12 @@ fsi.AddPrinter sprint_fol_formula
 // Example.                                                                  //
 // ------------------------------------------------------------------------- //
 
+// cong.p001
 ccvalid (parse
     @"f(f(f(f(f(c))))) = c /\ f(f(f(c))) = c 
     ==> f(c) = c \/ f(g(c)) = g(f(c))");;
 
+// cong.p002
 ccvalid (parse
     @"f(f(f(f(c)))) = c /\ f(f(c)) = c ==> f(c) = c");;
 
@@ -37,3 +39,8 @@ ccvalid (parse
 let showequiv ptn =
     let fn = reverseq (equated ptn) ptn
     List.map (apply fn) (dom fn);;
+
+// cong.p003
+// Added by EGT
+ccvalid (parse 
+    @"f(a,b) = a ==> f(f(a,b), b) = a");;

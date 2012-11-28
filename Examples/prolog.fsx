@@ -25,6 +25,8 @@ fsi.AddPrinter sprint_fol_formula
 // A Horn example.                                                           //
 // ------------------------------------------------------------------------- //
 
+// prolog.p001
+// Pelletier #32
 let p32 =
     hornprove (parse @" 
         (forall x. P(x) /\ (G(x) \/ H(x)) ==> Q(x)) /\ 
@@ -37,8 +39,10 @@ let p32 =
 // A non-Horn example.                                                       //
 // ------------------------------------------------------------------------- //
 
+// prolog.p002
 // System.Exception: non-Horn clause. - This is the expected result.
-//hornprove (parse @"(p \/ q) /\ (~p \/ q) /\ (p \/ ~q) ==> ~(~q \/ ~q)");;
+// Pelletier #09
+hornprove (parse @"(p \/ q) /\ (~p \/ q) /\ (p \/ ~q) ==> ~(~q \/ ~q)");;
 
 // pg. 210
 // ------------------------------------------------------------------------- //
@@ -47,12 +51,15 @@ let p32 =
 
 let lerules = ["0 <= X"; "S(X) <= S(Y) :- X <= Y"];;
 
+// prolog.p003
 simpleprolog lerules @"S(S(0)) <= S(S(S(0)))";;
 
+// prolog.p004
 // System.Exception: tryfind - This is the expected result.
-//simpleprolog lerules @"S(S(0)) <= S(0)";;
+simpleprolog lerules @"S(S(0)) <= S(0)";;
 
 let env = simpleprolog lerules @"S(S(0)) <= X";;
+// prolog.p005
 apply env "X";;
 
 // pg. 211
@@ -60,6 +67,7 @@ apply env "X";;
 // Example again.                                                            //
 // ------------------------------------------------------------------------- //
    
+// prolog.p006
 prolog lerules @"S(S(0)) <= X";;
 
 // pg. 211
@@ -71,12 +79,16 @@ let appendrules = [
     @"append(nil,L,L)";
     @"append(H::T,L,H::A) :- append(T,L,A)";];;
 
+// prolog.p007
 prolog appendrules @"append(1::2::nil,3::4::nil,Z)";;
 
+// prolog.p008
 prolog appendrules @"append(1::2::nil,Y,1::2::3::4::nil)";;
 
+// prolog.p009
 prolog appendrules @"append(X,3::4::nil,1::2::3::4::nil)";;
 
+// prolog.p010
 prolog appendrules @"append(X,Y,1::2::3::4::nil)";;
 
 // pg. 211
@@ -84,8 +96,9 @@ prolog appendrules @"append(X,Y,1::2::3::4::nil)";;
 // However this way round doesn't work.                                      //
 // ------------------------------------------------------------------------- //
 
+// prolog.p011
 // Process is terminated due to StackOverflowException. - This is the expected result.
-//prolog appendrules "append(X,3::4::nil,X)";;
+prolog appendrules "append(X,3::4::nil,X)";;
 
 // pg. 212
 // ------------------------------------------------------------------------- //
@@ -104,6 +117,7 @@ let sortrules = [
     @"0 <= X";
     @"S(X) <= S(Y) :- X <= Y"; ];;
 
+// prolog.p012
 prolog sortrules
   @"sort(S(S(S(S(0))))::S(0)::0::S(S(0))::S(0)::nil,X)";;
 
@@ -126,7 +140,7 @@ let badrules = [
 
 //** This no longer works
 
+// prolog.p013
 // Process is terminated due to StackOverflowException. - This is the expected result.
-//prolog badrules
-//  @"sort(S(S(S(S(0))))::S(0)::0::S(S(0))::S(0)::nil,X)";;
-
+prolog badrules
+  @"sort(S(S(S(S(0))))::S(0)::0::S(S(0))::S(0)::nil,X)";;

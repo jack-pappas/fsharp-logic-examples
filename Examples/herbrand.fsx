@@ -21,8 +21,12 @@ fsi.AddPrinter sprint_fol_formula
 // First example and a little tracing.                                       //
 // ------------------------------------------------------------------------- //
 
+// herbrand.p001
+// Harrison #07
 gilmore (parse @"exists x. forall y. P(x) ==> P(y)");;
 
+// herbrand.p002
+// Harrison #07
 let sfm = skolemize(Not (parse @"exists x. forall y. P(x) ==> P(y)"));;
 
 // pg. 161
@@ -30,6 +34,8 @@ let sfm = skolemize(Not (parse @"exists x. forall y. P(x) ==> P(y)"));;
 // Quick example.                                                            //
 // ------------------------------------------------------------------------- //
 
+// herbrand.p003
+// Pelletier #24
 let p24 = gilmore (parse @"
     ~(exists x. U(x) /\ Q(x)) 
     /\ (forall x. P(x) ==> Q(x) \/ R(x)) 
@@ -42,6 +48,8 @@ let p24 = gilmore (parse @"
 // Slightly less easy example.                                               //
 // ------------------------------------------------------------------------- //
 
+// herbrand.p004
+// Pelletier #45
 // Real: 00:00:27.907, CPU: 00:00:27.906, GC gen0: 7, gen1: 6, gen2: 1
 let p45 = Initialization.runWithEnlargedStack (fun () -> 
     gilmore (parse @"
@@ -56,6 +64,8 @@ let p45 = Initialization.runWithEnlargedStack (fun () ->
 // Apparently intractable example.                                           //
 // ------------------------------------------------------------------------- //
 
+// herbrand.p005
+// Pelletier #20
 //let p20 = gilmore (parse @"(forall x y. exists z. forall w. P(x) /\ Q(y) ==> R(z) /\ U(w))
 //                           ==> (exists x y. P(x) /\ Q(y)) ==> (exists z. R(z))");;
 
@@ -64,17 +74,24 @@ let p45 = Initialization.runWithEnlargedStack (fun () ->
 // Show how much better than the Gilmore procedure this can be.              //
 // ------------------------------------------------------------------------- //
 
+// herbrand.p006
+// Pelletier #20
 let p20dp = davisputnam (parse @"
     (forall x y. exists z. forall w. P(x) /\ Q(y) ==> R(z) /\ U(w))
     ==> (exists x y. P(x) /\ Q(y)) ==> (exists z. R(z))");;
 
+// herbrand.p007
+// Pelletier #36
 let p36 = davisputnam' (parse @"
     (forall x. exists y. P(x,y)) 
     /\ (forall x. exists y. G(x,y)) 
     /\ (forall x y. P(x,y) \/ G(x,y) ==> (forall z. P(y,z) \/ G(y,z) ==> H(x,z)))
     ==> (forall x. exists y. H(x,y))");;
 
+// herbrand.p008
+
 // Real: 00:01:50.847, CPU: 00:01:50.687, GC gen0: 382, gen1: 111, gen2: 1
+// Pelletier #29
 let p29 = davisputnam' (parse @"
     (exists x. P(x)) /\ (exists x. G(x)) ==>
     ((forall x. P(x) ==> H(x)) /\ (forall x. G(x) ==> J(x)) <=>

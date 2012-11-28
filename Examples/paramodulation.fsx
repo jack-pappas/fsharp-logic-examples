@@ -21,6 +21,7 @@ open FSharpx.Books.AutomatedReasoning.paramodulation
 // Test.                                                                     //
 // ------------------------------------------------------------------------- //
 
+// paramodulation.p001
 paramodulation 
     (parse @"
     (forall x. f(f(x)) = f(x)) /\ (forall x. exists y. f(y) = x)

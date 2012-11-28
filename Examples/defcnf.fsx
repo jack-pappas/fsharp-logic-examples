@@ -19,6 +19,7 @@ fsi.AddPrinter sprint_prop_formula
 // Example.                                                                  //
 // ------------------------------------------------------------------------- //
 
+// defcnf.p001
 cnf (parse_prop_formula @"p <=> (q <=> r)");;
 
 // pg. 77
@@ -26,6 +27,7 @@ cnf (parse_prop_formula @"p <=> (q <=> r)");;
 // Example.                                                                  //
 // ------------------------------------------------------------------------- //
 
+// defcnf.p002
 defcnfOrig (parse_prop_formula @"(p \/ (q /\ ~r)) /\ s");;
 
 // pg. 78
@@ -33,4 +35,5 @@ defcnfOrig (parse_prop_formula @"(p \/ (q /\ ~r)) /\ s");;
 // Examples.                                                                 //
 // ------------------------------------------------------------------------- //
 
+// defcnf.p003
 defcnf (parse_prop_formula @"(p \/ (q /\ ~r)) /\ s");;

@@ -20,8 +20,10 @@ let s = parset @"f(x,x,x)";;
 
 let t = parset @"g(x,y)";;
 
+// order.p001
 termsize s > termsize t;;
 
 let i = "y" |=> parset @"f(x,x,x)";;
 
+// order.p002
 termsize (tsubst i s) > termsize (tsubst i t);;

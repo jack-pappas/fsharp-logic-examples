@@ -299,10 +299,10 @@ complex_qelim (parse
 //     *** and w/o the condition, it's false I think
 // complex.p025
 // long running
-//    complex_qelim (parse
-//        @"forall a b c x y.
-//          (forall z. a * z^2 + b * z + c = 0 <=> z = x \/ z = y)
-//          ==> a * x * y = c /\ a * (x + y) + b = 0");;
+    complex_qelim (parse
+        @"forall a b c x y.
+          (forall z. a * z^2 + b * z + c = 0 <=> z = x \/ z = y)
+          ==> a * x * y = c /\ a * (x + y) + b = 0");;
 
 //     *** because the following is!
 
@@ -412,31 +412,31 @@ time complex_qelim (parse
 //*** feasible but lengthy?
 // complex.p042
 // long running
-//    time complex_qelim (parse
-//        @"forall x y. (a * x^2 + b * x + c = 0) /\ 
-//                  (a * y^2 + b * y + c = 0) /\ 
-//                  (forall z. (a * z^2 + b * z + c = 0)
-//                             ==> (z = x) \/ (z = y))
-//                  ==> (a * x * y = c) /\ (a * (x + y) + b = 0)");;
+    time complex_qelim (parse
+        @"forall x y. (a * x^2 + b * x + c = 0) /\ 
+                  (a * y^2 + b * y + c = 0) /\ 
+                  (forall z. (a * z^2 + b * z + c = 0)
+                             ==> (z = x) \/ (z = y))
+                  ==> (a * x * y = c) /\ (a * (x + y) + b = 0)");;
 
 // complex.p043
 // long running
-//    time complex_qelim (parse
-//        @"forall c x y. (a * x^2 + b * x + c = 0) /\ 
-//                  (a * y^2 + b * y + c = 0) /\ 
-//                  (forall z. (a * z^2 + b * z + c = 0)
-//                             ==> (z = x) \/ (z = y))
-//                  ==> (a * x * y = c) /\ (a * (x + y) + b = 0)");;
+    time complex_qelim (parse
+        @"forall c x y. (a * x^2 + b * x + c = 0) /\ 
+                  (a * y^2 + b * y + c = 0) /\ 
+                  (forall z. (a * z^2 + b * z + c = 0)
+                             ==> (z = x) \/ (z = y))
+                  ==> (a * x * y = c) /\ (a * (x + y) + b = 0)");;
 
 //******** This seems too hard
 // complex.p044
 // long running
-//    time complex_qelim (parse
-//        @"forall a b c x y. (a * x^2 + b * x + c = 0) /\ 
-//                   (a * y^2 + b * y + c = 0) /\ 
-//                   (forall z. (a * z^2 + b * z + c = 0)
-//                        ==> (z = x) \/ (z = y))
-//                   ==> (a * x * y = c) /\ (a * (x + y) + b = 0)");;
+    time complex_qelim (parse
+        @"forall a b c x y. (a * x^2 + b * x + c = 0) /\ 
+                   (a * y^2 + b * y + c = 0) /\ 
+                   (forall z. (a * z^2 + b * z + c = 0)
+                        ==> (z = x) \/ (z = y))
+                   ==> (a * x * y = c) /\ (a * (x + y) + b = 0)");;
 
 // complex.p045
 time complex_qelim (parse
@@ -499,25 +499,25 @@ time complex_qelim (parse
 
 // complex.p052
 // long running
-//    complex_qelim_all (parse
-//        @"~((c^2 = a^2 + b^2) /\ 
-//         (c^2 = x0^2 + (y0 - b)^2) /\ 
-//         (y0 * t1 = a + x0) /\ 
-//         (y0 * t2 = a - x0) /\ 
-//         ((1 - t1 * t2) * t = t1 + t2) /\ 
-//         (u * (b * t - a) = 1) /\ 
-//         (v1 * a + v2 * x0 + v3 * y0 = 1))");;
+    complex_qelim_all (parse
+        @"~((c^2 = a^2 + b^2) /\ 
+         (c^2 = x0^2 + (y0 - b)^2) /\ 
+         (y0 * t1 = a + x0) /\ 
+         (y0 * t2 = a - x0) /\ 
+         ((1 - t1 * t2) * t = t1 + t2) /\ 
+         (u * (b * t - a) = 1) /\ 
+         (v1 * a + v2 * x0 + v3 * y0 = 1))");;
 
 // complex.p053
 // long running
-//    complex_qelim_all (parse
-//        @"(c^2 = a^2 + b^2) /\ 
-//       (c^2 = x0^2 + (y0 - b)^2) /\ 
-//       (y0 * t1 = a + x0) /\ 
-//       (y0 * t2 = a - x0) /\ 
-//       ((1 - t1 * t2) * t = t1 + t2) /\ 
-//       (~(a = 0) \/ ~(x0 = 0) \/ ~(y0 = 0))
-//       ==> (b * t = a)");;
+    complex_qelim_all (parse
+        @"(c^2 = a^2 + b^2) /\ 
+       (c^2 = x0^2 + (y0 - b)^2) /\ 
+       (y0 * t1 = a + x0) /\ 
+       (y0 * t2 = a - x0) /\ 
+       ((1 - t1 * t2) * t = t1 + t2) /\ 
+       (~(a = 0) \/ ~(x0 = 0) \/ ~(y0 = 0))
+       ==> (b * t = a)");;
 
 // complex.p054
 complex_qelim_all (parse
@@ -574,11 +574,11 @@ time complex_qelim (parse
 
 // complex.p059
 // long running
-//    time complex_qelim (parse
-//        @"exists b c.
-//        (p1 = ai^2 * (b + c)^2 - c * b * (c + b - a) * (c + b + a)) /\ 
-//        (p2 = ae^2 * (c - b)^2 - c * b * (a + b - c) * (a - b + a)) /\ 
-//        (p3 = be^2 * (c - a)^2 - a * c * (a + b - c) * (c + b - a))");;
+time complex_qelim (parse
+    @"exists b c.
+    (p1 = ai^2 * (b + c)^2 - c * b * (c + b - a) * (c + b + a)) /\ 
+    (p2 = ae^2 * (c - b)^2 - c * b * (a + b - c) * (a - b + a)) /\ 
+    (p3 = be^2 * (c - a)^2 - a * c * (a + b - c) * (c + b - a))");;
 
 // complex.p060
 time complex_qelim (parse
@@ -622,6 +622,7 @@ let colmerauer = complex_qelim_all (parse
 
 // interface(prettyprint=0);
 //         resultant(a * x^2 + b * x + c, 2 * a * x + b,x);
+
 // complex.p063
 time complex_qelim (parse
     @"forall a b c.
@@ -644,14 +645,13 @@ time complex_qelim (parse
 //*** No hope for this one I think
 // complex.p066
 // long running
-//Initialization.runWithEnlargedStack (fun () -> 
-//    complex_qelim (parse
-//        @"forall a b c d e f g.
-//        (exists x. a * x^3 + b * x^2 + c * x + d = 0 /\ e * x^2 + f * x + g = 0) \/
-//        (a = 0) /\ (e = 0) <=>
-//        e^3*d^2+3*e*d*g*a*f-2*e^2*d*g*b-g^2*a*f*b+g^2*e*b^2-f*e^2*c*d+f^2*c*g*a-f*e*c*
-//        g*b+f^2*e*b*d-f^3*a*d+g*e^2*c^2-2*e*c*a*g^2+a^2*g^3 = 0"));;
-
+Initialization.runWithEnlargedStack (fun () -> 
+    complex_qelim (parse
+        @"forall a b c d e f g.
+        (exists x. a * x^3 + b * x^2 + c * x + d = 0 /\ e * x^2 + f * x + g = 0) \/
+        (a = 0) /\ (e = 0) <=>
+        e^3*d^2+3*e*d*g*a*f-2*e^2*d*g*b-g^2*a*f*b+g^2*e*b^2-f*e^2*c*d+f^2*c*g*a-f*e*c*
+        g*b+f^2*e*b*d-f^3*a*d+g*e^2*c^2-2*e*c*a*g^2+a^2*g^3 = 0"));;
 
 //  ------------------------------------------------------------------------- //
 //  Some trigonometric addition formulas (checking stuff from Maple).         //

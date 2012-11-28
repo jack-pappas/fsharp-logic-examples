@@ -23,10 +23,13 @@ fsi.AddPrinter sprint_fol_formula
 //  Trivial example.                                                          // 
 //  ------------------------------------------------------------------------- // 
 
+// geom.p001
 coordinate (parse @"collinear(a,b,c) ==> collinear(b,a,c)");;
-        
+
+// geom.p002        
 List.forall (grobner_decide << invariant_under_translation) coordinations;;
 
+// geom.p003
 List.forall (grobner_decide << invariant_under_rotation) coordinations;;
     
 // pg. 416
@@ -34,12 +37,15 @@ List.forall (grobner_decide << invariant_under_rotation) coordinations;;
 //  And show we can always invent such a transformation to zero a y:          // 
 //  ------------------------------------------------------------------------- // 
 
+// geom.p004
 // Real: 00:00:23.087, CPU: 00:00:23.046, GC gen0: 653, gen1: 148, gen2: 1
 Initialization.runWithEnlargedStack (fun () -> real_qelim (parse @"
     forall x y. exists s c. s^2 + c^2 = 1 /\ s * x + c * y = 0"));;
 
+// geom.p005
 List.forall (grobner_decide << invariant_under_scaling) coordinations;;
 
+// geom.p006
 List.partition (grobner_decide << invariant_under_shearing) coordinations;;
     
 // pg. 418
@@ -47,6 +53,7 @@ List.partition (grobner_decide << invariant_under_shearing) coordinations;;
 //  One from "Algorithms for Computer Algebra"                                // 
 //  ------------------------------------------------------------------------- // 
 
+// geom.p007
 (grobner_decide << originate) (parse 
     @"is_midpoint(m,a,c) /\ perpendicular(a,c,m,b) 
     ==> lengths_eq(a,b,b,c)");;
@@ -56,11 +63,13 @@ List.partition (grobner_decide << invariant_under_shearing) coordinations;;
 //  Parallelogram theorem (Chou's expository example at the start).           // 
 //  ------------------------------------------------------------------------- // 
 
+// geom.p008
 (grobner_decide << originate) (parse
     @"parallel(a,b,d,c) /\ parallel(a,d,b,c) /\
     is_intersection(e,a,c,b,d)
     ==> lengths_eq(a,e,e,c)");;
 
+// geom.p009
 (grobner_decide << originate) (parse
     @"parallel(a,b,d,c) /\ parallel(a,d,b,c) /\
     is_intersection(e,a,c,b,d) /\ ~collinear(a,b,c)
@@ -88,6 +97,7 @@ let vars001 = ["g_y"; "g_x"; "f_y"; "f_x"; "e_y"; "e_x"; "d_y"; "d_x"; "c_y"; "c
 
 let zeros001 = ["a_x"; "a_y"; "o_y"];;
 
+// geom.p010
 wu simson vars001 zeros001;;
     
 // pg. 423
@@ -95,6 +105,7 @@ wu simson vars001 zeros001;;
 //  Try without special coordinates.                                          // 
 //  ------------------------------------------------------------------------- // 
 
+// geom.p011
 wu simson (vars001 @ zeros001) [];;
     
 let pappus = 
@@ -111,6 +122,7 @@ let vars002 = ["f_y"; "f_x"; "e_y"; "e_x"; "d_y"; "d_x"; "b3_y"; "b2_y"; "b1_y";
 
 let zeros002 = ["a1_y"; "a2_y"; "a3_y"; "b1_x"; "b2_x"; "b3_x"];;
 
+// geom.p012
 wu pappus vars002 zeros002;;
 
 //  ------------------------------------------------------------------------- // 
@@ -132,6 +144,7 @@ let zeros003 = ["a_y"; "o_x"; "o_y"];;
 // This one is costly (too big for laptop, but doable in about 300M)
 // However, it gives exactly the same degenerate conditions as Chou
 
+// geom.p013
 // Real: 00:03:50.788, CPU: 00:03:50.046, GC gen0: 5552, gen1: 3167, gen2: 66
 wu butterfly vars003 zeros003;;
 
@@ -141,6 +154,7 @@ wu butterfly vars003 zeros003;;
 //  Centroid (Chou, example 142).                                             // 
 //  ------------------------------------------------------------------------- // 
 
+// geom.p014
 (grobner_decide << originate) 
     (parse 
         @"is_midpoint(d,b,c) /\ is_midpoint(e,a,c) /\

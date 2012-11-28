@@ -25,6 +25,7 @@ fsi.AddPrinter sprint_thm
 // One explicit example.                                                     //
 // ------------------------------------------------------------------------- //
 
+// limitations.p001
 gform (parse @"~(x = 0)");;
 
 // pg. 534
@@ -32,11 +33,17 @@ gform (parse @"~(x = 0)");;
 // Some more examples of things in or not in the set of true formulas.       //
 // ------------------------------------------------------------------------- //
 
+// limitations.p002
 gform (parse @"x = x");;
+
+// limitations.p003
 gform (parse @"0 < 0");;
 
 // pg. 538
+// limitations.p004
 diag001("p(x)");;
+
+// limitations.p005
 diag001("This string is diag(x)");;
     
 // pg. 538
@@ -44,6 +51,7 @@ diag001("This string is diag(x)");;
 // Analogous construct in natural language.                                  //
 // ------------------------------------------------------------------------- //
 
+// limitations.p006
 diag001("The result of substituting the quotation of x for `x' in x \ has property P");;
             
 // pg. 549
@@ -56,7 +64,10 @@ let prime_form p =
         S(S(0)) <= p /\
         forall n. n < p ==> (exists x. x <= p /\ p = n * x) ==> n = S(0)");;
 
+// limitations.p007
 dholds undefined (prime_form (Num.Int 100));;
+
+// limitations.p008
 dholds undefined (prime_form (Num.Int 101));;
             
 // pg. 551
@@ -64,6 +75,7 @@ dholds undefined (prime_form (Num.Int 101));;
 // Example.                                                                  //
 // ------------------------------------------------------------------------- //
 
+// limitations.p009
 classify Sigma 1 (parse @"
     forall x. x < 2 
         ==> exists y z. forall w. w < x + 2 
@@ -74,6 +86,7 @@ classify Sigma 1 (parse @"
 // Example.                                                                  //
 // ------------------------------------------------------------------------- //
 
+// limitations.p010
 sigma_bound (parse @"
     exists p x.
      p < x /\
@@ -101,10 +114,13 @@ let prog_suc =
         (4,Blank) |-> (Blank,Stay,0)]  
         undefined;;
 
+// limitations.p011
 exec prog_suc [0];;
 
+// limitations.p012
 exec prog_suc [1];;
 
+// limitations.p013
 exec prog_suc [19];;
 
 // pg. 566
@@ -112,11 +128,17 @@ exec prog_suc [19];;
 // Example.                                                                  //
 // ------------------------------------------------------------------------- //
 
+// limitations.p014
 robeval (parset @"S(0) + (S(S(0)) * ((S(0) + S(S(0)) + S(0))))");;
         
 // pg. 570
+// limitations.p015
 rob_ne (parset @"S(0) + S(0) + S(0)") (parset @"S(S(0)) * S(S(0))");;
+
+// limitations.p016
 rob_ne (parset @"0 + 0 * S(0)") (parset @"S(S(0)) + 0");;
+
+// limitations.p017
 rob_ne (parset @"S(S(0)) + 0") (parset @"0 + 0 + 0 * 0");;
 
 // pg. 573
@@ -124,6 +146,7 @@ rob_ne (parset @"S(S(0)) + 0") (parset @"0 + 0 + 0 * 0");;
 // Example in the text.                                                      //
 // ------------------------------------------------------------------------- //
 
+// limitations.p018
 sigma_prove (parse @"
     exists p. 
         S(S(0)) <= p /\
@@ -135,6 +158,7 @@ sigma_prove (parse @"
 // The essence of Goedel's first theorem.                                    //
 // ------------------------------------------------------------------------- //
 
+// limitations.p019
 meson002 (parse @"
     (True(G) <=> ~(|--(G))) /\ Pi(G) /\
     (forall p. Sigma(p) ==> (|--(p) <=> True(p))) /\
@@ -147,6 +171,7 @@ meson002 (parse @"
 // Godel's second theorem.                                                   //
 // ------------------------------------------------------------------------- //
 
+// limitations.p020
 let godel_2 = 
     prove (parse @"
         (forall p. |--(p) ==> |--(Pr(p))) /\

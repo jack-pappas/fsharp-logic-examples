@@ -18,10 +18,13 @@ fsi.AddPrinter sprint_prop_formula
 // Some currently tractable examples.                                        //
 // ------------------------------------------------------------------------- //
 
+// propexamples.p001
 ramsey 3 3 4;;
 
+// propexamples.p002
 tautology(ramsey 3 3 5);;
 
+// propexamples.p003
 tautology(ramsey 3 3 6);;
 
 // pg. 67
@@ -30,6 +33,7 @@ tautology(ramsey 3 3 6);;
 // ------------------------------------------------------------------------- //
 
 let [x; y; out; c] = List.map mk_index ["X"; "Y"; "OUT"; "C"];;
+// propexamples.p004
 ripplecarry x y c out 2;;
 
 // pg. 72
@@ -37,9 +41,15 @@ ripplecarry x y c out 2;;
 // Examples.                                                                 //
 // ------------------------------------------------------------------------- //
 
+// propexamples.p005
+// Harrison #05 - prime
 tautology(prime 7);;
 
+// propexamples.p006
+// Harrison #05 - prime
 tautology(prime 9);;
 
+// propexamples.p007
+// Harrison #05 - prime
 tautology(prime 11);;
 
