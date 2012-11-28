@@ -11,6 +11,7 @@ module FSharpx.Books.AutomatedReasoning.lib
 open LanguagePrimitives
 open FSharp.Compatibility.OCaml.Num
 
+
 // The exception fired by failwith is used as a control flow.
 // KeyNotFoundException is not recognized in many cases, so we have to use redefine Failure for compatibility.
 // Using exception as a control flow should be eliminated in the future.
@@ -49,7 +50,9 @@ let inline non p x =
 // Kind of assertion checking.                                               //
 // ------------------------------------------------------------------------- //
 
-// pg. ???
+// Not in book
+// Support fucntion for end user use if needed. 
+// Not used in handbook code.
 let check p x =
     assert (p x)
     x
@@ -111,7 +114,6 @@ let rec end_itlist f l =
         
 // pg. 619
 // NOTE: itlist2 has been replaced with the equivalent built-in F# function List.foldBack2.
-
         
 // pg. 619
 // NOTE: zip has been replaced with the equivalent built-in F# function List.zip.
@@ -125,11 +127,9 @@ let rec end_itlist f l =
 // pg. 619
 // NOTE: partition has been replaced with the equivalent built-in F# function List.partition.
 
-        
 // pg. 619
 // NOTE: filter has been replaced with the equivalent built-in F# function List.filter.
 
-    
 // pg. 619
 // NOTE: length has been replaced with the equivalent built-in F# function List.length.
         
@@ -166,7 +166,6 @@ let butlast l =
 // To avoid exceptions from F# List.find, use F# List.tryFind which
 // does not return an exception if an item is not found.
 
-        
 // pg. 619
 // NOTE: el has been replaced with the equivalent built-in F# function List.nth.
 
@@ -252,14 +251,15 @@ let rec assoc a l =
         if compare x a = 0 then y
         else assoc a t
 
-// pg. ???
+// Not in book
+// Support fucntion for end user use if needed. 
+// Not used in handbook code.
 let rec rev_assoc a l =
     match l with
     | [] -> failwith "find"
     | (x, y) :: t ->
         if compare y a = 0 then x
         else rev_assoc a t
-        
 
 // ------------------------------------------------------------------------- //
 // Merging of sorted lists (maintaining repetitions).                        //
@@ -324,7 +324,9 @@ let rec uniq l =
             else x :: t'
     | _ -> l
 
-// pg. ???
+// Not in book
+// Support fucntion for end user use if needed. 
+// Not used in handbook code.
 let repetitions =
     let rec repcount n l =
         match l with
@@ -362,7 +364,8 @@ let rec mapfilter f l =
 // Find list member that maximizes or minimizes a function.                  //
 // ------------------------------------------------------------------------- //
 
-// pg. ???
+// Not in book
+// Support function for use with maximize and minimize
 let optimize ord f lst =
     lst
     |> List.map (fun x -> x, f x)
@@ -570,6 +573,34 @@ type func<'a,'b> =
     | Leaf of int * ('a * 'b) list
     | Branch of int * int * func<'a,'b> * func<'a,'b>
 
+let rec string_of_patricia_tree_with_level pt (level : int) =
+    match pt with
+    | Empty  -> 
+        let emptyindent = String.replicate level " "        
+        emptyindent + "Empty"
+    | Leaf (n,l) ->
+        let leafindent = String.replicate level " "
+        let leaf = "Leaf " + string n 
+        let valueindent = String.replicate (level + 1) " "
+        let value = sprintf "%A" l
+        leafindent + leaf + "\n" + valueindent + value
+    | Branch (n1, n2, b1, b2) ->
+        let branchindent = String.replicate level " "
+        let branchIndex = string n1 + "," + string n2
+        let branch1 = string_of_patricia_tree_with_level b1 (level + 1)
+        let branch2 = string_of_patricia_tree_with_level b2 (level + 1)
+        let branch = "Branch " + branchIndex 
+        branchindent + branch  + "\n" + branch1  + "\n" + branch2
+
+let rec string_of_patricia_tree pt =
+    string_of_patricia_tree_with_level pt 0
+
+let sprint_patricia_tree pt =
+    string_of_patricia_tree pt
+
+let print_patricia_tree pt =
+    printfn "%O" (sprint_patricia_tree pt) |> ignore
+
 // ------------------------------------------------------------------------- //
 // Undefined function.                                                       //
 // ------------------------------------------------------------------------- //
@@ -610,7 +641,8 @@ let mapf =
 // Operations analogous to "fold" for lists.                                 //
 // ------------------------------------------------------------------------- //
 
-// pg. ???
+// Not in book
+// Support function for use with graph, dom, and ran.
 let foldl =
     let rec foldl_list f a l =
         match l with
@@ -626,7 +658,9 @@ let foldl =
             foldl f (foldl f a l) r
     foldl
         
-// pg. ???
+// Not in book
+// Support fucntion for end user use if needed. 
+// Not used in handbook code.
 let foldr =
     let rec foldr_list f l a =
         match l with
@@ -665,7 +699,8 @@ let ran f =
 // Application.                                                              //
 // ------------------------------------------------------------------------- //
 
-// pg. 621
+// Not in book
+// Support function for use with apply, tryapplyd, and tryapplyl.
 let applyd =
     let rec apply_listd l d x =
         match l with
@@ -691,10 +726,6 @@ let applyd =
 // pg. 621
 let apply f =
     applyd f (fun _ -> failwith "apply")
-
-// EGT
-let apply_none f =
-    applyd f (fun _ -> None)
 
 // pg. 621
 let tryapplyd f a d =
@@ -763,7 +794,10 @@ let undefine =
 // ------------------------------------------------------------------------- //
 
 // Finite Partial Functions (FPF)
+
 // To update the FPF with a new mapping from x to y.
+// Not in book
+// Support function for use with FPF
 let (|->),combine =
     let newbranch p1 t1 p2 t2 =
         let zp = p1 ^^^ p2
@@ -904,7 +938,9 @@ let fpf xs ys =
 // Grab an arbitrary element.                                                //
 // ------------------------------------------------------------------------- //
 
-// pg. ???
+// Not in book
+// Support fucntion for end user use if needed. 
+// Not used in handbook code.
 let rec choose t =
     match t with
     | Empty ->
@@ -919,8 +955,8 @@ let rec choose t =
 // Install a (trivial) printer for finite partial functions.                 //
 // ------------------------------------------------------------------------- //
 
-// pg. ???
-let print_fpf (f : func<'a,'b>) = printf "<func>"
+// Not in book
+//let print_fpf (f : func<'a,'b>) = printf "<func>"
 
 // ------------------------------------------------------------------------- //
 // Related stuff for standard functions.                                     //
@@ -939,15 +975,34 @@ let undef x =
 // Union-find algorithm.                                                     //
 // ------------------------------------------------------------------------- //
 
-// pg. ???   
+// Not in book
+// Type for use with union-find algorithm  
 type pnode<'a> =
     | Nonterminal of 'a 
     | Terminal of 'a * int
     
-// pg. 619
+// Not in book
+// Type for use with union-find algorithm 
+// HOL Light: termequivalence
 type partition<'a> = Partition of func<'a, pnode<'a>>
+
+// EGT - print Partition
+let rec string_of_partition par =
+    let rec string_of_partition_interal par level =
+        match par with
+        | Partition x -> 
+            let pt = string_of_patricia_tree_with_level x 1
+            "Partition\n" + pt
+    string_of_partition_interal par 0
+
+let sprint_partition pt =
+    string_of_partition pt
+
+let print_partition pt =
+    printfn "%O" (sprint_partition pt) |> ignore
     
-// pg. ???
+// Not in book
+// Support function for use with union-find algorithm 
 let rec terminus (Partition f as ptn) a =
     match apply f a with
     | Terminal (p, q) ->
@@ -955,12 +1010,13 @@ let rec terminus (Partition f as ptn) a =
     | Nonterminal b ->
         terminus ptn b
         
-// pg. ???
+// Not in book
+// Support function for use with union-find algorithm 
 let tryterminus ptn a =
     try terminus ptn a
     with _ -> (a, 1)
         
-// pg. ???
+// pg. 622
 let canonize ptn a =
     fst <| tryterminus ptn a
 
@@ -978,7 +1034,7 @@ let equate (a, b) (Partition f as ptn) =
     else
         List.foldBack id [b' |-> Nonterminal a'; a' |-> Terminal (a', na + nb)] f
     |> Partition
-            
+
 // pg. 622
 let unequal = Partition undefined
     
@@ -999,3 +1055,4 @@ let writeToString fn =
     use sw = new System.IO.StringWriter()
     fn sw
     sw.ToString()
+
