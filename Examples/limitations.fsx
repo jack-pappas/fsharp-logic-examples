@@ -6,7 +6,7 @@
 
 #load "initialization.fsx"
 
-open FSharpx.Compatibility.OCaml
+open FSharp.Compatibility.OCaml
 
 open FSharpx.Books.AutomatedReasoning.lib
 open FSharpx.Books.AutomatedReasoning.formulas

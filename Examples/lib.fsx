@@ -7,7 +7,7 @@
 #load "initialization.fsx"
 
 open FSharpx.Books.AutomatedReasoning.lib
-open FSharpx.Compatibility.OCaml.Num 
+open FSharp.Compatibility.OCaml.Num 
 
 // pg. 619
 
