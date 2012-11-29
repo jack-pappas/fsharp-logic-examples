@@ -29,7 +29,7 @@ lcfrefute (parse @"(exists x. ~p(x)) /\ (forall x. p(x))") 1 simpcont;;
 
 // lcffol.p003
 // Pelletier #58
-// TODO: Is this a conrrect translation from Pelletier #58?
+// TODO: Is this a conrrect translation from Pelletier #58? No
 let p58 = 
     time lcffol (parse @"
         forall x. exists v. exists w. forall y. forall z.
@@ -313,6 +313,7 @@ let p133 =
 // Pelletier #34
 // **** NEWLY HARD
 // long running
+// Ran for 9.5 hours with out completion.
 let p134 =
     time lcffol (parse @"
         ((exists x. forall y. P(x) <=> P(y)) <=>
@@ -443,7 +444,7 @@ let p157 =
 
 // lcffol.p069
 // Pelletier #58
-// TODO: Is this a conrrect translation from Pelletier #58?
+// TODO: Is this a conrrect translation from Pelletier #58? No
 let p158 =
     time lcffol (parse @"
         forall P Q R. forall x. exists v. exists w. forall y. forall z.
