@@ -55,7 +55,7 @@ Each of the examples fall into one of the following categories (with the associa
 
   No special comment. **Most examples fall into this category.**
 
-  2. *Completes successfully in <5 minutes.*
+  2. *Completes successfully in >5 minutes.*
 
   Includes a comment with the result of the `fsi` `#time` directive when the example is run on an average machine. For example:
 
@@ -189,5 +189,5 @@ The primary method for checking the F# code was to compare the results of the OC
 
 The traceability comments were put into a version of the OCaml source code, a run of the OCaml code, the F# examples and the F# unit test. Currently the OCaml code with the traceability comments is not included here; however we have provided the results of running the OCaml code with the traceability comments in "OCaml Results.pdf".
 
-Note: The OCaml code includes many more examples than are in the book. We are working toward adding all of the examples to the PDF document 
+Note: The OCaml code includes many more examples than are in the book. When the OCaml code was run, there were many additional examples that were commented out. We are working toward adding all of the examples to the PDF document. If you look at the OCaml run output for unif.ml you will notice that the traceability comment for unify.p003 is missing. This is because the code for unify.p003 was commented out when the run occurred.
 
