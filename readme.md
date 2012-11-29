@@ -180,3 +180,14 @@ There are a few important points to note when implementing new test cases:
   - A few examples must be run with a 16MB stack (the default limit set by OCaml version); this is done using the `runWithEnlargedStack` function in `Examples\initialization.fsx`.
 Without using our `runWithEnlargedStack` function, these examples crash with a `StackOverflowException` because the CLR uses a 1MB stack by default. (Discussion: [Why does F# impose a low limit on stack size?](http://stackoverflow.com/questions/7947446/why-does-f-impose-a-low-limit-on-stack-size)).
   - The built-in `Failure` active pattern has been redefined to accommodate `KeyNotFoundException`, `ArgumentException`, etc. The OCaml version makes use of `Failure` as a control flow; the F# version throws different kinds of exceptions which aren't caught by the default `Failure` pattern. The active pattern may need to be updated to handle other exceptions later (see the detailed function in the beginning of `lib.fs`).
+
+---
+
+### Traceability ###
+
+The primary method for checking the F# code was to compare the results of the OCaml output against the F# output. There are several hundred examples that need to be compared and doing so without a means of tracking is tedious at best. To make it easier to trace from an F# example's output back to the OCaml example's output, each example was given a unique identifier, which is the combination of the module name with a sequential number. e.g. complex.p001. These identifiers are referred to as traceability comments.
+
+The traceability comments were put into a version of the OCaml source code, a run of the OCaml code, the F# examples and the F# unit test. Currently the OCaml code with the traceability comments is not included here; however we have provided the results of running the OCaml code with the traceability comments in "OCaml Results.pdf".
+
+Note: The OCaml code includes many more examples than are in the book. We are working toward adding all of the examples to the PDF document 
+
