@@ -144,19 +144,26 @@ let rec last l =
         
 /// Private, recursive implementation of 'butlast' which
 /// improves performance by using continuation-passing-style.
-let rec private butlastImpl lst cont =
-    match lst with
-    | [] ->
-        failwith "butlastImpl"
-    | [_] ->
-        cont []
-    | hd :: tl ->
-        butlastImpl tl <| fun lst' ->
-            cont (hd :: lst')
+//let rec private butlastImpl lst cont =
+//    match lst with
+//    | [] ->
+//        failwith "butlastImpl"
+//    | [_] ->
+//        cont []
+//    | hd :: tl ->
+//        butlastImpl tl <| fun lst' ->
+//            cont (hd :: lst')
 
 // pg. 619
-let butlast l =
-    butlastImpl l id
+//let butlast l =
+//    butlastImpl l id
+
+// pg. 619
+let rec butlast l =
+    match l with
+    | [_]    -> []
+    | (h::t) -> h::(butlast t)
+    | []     -> failwith "butlast"
         
 // pg. 619
 // NOTE: find has been replaced with the equivalent built-in F# function List.find.

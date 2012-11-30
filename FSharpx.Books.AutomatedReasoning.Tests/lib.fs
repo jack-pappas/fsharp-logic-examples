@@ -15,17 +15,1006 @@ open FsUnit
 // Tests for library functions derived from
 // the results shown on Pg. 619-621.
 
-// lib.p001
-[<Test>]
-let ``List butlast`` () =
-    butlast [1; 2; 3; 4]
-    |> should equal [1; 2; 3]
+let private butLastValues : (int list * int list)[] = [| 
+    (
+        // idx 0
+        // lib.butLast.01
+        // System.Exception - butlast
+        [],
+        []
+    );
+    (
+        // idx 1
+        // lib.butLast.02
+        [1],
+        []
+    );
+    (
+        // idx 2
+        // lib.butLast.03
+        [1; 2],
+        [1;]
+    );
+    (
+        // idx 3
+        // lib.butLast.04
+        [1; 2; 3],
+        [1; 2]
+    );
+    |]
 
-// lib.p002
+[<TestCase(0, TestName = "lib.butLast.01", ExpectedException=typeof<System.Exception>, ExpectedMessage="butlast")>]
+[<TestCase(1, TestName = "lib.butLast.02")>]
+[<TestCase(2, TestName = "lib.butLast.03")>]
+[<TestCase(3, TestName = "lib.butLast.04")>]
+
 [<Test>]
-let ``List chop_list`` () =
-    chop_list 3 [1; 2; 3; 4; 5]
-    |> should equal ([1; 2; 3], [4; 5])
+let ``List butlast`` idx = 
+    let (list, _) = butLastValues.[idx]
+    let (_, result) = butLastValues.[idx]
+    butlast list
+    |> should equal result
+
+let private chopListValues : (int * int list * (int list * int list))[] = [| 
+    (
+        // idx 0
+        // lib.chopList.01
+        0, [],
+        ( [], [] )
+    );
+    (
+        // idx 1
+        // lib.chopList.02
+        // System.Exception - chop_list
+        1, [],
+        ( [], [] )
+    );
+    (
+        // idx 2
+        // lib.chopList.03
+        0, [1],
+        ( [], [1] )
+    );
+    (
+        // idx 3
+        // lib.chopList.04
+        1, [1],
+        ( [1], [] )
+    );
+    (
+        // idx 4
+        // lib.chopList.05
+        // System.Exception - chop_list
+        2, [1],
+        ( [], [] )
+    );
+    (
+        // idx 5
+        // lib.chopList.06
+        0, [1; 2],
+        ( [], [1; 2] )
+    );
+    (
+        // idx 6
+        // lib.chopList.07
+        1, [1; 2],
+        ( [1], [2] )
+    );
+    (
+        // idx 7
+        // lib.chopList.08
+        2, [1; 2],
+        ( [1; 2], [] )
+    );
+    (
+        // idx 8
+        // lib.chopList.09
+        // System.Exception - chop_list
+        3, [1; 2],
+        ( [], [] )
+    );
+    (
+        // idx 9
+        // lib.chopList.10
+        0, [1; 2; 3],
+        ( [], [1; 2; 3] )
+    );
+    (
+        // idx 10
+        // lib.chopList.11
+        1, [1; 2; 3],
+        ( [1], [2; 3] )
+    );
+    (
+        // idx 11
+        // lib.chopList.12
+        2, [1; 2; 3],
+        ( [1; 2], [3] )
+    );
+    (
+        // idx 12
+        // lib.chopList.13
+        3, [1; 2; 3],
+        ( [1; 2; 3], [] )
+    );
+    (
+        // idx 13
+        // lib.chopList.14
+        // System.Exception - chop_list
+        4, [1; 2; 3],
+        ( [], [] )
+    );
+    (
+        // idx 14
+        // lib.chopList.15
+        // System.Exception - chop_list
+        -1, [],
+        ( [], [1; 2; 3] )
+    );
+    (
+        // idx 15
+        // lib.chopList.16
+        // System.Exception - chop_list
+        -1, [1],
+        ( [1], [2; 3] )
+    );
+    (
+        // idx 16
+        // lib.chopList.17
+        // System.Exception - chop_list
+        -1, [1; 2],
+        ( [1; 2], [3] )
+    );
+    |]
+
+[<TestCase(0, TestName = "lib.chopList.01")>]
+[<TestCase(1, TestName = "lib.chopList.02", ExpectedException=typeof<System.Exception>, ExpectedMessage="chop_list")>]
+[<TestCase(2, TestName = "lib.chopList.03")>]
+[<TestCase(3, TestName = "lib.chopList.04")>]
+[<TestCase(4, TestName = "lib.chopList.05", ExpectedException=typeof<System.Exception>, ExpectedMessage="chop_list")>]
+[<TestCase(5, TestName = "lib.chopList.06")>]
+[<TestCase(6, TestName = "lib.chopList.07")>]
+[<TestCase(7, TestName = "lib.chopList.08")>]
+[<TestCase(8, TestName = "lib.chopList.09", ExpectedException=typeof<System.Exception>, ExpectedMessage="chop_list")>]
+[<TestCase(9, TestName = "lib.chopList.10")>]
+[<TestCase(10, TestName = "lib.chopList.11")>]
+[<TestCase(11, TestName = "lib.chopList.12")>]
+[<TestCase(12, TestName = "lib.chopList.13")>]
+[<TestCase(13, TestName = "lib.chopList.14", ExpectedException=typeof<System.Exception>, ExpectedMessage="chop_list")>]
+[<TestCase(14, TestName = "lib.chopList.15", ExpectedException=typeof<System.Exception>, ExpectedMessage="chop_list")>]
+[<TestCase(15, TestName = "lib.chopList.16", ExpectedException=typeof<System.Exception>, ExpectedMessage="chop_list")>]
+[<TestCase(16, TestName = "lib.chopList.17", ExpectedException=typeof<System.Exception>, ExpectedMessage="chop_list")>]
+
+[<Test>]
+let ``List chop_list`` idx = 
+    let (n, _, _) = chopListValues.[idx]
+    let (_, list, _) = chopListValues.[idx]
+    let (_, _, result) = chopListValues.[idx]
+    chop_list n list
+    |> should equal result
+
+let private distinctpairsValues : (int list * (int * int) list )[] = [| 
+    (
+        // idx 0
+        // lib.distinctpairs.01
+        [],
+        []
+    );
+    (
+        // idx 1
+        // lib.distinctpairs.02
+        [1],
+        []
+    );
+    (
+        // idx 2
+        // lib.distinctpairs.03
+        [1; 2],
+        [(1, 2)]
+    );
+    (
+        // idx 3
+        // lib.distinctpairs.04
+        [1; 2; 3],
+        [(1, 2); (1, 3); (2, 3); ]
+    );
+    (
+        // idx 4
+        // lib.distinctpairs.05
+        [1; 2; 3; 4],
+        [(1, 2); (1, 3); (1, 4); (2, 3); (2, 4); (3, 4)]
+    );
+    |]
+
+[<TestCase(0, TestName = "lib.distinctpairs.01")>]
+[<TestCase(1, TestName = "lib.distinctpairs.02")>]
+[<TestCase(2, TestName = "lib.distinctpairs.03")>]
+[<TestCase(3, TestName = "lib.distinctpairs.04")>]
+[<TestCase(4, TestName = "lib.distinctpairs.05")>]
+
+[<Test>]
+let ``List distinctpairs`` idx = 
+    let (list, _) = distinctpairsValues.[idx]
+    let (_, result) = distinctpairsValues.[idx]
+    distinctpairs list
+    |> should equal result
+
+
+let private earlierValues : (int list * int * int * bool)[] = [| 
+    (
+        // idx 0
+        // lib.earlier.001
+        [], -1, -1, 
+        false
+    );
+    (
+        // idx 1
+        // lib.earlier.002
+        [], -1, 0,
+        false
+    );
+    (
+        // idx 2
+        // lib.earlier.003
+        [], -1, 1, 
+        false
+    );
+    (
+        // idx 3
+        // lib.earlier.004
+        [], 0, -1, 
+        false
+    );
+    (
+        // idx 4
+        // lib.earlier.005
+        [], 0, 0,
+        false
+    );
+    (
+        // idx 5
+        // lib.earlier.006
+        [], 0, 1, 
+        false
+    );
+    (
+        // idx 6
+        // lib.earlier.007
+        [], 1, -1, 
+        false
+    );
+    (
+        // idx 7
+        // lib.earlier.008
+        [], 1, 0,
+        false
+    );
+    (
+        // idx 8
+        // lib.earlier.009
+        [], 1, 1, 
+        false
+    );
+
+    
+    (
+        // idx 9
+        // lib.earlier.010
+        [1], -1, -1, 
+        false
+    );
+    (
+        // idx 10
+        // lib.earlier.011
+        [1], -1, 0,
+        false
+    );
+    (
+        // idx 11
+        // lib.earlier.012
+        [1], -1, 1, 
+        false
+    );
+    (
+        // idx 12
+        // lib.earlier.013
+        [1], 0, -1, 
+        false
+    );
+    (
+        // idx 13
+        // lib.earlier.014
+        [1], 0, 0,
+        false
+    );
+    (
+        // idx 14
+        // lib.earlier.015
+        [1], 0, 1, 
+        false
+    );
+    (
+        // idx 15
+        // lib.earlier.016
+        // TODO: EGT Is this correct result?  argument(s) exceed list size
+        [1], 1, -1, 
+        true
+    );
+    (
+        // idx 16
+        // lib.earlier.017
+        // TODO: EGT Is this correct result?  argument(s) exceed list size
+        [1], 1, 0,
+        true
+    );
+    (
+        // idx 17
+        // lib.earlier.018
+        [1], 1, 1, 
+        false
+    );
+
+    
+    (
+        // idx 18
+        // lib.earlier.019
+        [1; 2], -1, -1, 
+        false
+    );
+    (
+        // idx 19
+        // lib.earlier.020
+        [1; 2], -1, 0,
+        false
+    );
+    (
+        // idx 20
+        // lib.earlier.021
+        [1; 2], -1, 1, 
+        false
+    );
+    (
+        // idx 21
+        // lib.earlier.022
+        [1; 2], -1, 2, 
+        false
+    );
+    (
+        // idx 22
+        // lib.earlier.023
+        [1; 2], -1, 3, 
+        false
+    );
+    (
+        // idx 23
+        // lib.earlier.024
+        [1; 2], 0, -1, 
+        false
+    );
+    (
+        // idx 24
+        // lib.earlier.025
+        [1; 2], 0, 0,
+        false
+    );
+    (
+        // idx 25
+        // lib.earlier.026
+        [1; 2], 0, 1, 
+        false
+    );
+    (
+        // idx 26
+        // lib.earlier.027
+        [1; 2], 0, 2, 
+        false
+    );
+    (
+        // idx 27
+        // lib.earlier.028
+        [1; 2], 0, 3, 
+        false
+    );
+    (
+        // idx 28
+        // lib.earlier.029
+        // TODO: EGT Is this correct result?  argument(s) exceed list size
+        [1; 2], 1, -1, 
+        true
+    );
+    (
+        // idx 29
+        // lib.earlier.030
+        [1; 2], 1, 0,
+        true
+    );
+    (
+        // idx 30
+        // lib.earlier.031
+        [1; 2], 1, 1, 
+        false
+    );
+    (
+        // idx 31
+        // lib.earlier.032
+        // TODO: EGT Is this correct result?  argument(s) exceed list size
+        [1; 2], 1, 2, 
+        true
+    );
+    (
+        // idx 32
+        // lib.earlier.033
+        // TODO: EGT Is this correct result?  argument(s) exceed list size
+        [1; 2], 1, 3, 
+        true
+    );
+    (
+        // idx 33
+        // lib.earlier.034
+        // TODO: EGT Is this correct result?  argument(s) exceed list size
+        [1; 2], 2, -1, 
+        true
+    );
+    (
+        // idx 34
+        // lib.earlier.035
+        // TODO: EGT Is this correct result?  argument(s) exceed list size
+        [1; 2], 2, 0,
+        true
+    );
+    (
+        // idx 35
+        // lib.earlier.036
+        [1; 2], 2, 1, 
+        false
+    );
+    (
+        // idx 36
+        // lib.earlier.037
+        [1; 2], 2, 2, 
+        false
+    );
+    (
+        // idx 37
+        // lib.earlier.038
+        // TODO: EGT Is this correct result?  argument(s) exceed list size
+        [1; 2], 2, 3, 
+        true
+    );
+    (
+        // idx 38
+        // lib.earlier.039
+        [1; 2], 3, -1, 
+        false
+    );
+    (
+        // idx 39
+        // lib.earlier.040
+        [1; 2], 3, 0,
+        false
+    );
+    (
+        // idx 40
+        // lib.earlier.041
+        [1; 2], 3, 1, 
+        false
+    );
+    (
+        // idx 41
+        // lib.earlier.042
+        [1; 2], 3, 2, 
+        false
+    );
+    (
+        // idx 42
+        // lib.earlier.043
+        [1; 2], 3, 3, 
+        false
+    );
+
+    
+    (
+        // idx 43
+        // lib.earlier.044
+        [1; 2; 3], -1, -1,
+        false
+    );
+    (
+        // idx 44
+        // lib.earlier.045
+        [1; 2; 3], -1, 0,
+        false
+    );
+    (
+        // idx 45
+        // lib.earlier.046
+        [1; 2; 3], -1, 1,
+        false
+    );
+    (
+        // idx 46
+        // lib.earlier.047
+        [1; 2; 3], -1, 2,
+        false
+    );
+    (
+        // idx 47
+        // lib.earlier.048
+        [1; 2; 3], -1, 3,
+        false
+    );
+    (
+        // idx 48
+        // lib.earlier.049
+        [1; 2; 3], 0, -1,
+        false
+    );
+    (
+        // idx 49
+        // lib.earlier.050
+        [1; 2; 3], 0, 0,
+        false
+    );
+    (
+        // idx 50
+        // lib.earlier.051
+        [1; 2; 3], 0, 1,
+        false
+    );
+    (
+        // idx 51
+        // lib.earlier.052
+        [1; 2; 3], 0, 2,
+        false
+    );
+    (
+        // idx 52
+        // lib.earlier.053
+        [1; 2; 3], 0, 3,
+        false
+    );
+    (
+        // idx 53
+        // lib.earlier.054
+        // TODO: EGT Is this correct result?  argument(s) exceed list size
+        [1; 2; 3], 1, -1,
+        true
+    );
+    (
+        // idx 54
+        // lib.earlier.055
+        [1; 2; 3], 1, 0,
+        true
+    );
+    (
+        // idx 55
+        // lib.earlier.056
+        [1; 2; 3], 1, 1,
+        false
+    );
+    (
+        // idx 56
+        // lib.earlier.057
+        [1; 2; 3], 1, 2,
+        true
+    );
+    (
+        // idx 57
+        // lib.earlier.058
+        // TODO: EGT Is this correct result?  argument(s) exceed list size
+        [1; 2; 3], 1, 3,
+        true
+    );
+    (
+        // idx 58
+        // lib.earlier.059
+        // TODO: EGT Is this correct result?  argument(s) exceed list size
+        [1; 2; 3], 2, -1,
+        true
+    );
+    (
+        // idx 59
+        // lib.earlier.060
+        [1; 2; 3], 2, 0,
+        true
+    );
+    (
+        // idx 60
+        // lib.earlier.061
+        [1; 2; 3], 2, 1,
+        false
+    );
+    (
+        // idx 61
+        // lib.earlier.062
+        [1; 2; 3], 2, 2,
+        false
+    );
+    (
+        // idx 62
+        // lib.earlier.063
+        // TODO: EGT Is this correct result?  argument(s) exceed list size
+        [1; 2; 3], 2, 3,
+        true
+    );
+    (
+        // idx 63
+        // lib.earlier.064
+        // TODO: EGT Is this correct result?  argument(s) exceed list size
+        [1; 2; 3], 3, -1,
+        true
+    );
+    (
+        // idx 64
+        // lib.earlier.065
+        // TODO: EGT Is this correct result?  argument(s) exceed list size
+        [1; 2; 3], 3, 0,
+        true
+    );
+    (
+        // idx 65
+        // lib.earlier.066
+        [1; 2; 3], 3, 1,
+        false
+    );
+    (
+        // idx 66
+        // lib.earlier.067
+        [1; 2; 3], 3, 2,
+        false
+    );
+    (
+        // idx 67
+        // lib.earlier.068
+        [1; 2; 3], 3, 3,
+        false
+    );
+    (
+        // idx 68
+        // lib.earlier.069
+        [1; 2; 3; 4], -1, -1,
+        false
+    );
+    (
+        // idx 69
+        // lib.earlier.070
+        [1; 2; 3; 4], -1, 0,
+        false
+    );
+    (
+        // idx 70
+        // lib.earlier.071
+        [1; 2; 3; 4], -1, 1,
+        false
+    );
+    (
+        // idx 71
+        // lib.earlier.072
+        [1; 2; 3; 4], -1, 2,
+        false
+    );
+    (
+        // idx 72
+        // lib.earlier.073
+        [1; 2; 3; 4], -1, 3,
+        false
+    );
+    (
+        // idx 73
+        // lib.earlier.074
+        [1; 2; 3; 4], -1, 4,
+        false
+    );
+    (
+        // idx 74
+        // lib.earlier.075
+        [1; 2; 3; 4], 0, -1,
+        false
+    );
+    (
+        // idx 75
+        // lib.earlier.076
+        [1; 2; 3; 4], 0, 0,
+        false
+    );
+    (
+        // idx 76
+        // lib.earlier.077
+        [1; 2; 3; 4], 0, 1,
+        false
+    );
+    (
+        // idx 77
+        // lib.earlier.078
+        [1; 2; 3; 4], 0, 2,
+        false
+    );
+    (
+        // idx 78
+        // lib.earlier.079
+        [1; 2; 3; 4], 0, 3,
+        false
+    );
+    (
+        // idx 79
+        // lib.earlier.080
+        [1; 2; 3; 4], 0, 4,
+        false
+    );
+    (
+        // idx 80
+        // lib.earlier.081
+        // TODO: EGT Is this correct result?  argument(s) exceed list size
+        [1; 2; 3; 4], 1, -1,
+        true
+    );
+    (
+        // idx 81
+        // lib.earlier.082
+        [1; 2; 3; 4], 1, 0,
+        true
+    );
+    (
+        // idx 82
+        // lib.earlier.083
+        [1; 2; 3; 4], 1, 1,
+        false
+    );
+    (
+        // idx 83
+        // lib.earlier.084
+        [1; 2; 3; 4], 1, 2,
+        true
+    );
+    (
+        // idx 84
+        // lib.earlier.085
+        [1; 2; 3; 4], 1, 3,
+        true
+    );
+    (
+        // idx 85
+        // lib.earlier.086
+        [1; 2; 3; 4], 1, 4,
+        true
+    );
+    (
+        // idx 86
+        // lib.earlier.087
+        // TODO: EGT Is this correct result?  argument(s) exceed list size
+        [1; 2; 3; 4], 2, -1,
+        true
+    );
+    (
+        // idx 87
+        // lib.earlier.088
+        [1; 2; 3; 4], 2, 0,
+        true
+    );
+    (
+        // idx 88
+        // lib.earlier.089
+        [1; 2; 3; 4], 2, 1,
+        false
+    );
+    (
+        // idx 89
+        // lib.earlier.090
+        [1; 2; 3; 4], 2, 2,
+        false
+    );
+    (
+        // idx 90
+        // lib.earlier.091
+        [1; 2; 3; 4], 2, 3,
+        true
+    );
+    (
+        // idx 91
+        // lib.earlier.092
+        // TODO: EGT Is this correct result?  argument(s) exceed list size
+        [1; 2; 3; 4], 2, 4,
+        true
+    );
+    (
+        // idx 92
+        // lib.earlier.093
+        // TODO: EGT Is this correct result?  argument(s) exceed list size
+        [1; 2; 3; 4], 3, -1,
+        true
+    );
+    (
+        // idx 93
+        // lib.earlier.094
+        [1; 2; 3; 4], 3, 0,
+        true
+    );
+    (
+        // idx 94
+        // lib.earlier.095
+        [1; 2; 3; 4], 3, 1,
+        false
+    );
+    (
+        // idx 95
+        // lib.earlier.096
+        [1; 2; 3; 4], 3, 2,
+        false
+    );
+    (
+        // idx 96
+        // lib.earlier.097
+        [1; 2; 3; 4], 3, 3,
+        false
+    );
+    (
+        // idx 97
+        // lib.earlier.098
+        [1; 2; 3; 4], 3, 4,
+        true
+    );
+    (
+        // idx 98
+        // lib.earlier.099
+        // TODO: EGT Is this correct result?  argument(s) exceed list size
+        [1; 2; 3; 4], 4, -1,
+        true
+    );
+    (
+        // idx 99
+        // lib.earlier.100
+        // TODO: EGT Is this correct result?  argument(s) exceed list size
+        [1; 2; 3; 4], 4, 0,
+        true
+    );
+    (
+        // idx 100
+        // lib.earlier.101
+        [1; 2; 3; 4], 4, 1,
+        false
+    );
+    (
+        // idx 101
+        // lib.earlier.102
+        [1; 2; 3; 4], 4, 2,
+        false
+    );
+    (
+        // idx 102
+        // lib.earlier.103
+        [1; 2; 3; 4], 4, 3,
+        false
+    );
+    (
+        // idx 103
+        // lib.earlier.104
+        [1; 2; 3; 4], 4, 4,
+        false
+    );
+    |]
+
+[<TestCase(0, TestName = "lib.earlier.001")>]
+[<TestCase(1, TestName = "lib.earlier.002")>]
+[<TestCase(2, TestName = "lib.earlier.003")>]
+[<TestCase(3, TestName = "lib.earlier.004")>]
+[<TestCase(4, TestName = "lib.earlier.005")>]
+[<TestCase(5, TestName = "lib.earlier.006")>]
+[<TestCase(6, TestName = "lib.earlier.007")>]
+[<TestCase(7, TestName = "lib.earlier.008")>]
+[<TestCase(8, TestName = "lib.earlier.009")>]
+[<TestCase(9, TestName = "lib.earlier.010")>]
+[<TestCase(10, TestName = "lib.earlier.011")>]
+[<TestCase(11, TestName = "lib.earlier.012")>]
+[<TestCase(12, TestName = "lib.earlier.013")>]
+[<TestCase(13, TestName = "lib.earlier.014")>]
+[<TestCase(14, TestName = "lib.earlier.015")>]
+[<TestCase(15, TestName = "lib.earlier.016")>]
+[<TestCase(16, TestName = "lib.earlier.017")>]
+[<TestCase(17, TestName = "lib.earlier.018")>]
+[<TestCase(18, TestName = "lib.earlier.019")>]
+[<TestCase(19, TestName = "lib.earlier.020")>]
+[<TestCase(20, TestName = "lib.earlier.021")>]
+[<TestCase(21, TestName = "lib.earlier.022")>]
+[<TestCase(22, TestName = "lib.earlier.023")>]
+[<TestCase(23, TestName = "lib.earlier.024")>]
+[<TestCase(24, TestName = "lib.earlier.025")>]
+[<TestCase(25, TestName = "lib.earlier.026")>]
+[<TestCase(26, TestName = "lib.earlier.027")>]
+[<TestCase(27, TestName = "lib.earlier.028")>]
+[<TestCase(28, TestName = "lib.earlier.029")>]
+[<TestCase(29, TestName = "lib.earlier.030")>]
+[<TestCase(30, TestName = "lib.earlier.031")>]
+[<TestCase(31, TestName = "lib.earlier.032")>]
+[<TestCase(32, TestName = "lib.earlier.033")>]
+[<TestCase(33, TestName = "lib.earlier.034")>]
+[<TestCase(34, TestName = "lib.earlier.035")>]
+[<TestCase(35, TestName = "lib.earlier.036")>]
+[<TestCase(36, TestName = "lib.earlier.037")>]
+[<TestCase(37, TestName = "lib.earlier.038")>]
+[<TestCase(38, TestName = "lib.earlier.039")>]
+[<TestCase(39, TestName = "lib.earlier.040")>]
+[<TestCase(40, TestName = "lib.earlier.041")>]
+[<TestCase(41, TestName = "lib.earlier.042")>]
+[<TestCase(42, TestName = "lib.earlier.043")>]
+[<TestCase(43, TestName = "lib.earlier.044")>]
+[<TestCase(44, TestName = "lib.earlier.045")>]
+[<TestCase(45, TestName = "lib.earlier.046")>]
+[<TestCase(46, TestName = "lib.earlier.047")>]
+[<TestCase(47, TestName = "lib.earlier.048")>]
+[<TestCase(48, TestName = "lib.earlier.049")>]
+[<TestCase(49, TestName = "lib.earlier.050")>]
+[<TestCase(50, TestName = "lib.earlier.051")>]
+[<TestCase(51, TestName = "lib.earlier.052")>]
+[<TestCase(52, TestName = "lib.earlier.053")>]
+[<TestCase(53, TestName = "lib.earlier.054")>]
+[<TestCase(54, TestName = "lib.earlier.055")>]
+[<TestCase(55, TestName = "lib.earlier.056")>]
+[<TestCase(56, TestName = "lib.earlier.057")>]
+[<TestCase(57, TestName = "lib.earlier.058")>]
+[<TestCase(58, TestName = "lib.earlier.059")>]
+[<TestCase(59, TestName = "lib.earlier.060")>]
+[<TestCase(60, TestName = "lib.earlier.061")>]
+[<TestCase(61, TestName = "lib.earlier.062")>]
+[<TestCase(62, TestName = "lib.earlier.063")>]
+[<TestCase(63, TestName = "lib.earlier.064")>]
+[<TestCase(64, TestName = "lib.earlier.065")>]
+[<TestCase(65, TestName = "lib.earlier.066")>]
+[<TestCase(66, TestName = "lib.earlier.067")>]
+[<TestCase(67, TestName = "lib.earlier.068")>]
+[<TestCase(68, TestName = "lib.earlier.069")>]
+[<TestCase(69, TestName = "lib.earlier.070")>]
+[<TestCase(70, TestName = "lib.earlier.071")>]
+[<TestCase(71, TestName = "lib.earlier.072")>]
+[<TestCase(72, TestName = "lib.earlier.073")>]
+[<TestCase(73, TestName = "lib.earlier.074")>]
+[<TestCase(74, TestName = "lib.earlier.075")>]
+[<TestCase(75, TestName = "lib.earlier.076")>]
+[<TestCase(76, TestName = "lib.earlier.077")>]
+[<TestCase(77, TestName = "lib.earlier.078")>]
+[<TestCase(78, TestName = "lib.earlier.079")>]
+[<TestCase(79, TestName = "lib.earlier.080")>]
+[<TestCase(80, TestName = "lib.earlier.081")>]
+[<TestCase(81, TestName = "lib.earlier.082")>]
+[<TestCase(82, TestName = "lib.earlier.083")>]
+[<TestCase(83, TestName = "lib.earlier.084")>]
+[<TestCase(84, TestName = "lib.earlier.085")>]
+[<TestCase(85, TestName = "lib.earlier.086")>]
+[<TestCase(86, TestName = "lib.earlier.087")>]
+[<TestCase(87, TestName = "lib.earlier.088")>]
+[<TestCase(88, TestName = "lib.earlier.089")>]
+[<TestCase(89, TestName = "lib.earlier.090")>]
+[<TestCase(90, TestName = "lib.earlier.091")>]
+[<TestCase(91, TestName = "lib.earlier.092")>]
+[<TestCase(92, TestName = "lib.earlier.093")>]
+[<TestCase(93, TestName = "lib.earlier.094")>]
+[<TestCase(94, TestName = "lib.earlier.095")>]
+[<TestCase(95, TestName = "lib.earlier.096")>]
+[<TestCase(96, TestName = "lib.earlier.097")>]
+[<TestCase(97, TestName = "lib.earlier.098")>]
+[<TestCase(98, TestName = "lib.earlier.099")>]
+[<TestCase(99, TestName = "lib.earlier.100")>]
+[<TestCase(100, TestName = "lib.earlier.101")>]
+[<TestCase(101, TestName = "lib.earlier.102")>]
+[<TestCase(102, TestName = "lib.earlier.103")>]
+[<TestCase(103, TestName = "lib.earlier.104")>]
+
+[<Test>]
+let ``List earlier`` idx = 
+    let (list, _, _, _) = earlierValues.[idx]
+    let (_, x, _, _) = earlierValues.[idx]
+    let (_, _, y, _) = earlierValues.[idx]
+    let (_, _, _, result) = earlierValues.[idx]
+    earlier list x y
+    |> should equal result
+
+
+[<Test>]
+let ``List end_itlist`` () =
+    end_itlist (fun x y -> x * y) [1; 2; 3; 4]
+    |> should equal 24
+
+    
+// =================================================================================
 
 // lib.p003
 // Note: Since List.iter returns unit, need to use function with side effect
@@ -47,10 +1036,10 @@ let ``List nth`` () =
     |> should equal 2
     
 // lib.p005
-[<Test>]
-let ``List end_itlist`` () =
-    end_itlist (fun x y -> x * y) [1; 2; 3; 4]
-    |> should equal 24
+//[<Test>]
+//let ``List end_itlist`` () =
+//    end_itlist (fun x y -> x * y) [1; 2; 3; 4]
+//    |> should equal 24
     
 // lib.p006
 [<Test>]
@@ -162,67 +1151,67 @@ let ``List zip`` () =
 
 // lib.p024
 [<Test>]
-let ``sort all`` () =
+let ``List sort all`` () =
     sort (<) [3; 1; 4; 1; 5; 9; 2; 6; 5; 3; 5]
     |> should equal [1; 1; 2; 3; 3; 4; 5; 5; 5; 6; 9]
 
 // lib.p025
 [<Test>]
-let ``sort uniq`` () =
+let ``List sort uniq`` () =
     uniq (sort (<) [3; 1; 4; 1; 5; 9; 2; 6; 5; 3; 5])
     |> should equal [1; 2; 3; 4; 5; 6; 9]
 
 // lib.p026
 [<Test>]
-let ``sort by increasing length`` () =
+let ``List sort by increasing length`` () =
     sort (increasing List.length) [[1]; [1;2;3]; []; [3; 4]]
     |> should equal [[]; [1]; [3; 4]; [1; 2; 3]]
 
 // lib.p027
 [<Test>]
-let ``unions`` () =
+let ``List unions`` () =
     unions [[1; 2; 3]; [4; 8; 12]; [3; 6; 9; 12]; [1]]
     |> should equal [1; 2; 3; 4; 6; 8; 9; 12]
 
 // lib.p028
 [<Test>]
-let ``image`` () =
+let ``List image`` () =
     image (fun x -> x % 2) [1; 2; 3; 4; 5]
     |> should equal [0; 1]    
 
 // lib.p029
 [<Test>]
-let ``allsubsets`` () =
+let ``List allsubsets`` () =
     allsubsets [1; 2; 3]
     |> should equal [[]; [1]; [1; 2]; [1; 2; 3]; [1; 3]; [2]; [2; 3]; [3]]
 
 // lib.p030
 [<Test>]
-let ``allnonemptysubsets`` () =
+let ``List allnonemptysubsets`` () =
     allnonemptysubsets [1; 2; 3]
     |> should equal [[1]; [1; 2]; [1; 2; 3]; [1; 3]; [2]; [2; 3]; [3]]
 
 // lib.p031
 [<Test>]
-let ``allsets`` () =
+let ``List allsets`` () =
     allsets 2 [1; 2; 3]
     |> should equal [[1; 2]; [1; 3]; [2; 3]]
 
 // lib.p032
 [<Test>]
-let ``allpairs`` () =
+let ``List allpairs`` () =
     allpairs (fun x y -> x * y) [2; 3; 5] [7; 11]
     |> should equal [14; 22; 21; 33; 35; 55]
 
 // lib.p033
-[<Test>]
-let ``distinctpairs`` () =
-    distinctpairs [1; 2; 3; 4]
-    |> should equal [(1, 2); (1, 3); (1, 4); (2, 3); (2, 4); (3, 4)]
+//[<Test>]
+//let ``List distinctpairs`` () =
+//    distinctpairs [1; 2; 3; 4]
+//    |> should equal [(1, 2); (1, 3); (1, 4); (2, 3); (2, 4); (3, 4)]
 
 // lib.p034
 [<Test>]
-let ``assoc`` () =
+let ``Association List assoc`` () =
     assoc 3 [1,2; 2,4; 3,9; 4,16]
     |> should equal 9
 
@@ -262,38 +1251,38 @@ let timesFour x = x * 4
 // lib.p039
 // (2 * 4) + 5 = 13
 [<Test>]
-let ``backward composition operator`` () =
+let ``function operator backward composition`` () =
     (addFive << timesFour) 2
     |> should equal 13
 
 // lib.p040
 // (2 + 5) * 4 = 28
 [<Test>]
-let ``forward composition operator`` () =
+let ``function operator forward composition`` () =
     (addFive >> timesFour) 2
     |> should equal 28
 
 // lib.p041
 [<Test>]
-let ``gcd test`` () =
+let ``math gcd`` () =
     gcd_num (num_of_int 12) (num_of_int 15)
     |> should equal (num_of_int 3)
 
 // lib.p042
 [<Test>]
-let ``lcm test`` () =
+let ``math lcm`` () =
     lcm_num (num_of_int 12) (num_of_int 15)
     |> should equal (num_of_int 60)
 
 // lib.p043
 [<Test>]
-let ``non test`` () =
+let ``idiom non`` () =
     non (fun x -> x % 2 = 0) 5
     |> should equal true
 
 // lib.p044
 [<Test>]
-let ``funpow test`` () =
+let ``function funpow`` () =
     funpow 10 (fun x -> x + x) 1
     |> should equal 1024
 
@@ -304,19 +1293,19 @@ let divideBy x =
 
 // lib.p045
 [<Test>]
-let ``can test`` () =
+let ``function can`` () =
     can divideBy 0
     |> should equal false
 
 // lib.p046
 [<Test>]
-let ``list creation span`` () =
+let ``List operator range (int)`` () =
     3--5
     |> should equal [3; 4; 5]
 
 // lib.p047
 [<Test>]
-let ``list creation span num`` () =
+let ``List operator range (num)`` () =
     (num_of_int 3)---(num_of_int 5)
     |> should equal [(num_of_int 3); (num_of_int 4); (num_of_int 5)]
 
@@ -351,10 +1340,10 @@ let ``List index`` () =
     |> should equal 0
 
 // lib.p053
-[<Test>]
-let ``List earlier`` () =
-    earlier [1; 2; 3] 3 2
-    |> should equal false
+//[<Test>]
+//let ``List earlier`` () =
+//    earlier [1; 2; 3] 3 2
+//    |> should equal false
 
 // lib.p054
 [<Test>]
@@ -402,7 +1391,7 @@ let containsEven x =
 
 // lib.p060
 [<Test>]
-let ``tryfind 1`` () =
+let ``function tryfind 1`` () =
     try
         tryfind containsEven list1
     with
@@ -412,7 +1401,7 @@ let ``tryfind 1`` () =
 
 // lib.p061
 [<Test>]
-let ``tryfind 2`` () =
+let ``function tryfind 2`` () =
     try
         tryfind containsEven list2
     with
@@ -691,7 +1680,7 @@ let ``finite partial function undefine success`` () =
 
 // lib.p098
 [<Test>]
-let ``finite partial function update operator`` () =
+let ``finite partial function operator update`` () =
     let pt = 10 |=> 100
     pt
     |> should equal (Leaf (10 ,[(10, 100)]))

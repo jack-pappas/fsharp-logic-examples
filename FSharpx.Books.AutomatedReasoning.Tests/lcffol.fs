@@ -2096,4 +2096,3 @@ let ``lcffol pp tests`` idx =
     lcffol (parse formula)
     |> sprint_thm
     |> should equal pretty_printer_result
-
