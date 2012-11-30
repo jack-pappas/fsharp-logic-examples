@@ -34,7 +34,7 @@ List.nth [0; 1; 2; 3] 2
 
 // lib.p005
 // Multiply all items in list, i.e. 1 * 2 * 3 * 4
-end_itlist (fun x y -> x * y) [1; 2; 3; 4];;
+List.reduceBack (fun x y -> x * y) [1; 2; 3; 4];;
 
 // lib.p006
 // NOTE: exists has been replaced with the equivalent built-in F# function List.exists.
@@ -441,3 +441,4 @@ List.map mapEq (Seq.toList testValues)
       
 // lib.p104
 equated ptn;;
+

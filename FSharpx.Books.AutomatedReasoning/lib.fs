@@ -84,9 +84,11 @@ let rec repeat f x =
 // ------------------------------------------------------------------------- //
 
 // pg. 618
+// NOTE: (--) operator has been replaced with an equivalent using built-in F# range expression.
 let inline (--) (m : int) (n : int) = [m..n]
 
 // pg.618
+// NOTE: (---) operator has been replaced with an equivalent using built-in F# range expression.
 let inline (---) (m : num) (n : num) = [m..n]
 
 // pg. 619
@@ -106,12 +108,6 @@ let inline (---) (m : num) (n : num) = [m..n]
         
 // pg. 619
 // NOTE: end_itlist has been replaced with the equivalent built-in F# function List.reduceBack.
-//let rec end_itlist f l =
-//    match l with
-//    | [] -> failwith "end_itlist"
-//    | [x] -> x
-//    | hd :: tl ->
-//        f hd (end_itlist f tl)
         
 // pg. 619
 // NOTE: itlist2 has been replaced with the equivalent built-in F# function List.foldBack2.
@@ -223,6 +219,7 @@ let rec insertat i x l =
 // NOTE: forall2 has been replaced with the equivalent built-in F# function List.forall2.
         
 // pg. 619
+// NOTE: index has been replaced with an equivalent using built-in F# function List.findIndex.
 let inline index x xs = List.findIndex ((=) x) xs
         
 // pg. 619

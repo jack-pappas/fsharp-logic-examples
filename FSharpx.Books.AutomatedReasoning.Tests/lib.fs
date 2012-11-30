@@ -239,7 +239,6 @@ let ``List distinctpairs`` idx =
     distinctpairs list
     |> should equal result
 
-
 let private earlierValues : (int list * int * int * bool)[] = [| 
     (
         // idx 0
@@ -295,8 +294,6 @@ let private earlierValues : (int list * int * int * bool)[] = [|
         [], 1, 1, 
         false
     );
-
-    
     (
         // idx 9
         // lib.earlier.010
@@ -353,8 +350,6 @@ let private earlierValues : (int list * int * int * bool)[] = [|
         [1], 1, 1, 
         false
     );
-
-    
     (
         // idx 18
         // lib.earlier.019
@@ -1007,13 +1002,1020 @@ let ``List earlier`` idx =
     earlier list x y
     |> should equal result
 
+let private existsValues : (int list * bool)[] = [| 
+    (
+        // idx 0
+        // lib.exists.001
+        [],
+        false
+    ); 
+    (
+        // idx 1
+        // lib.exists.002
+        [-2],
+        true
+    );
+    (
+        // idx 2
+        // lib.exists.003
+        [-1],
+        false
+    );
+    (
+        // idx 3
+        // lib.exists.004
+        [0],
+        true
+    );
+    (
+        // idx 4
+        // lib.exists.005
+        [1],
+        false
+    );
+    (
+        // idx 5
+        // lib.exists.006
+        [1; 2;],
+        true
+    );
+    (
+        // idx 6
+        // lib.exists.007
+        [1; 3],
+        false
+    );
+    (
+        // idx 7
+        // lib.exists.008
+        [2; 3],
+        true
+    );
+    (
+        // idx 8
+        // lib.exists.009
+        [1; 2; 3],
+        true
+    );
+    (
+        // idx 9
+        // lib.exists.010
+        [2; 3; 4],
+        true
+    );
+    |]
+
+[<TestCase(0, TestName = "lib.exists.01")>]
+[<TestCase(1, TestName = "lib.exists.02")>]
+[<TestCase(2, TestName = "lib.exists.03")>]
+[<TestCase(3, TestName = "lib.exists.04")>]
+[<TestCase(4, TestName = "lib.exists.05")>]
+[<TestCase(5, TestName = "lib.exists.06")>]
+[<TestCase(6, TestName = "lib.exists.07")>]
+[<TestCase(7, TestName = "lib.exists.08")>]
+[<TestCase(8, TestName = "lib.exists.09")>]
+[<TestCase(9, TestName = "lib.exists.10")>]
 
 [<Test>]
-let ``List reduceBack`` () =
-    List.reduceBack (fun x y -> x * y) [1; 2; 3; 4]
-    |> should equal 24
+let ``List exists`` idx = 
+    let (list, _) = existsValues.[idx]
+    let (_, result) = existsValues.[idx]
+    List.exists (fun x -> x % 2 = 0) list 
+    |> should equal result
 
+let private filterValues : (int list * int list)[] = [| 
+    (
+        // idx 0
+        // lib.filter.001
+        [],
+        []
+    ); 
+    (
+        // idx 1
+        // lib.filter.002
+        [-2],
+        [-2]
+    );
+    (
+        // idx 2
+        // lib.filter.003
+        [-1],
+        []
+    );
+    (
+        // idx 3
+        // lib.filter.004
+        [0],
+        [0]
+    );
+    (
+        // idx 4
+        // lib.filter.005
+        [1],
+        []
+    );
+    (
+        // idx 5
+        // lib.filter.006
+        [1; 2;],
+        [2]
+    );
+    (
+        // idx 6
+        // lib.filter.007
+        [1; 3],
+        []
+    );
+    (
+        // idx 7
+        // lib.filter.008
+        [2; 3],
+        [2]
+    );
+    (
+        // idx 8
+        // lib.filter.009
+        [1; 2; 3],
+        [2]
+    );
+    (
+        // idx 9
+        // lib.filter.010
+        [2; 3; 4],
+        [2; 4]
+    );
+    |]
+
+[<TestCase(0, TestName = "lib.filter.01")>]
+[<TestCase(1, TestName = "lib.filter.02")>]
+[<TestCase(2, TestName = "lib.filter.03")>]
+[<TestCase(3, TestName = "lib.filter.04")>]
+[<TestCase(4, TestName = "lib.filter.05")>]
+[<TestCase(5, TestName = "lib.filter.06")>]
+[<TestCase(6, TestName = "lib.filter.07")>]
+[<TestCase(7, TestName = "lib.filter.08")>]
+[<TestCase(8, TestName = "lib.filter.09")>]
+[<TestCase(9, TestName = "lib.filter.10")>]
     
+[<Test>]
+let ``List filter`` idx = 
+    let (list, _) = filterValues.[idx]
+    let (_, result) = filterValues.[idx]
+    List.filter (fun x -> x % 2 = 0) list 
+    |> should equal result
+
+let private findValues : (int list * int)[] = [| 
+    (
+        // idx 0
+        // lib.find.001
+        // System.Exception - System.Collections.Generic.KeyNotFoundException
+        [],
+        -99  // Dummy value used as place holder
+    ); 
+    (
+        // idx 1
+        // lib.find.002
+        [-2],
+        -2
+    );
+    (
+        // idx 2
+        // lib.find.003
+        // System.Exception - System.Collections.Generic.KeyNotFoundException
+        [-1],
+        -99  // Dummy value used as place holder
+    );
+    (
+        // idx 3
+        // lib.find.004
+        [0],
+        0
+    );
+    (
+        // idx 4
+        // lib.find.005
+        // System.Exception - System.Collections.Generic.KeyNotFoundException
+        [1],
+        -99  // Dummy value used as place holder
+    );
+    (
+        // idx 5
+        // lib.find.006
+        [1; 2;],
+        2
+    );
+    (
+        // idx 6
+        // lib.find.007
+        // System.Exception - System.Collections.Generic.KeyNotFoundException
+        [1; 3],
+        -99  // Dummy value used as place holder
+    );
+    (
+        // idx 7
+        // lib.find.008
+        [2; 3],
+        2
+    );
+    (
+        // idx 8
+        // lib.find.009
+        [1; 2; 3],
+        2
+    );
+    (
+        // idx 9
+        // lib.find.010
+        [2; 3; 4],
+        2
+    );
+    |]
+
+[<TestCase(0, TestName = "lib.find.01", ExpectedException=typeof<System.Collections.Generic.KeyNotFoundException>)>]
+[<TestCase(1, TestName = "lib.find.02")>]
+[<TestCase(2, TestName = "lib.find.03", ExpectedException=typeof<System.Collections.Generic.KeyNotFoundException>)>]
+[<TestCase(3, TestName = "lib.find.04")>]
+[<TestCase(4, TestName = "lib.find.05", ExpectedException=typeof<System.Collections.Generic.KeyNotFoundException>)>]
+[<TestCase(5, TestName = "lib.find.06")>]
+[<TestCase(6, TestName = "lib.find.07", ExpectedException=typeof<System.Collections.Generic.KeyNotFoundException>)>]
+[<TestCase(7, TestName = "lib.find.08")>]
+[<TestCase(8, TestName = "lib.find.09")>]
+[<TestCase(9, TestName = "lib.find.10")>]
+   
+[<Test>]
+let ``List find`` idx = 
+    let (list, _) = findValues.[idx]
+    let (_, result) = findValues.[idx]
+    List.find (fun x -> x % 2 = 0) list 
+    |> should equal result
+
+let private foldBackValues : (int list * int * int)[] = [| 
+    (
+        // idx 0
+        // lib.foldBack.001
+        [], 10,
+        10
+    ); 
+    (
+        // idx 1
+        // lib.foldBack.002
+        [-2], 10,
+        8
+    );
+    (
+        // idx 2
+        // lib.foldBack.003
+        [-1], 10,
+        9
+    );
+    (
+        // idx 3
+        // lib.foldBack.004
+        [0], 10,
+        10
+    );
+    (
+        // idx 4
+        // lib.foldBack.005
+        [1], 10,
+        11
+    );
+    (
+        // idx 5
+        // lib.foldBack.006
+        [1; 2;], 10,
+        13
+    );
+    (
+        // idx 6
+        // lib.foldBack.007
+        [1; 3], 10,
+        14
+    );
+    (
+        // idx 7
+        // lib.foldBack.008
+        [2; 3], 10,
+        15
+    );
+    (
+        // idx 8
+        // lib.foldBack.009
+        [1; 2; 3], 10,
+        16
+    );
+    (
+        // idx 9
+        // lib.foldBack.010
+        [2; 3; 4], 10,
+        19
+    );
+    |]
+
+[<TestCase(0, TestName = "lib.foldBack.01")>]
+[<TestCase(1, TestName = "lib.foldBack.02")>]
+[<TestCase(2, TestName = "lib.foldBack.03")>]
+[<TestCase(3, TestName = "lib.foldBack.04")>]
+[<TestCase(4, TestName = "lib.foldBack.05")>]
+[<TestCase(5, TestName = "lib.foldBack.06")>]
+[<TestCase(6, TestName = "lib.foldBack.07")>]
+[<TestCase(7, TestName = "lib.foldBack.08")>]
+[<TestCase(8, TestName = "lib.foldBack.09")>]
+[<TestCase(9, TestName = "lib.foldBack.10")>]
+  
+[<Test>]
+let ``List foldBack`` idx = 
+    let (list, _, _) = foldBackValues.[idx]
+    let (_, start_value, _) = foldBackValues.[idx]
+    let (_, _, result) = foldBackValues.[idx]
+    List.foldBack (fun acc elem -> acc + elem) list start_value
+    |> should equal result
+
+let private foldBack2Values : (int list * int list * int * int)[] = [| 
+    (
+        // idx 0
+        // lib.foldBack2.001
+        [], [], 10,
+        10
+    ); 
+    (
+        // idx 1
+        // lib.foldBack2.002
+        // System.ArgumentException - The lists had different lengths.
+        [1], [], 10,
+        -99  // Dummy value used as place holder
+    );
+    (
+        // idx 2
+        // lib.foldBack2.003
+        // System.ArgumentException - The lists had different lengths.
+        [], [1], 10,
+        -99  // Dummy value used as place holder
+    );
+    (
+        // idx 3
+        // lib.foldBack2.004
+        [0], [0], 10,
+        10
+    );
+    (
+        // idx 4
+        // lib.foldBack2.005
+        [-2], [2], 10,
+        6
+    );
+    (
+        // idx 5
+        // lib.foldBack2.006
+        [2], [3], 10,
+        16
+    );
+    (
+        // idx 6
+        // lib.foldBack2.007
+        [1; 2;], [4; 5], 10,
+        24
+    );
+    (
+        // idx 7
+        // lib.foldBack2.008
+        [1; 2; 4;], [0; -1; 3], 10,
+        20
+    );
+    (
+        // idx 8
+        // lib.foldBack2.009
+        [1; 3; 4; 7;], [0; 0; 0; 0], 10,
+        10
+    );
+    |]
+
+[<TestCase(0, TestName = "lib.foldBack2.01")>]
+[<TestCase(1, TestName = "lib.foldBack2.02", ExpectedException=typeof<System.ArgumentException>)>]
+[<TestCase(2, TestName = "lib.foldBack2.03", ExpectedException=typeof<System.ArgumentException>)>]
+[<TestCase(3, TestName = "lib.foldBack2.04")>]
+[<TestCase(4, TestName = "lib.foldBack2.05")>]
+[<TestCase(5, TestName = "lib.foldBack2.06")>]
+[<TestCase(6, TestName = "lib.foldBack2.07")>]
+[<TestCase(7, TestName = "lib.foldBack2.08")>]
+[<TestCase(8, TestName = "lib.foldBack2.09")>]
+
+[<Test>]
+let ``List foldBack2`` idx = 
+    let (list1, _, _, _) = foldBack2Values.[idx]
+    let (_, list2, _, _) = foldBack2Values.[idx]
+    let (_, _, start_value, _) = foldBack2Values.[idx]
+    let (_, _, _, result) = foldBack2Values.[idx]
+    List.foldBack2 (fun elem1 elem2 acc -> elem1 * elem2 + acc) list1 list2 start_value
+    |> should equal result
+
+let private forallValues : (int list * bool)[] = [| 
+    (
+        // idx 0
+        // lib.forall.001
+        [],
+        true
+    ); 
+    (
+        // idx 1
+        // lib.forall.002
+        [-2],
+        true
+    );
+    (
+        // idx 2
+        // lib.forall.003
+        [-1],
+        false
+    );
+    (
+        // idx 3
+        // lib.forall.004
+        [0],
+        true
+    );
+    (
+        // idx 4
+        // lib.forall.005
+        [1],
+        false
+    );
+    (
+        // idx 5
+        // lib.forall.006
+        [2],
+        true
+    );
+    (
+        // idx 6
+        // lib.forall.007
+        [0; 0],
+        true
+    );
+    (
+        // idx 7
+        // lib.forall.008
+        [0; 1],
+        false
+    );
+    (
+        // idx 8
+        // lib.forall.009
+        [1; 0], 
+        false
+    );
+    (
+        // idx 9
+        // lib.forall.010
+        [1; 3],
+        false
+    );
+    (
+        // idx 10
+        // lib.forall.011
+        [2; 4],
+        true
+    );
+    (
+        // idx 11
+        // lib.forall.012
+        [1; 2; 3],
+        false
+    );
+    (
+        // idx 12
+        // lib.forall.013
+        [2; 3; 4],
+        false
+    );
+    (
+        // idx 13
+        // lib.forall.014
+        [1; 1; 1],
+        false
+    );
+    (
+        // idx 14
+        // lib.forall.015
+        [2; 2; 2],
+        true
+    );
+    |]
+
+[<TestCase(0, TestName = "lib.forall.01")>]
+[<TestCase(1, TestName = "lib.forall.02")>]
+[<TestCase(2, TestName = "lib.forall.03")>]
+[<TestCase(3, TestName = "lib.forall.04")>]
+[<TestCase(4, TestName = "lib.forall.05")>]
+[<TestCase(5, TestName = "lib.forall.06")>]
+[<TestCase(6, TestName = "lib.forall.07")>]
+[<TestCase(7, TestName = "lib.forall.08")>]
+[<TestCase(8, TestName = "lib.forall.09")>]
+[<TestCase(9, TestName = "lib.forall.10")>]
+[<TestCase(10, TestName = "lib.forall.11")>]
+[<TestCase(12, TestName = "lib.forall.12")>]
+[<TestCase(13, TestName = "lib.forall.13")>]
+[<TestCase(14, TestName = "lib.forall.14")>]
+
+[<Test>]
+let ``List forall`` idx = 
+    let (list, _) = forallValues.[idx]
+    let (_, result) = forallValues.[idx]
+    List.forall (fun x -> x % 2 = 0) list 
+    |> should equal result
+
+let private forall2Values : (int list * int list * bool)[] = [| 
+    (
+        // idx 0
+        // lib.forall2.001
+        [], [],
+        true
+    ); 
+    (
+        // idx 1
+        // lib.forall2.002
+        // System.ArgumentException - The lists had different lengths.
+        [1], [],
+        false  // Dummy value used as place holder
+    );
+    (
+        // idx 2
+        // lib.forall2.003
+        // System.ArgumentException - The lists had different lengths.
+        [], [1],
+        false  // Dummy value used as place holder
+    );
+    (
+        // idx 3
+        // lib.forall2.004
+        [0], [0],
+        false
+    );
+    (
+        // idx 4
+        // lib.forall2.005
+        [0], [1],
+        true
+    );
+    (
+        // idx 5
+        // lib.forall2.006
+        [1], [0],
+        false
+    );
+    (
+        // idx 6
+        // lib.forall2.007
+        // System.ArgumentException - The lists had different lengths.
+        [0; 0], [],
+        false  // Dummy value used as place holder
+    );
+    (
+        // idx 7
+        // lib.forall2.008
+        // System.ArgumentException - The lists had different lengths.
+        [], [0; 0],
+         false  // Dummy value used as place holder
+    );
+    (
+        // idx 8
+        // lib.forall2.009
+        [0; 0], [0; 0],
+        false
+    );
+    (
+        // idx 9
+        // lib.forall2.010
+        [0; 0], [0; 1],
+        false
+    );
+    (
+        // idx 10
+        // lib.forall2.011
+        [0; 0], [1; 0],
+        false
+    );
+    (
+        // idx 11
+        // lib.forall2.012
+        [0; 0], [1; 1],
+        true
+    );
+    (
+        // idx 12
+        // lib.forall2.013
+        [0; 1], [0; 0],
+        false
+    );
+    (
+        // idx 13
+        // lib.forall2.014
+        [0; 1], [0; 1],
+        false
+    );
+    (
+        // idx 14
+        // lib.forall2.015
+        [0; 1], [1; 0],
+        false
+    );
+    (
+        // idx 15
+        // lib.forall2.016
+        [0; 1], [1; 1],
+        false
+    );
+    (
+        // idx 16
+        // lib.forall2.0017
+        [1; 0], [0; 0],
+        false
+    );
+    (
+        // idx 17
+        // lib.forall2.0018
+        [1; 0], [0; 1],
+        false
+    );
+    (
+        // idx 18
+        // lib.forall2.019
+        [1; 0], [1; 0],
+        false
+    );
+    (
+        // idx 19
+        // lib.forall2.020
+        [1; 0], [1; 1],
+        false
+    );
+    (
+        // idx 20
+        // lib.forall2.021
+        [1; 1], [0; 0],
+        false
+    );
+    (
+        // idx 21
+        // lib.forall2.022
+        [1; 1], [0; 1],
+        false
+    );
+    (
+        // idx 22
+        // lib.forall2.023
+        [1; 1], [1; 0],
+        false
+    );
+    (
+        // idx 23
+        // lib.forall2.024
+        [1; 1], [1; 1],
+        false
+    );
+    |]
+
+[<TestCase(0, TestName = "lib.forall2.01")>]
+[<TestCase(1, TestName = "lib.forall2.02", ExpectedException=typeof<System.ArgumentException>)>]
+[<TestCase(2, TestName = "lib.forall2.03", ExpectedException=typeof<System.ArgumentException>)>]
+[<TestCase(3, TestName = "lib.forall2.04")>]
+[<TestCase(4, TestName = "lib.forall2.05")>]
+[<TestCase(5, TestName = "lib.forall2.06")>]
+[<TestCase(6, TestName = "lib.forall2.07", ExpectedException=typeof<System.ArgumentException>)>]
+[<TestCase(7, TestName = "lib.forall2.08", ExpectedException=typeof<System.ArgumentException>)>]
+[<TestCase(8, TestName = "lib.forall2.09")>]
+[<TestCase(9, TestName = "lib.forall2.10")>]
+[<TestCase(10, TestName = "lib.forall2.11")>]
+[<TestCase(11, TestName = "lib.forall2.12")>]
+[<TestCase(12, TestName = "lib.forall2.13")>]
+[<TestCase(13, TestName = "lib.forall2.14")>]
+[<TestCase(14, TestName = "lib.forall2.15")>]
+[<TestCase(15, TestName = "lib.forall2.16")>]
+[<TestCase(16, TestName = "lib.forall2.17")>]
+[<TestCase(17, TestName = "lib.forall2.18")>]
+[<TestCase(18, TestName = "lib.forall2.19")>]
+[<TestCase(19, TestName = "lib.forall2.20")>]
+[<TestCase(20, TestName = "lib.forall2.21")>]
+[<TestCase(21, TestName = "lib.forall2.22")>]
+[<TestCase(22, TestName = "lib.forall2.23")>]
+[<TestCase(23, TestName = "lib.forall2.24")>]
+
+[<Test>]
+let ``List forall2`` idx = 
+    let (list1, _, _) = forall2Values.[idx]
+    let (_, list2, _) = forall2Values.[idx]
+    let (_, _, result) = forall2Values.[idx]
+    List.forall2 (fun elem1 elem2 -> (elem1 < elem2)) list1 list2
+    |> should equal result
+
+let private headValues : (int list * int)[] = [| 
+    (
+        // idx 0
+        // lib.head.01
+        // System.ArgumentException - The input list was empty.
+        [],
+        -99  // Dummy value used as place holder
+    );
+    (
+        // idx 1
+        // lib.head.02
+        [1],
+        1
+    );
+    (
+        // idx 2
+        // lib.head.03
+        [1; 2],
+        1
+    );
+    (
+        // idx 3
+        // lib.head.04
+        [1; 2; 3],
+        1
+    );
+    (
+        // idx 4
+        // lib.head.05
+        [3; 2; 1],
+        3
+    )
+    |]
+
+[<TestCase(0, TestName = "lib.head.01", ExpectedException=typeof<System.ArgumentException>)>]
+[<TestCase(1, TestName = "lib.head.02")>]
+[<TestCase(2, TestName = "lib.head.03")>]
+[<TestCase(3, TestName = "lib.head.04")>]
+[<TestCase(4, TestName = "lib.head.05")>]
+
+[<Test>]
+let ``List head`` idx = 
+    let (list, _) = headValues.[idx]
+    let (_, result) = headValues.[idx]
+    List.head list
+    |> should equal result
+
+let private imageValues : (int list * int list)[] = [| 
+    (
+        // idx 0
+        // lib.image.001
+        [],
+        []
+    ); 
+    (
+        // idx 1
+        // lib.image.002
+        [-2],
+        [0]
+    );
+    (
+        // idx 2
+        // lib.image.003
+        [-1],
+        [-1]
+    );
+    (
+        // idx 3
+        // lib.image.004
+        [0],
+        [0]
+    );
+    (
+        // idx 4
+        // lib.image.005
+        [1],
+        [1]
+    );
+    (
+        // idx 5
+        // lib.image.006
+        [2],
+        [0]
+    );
+    (
+        // idx 6
+        // lib.image.007
+        [-5; -3; -1],
+        [-1]
+    );
+    (
+        // idx 7
+        // lib.image.008
+        [-9; -7;-5; -3; -1],
+        [-1]
+    );
+    (
+        // idx 8
+        // lib.image.009
+        [-2; 2], 
+        [0]
+    );
+    (
+        // idx 9
+        // lib.image.010
+        [-6; -4; -2; 2; 4; 6], 
+        [0]
+    );
+    (
+        // idx 10
+        // lib.image.011
+        [1; 3; 5],
+        [1]
+    );
+    (
+        // idx 11
+        // lib.image.012
+        [1; 3; 5; 7; 9],
+        [1]
+    );
+    (
+        // idx 12
+        // lib.image.013
+        [0; 1],
+        [0; 1]
+    );
+    (
+        // idx 13
+        // lib.image.014
+        [0; 1; 2],
+        [0; 1]
+    );
+    (
+        // idx 14
+        // lib.image.015
+        [-1; 0],
+        [-1; 0]
+    );
+    (
+        // idx 15
+        // lib.image.016
+        [-2; -1; 0],
+        [-1; 0]
+    );
+    (
+        // idx 16
+        // lib.image.017
+        [-10; -9; -8; -7; -6; -5; -4; -3; -2; -1; 0; 1; 2; 2; 4; 5; 6; 7; 8; 8; 10],
+        [-1; 0; 1]
+    );
+    |]
+
+[<TestCase(0, TestName = "lib.image.01")>]
+[<TestCase(1, TestName = "lib.image.02")>]
+[<TestCase(2, TestName = "lib.image.03")>]
+[<TestCase(3, TestName = "lib.image.04")>]
+[<TestCase(4, TestName = "lib.image.05")>]
+[<TestCase(5, TestName = "lib.image.06")>]
+[<TestCase(6, TestName = "lib.image.07")>]
+[<TestCase(7, TestName = "lib.image.08")>]
+[<TestCase(8, TestName = "lib.image.09")>]
+[<TestCase(9, TestName = "lib.image.10")>]
+[<TestCase(10, TestName = "lib.image.11")>]
+[<TestCase(11, TestName = "lib.image.12")>]
+[<TestCase(12, TestName = "lib.image.13")>]
+[<TestCase(13, TestName = "lib.image.14")>]
+[<TestCase(14, TestName = "lib.image.15")>]
+[<TestCase(15, TestName = "lib.image.16")>]
+[<TestCase(16, TestName = "lib.image.17")>]
+
+[<Test>]
+let ``List image`` idx = 
+    let (list, _) = imageValues.[idx]
+    let (_, result) = imageValues.[idx]
+    image (fun x -> x % 2) list
+    |> should equal result
+    
+let private indexValues : (int * int list * int)[] = [| 
+    (
+        // idx 0
+        // lib.index.01
+        // System.Exception - System.Collections.Generic.KeyNotFoundException
+        0, [],
+        -99  // Dummy value used as place holder
+    );
+    (
+        // idx 1
+        // lib.index.02
+        // System.Exception - System.Collections.Generic.KeyNotFoundException
+        1, [],
+        -99  // Dummy value used as place holder
+    );
+    (
+        // idx 2
+        // lib.index.03
+        // System.Exception - System.Collections.Generic.KeyNotFoundException
+        0, [1],
+        -99  // Dummy value used as place holder
+    );
+    (
+        // idx 3
+        // lib.index.04
+        1, [1],
+        0
+    );
+    (
+        // idx 4
+        // lib.index.05
+        // System.Exception - System.Collections.Generic.KeyNotFoundException
+        2, [1],
+        -99  // Dummy value used as place holder
+    );
+    (
+        // idx 5
+        // lib.index.06
+        // System.Exception - System.Collections.Generic.KeyNotFoundException
+        0, [1; 2],
+        -99  // Dummy value used as place holder
+    );
+    (
+        // idx 6
+        // lib.index.07
+        1, [1; 2],
+        0
+    );
+    (
+        // idx 7
+        // lib.index.08
+        2, [1; 2],
+        1
+    );
+    (
+        // idx 8
+        // lib.index.09
+        // System.Exception - System.Collections.Generic.KeyNotFoundException
+        3, [1; 2],
+        -99  // Dummy value used as place holder
+    );
+    (
+        // idx 9
+        // lib.index.10
+        1, [1; 1; 1],
+        0
+    );
+    (
+        // idx 10
+        // lib.index.11
+        1, [3; 2; 1],
+        2
+    );
+    (
+        // idx 11
+        // lib.index.12
+        2, [1; 2; 3],
+        1
+    );
+    (
+        // idx 12
+        // lib.index.13
+        3, [1; 2; 3],
+        2
+    );
+    (
+        // idx 13
+        // lib.index.14
+        -1, [-5; -4; -3; -2; -1; 0; 1; 2; 3; 4; 5],
+        4
+    );
+    (
+        // idx 14
+        // lib.index.15
+        // System.Exception - System.Collections.Generic.KeyNotFoundException
+        5, [2; 4; 6; 8; 10; 12; 14; 16; 18],
+        -99  // Dummy value used as place holder
+    );
+    (
+        // idx 15
+        // lib.index.16
+        5, [-5; 0 ; 5; 10],
+        2
+    );
+    |]
+
+[<TestCase(0, TestName = "lib.index.01", ExpectedException=typeof<System.Collections.Generic.KeyNotFoundException>)>]
+[<TestCase(1, TestName = "lib.index.02", ExpectedException=typeof<System.Collections.Generic.KeyNotFoundException>)>]
+[<TestCase(2, TestName = "lib.index.03", ExpectedException=typeof<System.Collections.Generic.KeyNotFoundException>)>]
+[<TestCase(3, TestName = "lib.index.04")>]
+[<TestCase(4, TestName = "lib.index.05", ExpectedException=typeof<System.Collections.Generic.KeyNotFoundException>)>]
+[<TestCase(5, TestName = "lib.index.06", ExpectedException=typeof<System.Collections.Generic.KeyNotFoundException>)>]
+[<TestCase(6, TestName = "lib.index.07")>]
+[<TestCase(7, TestName = "lib.index.08")>]
+[<TestCase(8, TestName = "lib.index.09", ExpectedException=typeof<System.Collections.Generic.KeyNotFoundException>)>]
+[<TestCase(9, TestName = "lib.index.10")>]
+[<TestCase(10, TestName = "lib.index.11")>]
+[<TestCase(11, TestName = "lib.index.12")>]
+[<TestCase(12, TestName = "lib.index.13")>]
+[<TestCase(13, TestName = "lib.index.14")>]
+[<TestCase(14, TestName = "lib.index.15", ExpectedException=typeof<System.Collections.Generic.KeyNotFoundException>)>]
+[<TestCase(15, TestName = "lib.index.16")>]
+
+[<Test>]
+let ``List index`` idx = 
+    let (searchValue, _, _) = indexValues.[idx]
+    let (_, list, _) = indexValues.[idx]
+    let (_, _, result) = indexValues.[idx]
+    index searchValue list
+    |> should equal result
+
 // =================================================================================
 
 // lib.p003
@@ -1042,10 +2044,10 @@ let ``List nth`` () =
 //    |> should equal 24
     
 // lib.p006
-[<Test>]
-let ``List exists`` () =
-    List.exists (fun x -> x % 2 = 0) [1; 2; 3]
-    |> should equal true
+//[<Test>]
+//let ``List exists`` () =
+//    List.exists (fun x -> x % 2 = 0) [1; 2; 3]
+//    |> should equal true
 
 // lib.p007
 [<Test>]
@@ -1054,22 +2056,22 @@ let ``String explode`` () =
     |> should equal ["h"; "e"; "l"; "l"; "o"]
 
 // lib.p008
-[<Test>]
-let ``List forall`` () =
-    List.forall (fun x -> (x < 5)) [1; 2; 3]
-    |> should equal true
+//[<Test>]
+//let ``List forall`` () =
+//    List.forall (fun x -> (x < 5)) [1; 2; 3]
+//    |> should equal true
 
 // lib.p009
-[<Test>]
-let ``List forall2`` () =
-    List.forall2 (fun x y -> (x < y)) [1; 2; 3; 4] [3; 4; 5; 6]
-    |> should equal true
+//[<Test>]
+//let ``List forall2`` () =
+//    List.forall2 (fun x y -> (x < y)) [1; 2; 3; 4] [3; 4; 5; 6]
+//    |> should equal true
 
 // lib.p010
-[<Test>]
-let ``List head`` () =
-    List.head [1; 2; 3]
-    |> should equal 1
+//[<Test>]
+//let ``List head`` () =
+//    List.head [1; 2; 3]
+//    |> should equal 1
 
 // lib.p011
 [<Test>]
@@ -1084,16 +2086,16 @@ let ``List insertat`` () =
     |> should equal [0; 1; 2; 9; 3; 4; 5]
 
 // lib.p013
-[<Test>]
-let ``List foldBack`` () =
-    List.foldBack (fun x y -> x + y) [1; 2; 3] 5
-    |> should equal 11
+//[<Test>]
+//let ``List foldBack`` () =
+//    List.foldBack (fun x y -> x + y) [1; 2; 3] 5
+//    |> should equal 11
 
 // lib.p014
-[<Test>]
-let ``List foldBack2`` () =
-    List.foldBack2 (fun a x y -> a + x + y) ["a"; "b"; "c"] ["1"; "2"; "3"] " Hello"
-    |> should equal "a1b2c3 Hello"
+//[<Test>]
+//let ``List foldBack2`` () =
+//    List.foldBack2 (fun a x y -> a + x + y) ["a"; "b"; "c"] ["1"; "2"; "3"] " Hello"
+//    |> should equal "a1b2c3 Hello"
 
 // lib.p015
 [<Test>]
@@ -1118,6 +2120,11 @@ let ``List map2`` () =
 let ``List mapfilter`` () =
     mapfilter (fun x -> x % 2 = 0) [1; 2; 3; 4]
     |> should equal [false; true; false; true]
+
+[<Test>]
+let ``List reduceBack`` () =
+    List.reduceBack (fun x y -> x * y) [1; 2; 3; 4]
+    |> should equal 24
 
 // lib.p019
 [<Test>]
@@ -1174,10 +2181,10 @@ let ``List unions`` () =
     |> should equal [1; 2; 3; 4; 6; 8; 9; 12]
 
 // lib.p028
-[<Test>]
-let ``List image`` () =
-    image (fun x -> x % 2) [1; 2; 3; 4; 5]
-    |> should equal [0; 1]    
+//[<Test>]
+//let ``List image`` () =
+//    image (fun x -> x % 2) [1; 2; 3; 4; 5]
+//    |> should equal [0; 1]    
 
 // lib.p029
 [<Test>]
@@ -1316,10 +2323,10 @@ let ``List partition`` () =
     |> should equal ([0; 2; 4], [1; 3])
 
 // lib.p049
-[<Test>]
-let ``List filter`` () =
-    List.filter (fun x -> x % 2 = 0) [0; 1; 2; 3; 4]
-    |> should equal [0; 2; 4]
+//[<Test>]
+//let ``List filter`` () =
+//    List.filter (fun x -> x % 2 = 0) [0; 1; 2; 3; 4]
+//    |> should equal [0; 2; 4]
 
 // lib.p050
 [<Test>]
@@ -1328,16 +2335,16 @@ let ``List length`` () =
     |> should equal 3
 
 // lib.p051
-[<Test>]
-let ``List find`` () =
-    List.find (fun x -> x % 2 = 0) [1; 2; 3; 4]
-    |> should equal 2
+//[<Test>]
+//let ``List find`` () =
+//    List.find (fun x -> x % 2 = 0) [1; 2; 3; 4]
+//    |> should equal 2
 
 // lib.p052
-[<Test>]
-let ``List index`` () =
-    index 1 [1; 2; 3; 1]
-    |> should equal 0
+//[<Test>]
+//let ``List index`` () =
+//    index 1 [1; 2; 3; 1]
+//    |> should equal 0
 
 // lib.p053
 //[<Test>]
