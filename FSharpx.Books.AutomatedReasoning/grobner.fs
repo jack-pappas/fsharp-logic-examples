@@ -263,7 +263,7 @@ let term_of_varpow vars (x,k) =
 
 let term_of_varpows vars lis =
     let tms = List.filter (fun (a,b) -> b <> 0) (List.zip vars lis) in
-    end_itlist (fun s t -> Fn("*",[s;t])) (List.map (term_of_varpow vars) tms)
+    List.reduceBack (fun s t -> Fn("*",[s;t])) (List.map (term_of_varpow vars) tms)
 
 let term_of_monomial vars (c,m) =
     if List.forall (fun x -> x = 0) m then mk_numeral c
@@ -271,7 +271,7 @@ let term_of_monomial vars (c,m) =
     else Fn("*",[mk_numeral c; term_of_varpows vars m])
 
 let term_of_poly vars pol =
-    end_itlist (fun s t -> Fn("+",[s;t])) (List.map (term_of_monomial vars) pol)
+    List.reduceBack (fun s t -> Fn("+",[s;t])) (List.map (term_of_monomial vars) pol)
 
 let grobner_basis vars pols =
     List.map (term_of_poly vars) (groebner (List.map (mpolyatom vars) pols))

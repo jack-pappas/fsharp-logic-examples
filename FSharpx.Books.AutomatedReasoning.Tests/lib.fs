@@ -1009,8 +1009,8 @@ let ``List earlier`` idx =
 
 
 [<Test>]
-let ``List end_itlist`` () =
-    end_itlist (fun x y -> x * y) [1; 2; 3; 4]
+let ``List reduceBack`` () =
+    List.reduceBack (fun x y -> x * y) [1; 2; 3; 4]
     |> should equal 24
 
     

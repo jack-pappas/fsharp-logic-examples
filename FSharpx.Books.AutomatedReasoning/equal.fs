@@ -53,7 +53,7 @@ let function_congruence (f, n) =
         let argnames_y = List.map (fun n -> "y" + (string n)) (1 -- n)
         let args_x = List.map (fun x -> Var x) argnames_x
         let args_y = List.map (fun x -> Var x) argnames_y
-        let ant = end_itlist mk_and (List.map2 mk_eq args_x args_y)
+        let ant = List.reduceBack mk_and (List.map2 mk_eq args_x args_y)
         let con = mk_eq (Fn (f, args_x)) (Fn (f, args_y))
         [List.foldBack mk_forall (argnames_x @ argnames_y) (Imp (ant, con))]
 
@@ -69,7 +69,7 @@ let predicate_congruence (p, n) =
         let argnames_y = List.map (fun n -> "y" + (string n)) (1 -- n)
         let args_x = List.map (fun x -> Var x) argnames_x
         let args_y = List.map (fun x -> Var x) argnames_y
-        let ant = end_itlist mk_and (List.map2 mk_eq args_x args_y)
+        let ant = List.reduceBack mk_and (List.map2 mk_eq args_x args_y)
         let con = Imp (Atom (R (p, args_x)), Atom (R (p, args_y)))
         [List.foldBack mk_forall (argnames_x @ argnames_y) (Imp (ant, con))]
 
@@ -90,4 +90,4 @@ let equalitize fm =
         let axioms = List.foldBack (union << function_congruence) funcs
                             (List.foldBack (union << predicate_congruence) preds
                                     equivalence_axioms)
-        Imp (end_itlist mk_and axioms, fm)
+        Imp (List.reduceBack mk_and axioms, fm)

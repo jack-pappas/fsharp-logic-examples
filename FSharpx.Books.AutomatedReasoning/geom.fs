@@ -143,7 +143,7 @@ let rec triangulate vars consts pols =
     let cns, tpols = List.partition (is_constant vars) pols
     if cns <> [] then triangulate vars (cns @ consts) tpols else
     if List.length pols <= 1 then pols @ triangulate (List.tail vars) [] consts else
-    let n = end_itlist min (List.map (degree vars) pols)
+    let n = List.reduceBack min (List.map (degree vars) pols)
     let p = List.find (fun p -> degree vars p = n) pols
     let ps = subtract pols [p]
     triangulate vars consts (p :: List.map (fun q -> snd (pdivide vars q p)) ps)

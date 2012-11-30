@@ -105,12 +105,13 @@ let inline (---) (m : num) (n : num) = [m..n]
 // NOTE: itlist has been replaced with the equivalent built-in F# function List.foldBack.
         
 // pg. 619
-let rec end_itlist f l =
-    match l with
-    | [] -> failwith "end_itlist"
-    | [x] -> x
-    | hd :: tl ->
-        f hd (end_itlist f tl)
+// NOTE: end_itlist has been replaced with the equivalent built-in F# function List.reduceBack.
+//let rec end_itlist f l =
+//    match l with
+//    | [] -> failwith "end_itlist"
+//    | [x] -> x
+//    | hd :: tl ->
+//        f hd (end_itlist f tl)
         
 // pg. 619
 // NOTE: itlist2 has been replaced with the equivalent built-in F# function List.foldBack2.
@@ -376,7 +377,7 @@ let rec mapfilter f l =
 let optimize ord f lst =
     lst
     |> List.map (fun x -> x, f x)
-    |> end_itlist (fun (_, y1 as p1) (_, y2 as p2) ->
+    |> List.reduceBack (fun (_, y1 as p1) (_, y2 as p2) ->
         if ord y1 y2 then p1 else p2)
     |> fst
                         

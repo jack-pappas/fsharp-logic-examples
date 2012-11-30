@@ -299,7 +299,7 @@ let poly_nonzero vars sgns pol =
     if List.exists (fun p -> findsign sgns p <> Zero) dcs then True
     elif ucs = [] then False
     else
-        end_itlist mk_or (List.map (fun p -> Not (mk_eq p zero)) ucs)
+        List.reduceBack mk_or (List.map (fun p -> Not (mk_eq p zero)) ucs)
 
 //  pg. 364
 //  ------------------------------------------------------------------------- //
@@ -329,7 +329,7 @@ let rec cqelim vars (eqs, neqs) sgns =
         if eqs = [] then
             list_conj (List.map (poly_nonzero vars sgns) neqs)
         else
-            let n = end_itlist min (List.map (degree vars) eqs)
+            let n = List.reduceBack min (List.map (degree vars) eqs)
             let p = List.find (fun p -> degree vars p = n) eqs
             let oeqs = subtract eqs [p]
             split_zero sgns (head vars p)
@@ -341,7 +341,7 @@ let rec cqelim vars (eqs, neqs) sgns =
                     elif neqs = [] then
                         True
                     else
-                        let q = end_itlist (poly_mul vars) neqs
+                        let q = List.reduceBack (poly_mul vars) neqs
                         poly_nondiv vars sgns' p (poly_pow vars q (degree vars p)))            
 
 

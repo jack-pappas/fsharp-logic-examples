@@ -310,11 +310,11 @@ let nenf fm =
 
 let list_conj l =
     if l = [] then True
-    else end_itlist mk_and l
+    else List.reduceBack mk_and l
 
 let list_disj l = 
     if l = [] then False 
-    else end_itlist mk_or l
+    else List.reduceBack mk_or l
    
 let mk_lits pvs v =
     list_conj (List.map (fun p -> if eval p v then p else Not p) pvs)
