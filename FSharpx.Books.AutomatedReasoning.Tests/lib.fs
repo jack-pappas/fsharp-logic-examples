@@ -2016,20 +2016,531 @@ let ``List index`` idx =
     index searchValue list
     |> should equal result
 
+let private insertValues : (int * int list * int list)[] = [| 
+    (
+        // idx 0
+        // lib.insert.01
+        0, [],
+        [0]
+    );
+    (
+        // idx 1
+        // lib.insert.02
+        1, [],
+        [1]
+    );
+    (
+        // idx 2
+        // lib.insert.03
+        0, [1],
+        [0; 1]
+    );
+    (
+        // idx 3
+        // lib.insert.04
+        1, [1],
+        [1]
+    );
+    (
+        // idx 4
+        // lib.insert.05
+        2, [1],
+        [1; 2]
+    );
+    (
+        // idx 5
+        // lib.insert.06
+        0, [1; 2],
+        [0; 1; 2]
+    );
+    (
+        // idx 6
+        // lib.insert.07
+        1, [1; 2],
+        [1; 2]
+    );
+    (
+        // idx 7
+        // lib.insert.08
+        2, [1; 2],
+        [1; 2]
+    );
+    (
+        // idx 8
+        // lib.insert.09
+        3, [1; 2],
+        [1; 2; 3]
+    );
+    (
+        // idx 9
+        // lib.insert.10
+        0, [1; 2; 3],
+        [0; 1; 2; 3]
+    );
+    (
+        // idx 10
+        // lib.insert.11
+        1, [1; 2; 3],
+        [1; 2; 3]
+    );
+    (
+        // idx 11
+        // lib.insert.12
+        2, [1; 2; 3],
+        [1; 2; 3]
+    );
+    (
+        // idx 12
+        // lib.insert.13
+        3, [1; 2; 3],
+        [1; 2; 3]
+    );
+    (
+        // idx 13
+        // lib.insert.14
+        4, [1; 2; 3],
+        [1; 2; 3; 4]
+    );
+    (
+        // idx 14
+        // lib.insert.15
+        -1, [],
+        [-1]
+    );
+    (
+        // idx 15
+        // lib.insert.16
+        -1, [1],
+        [-1; 1]
+    );
+    (
+        // idx 16
+        // lib.insert.17
+        -1, [1; 2],
+        [-1; 1; 2]
+    );
+    |]
+
+[<TestCase(0, TestName = "lib.insert.01")>]
+[<TestCase(1, TestName = "lib.insert.02")>]
+[<TestCase(2, TestName = "lib.insert.03")>]
+[<TestCase(3, TestName = "lib.insert.04")>]
+[<TestCase(4, TestName = "lib.insert.05")>]
+[<TestCase(5, TestName = "lib.insert.06")>]
+[<TestCase(6, TestName = "lib.insert.07")>]
+[<TestCase(7, TestName = "lib.insert.08")>]
+[<TestCase(8, TestName = "lib.insert.09")>]
+[<TestCase(9, TestName = "lib.insert.10")>]
+[<TestCase(10, TestName = "lib.insert.11")>]
+[<TestCase(11, TestName = "lib.insert.12")>]
+[<TestCase(12, TestName = "lib.insert.13")>]
+[<TestCase(13, TestName = "lib.insert.14")>]
+[<TestCase(14, TestName = "lib.insert.15")>]
+[<TestCase(15, TestName = "lib.insert.16")>]
+[<TestCase(16, TestName = "lib.insert.17")>]
+
+[<Test>]
+let ``List insert`` idx = 
+    let (insertValue, _, _) = insertValues.[idx]
+    let (_, list, _) = insertValues.[idx]
+    let (_, _, result) = insertValues.[idx]
+    insert insertValue list
+    |> should equal result
+
+let private insertatValues : (int * int * int list * int list)[] = [| 
+    (
+        // idx 0
+        // lib.insertat.01
+        // System.Exception - list too short for position to exist
+        -1, 5, [],
+        [5]
+    );
+    (
+        // idx 1
+        // lib.insertat.02
+        // System.Exception - list too short for position to exist
+        1, 5, [],
+        [5]
+    );
+    (
+        // idx 2
+        // lib.insertat.03
+        0, 5, [],
+        [5]
+    );
+    (
+        // idx 3
+        // lib.insertat.04
+        0, 5, [2],
+        [5; 2]
+    );
+    (
+        // idx 4
+        // lib.insertat.05
+        1, 5, [2],
+        [2; 5]
+    );
+    (
+        // idx 5
+        // lib.insertat.06
+        0, 5, [2; 4],
+        [5; 2; 4]
+    );
+    (
+        // idx 6
+        // lib.insertat.07
+        1, 5, [2; 4],
+        [2; 5; 4]
+    );
+    (
+        // idx 7
+        // lib.insertat.08
+        2, 5, [2; 4],
+        [2; 4; 5]
+    );
+    (
+        // idx 8
+        // lib.insertat.09
+        0, 5, [2; 4; 6],
+        [5; 2; 4; 6]
+    );
+    (
+        // idx 9
+        // lib.insertat.10
+        1, 5, [2; 4; 6],
+        [2; 5; 4; 6]
+    );
+    (
+        // idx 10
+        // lib.insertat.11
+        2, 5, [2; 4; 6],
+        [2; 4; 5; 6]
+    );
+    (
+        // idx 11
+        // lib.insertat.12
+        3, 5, [2; 4; 6],
+        [2; 4; 6; 5]
+    );
+    |]
+
+[<TestCase(0, TestName = "lib.insertat.01", ExpectedException=typeof<System.Exception>)>]
+[<TestCase(1, TestName = "lib.insertat.02", ExpectedException=typeof<System.Exception>)>]
+[<TestCase(2, TestName = "lib.insertat.03")>]
+[<TestCase(3, TestName = "lib.insertat.04")>]
+[<TestCase(4, TestName = "lib.insertat.05")>]
+[<TestCase(5, TestName = "lib.insertat.06")>]
+[<TestCase(6, TestName = "lib.insertat.07")>]
+[<TestCase(7, TestName = "lib.insertat.08")>]
+[<TestCase(8, TestName = "lib.insertat.09")>]
+[<TestCase(9, TestName = "lib.insertat.10")>]
+[<TestCase(10, TestName = "lib.insertat.11")>]
+[<TestCase(11, TestName = "lib.insertat.12")>]
+
+[<Test>]
+let ``List insertat`` idx = 
+    let (position, _, _, _) = insertatValues.[idx]
+    let (_, insertValue, _, _) = insertatValues.[idx]
+    let (_, _, list, _) = insertatValues.[idx]
+    let (_, _, _, result) = insertatValues.[idx]
+    insertat position insertValue list
+    |> should equal result
+
+let private intersectValues : (int list * int list * int list)[] = [| 
+    (
+        // idx 0
+        // lib.intersect.01
+        [], [],
+        []
+    );
+    (
+        // idx 1
+        // lib.intersect.02
+        [], [1],
+        []
+    );
+    (
+        // idx 2
+        // lib.intersect.03
+        [1], [],
+        []
+    );
+    (
+        // idx 3
+        // lib.intersect.04
+        [1], [1],
+        [1]
+    );
+    (
+        // idx 4
+        // lib.intersect.05
+        [1], [2],
+        []
+    );
+    (
+        // idx 5
+        // lib.intersect.06
+        [1; 2], [1; 2],
+        [1; 2]
+    );
+    (
+        // idx 6
+        // lib.intersect.07
+        [1; 2], [2; 3],
+        [2]
+    );
+    (
+        // idx 7
+        // lib.intersect.08
+        [1; 2; 3], [1],
+        [1]
+    );
+    (
+        // idx 8
+        // lib.intersect.09
+        [1; 2; 3], [2],
+        [2]
+    );
+    (
+        // idx 9
+        // lib.intersect.10
+        [1; 2; 3], [3],
+        [3]
+    );
+    (
+        // idx 10
+        // lib.intersect.11
+        [1; 2; 3], [1; 2],
+        [1; 2]
+    );
+    (
+        // idx 11
+        // lib.intersect.12
+        [1; 2; 3], [2; 3],
+        [2; 3]
+    );
+    (
+        // idx 12
+        // lib.intersect.13
+        [1; 2; 3], [1; 2; 3],
+        [1; 2; 3]
+    );
+    (
+        // idx 13
+        // lib.intersect.14
+        [1; 2; 3], [3; 2; 1],
+        [1; 2; 3]
+    );
+    (
+        // idx 14
+        // lib.intersect.15
+        [1; 2; 3], [1; 1; 2; 2],
+        [1; 2]
+    );
+    (
+        // idx 15
+        // lib.intersect.16
+        [1; 2; 3], [1; 1; 2; 2; 4; 4;],
+        [1; 2]
+    );
+    (
+        // idx 16
+        // lib.intersect.17
+        [1; 2; 3], [-2; -1; 0; 1; 2; 3; 4; ],
+        [1; 2; 3]
+    );
+    |]
+
+[<TestCase(0, TestName = "lib.intersect.01")>]
+[<TestCase(1, TestName = "lib.intersect.02")>]
+[<TestCase(2, TestName = "lib.intersect.03")>]
+[<TestCase(3, TestName = "lib.intersect.04")>]
+[<TestCase(4, TestName = "lib.intersect.05")>]
+[<TestCase(5, TestName = "lib.intersect.06")>]
+[<TestCase(6, TestName = "lib.intersect.07")>]
+[<TestCase(7, TestName = "lib.intersect.08")>]
+[<TestCase(8, TestName = "lib.intersect.09")>]
+[<TestCase(9, TestName = "lib.intersect.10")>]
+[<TestCase(10, TestName = "lib.intersect.11")>]
+[<TestCase(11, TestName = "lib.intersect.12")>]
+[<TestCase(12, TestName = "lib.intersect.13")>]
+[<TestCase(13, TestName = "lib.intersect.14")>]
+[<TestCase(14, TestName = "lib.intersect.15")>]
+[<TestCase(15, TestName = "lib.intersect.16")>]
+[<TestCase(16, TestName = "lib.intersect.17")>]
+
+
+[<Test>]
+let ``List intersect`` idx = 
+    let (list1, _, _) = intersectValues.[idx]
+    let (_, list2, _) = intersectValues.[idx]
+    let (_, _, result) = intersectValues.[idx]
+    intersect list1 list2
+    |> should equal result
+
+let private iterValues : (string list * string)[] = [| 
+    (
+        // idx 0
+        // lib.iter.01
+        [], 
+        @""
+    );
+    (
+        // idx 1
+        // lib.iter.02
+        ["The"], 
+        @"The"
+    );
+    (
+        // idx 2
+        // lib.iter.03
+        ["The"; " quick"], 
+        @"The quick"
+    );
+    (
+        // idx 3
+        // lib.iter.04
+        ["The"; " quick"; " brown fox"], 
+        @"The quick brown fox"
+    );
+    |]
+
+[<TestCase(0, TestName = "lib.iter.01")>]
+[<TestCase(1, TestName = "lib.iter.02")>]
+[<TestCase(2, TestName = "lib.iter.03")>]
+[<TestCase(3, TestName = "lib.iter.04")>]
+
+
+[<Test>]
+// Note: Since List.iter returns unit, 
+// need to use function with side effect
+// or a mutable value :(
+// to have some output to test against
+// i.e. sb.Append.
+let ``List iter`` idx = 
+    let (list, _) = iterValues.[idx]
+    let (_, result) = iterValues.[idx]
+    let sb = System.Text.StringBuilder ()
+    list |> List.iter (fun (s : string) ->
+        sb.Append s
+        |> ignore)
+    sb.ToString ()
+    |> should equal result
+
+let private lastValues : (int list * int)[] = [| 
+    (
+        // idx 0
+        // lib.last.01
+        // System.Exception - Cannot get the last element of an empty list.
+        [],
+        -99  // Dummy value used as place holder
+    );
+    (
+        // idx 1
+        // lib.last.02
+        [1],
+        1
+    );
+    (
+        // idx 2
+        // lib.last.03
+        [1; 2],
+        2
+    );
+    (
+        // idx 3
+        // lib.last.04
+        [1; 2; 3],
+        3
+    );
+    (
+        // idx 4
+        // lib.last.05
+        [3; 2; 1],
+        1
+    )
+    |]
+
+[<TestCase(0, TestName = "lib.last.01", ExpectedException=typeof<System.Exception>, ExpectedMessage="Cannot get the last element of an empty list.")>]
+[<TestCase(1, TestName = "lib.last.02")>]
+[<TestCase(2, TestName = "lib.last.03")>]
+[<TestCase(3, TestName = "lib.last.04")>]
+[<TestCase(4, TestName = "lib.last.05")>]
+
+[<Test>]
+let ``List last`` idx = 
+    let (list, _) = lastValues.[idx]
+    let (_, result) = lastValues.[idx]
+    last list
+    |> should equal result
+
+let private lengthValues : (int list * int)[] = [| 
+    (
+        // idx 0
+        // lib.length.01
+        [],
+        0
+    );
+    (
+        // idx 1
+        // lib.length.02
+        [1],
+        1
+    );
+    (
+        // idx 2
+        // lib.length.03
+        [1; 2],
+        2
+    );
+    (
+        // idx 3
+        // lib.length.04
+        [1; 2; 3],
+        3
+    );
+    (
+        // idx 4
+        // lib.length.05
+        [3; 2; 1; 0],
+        4
+    )
+    (
+        // idx 5
+        // lib.length.06
+        [0; 1; 1; 2; 2; 3; 4; 5],
+        8
+    )
+    |]
+
+[<TestCase(0, TestName = "lib.length.01")>]
+[<TestCase(1, TestName = "lib.length.02")>]
+[<TestCase(2, TestName = "lib.length.03")>]
+[<TestCase(3, TestName = "lib.length.04")>]
+[<TestCase(4, TestName = "lib.length.05")>]
+[<TestCase(5, TestName = "lib.length.06")>]
+
+[<Test>]
+let ``List length`` idx = 
+    let (list, _) = lengthValues.[idx]
+    let (_, result) = lengthValues.[idx]
+    List.length list
+    |> should equal result
+    
 // =================================================================================
 
 // lib.p003
 // Note: Since List.iter returns unit, need to use function with side effect
 // i.e. sb.Append to create something to test.
-[<Test>]
-let ``List iter`` () =
-    let l = ["See "; "the "; "dog"]
-    let sb = System.Text.StringBuilder ()
-    l |> List.iter (fun (s : string) ->
-        sb.Append s
-        |> ignore)
-    sb.ToString ()
-    |> should equal @"See the dog"
+//[<Test>]
+//let ``List iter`` () =
+//    let l = ["See "; "the "; "dog"]
+//    let sb = System.Text.StringBuilder ()
+//    l |> List.iter (fun (s : string) ->
+//        sb.Append s
+//        |> ignore)
+//    sb.ToString ()
+//    |> should equal @"See the dog"
     
 // lib.p004
 [<Test>]
@@ -2080,10 +2591,10 @@ let ``String implode`` () =
     |> should equal "wxyz"
 
 // lib.p012
-[<Test>]
-let ``List insertat`` () =
-    insertat 3 9 [0; 1; 2; 3; 4; 5]
-    |> should equal [0; 1; 2; 9; 3; 4; 5]
+//[<Test>]
+//let ``List insertat`` () =
+//    insertat 3 9 [0; 1; 2; 3; 4; 5]
+//    |> should equal [0; 1; 2; 9; 3; 4; 5]
 
 // lib.p013
 //[<Test>]
@@ -2098,10 +2609,10 @@ let ``List insertat`` () =
 //    |> should equal "a1b2c3 Hello"
 
 // lib.p015
-[<Test>]
-let ``List last`` () =
-    last [1; 2; 3; 4]
-    |> should equal 4
+//[<Test>]
+//let ``List last`` () =
+//    last [1; 2; 3; 4]
+//    |> should equal 4
 
 // lib.p016
 [<Test>]
@@ -2329,10 +2840,10 @@ let ``List partition`` () =
 //    |> should equal [0; 2; 4]
 
 // lib.p050
-[<Test>]
-let ``List length`` () =
-    List.length [1; 2; 3]
-    |> should equal 3
+//[<Test>]
+//let ``List length`` () =
+//    List.length [1; 2; 3]
+//    |> should equal 3
 
 // lib.p051
 //[<Test>]
@@ -2378,13 +2889,13 @@ let ``List mergepairs 2`` () =
 
 // lib.p058
 [<Test>]
-let ``List length increasing`` () =
+let ``Predicate increasing`` () =
     increasing List.length [1] [1;2;3]
     |> should equal true
 
 // lib.p059
 [<Test>]
-let ``List length decreasing`` () =
+let ``Predicate decreasing`` () =
     decreasing List.length [1] [1;2;3]
     |> should equal false
 
@@ -2451,10 +2962,10 @@ let ``List union`` () =
     |> should equal [1; 2; 3; 4; 5; 6]
 
 // lib.p067
-[<Test>]
-let ``List intersect`` () =
-    intersect [1; 2; 3; 5; 6] [2; 4; 5]
-    |> should equal [2; 5]
+//[<Test>]
+//let ``List intersect`` () =
+//    intersect [1; 2; 3; 5; 6] [2; 4; 5]
+//    |> should equal [2; 5]
 
 // lib.p068
 [<Test>]
@@ -2517,10 +3028,10 @@ let ``List set eq 3`` () =
     |> should equal true
 
 // lib.p078
-[<Test>]
-let ``List insert`` () =
-    insert 3 [1; 2; 4]
-    |> should equal [1; 2; 3; 4]
+//[<Test>]
+//let ``List insert`` () =
+//    insert 3 [1; 2; 4]
+//    |> should equal [1; 2; 3; 4]
 
 // lib.p079
 [<Test>]

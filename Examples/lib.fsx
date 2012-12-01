@@ -441,4 +441,3 @@ List.map mapEq (Seq.toList testValues)
       
 // lib.p104
 equated ptn;;
-
