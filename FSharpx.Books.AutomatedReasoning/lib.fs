@@ -270,7 +270,8 @@ let rec rev_assoc a l =
 // Merging of sorted lists (maintaining repetitions).                        //
 // ------------------------------------------------------------------------- //
 
-// pg. ???
+// Not in book
+// Support function for use with mergepairs, sort
 let rec merge comparer l1 l2 =
     match l1, l2 with
     | [], x
@@ -286,21 +287,20 @@ let rec merge comparer l1 l2 =
 // ------------------------------------------------------------------------- //
 
 // pg. 619
-let rec mergepairs ord l1 l2 =
-    match l1, l2 with
-    | [s], [] -> s
-    | l, [] ->
-        mergepairs ord [] l
-    | l, [s1] ->
-        mergepairs ord (s1 :: l) []
-    | l, s1 :: s2 :: ss ->
-        mergepairs ord ((merge ord s1 s2) :: l) ss
+let sort ord =
+    let rec mergepairs l1 l2 =
+        match l1, l2 with
+        | [s],[] -> s
+        | l,[] ->
+            mergepairs [] l
+        | l,[s1] ->
+            mergepairs (s1::l) []
+        | l, s1 :: s2 :: ss ->
+            mergepairs ((merge ord s1 s2)::l) ss
+    fun l -> 
+        if l = [] then [] 
+        else mergepairs [] (List.map (fun x -> [x]) l)
 
-let sort ord l =
-    match l with
-    | [] -> []
-    | l ->
-        mergepairs ord [] (List.map (fun x -> [x]) l)
 
 // ------------------------------------------------------------------------- //
 // Common measure predicates to use with "sort".                             //

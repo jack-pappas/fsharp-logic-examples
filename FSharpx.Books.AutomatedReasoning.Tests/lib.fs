@@ -12,6 +12,15 @@ open FSharp.Compatibility.OCaml.Num
 open NUnit.Framework
 open FsUnit
 
+// TODO: EGT add test cases to enusre F# replacements work same as OCaml code.
+// e.g. rev with F# List.rev
+// See maximize and List.maxBy for example
+
+// TODO: EGT identify F# replacements from Set module
+// This is only to identify possible replacements, 
+// not to actually replace the code.
+// e.g. mem with Set.contains
+
 // Tests for library functions derived from
 // the results shown on Pg. 619-621.
 
@@ -21,7 +30,7 @@ let private butLastValues : (int list * int list)[] = [|
         // lib.butLast.01
         // System.Exception - butlast
         [],
-        []
+        [] // Dummy value used as place holder
     );
     (
         // idx 1
@@ -33,7 +42,7 @@ let private butLastValues : (int list * int list)[] = [|
         // idx 2
         // lib.butLast.03
         [1; 2],
-        [1;]
+        [1]
     );
     (
         // idx 3
@@ -67,7 +76,7 @@ let private chopListValues : (int * int list * (int list * int list))[] = [|
         // lib.chopList.02
         // System.Exception - chop_list
         1, [],
-        ( [], [] )
+        ( [], [] ) // Dummy value used as place holder
     );
     (
         // idx 2
@@ -86,7 +95,7 @@ let private chopListValues : (int * int list * (int list * int list))[] = [|
         // lib.chopList.05
         // System.Exception - chop_list
         2, [1],
-        ( [], [] )
+        ( [], [] ) // Dummy value used as place holder
     );
     (
         // idx 5
@@ -111,7 +120,7 @@ let private chopListValues : (int * int list * (int list * int list))[] = [|
         // lib.chopList.09
         // System.Exception - chop_list
         3, [1; 2],
-        ( [], [] )
+        ( [], [] ) // Dummy value used as place holder
     );
     (
         // idx 9
@@ -142,28 +151,28 @@ let private chopListValues : (int * int list * (int list * int list))[] = [|
         // lib.chopList.14
         // System.Exception - chop_list
         4, [1; 2; 3],
-        ( [], [] )
+        ( [], [] ) // Dummy value used as place holder
     );
     (
         // idx 14
         // lib.chopList.15
         // System.Exception - chop_list
         -1, [],
-        ( [], [1; 2; 3] )
+        ( [], [] ) // Dummy value used as place holder
     );
     (
         // idx 15
         // lib.chopList.16
         // System.Exception - chop_list
         -1, [1],
-        ( [1], [2; 3] )
+        ( [], [] ) // Dummy value used as place holder
     );
     (
         // idx 16
         // lib.chopList.17
         // System.Exception - chop_list
         -1, [1; 2],
-        ( [1; 2], [3] )
+        ( [], [] ) // Dummy value used as place holder
     );
     |]
 
@@ -1036,7 +1045,7 @@ let private existsValues : (int list * bool)[] = [|
     (
         // idx 5
         // lib.exists.006
-        [1; 2;],
+        [1; 2],
         true
     );
     (
@@ -1117,7 +1126,7 @@ let private filterValues : (int list * int list)[] = [|
     (
         // idx 5
         // lib.filter.006
-        [1; 2;],
+        [1; 2],
         [2]
     );
     (
@@ -1201,7 +1210,7 @@ let private findValues : (int list * int)[] = [|
     (
         // idx 5
         // lib.find.006
-        [1; 2;],
+        [1; 2],
         2
     );
     (
@@ -1283,7 +1292,7 @@ let private foldBackValues : (int list * int * int)[] = [|
     (
         // idx 5
         // lib.foldBack.006
-        [1; 2;], 10,
+        [1; 2], 10,
         13
     );
     (
@@ -1373,19 +1382,19 @@ let private foldBack2Values : (int list * int list * int * int)[] = [|
     (
         // idx 6
         // lib.foldBack2.007
-        [1; 2;], [4; 5], 10,
+        [1; 2], [4; 5], 10,
         24
     );
     (
         // idx 7
         // lib.foldBack2.008
-        [1; 2; 4;], [0; -1; 3], 10,
+        [1; 2; 4], [0; -1; 3], 10,
         20
     );
     (
         // idx 8
         // lib.foldBack2.009
-        [1; 3; 4; 7;], [0; 0; 0; 0], 10,
+        [1; 3; 4; 7], [0; 0; 0; 0], 10,
         10
     );
     |]
@@ -2153,14 +2162,14 @@ let private insertatValues : (int * int * int list * int list)[] = [|
         // lib.insertat.01
         // System.Exception - list too short for position to exist
         -1, 5, [],
-        [5]
+        [] // Dummy value used as place holder
     );
     (
         // idx 1
         // lib.insertat.02
         // System.Exception - list too short for position to exist
         1, 5, [],
-        [5]
+        [] // Dummy value used as place holder
     );
     (
         // idx 2
@@ -2340,7 +2349,7 @@ let private intersectValues : (int list * int list * int list)[] = [|
     (
         // idx 15
         // lib.intersect.16
-        [1; 2; 3], [1; 1; 2; 2; 4; 4;],
+        [1; 2; 3], [1; 1; 2; 2; 4; 4],
         [1; 2]
     );
     (
@@ -2368,7 +2377,6 @@ let private intersectValues : (int list * int list * int list)[] = [|
 [<TestCase(14, TestName = "lib.intersect.15")>]
 [<TestCase(15, TestName = "lib.intersect.16")>]
 [<TestCase(16, TestName = "lib.intersect.17")>]
-
 
 [<Test>]
 let ``List intersect`` idx = 
@@ -2409,7 +2417,6 @@ let private iterValues : (string list * string)[] = [|
 [<TestCase(1, TestName = "lib.iter.02")>]
 [<TestCase(2, TestName = "lib.iter.03")>]
 [<TestCase(3, TestName = "lib.iter.04")>]
-
 
 [<Test>]
 // Note: Since List.iter returns unit, 
@@ -2526,7 +2533,623 @@ let ``List length`` idx =
     let (_, result) = lengthValues.[idx]
     List.length list
     |> should equal result
+
+let private mapValues : (int list * int list)[] = [| 
+    (
+        // idx 0
+        // lib.map.01
+        [],
+        []
+    );
+    (
+        // idx 1
+        // lib.map.02
+        [1],
+        [6]
+    );
+    (
+        // idx 2
+        // lib.map.03
+        [1; 2],
+        [6; 7]
+    );
+    (
+        // idx 3
+        // lib.map.04
+        [1; 2; 3],
+        [6; 7; 8]
+    );
+    |]
+
+[<TestCase(0, TestName = "lib.map.01")>]
+[<TestCase(1, TestName = "lib.map.02")>]
+[<TestCase(2, TestName = "lib.map.03")>]
+[<TestCase(3, TestName = "lib.map.04")>]
+
+[<Test>]
+let ``List map`` idx = 
+    let (list, _) = mapValues.[idx]
+    let (_, result) = mapValues.[idx]
+    List.map (fun x -> x + 5) list
+    |> should equal result
+
+let private map2Values : (int list * int list * int list)[] = [| 
+    (
+        // idx 0
+        // lib.map2.01
+        [], [],
+        []
+    );
+    (
+        // idx 1
+        // lib.map2.02
+        // System.ArgumentException - The lists had different lengths.
+        [], [1],
+        []
+    );
+    (
+        // idx 2
+        // lib.map2.03
+        // System.ArgumentException - The lists had different lengths.
+        [1], [],
+        []
+    );
+    (
+        // idx 3
+        // lib.map2.04
+        [1], [1],
+        [2]
+    );
+    (
+        // idx 4
+        // lib.map2.05
+        [1], [2],
+        [3]
+    );
+    (
+        // idx 5
+        // lib.map2.06
+        [1; 2], [1; 2],
+        [2; 4]
+    );
+    (
+        // idx 6
+        // lib.map2.07
+        [1; 2], [2; 3],
+        [3; 5]
+    );
+    (
+        // idx 7
+        // lib.map2.08
+        [1; 2; 3], [1; 2; 3],
+        [2; 4; 6]
+    );
+    (
+        // idx 8
+        // lib.map2.09
+        [1; 2; 3], [3; 2; 1],
+        [4; 4; 4]
+    );
+    |]
+
+[<TestCase(0, TestName = "lib.map2.01")>]
+[<TestCase(1, TestName = "lib.map2.02", ExpectedException=typeof<System.ArgumentException>)>]
+[<TestCase(2, TestName = "lib.map2.03", ExpectedException=typeof<System.ArgumentException>)>]
+[<TestCase(3, TestName = "lib.map2.04")>]
+[<TestCase(4, TestName = "lib.map2.05")>]
+[<TestCase(5, TestName = "lib.map2.06")>]
+[<TestCase(6, TestName = "lib.map2.07")>]
+[<TestCase(7, TestName = "lib.map2.08")>]
+[<TestCase(8, TestName = "lib.map2.09")>]
+
+[<Test>]
+let ``List map2`` idx = 
+    let (list1, _, _) = map2Values.[idx]
+    let (_, list2, _) = map2Values.[idx]
+    let (_, _, result) = map2Values.[idx]
+    List.map2 (fun x y -> x + y) list1 list2
+    |> should equal result
+
+let private mapfilterValues : (int list * bool list)[] = [| 
+    (
+        // idx 0
+        // lib.mapfilter.001
+        [],
+        []
+    ); 
+    (
+        // idx 1
+        // lib.mapfilter.002
+        [-2],
+        [true]
+    );
+    (
+        // idx 2
+        // lib.mapfilter.003
+        [-1],
+        [false]
+    );
+    (
+        // idx 3
+        // lib.mapfilter.004
+        [0],
+        [true]
+    );
+    (
+        // idx 4
+        // lib.mapfilter.005
+        [1],
+        [false]
+    );
+    (
+        // idx 5
+        // lib.mapfilter.006
+        [1; 2],
+        [false; true]
+    );
+    (
+        // idx 6
+        // lib.mapfilter.007
+        [1; 3],
+        [false; false]
+    );
+    (
+        // idx 7
+        // lib.mapfilter.008
+        [2; 3],
+        [true; false]
+    );
+    (
+        // idx 8
+        // lib.mapfilter.009
+        [1; 2; 3],
+        [false; true; false]
+    );
+    (
+        // idx 9
+        // lib.mapfilter.010
+        [2; 3; 4],
+        [true; false; true]
+    );
+    |]
+
+[<TestCase(0, TestName = "lib.mapfilter.01")>]
+[<TestCase(1, TestName = "lib.mapfilter.02")>]
+[<TestCase(2, TestName = "lib.mapfilter.03")>]
+[<TestCase(3, TestName = "lib.mapfilter.04")>]
+[<TestCase(4, TestName = "lib.mapfilter.05")>]
+[<TestCase(5, TestName = "lib.mapfilter.06")>]
+[<TestCase(6, TestName = "lib.mapfilter.07")>]
+[<TestCase(7, TestName = "lib.mapfilter.08")>]
+[<TestCase(8, TestName = "lib.mapfilter.09")>]
+[<TestCase(9, TestName = "lib.mapfilter.10")>]
     
+[<Test>]
+let ``List mapfilter`` idx = 
+    let (list, _) = mapfilterValues.[idx]
+    let (_, result) = mapfilterValues.[idx]
+    mapfilter (fun x -> x % 2 = 0) list 
+    |> should equal result
+
+let private maximizeValues : (int list * int)[] = [| 
+    (
+        // idx 0
+        // lib.maximize.001   
+        // System.ArgumentException - The input list was empty.   
+        [],
+        -99  // Dummy value used as place holder
+    ); 
+    (
+        // idx 1
+        // lib.maximize.002
+        [-2],
+        -2
+    );
+    (
+        // idx 2
+        // lib.maximize.003
+        [-2; 0],
+        0
+    );
+    (
+        // idx 3
+        // lib.maximize.004
+        [0; 2],
+        2
+    );
+    (
+        // idx 4
+        // lib.maximize.005
+        [-3; -2; -1; 0; 1; 2; 3],
+        3
+    );
+    (
+        // idx 5
+        // lib.maximize.006
+        [-6; -5; -4; -3; -2; -1; 0; 1; 2; 3],
+        -6
+    );
+    |]
+
+[<TestCase(0, TestName = "lib.maximize.01", ExpectedException=typeof<System.ArgumentException>)>]
+[<TestCase(1, TestName = "lib.maximize.02")>]
+[<TestCase(2, TestName = "lib.maximize.03")>]
+[<TestCase(3, TestName = "lib.maximize.04")>]
+[<TestCase(4, TestName = "lib.maximize.05")>]
+[<TestCase(5, TestName = "lib.maximize.06")>]
+
+[<Test>]
+let ``List maximize`` idx = 
+    let (list, _) = maximizeValues.[idx]
+    let (_, result) = maximizeValues.[idx]
+    maximize (fun x -> (x + 1) * (x + 1)) list
+    |> should equal result
+
+// The next two Test are too show the similarities and differences
+// between maximize and F# List.maxBy which should be
+// replacable.
+// 
+// If there are multiple results that are the same
+// maximize will return the last one while
+// F# List.maxBy will return the first one
+// 
+// The first Test is to show that they both return
+// the same exception when given an empty list.
+// Since an exception will end a test case, one can not
+// run back to back functions returning exceptions
+// for one test case, thus a second test for the 
+// F# List.maxBy exception test case.
+//
+// The second test is to show the different results
+// for the same input.
+[<TestCase(0, TestName = "lib.MaxBy.01", ExpectedException=typeof<System.ArgumentException>)>]
+
+[<Test>]
+let ``List MaxBy Exception`` idx = 
+    let (list, _) = maximizeValues.[idx]
+    let (_, maxByResult) = maximizeValues.[idx]
+    List.maxBy (fun x -> 10) list
+    |> should equal maxByResult
+
+let private maximizeVsMaxByValues : (int list * int * int)[] = [| 
+    (
+        // idx 0
+        // lib.maximizeVsMaxBy.001
+        [1],
+        1,
+        1
+    ); 
+    (
+        // idx 1
+        // lib.maximizeVsMaxBy.002
+        [1; 2],
+        2,
+        1
+    ); 
+    (
+        // idx 2
+        // lib.maximizeVsMaxBy.003
+        [1; 2; 3],
+        3,
+        1
+    ); 
+    |]
+    
+[<TestCase(0, TestName = "lib.maximizeVsMaxBy.01")>]
+[<TestCase(1, TestName = "lib.maximizeVsMaxBy.02")>]
+[<TestCase(2, TestName = "lib.maximizeVsMaxBy.03")>]
+
+[<Test>]
+let ``List maximize Vs MaxBy`` idx = 
+    let (list, _, _) = maximizeVsMaxByValues.[idx]
+    let (_, maximizeResult, _) = maximizeVsMaxByValues.[idx]
+    let (_, _, maxByResult) = maximizeVsMaxByValues.[idx]
+    maximize (fun x -> 10) list
+    |> should equal maximizeResult
+    List.maxBy (fun x -> 10) list
+    |> should equal maxByResult
+
+let private memValues : (int * int list * bool)[] = [| 
+    (
+        // idx 0
+        // lib.mem.001
+        0, [],
+        false
+    ); 
+    (
+        // idx 1
+        // lib.mem.002
+        0, [1],
+        false
+    );
+    (
+        // idx 2
+        // lib.mem.003
+        1, [1],
+        true
+    );
+    (
+        // idx 3
+        // lib.mem.004
+        0, [1; 2],
+        false
+    );
+    (
+        // idx 4
+        // lib.mem.005
+        1, [1; 2],
+        true
+    );
+    (
+        // idx 5
+        // lib.mem.006
+        2, [1; 2],
+        true
+    );
+    (
+        // idx 6
+        // lib.mem.007
+        5, [1; 2; 3; 4; 5],
+        true
+    );
+    (
+        // idx 7
+        // lib.mem.008
+        6, [1; 2; 3; 4; 5],
+        false
+    );
+    |]
+
+[<TestCase(0, TestName = "lib.mem.01")>]
+[<TestCase(1, TestName = "lib.mem.02")>]
+[<TestCase(2, TestName = "lib.mem.03")>]
+[<TestCase(3, TestName = "lib.mem.04")>]
+[<TestCase(4, TestName = "lib.mem.05")>]
+[<TestCase(5, TestName = "lib.mem.06")>]
+[<TestCase(6, TestName = "lib.mem.07")>]
+[<TestCase(7, TestName = "lib.mem.08")>]
+
+[<Test>]
+let ``List mem`` idx = 
+    let (elem, _, _) = memValues.[idx]
+    let (_, list, _) = memValues.[idx]
+    let (_, _, result) = memValues.[idx]
+    mem elem list 
+    |> should equal result
+
+let private mergeValues : (int list * int list * int list * int list * int list * int list * int list * int list)[] = [| 
+    (
+        // idx 0
+        // lib.merge.01
+        [], [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        []
+    );
+    (
+        // idx 1
+        // lib.merge.02
+        [], [1],
+        [1],
+        [1],
+        [1],
+        [1],
+        [1],
+        [1]
+    );
+    (
+        // idx 2
+        // lib.merge.03
+        [1], [],
+        [1],
+        [1],
+        [1],
+        [1],
+        [1],
+        [1]
+    );
+    (
+        // idx 3
+        // lib.merge.04
+        [1], [1],
+        [1; 1],
+        [1; 1],
+        [1; 1],
+        [1; 1],
+        [1; 1],
+        [1; 1]
+    );
+    (
+        // idx 4
+        // lib.merge.05
+        [1], [2],
+        [2; 1],
+        [1; 2],
+        [2; 1],
+        [2; 1],
+        [1; 2],
+        [1; 2]
+    );
+    (
+        // idx 5
+        // lib.merge.06
+        [1; 2], [1; 2],
+        [1; 2; 1; 2],
+        [1; 1; 2; 2],
+        [1; 1; 2; 2],
+        [1; 2; 1; 2],
+        [1; 1; 2; 2],
+        [1; 1; 2; 2]
+    );
+    (
+        // idx 6
+        // lib.merge.07
+        [1; 2], [2; 3],
+        [2; 3; 1; 2],
+        [1; 2; 2; 3],
+        [2; 3; 1; 2],
+        [2; 3; 1; 2],
+        [1; 2; 2; 3],
+        [1; 2; 2; 3]
+    );
+    (
+        // idx 7
+        // lib.merge.08
+        [1; 2; 3], [1],
+        [1; 1; 2; 3],
+        [1; 1; 2; 3],
+        [1; 1; 2; 3],
+        [1; 2; 3; 1],
+        [1; 1; 2; 3],
+        [1; 1; 2; 3]
+    );
+    (
+        // idx 8
+        // lib.merge.09
+        [1; 2; 3], [2],
+        [2; 1; 2; 3],
+        [1; 2; 2; 3],
+        [2; 1; 2; 3],
+        [2; 1; 2; 3],
+        [1; 2; 2; 3],
+        [1; 2; 2; 3]
+    );
+    (
+        // idx 9
+        // lib.merge.10
+        [1; 2; 3], [3],
+        [3; 1; 2; 3],
+        [1; 2; 3; 3],
+        [3; 1; 2; 3],
+        [3; 1; 2; 3],
+        [1; 2; 3; 3],
+        [1; 2; 3; 3]
+    );
+    (
+        // idx 10
+        // lib.merge.11
+        [1; 2; 3], [1; 2],
+        [1; 2; 1; 2; 3],
+        [1; 1; 2; 2; 3],
+        [1; 1; 2; 2; 3],
+        [1; 2; 3; 1; 2],
+        [1; 1; 2; 2; 3],
+        [1; 1; 2; 2; 3]
+    );
+    (
+        // idx 11
+        // lib.merge.12
+        [1; 2; 3], [2; 3],
+        [2; 3; 1; 2; 3],
+        [1; 2; 2; 3; 3],
+        [2; 3; 1; 2; 3],
+        [2; 3; 1; 2; 3],
+        [1; 2; 2; 3; 3],
+        [1; 2; 2; 3; 3]
+    );
+    (
+        // idx 12
+        // lib.merge.13
+        [1; 2; 3], [1; 2; 3],
+        [1; 2; 3; 1; 2; 3],
+        [1; 1; 2; 2; 3; 3],
+        [1; 1; 2; 2; 3; 3],
+        [1; 2; 3; 1; 2; 3],
+        [1; 1; 2; 2; 3; 3],
+        [1; 1; 2; 2; 3; 3]
+    );
+    (
+        // idx 13
+        // lib.merge.14
+        [1; 2; 3], [3; 2; 1],
+        [3; 2; 1; 1; 2; 3],
+        [1; 2; 3; 2; 1; 3],
+        [3; 2; 1; 1; 2; 3],
+        [3; 2; 1; 2; 3; 1],
+        [1; 2; 3; 3; 2; 1],
+        [1; 2; 3; 3; 2; 1]
+    );
+    (
+        // idx 14
+        // lib.merge.15
+        [1; 2; 3], [1; 1; 2; 2],
+        [1; 1; 2; 2; 1; 2; 3],
+        [1; 1; 1; 2; 2; 2; 3],
+        [1; 1; 1; 2; 2; 2; 3],
+        [1; 2; 3; 1; 1; 2; 2],
+        [1; 1; 1; 2; 2; 2; 3],
+        [1; 1; 1; 2; 2; 2; 3]
+    );
+    (
+        // idx 15
+        // lib.merge.16
+        [1; 2; 3], [1; 1; 2; 2; 4; 4],
+        [1; 1; 2; 2; 4; 4; 1; 2; 3],
+        [1; 1; 1; 2; 2; 2; 3; 4; 4],
+        [1; 1; 1; 2; 2; 2; 4; 4; 3],
+        [1; 2; 3; 1; 1; 2; 2; 4; 4],
+        [1; 1; 1; 2; 2; 2; 3; 4; 4],
+        [1; 1; 1; 2; 2; 2; 3; 4; 4]
+    );
+    (
+        // idx 16
+        // lib.merge.17
+        [1; 2; 3], [-2; -1; 0; 1; 2; 3; 4],
+        [1; 2; 3; -2; -1; 0; 1; 2; 3; 4],
+        [-2; -1; 0; 1; 1; 2; 2; 3; 3; 4],
+        [-2; -1; 0; 1; 1; 2; 2; 3; 3; 4],
+        [1; 2; 3; -2; -1; 0; 1; 2; 3; 4],
+        [-2; -1; 0; 1; 1; 2; 2; 3; 3; 4],
+        [1; 2; 3; -2; -1; 0; 1; 2; 3; 4]
+    );
+    |]
+
+[<TestCase(0, TestName = "lib.merge.01")>]
+[<TestCase(1, TestName = "lib.merge.02")>]
+[<TestCase(2, TestName = "lib.merge.03")>]
+[<TestCase(3, TestName = "lib.merge.04")>]
+[<TestCase(4, TestName = "lib.merge.05")>]
+[<TestCase(5, TestName = "lib.merge.06")>]
+[<TestCase(6, TestName = "lib.merge.07")>]
+[<TestCase(7, TestName = "lib.merge.08")>]
+[<TestCase(8, TestName = "lib.merge.09")>]
+[<TestCase(9, TestName = "lib.merge.10")>]
+[<TestCase(10, TestName = "lib.merge.11")>]
+[<TestCase(11, TestName = "lib.merge.12")>]
+[<TestCase(12, TestName = "lib.merge.13")>]
+[<TestCase(13, TestName = "lib.merge.14")>]
+[<TestCase(14, TestName = "lib.merge.15")>]
+[<TestCase(15, TestName = "lib.merge.16")>]
+[<TestCase(16, TestName = "lib.merge.17")>]
+
+[<Test>]
+let ``List merge`` idx = 
+    let (list1, _, _, _, _, _, _, _) = mergeValues.[idx]
+    let (_, list2, _, _, _, _, _, _) = mergeValues.[idx]
+    let (_, _, greaterThanResult, _, _, _, _, _) = mergeValues.[idx]
+    let (_, _, _, lessThanResult, _, _, _, _) = mergeValues.[idx]
+    let (_, _, _, _, equalResult, _, _, _) = mergeValues.[idx]
+    let (_, _, _, _, _, greaterThanOrEqualResult, _, _) = mergeValues.[idx]
+    let (_, _, _, _, _, _, lessThanOrEqualResult, _) = mergeValues.[idx]
+    let (_, _, _, _, _, _, _, notEqualResult) = mergeValues.[idx]
+    merge (>) list1 list2
+    |> should equal greaterThanResult
+    merge (<) list1 list2
+    |> should equal lessThanResult
+    merge (=) list1 list2
+    |> should equal equalResult
+    merge (>=) list1 list2
+    |> should equal greaterThanOrEqualResult
+    merge (<=) list1 list2
+    |> should equal lessThanOrEqualResult
+    merge (<>) list1 list2
+    |> should equal notEqualResult
+
+// ....................................................................................
+
 // =================================================================================
 
 // lib.p003
@@ -2615,22 +3238,22 @@ let ``String implode`` () =
 //    |> should equal 4
 
 // lib.p016
-[<Test>]
-let ``List map`` () =
-    List.map (fun x -> x + 5) [1; 2; 3]
-    |> should equal [6; 7; 8]
+//[<Test>]
+//let ``List map`` () =
+//    List.map (fun x -> x + 5) [1; 2; 3]
+//    |> should equal [6; 7; 8]
 
 // lib.p017
-[<Test>]
-let ``List map2`` () =
-    List.map2 (fun x y -> x + y) [1; 2; 3] [10; 11; 12]
-    |> should equal [11; 13; 15]
+//[<Test>]
+//let ``List map2`` () =
+//    List.map2 (fun x y -> x + y) [1; 2; 3] [10; 11; 12]
+//    |> should equal [11; 13; 15]
 
 // lib.p018
-[<Test>]
-let ``List mapfilter`` () =
-    mapfilter (fun x -> x % 2 = 0) [1; 2; 3; 4]
-    |> should equal [false; true; false; true]
+//[<Test>]
+//let ``List mapfilter`` () =
+//    mapfilter (fun x -> x % 2 = 0) [1; 2; 3; 4]
+//    |> should equal [false; true; false; true]
 
 [<Test>]
 let ``List reduceBack`` () =
@@ -2864,28 +3487,28 @@ let ``List partition`` () =
 //    |> should equal false
 
 // lib.p054
-[<Test>]
-let ``List merge 1`` () =
-    merge (<) [3] [1]
-    |> should equal [1; 3]
+//[<Test>]
+//let ``List merge 1`` () =
+//    merge (<) [3] [1]
+//    |> should equal [1; 3]
 
 // lib.p055
-[<Test>]
-let ``List merge 2`` () =
-    merge (>) [1] [3]
-    |> should equal [3; 1]
+//[<Test>]
+//let ``List merge 2`` () =
+//    merge (>) [1] [3]
+//    |> should equal [3; 1]
 
 // lib.p056
-[<Test>]
-let ``List mergepairs 1`` () =
-    mergepairs (<) [[1;10]; [3;7]; [5;8]] [[2;11]; [4;12]; [6;9]]
-    |> should equal [1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11; 12]
+//[<Test>]
+//let ``List mergepairs 1`` () =
+//    mergepairs (<) [[1;10]; [3;7]; [5;8]] [[2;11]; [4;12]; [6;9]]
+//    |> should equal [1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11; 12]
 
 // lib.p057
-[<Test>]
-let ``List mergepairs 2`` () =
-    mergepairs (>) [[10;1]; [7;3]; [8;5]] [[11;2]; [12;4]; [9;6]]
-    |> should equal [12; 11; 10; 9; 8; 7; 6; 5; 4; 3; 2; 1]
+//[<Test>]
+//let ``List mergepairs 2`` () =
+//    mergepairs (>) [[10;1]; [7;3]; [8;5]] [[11;2]; [12;4]; [9;6]]
+//    |> should equal [12; 11; 10; 9; 8; 7; 6; 5; 4; 3; 2; 1]
 
 // lib.p058
 [<Test>]
@@ -2899,8 +3522,8 @@ let ``Predicate decreasing`` () =
     decreasing List.length [1] [1;2;3]
     |> should equal false
 
-let list1 = [1; 2; 3;]
-let list2 = [1; 3; 5;]
+let list1 = [1; 2; 3]
+let list2 = [1; 3; 5]
 // Crate a function that returns failure
 let containsEven x =
     match x with
@@ -2928,20 +3551,20 @@ let ``function tryfind 2`` () =
     |> should equal false
 
 // lib.p062
-[<Test>]
-let ``List mapfilter 2`` () =
-    mapfilter (fun x -> 
-        match x with
-        | _ when x % 2 = 0 -> x
-        | _ -> failwith "invalid")
-        [1; 2; 3; 4]
-    |> should equal [2; 4]
+//[<Test>]
+//let ``List mapfilter 2`` () =
+//    mapfilter (fun x -> 
+//        match x with
+//        | _ when x % 2 = 0 -> x
+//        | _ -> failwith "invalid")
+//        [1; 2; 3; 4]
+//    |> should equal [2; 4]
 
 // lib.p063
-[<Test>]
-let ``List maximize`` () =
-    maximize (fun x -> x * x) [-4; 1; 2]
-    |> should equal -4
+//[<Test>]
+//let ``List maximize`` () =
+//    maximize (fun x -> x * x) [-4; 1; 2]
+//    |> should equal -4
 
 // lib.p064
 [<Test>]
@@ -3034,16 +3657,16 @@ let ``List set eq 3`` () =
 //    |> should equal [1; 2; 3; 4]
 
 // lib.p079
-[<Test>]
-let ``List mem 1`` () =
-    mem 3 [1; 2; 4]
-    |> should equal false
+//[<Test>]
+//let ``List mem 1`` () =
+//    mem 3 [1; 2; 4]
+//    |> should equal false
 
 // lib.p080
-[<Test>]
-let ``List mem 2`` () =
-    mem 2 [1; 2; 4]
-    |> should equal true
+//[<Test>]
+//let ``List mem 2`` () =
+//    mem 2 [1; 2; 4]
+//    |> should equal true
 
 // lib.p081
 [<Test>]
