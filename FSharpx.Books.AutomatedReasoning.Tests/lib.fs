@@ -2418,12 +2418,12 @@ let private iterValues : (string list * string)[] = [|
 [<TestCase(2, TestName = "lib.iter.03")>]
 [<TestCase(3, TestName = "lib.iter.04")>]
 
-[<Test>]
 // Note: Since List.iter returns unit, 
 // need to use function with side effect
 // or a mutable value :(
 // to have some output to test against
 // i.e. sb.Append.
+[<Test>]
 let ``List iter`` idx = 
     let (list, _) = iterValues.[idx]
     let (_, result) = iterValues.[idx]
@@ -3148,7 +3148,788 @@ let ``List merge`` idx =
     merge (<>) list1 list2
     |> should equal notEqualResult
 
+let private minimizeValues : (int list * int)[] = [| 
+    (
+        // idx 0
+        // lib.minimize.001   
+        // System.ArgumentException - The input list was empty.   
+        [],
+        -99  // Dummy value used as place holder
+    ); 
+    (
+        // idx 1
+        // lib.minimize.002
+        [-2],
+        -2
+    );
+    (
+        // idx 2
+        // lib.minimize.003
+        [-2; 0],
+        0
+    );
+    (
+        // idx 3
+        // lib.minimize.004
+        [0; 2],
+        2
+    );
+    (
+        // idx 4
+        // lib.minimize.005
+        [-3; -2; -1; 0; 1; 2; 3],
+        3
+    );
+    (
+        // idx 5
+        // lib.minimize.006
+        [-6; -5; -4; -3; -2; -1; 0; 1; 2; 3],
+        -6
+    );
+    |]
+
+[<TestCase(0, TestName = "lib.minimize.01", ExpectedException=typeof<System.ArgumentException>)>]
+[<TestCase(1, TestName = "lib.minimize.02")>]
+[<TestCase(2, TestName = "lib.minimize.03")>]
+[<TestCase(3, TestName = "lib.minimize.04")>]
+[<TestCase(4, TestName = "lib.minimize.05")>]
+[<TestCase(5, TestName = "lib.minimize.06")>]
+
+[<Test>]
+let ``List minimize`` idx = 
+    let (list, _) = minimizeValues.[idx]
+    let (_, result) = minimizeValues.[idx]
+    minimize (fun x -> -((x + 1) * (x + 1))) list
+    |> should equal result
+
+// The next two Test are to show the similarities and differences
+// between minimize and F# List.minBy which should be
+// replacable.
+// 
+// If there are multiple results that are the same
+// minimize will return the last one while
+// F# List.minBy will return the first one
+// 
+// The first Test is to show that they both return
+// the same exception when given an empty list.
+// Since an exception will end a test case, one can not
+// run back to back functions returning exceptions
+// for one test case, thus a second test for the 
+// F# List.minBy exception test case.
+//
+// The second test is to show the different results
+// for the same input.
+[<TestCase(0, TestName = "lib.minBy.01", ExpectedException=typeof<System.ArgumentException>)>]
+
+[<Test>]
+let ``List minBy Exception`` idx = 
+    let (list, _) = minimizeValues.[idx]
+    let (_, minByResult) = minimizeValues.[idx]
+    List.minBy (fun x -> 10) list
+    |> should equal minByResult
+
+let private minimizeVsminByValues : (int list * int * int)[] = [| 
+    (
+        // idx 0
+        // lib.minimizeVsminBy.001
+        [1],
+        1,
+        1
+    ); 
+    (
+        // idx 1
+        // lib.minimizeVsminBy.002
+        [1; 2],
+        2,
+        1
+    ); 
+    (
+        // idx 2
+        // lib.minimizeVsminBy.003
+        [1; 2; 3],
+        3,
+        1
+    ); 
+    |]
+    
+[<TestCase(0, TestName = "lib.minimizeVsminBy.01")>]
+[<TestCase(1, TestName = "lib.minimizeVsminBy.02")>]
+[<TestCase(2, TestName = "lib.minimizeVsminBy.03")>]
+
+[<Test>]
+let ``List minimize Vs minBy`` idx = 
+    let (list, _, _) = minimizeVsminByValues.[idx]
+    let (_, minimizeResult, _) = minimizeVsminByValues.[idx]
+    let (_, _, minByResult) = minimizeVsminByValues.[idx]
+    minimize (fun x -> 10) list
+    |> should equal minimizeResult
+    List.minBy (fun x -> 10) list
+    |> should equal minByResult
+
+// el is here to demonstrate that
+// el and F# List.nth return same results.
+let rec el n l =
+    if n = 0 then List.head l 
+    else el (n - 1) (List.tail l)
+
+let private nthValues : (int list * int * int)[] = [| 
+    (
+        // idx 0
+        // lib.nth.001   
+        // System.ArgumentException - The index was outside the range of elemements in the list. 
+        [], 1,
+        -99  // Dummy value used as place holder
+    ); 
+    (
+        // idx 1
+        // System.ArgumentException - The index was outside the range of elemements in the list. 
+        [3], -1,
+        -99  // Dummy value used as place holder
+    );
+    (
+        // idx 2
+        // lib.nth.003
+        [3], 0,
+        3
+    );
+    (
+        // idx 3
+        // lib.nth.004
+        [3; 4], 0,
+        3
+    );
+    (
+        // idx 4
+        // lib.nth.005
+        [3; 4], 1,
+        4
+    );
+    (
+        // idx 5
+        // lib.nth.006
+        [1; 2; 3], 0,
+        1
+    );
+    (
+        // idx 6
+        // lib.nth.007
+        [1; 2; 3], 1,
+        2
+    );
+    (
+        // idx 7
+        // lib.nth.008
+        [1; 2; 3], 2,
+        3
+    );
+    (
+        // idx 8
+        // lib.nth.009
+        [10; 9; 8; 7; 6; 5; 4; 3; 2; 1; 0], 3,
+        7
+    );
+    |]
+
+[<TestCase(0, TestName = "lib.nth.01", ExpectedException=typeof<System.ArgumentException>)>]
+[<TestCase(1, TestName = "lib.nth.02", ExpectedException=typeof<System.ArgumentException>)>]
+[<TestCase(2, TestName = "lib.nth.03")>]
+[<TestCase(3, TestName = "lib.nth.04")>]
+[<TestCase(4, TestName = "lib.nth.05")>]
+[<TestCase(5, TestName = "lib.nth.06")>]
+[<TestCase(6, TestName = "lib.nth.07")>]
+[<TestCase(7, TestName = "lib.nth.08")>]
+[<TestCase(8, TestName = "lib.nth.09")>]
+
+[<Test>]
+let ``List nth`` idx = 
+    let (list, _, _) = nthValues.[idx]
+    let (_, elem, result) = nthValues.[idx]
+    let (_, _, result) = nthValues.[idx]
+    List.nth list elem
+    |> should equal result
+    el elem list 
+    |> should equal result
+
+// This Test is to show that they both return
+// the same exception when given an index was outside the 
+// range of elemements in the list.
+// Since an exception will end a test case, one can not
+// run back to back functions returning exceptions
+// for one test case, thus a second test for the 
+// el exception test case.
+
+[<TestCase(0, TestName = "lib.el.01", ExpectedException=typeof<System.ArgumentException>)>]
+[<TestCase(1, TestName = "lib.el.02", ExpectedException=typeof<System.ArgumentException>)>]
+
+[<Test>]
+let ``List el exception`` idx = 
+    let (list, _, _) = nthValues.[idx]
+    let (_, elem, result) = nthValues.[idx]
+    let (_, _, result) = nthValues.[idx]
+    el elem list 
+    |> should equal result
+
+// (--) is here to demonstrate that
+// OCaml (--) and F# [n..m] return same results.
+let rec (--) = 
+    fun m n -> 
+        if m > n then [] 
+        else m::((m + 1) -- n)
+
+let private rangeIntValues : (int * int * int list)[] = [| 
+    (
+        // idx 0
+        // lib.rangeInt.001 
+        2, -2,
+        []
+    ); 
+    (
+        // idx 1
+        // lib.rangeInt.002
+        1, 1,
+        [1]
+    ); 
+    (
+        // idx 2
+        // lib.rangeInt.003
+        1, 2,
+        [1; 2]
+    ); 
+    (
+        // idx 3
+        // lib.rangeInt.004
+        1, 3,
+        [1; 2; 3]
+    ); 
+    (
+        // idx 4
+        // lib.rangeInt.005
+        -5, 5,
+        [-5; -4; -3; -2; -1; 0; 1; 2; 3; 4; 5]
+    ); 
+    |]
+
+[<TestCase(0, TestName = "lib.rangeInt.01")>]
+[<TestCase(1, TestName = "lib.rangeInt.02")>]
+[<TestCase(2, TestName = "lib.rangeInt.03")>]
+[<TestCase(3, TestName = "lib.rangeInt.04")>]
+[<TestCase(4, TestName = "lib.rangeInt.05")>]
+
+[<Test>]
+let ``List operator range (Int)`` idx = 
+    let (start, _, _) = rangeIntValues.[idx]
+    let (_, stop, result) = rangeIntValues.[idx]
+    let (_, _, result) = rangeIntValues.[idx]
+    [start..stop]
+    |> should equal result
+    (start -- stop) 
+    |> should equal result
+
+// (---) is here to demonstrate that
+// OCaml (---) and F# [n..m] return same results.
+// Note: OCaml restricts values to Num by 
+// using num operators for > and + .
+// Since F# overloads operators,
+// we have to restrict values using parameter types.
+let rec (---) = 
+    fun (m : num) (n : num) -> 
+        if m > n then [] 
+        else m::((m + (Int 1)) --- n)
+
+let private rangeNumValues : (Num * Num * Num list)[] = [| 
+    (
+        // idx 0
+        // lib.rangeNum.001 
+        (num_of_int 2), (num_of_int -2),
+        []
+    ); 
+    (
+        // idx 1
+        // lib.rangeNum.002
+        (num_of_int 1), (num_of_int 1),
+        [(num_of_int 1)]
+    ); 
+    (
+        // idx 2
+        // lib.rangeNum.003
+        (num_of_int 1), (num_of_int 2),
+        [(num_of_int 1); (num_of_int 2)]
+    ); 
+    (
+        // idx 3
+        // lib.rangeNum.004
+        (num_of_int 1), (num_of_int 3),
+        [(num_of_int 1); (num_of_int 2); (num_of_int 3)]
+    ); 
+    (
+        // idx 4
+        // lib.rangeNum.005
+        (num_of_int -5), (num_of_int 5),
+        [(num_of_int -5); (num_of_int -4); (num_of_int -3); (num_of_int -2); (num_of_int -1); (num_of_int 0); (num_of_int 1); (num_of_int 2); (num_of_int 3); (num_of_int 4); (num_of_int 5)]
+    ); 
+    |]
+
+[<TestCase(0, TestName = "lib.rangeNum.01")>]
+[<TestCase(1, TestName = "lib.rangeNum.02")>]
+[<TestCase(2, TestName = "lib.rangeNum.03")>]
+[<TestCase(3, TestName = "lib.rangeNum.04")>]
+[<TestCase(4, TestName = "lib.rangeNum.05")>]
+
+[<Test>]
+let ``List operator range (Num)`` idx = 
+    let (start, _, _) = rangeNumValues.[idx]
+    let (_, stop, _) = rangeNumValues.[idx]
+    let (_, _, result) = rangeNumValues.[idx]
+    [start..stop]
+    |> should equal result
+    (start --- stop) 
+    |> should equal result
+
+// partition is here to demonstrate that
+// OCaml partition and F# List.partition return same results.
+let rec itlist f l b =
+    match l with
+    | []     -> b
+    | (h::t) -> f h (itlist f t b)
+
+let partition p l =
+    itlist (fun a (yes,no) -> if p a then a::yes,no else yes,a::no) l ([],[])
+
+let private partitionValues : (int list * (int list * int list))[] = [| 
+    (
+        // idx 0
+        // lib.partition.001
+        [],
+        ( [], [] )
+    ); 
+    (
+        // idx 1
+        // lib.partition.002
+        [-2],
+        ( [-2], [] )
+    );
+    (
+        // idx 2
+        // lib.partition.003
+        [-1],
+        ( [], [-1] )
+    );
+    (
+        // idx 3
+        // lib.partition.004
+        [0],
+        ( [0], [] )
+    );
+    (
+        // idx 4
+        // lib.partition.005
+        [1],
+        ( [], [1] )
+    );
+    (
+        // idx 5
+        // lib.partition.006
+        [1; 2],
+        ( [2], [1] )
+    );
+    (
+        // idx 6
+        // lib.partition.007
+        [1; 3],
+        ( [], [1; 3] )
+    );
+    (
+        // idx 7
+        // lib.partition.008
+        [2; 3],
+        ( [2], [3] )
+    );
+    (
+        // idx 8
+        // lib.partition.009
+        [1; 2; 3],
+        ( [2], [1; 3] )
+    );
+    (
+        // idx 9
+        // lib.partition.010
+        [2; 3; 4],
+        ( [2; 4], [3] )
+    ); 
+    |]
+
+[<TestCase(0, TestName = "lib.partition.01")>]
+[<TestCase(1, TestName = "lib.partition.02")>]
+[<TestCase(2, TestName = "lib.partition.03")>]
+[<TestCase(3, TestName = "lib.partition.04")>]
+[<TestCase(4, TestName = "lib.partition.05")>]
+[<TestCase(5, TestName = "lib.partition.06")>]
+[<TestCase(6, TestName = "lib.partition.07")>]
+[<TestCase(7, TestName = "lib.partition.08")>]
+[<TestCase(8, TestName = "lib.partition.09")>]
+[<TestCase(9, TestName = "lib.partition.10")>]
+
+[<Test>]
+let ``List partition`` idx = 
+    let (list, _) = partitionValues.[idx]
+    let (_, result ) = partitionValues.[idx]
+    List.partition (fun x -> x % 2 = 0) list 
+    |> should equal result
+    partition (fun x -> x % 2 = 0) list 
+    |> should equal result
+
+let private psubsetValues : (int list * int list * bool)[] = [| 
+    (
+        // idx 0
+        // lib.psubset.01
+        [], [],
+        false
+    );
+    (
+        // idx 1
+        // lib.psubset.02
+        [], [1],
+        true
+    );
+    (
+        // idx 2
+        // lib.psubset.03
+        [1], [],
+        false
+    );
+    (
+        // idx 3
+        // lib.psubset.04
+        [1], [1],
+        false
+    );
+    (
+        // idx 4
+        // lib.psubset.05
+        [1], [2],
+        false
+    );
+    (
+        // idx 5
+        // lib.psubset.06
+        [], [1; 2],
+        true
+    );
+    (
+        // idx 6
+        // lib.psubset.07
+        [1], [1; 2],
+        true
+    );
+    (
+        // idx 7
+        // lib.psubset.08
+        [2], [1; 2],
+        true
+    );
+    (
+        // idx 8
+        // lib.psubset.09
+        [1; 2], [1; 2],
+        false
+    );
+    (
+        // idx 9
+        // lib.psubset.10
+        [], [2; 1],
+        true
+    );
+    (
+        // idx 10
+        // lib.psubset.11
+        [1], [2; 1],
+        true
+    );
+    (
+        // idx 11
+        // lib.psubset.12
+        [2], [2; 1],
+        true
+    );
+    (
+        // idx 12
+        // lib.psubset.13
+        [1; 2], [2; 1],
+        false
+    );
+    (
+        // idx 13
+        // lib.psubset.14
+        [1; 2; 3], [3; 2; 1],
+        false
+    );
+    (
+        // idx 14
+        // lib.psubset.15
+        [1; 2; 3], [1; 1; 2; 2; 3; 3],
+        false
+    );
+    (
+        // idx 15
+        // lib.psubset.16
+        [1; 2; 3], [1; 2],
+        false
+    );
+    (
+        // idx 16
+        // lib.psubset.17
+        [-1; 0; 1], [-2; -1; 0; 1; 2; 3; 4],
+        true
+    );
+    |]
+
+[<TestCase(0, TestName = "lib.psubset.01")>]
+[<TestCase(1, TestName = "lib.psubset.02")>]
+[<TestCase(2, TestName = "lib.psubset.03")>]
+[<TestCase(3, TestName = "lib.psubset.04")>]
+[<TestCase(4, TestName = "lib.psubset.05")>]
+[<TestCase(5, TestName = "lib.psubset.06")>]
+[<TestCase(6, TestName = "lib.psubset.07")>]
+[<TestCase(7, TestName = "lib.psubset.08")>]
+[<TestCase(8, TestName = "lib.psubset.09")>]
+[<TestCase(9, TestName = "lib.psubset.10")>]
+[<TestCase(10, TestName = "lib.psubset.11")>]
+[<TestCase(11, TestName = "lib.psubset.12")>]
+[<TestCase(12, TestName = "lib.psubset.13")>]
+[<TestCase(13, TestName = "lib.psubset.14")>]
+[<TestCase(14, TestName = "lib.psubset.15")>]
+[<TestCase(15, TestName = "lib.psubset.16")>]
+[<TestCase(16, TestName = "lib.psubset.17")>]
+
+[<Test>]
+let ``List psubset`` idx = 
+    let (list1, _, _) = psubsetValues.[idx]
+    let (_, list2, _) = psubsetValues.[idx]
+    let (_, _, result) = psubsetValues.[idx]
+    psubset list1 list2
+    |> should equal result
+
+// end_itlist is here to demonstrate that
+// OCaml end_itlist and F# List.reduceBack return same results.
+let rec end_itlist f l =
+    match l with
+    | []     -> failwith "end_itlist"
+    | [x]    -> x
+    | (h::t) -> f h (end_itlist f t)
+
+let private reduceBackValues : (int list * int)[] = [| 
+    (
+        // idx 0
+        // lib.reduceBack.01
+        // System.ArgumentException - The input list was empty.
+        // System.Exception - end_itlist
+        [],
+        -99  // Dummy value used as place holder
+    );
+    (
+        // idx 1
+        // lib.reduceBack.02
+        [1],
+        1
+    );
+    (
+        // idx 2
+        // lib.reduceBack.03
+        [1; 2],
+        2
+    );
+    (
+        // idx 3
+        // lib.reduceBack.04
+        [1; 2; 3],
+        6
+    );
+    (
+        // idx 4
+        // lib.reduceBack.05
+        [1; 2; 3; 4],
+        24
+    );
+    |]
+
+[<TestCase(0, TestName = "lib.reduceBack.01", ExpectedException=typeof<System.ArgumentException>)>]
+[<TestCase(1, TestName = "lib.reduceBack.02")>]
+[<TestCase(2, TestName = "lib.reduceBack.03")>]
+[<TestCase(3, TestName = "lib.reduceBack.04")>]
+[<TestCase(4, TestName = "lib.reduceBack.05")>]
+
+[<Test>]
+let ``List reduceBack`` idx = 
+    let (list, _) = reduceBackValues.[idx]
+    let (_, result) = reduceBackValues.[idx]
+    List.reduceBack (fun x y -> x * y) list 
+    |> should equal result
+    end_itlist (fun x y -> x * y) list 
+    |> should equal result
+
+// This Test is to show that they both return
+// different exceptions when given an empty list.
+// Since an exception will end a test case, one can not
+// run back to back functions returning exceptions
+// for one test case, thus a second test for the 
+// F# List.minBy exception test case.
+
+[<TestCase(0, TestName = "lib.end_itlist.01", ExpectedException=typeof<System.Exception>, ExpectedMessage="end_itlist")>]
+
+[<Test>]
+let ``List end_itlist Exception`` idx = 
+    let (list, _) = minimizeValues.[idx]
+    let (_, result) = minimizeValues.[idx]
+    end_itlist (fun x y -> x * y) list 
+    |> should equal result
+
+// replicate is here to demonstrate that
+// OCaml replicate and F# List.replicate return different results
+// when count is negative.
+let replicate n a = List.map (fun x -> a) (1--n)
+
+let private replicateValues : (int * string * string list)[] = [| 
+    (
+        // idx 0
+        // lib.replicate.01
+        // F#: System.ArgumentException - The input must be non-negative.
+        // OCaml: []
+        -1, "a",
+        [ ]  
+    );
+    (
+        // idx 1
+        // lib.replicate.02
+        0, "a",
+        [ ]
+    );
+    (
+        // idx 2
+        // lib.replicate.03
+        1, "a",
+        [ "a" ]
+    );
+    (
+        // idx 3
+        // lib.replicate.04
+        2, "a",
+        [ "a"; "a" ]
+    );
+    (
+        // idx 4
+        // lib.replicate.05
+        2, "a b",
+        [ "a b"; "a b" ]
+    );
+    (
+        // idx 5
+        // lib.replicate.04
+        10, "a",
+        [ "a"; "a"; "a"; "a"; "a"; "a"; "a"; "a"; "a"; "a" ]
+    );
+    |]
+
+[<TestCase(0, TestName = "lib.replicate.01", ExpectedException=typeof<System.ArgumentException>)>]
+[<TestCase(1, TestName = "lib.replicate.02")>]
+[<TestCase(2, TestName = "lib.replicate.03")>]
+[<TestCase(3, TestName = "lib.replicate.04")>]
+[<TestCase(4, TestName = "lib.replicate.05")>]
+[<TestCase(5, TestName = "lib.replicate.06")>]
+
+[<Test>]
+let ``List replicate`` idx = 
+    let (count, _, _) = replicateValues.[idx]
+    let (_, initial, _) = replicateValues.[idx]
+    let (_, _, result) = replicateValues.[idx]
+    List.replicate count initial 
+    |> should equal result
+    replicate count initial 
+    |> should equal result
+
+// This Test is to show that when count is negative
+// F# List.replicate will return exception and
+// OCaml replicate will return [].
+//
+// Since an exception will end a test case, one can not
+// run back to back functions returning exceptions
+// for one test case, thus a second test for the 
+// OCaml replicate test case.
+
+[<TestCase(0, TestName = "lib.replicate.07")>]
+
+[<Test>]
+let ``List replicate (OCaml) negative count`` idx = 
+    let (count, _, _) = replicateValues.[idx]
+    let (_, initial, _) = replicateValues.[idx]
+    let (_, _, result) = replicateValues.[idx]
+    replicate count initial 
+    |> should equal result
+
 // ....................................................................................
+
+// rev is here to demonstrate that
+// rev and F# List.rev return same results.
+let rev =
+    let rec rev_append acc l =
+        match l with
+        | [] -> acc
+        | h::t -> rev_append (h::acc) t
+    fun l -> rev_append [] l
+
+let private revValues : (int list * int list)[] = [| 
+    (
+        // idx 0
+        // lib.rev.01
+        [],
+        []
+    );
+    (
+        // idx 1
+        // lib.rev.02
+        [1],
+        [1]
+    );
+    (
+        // idx 2
+        // lib.rev.03
+        [1; 2],
+        [2; 1]
+    );
+    (
+        // idx 3
+        // lib.rev.04
+        [1; 2; 3],
+        [3; 2; 1]
+    );
+    (
+        // idx 4
+        // lib.rev.05
+        [-2; -1; 0; 1; 2],
+        [2; 1; 0; -1; -2]
+    );
+    (
+        // idx 5
+        // lib.rev.06
+        [4; 9; 5; 11; 6; 2],
+        [2; 6; 11; 5; 9; 4]
+    );
+    |]
+
+[<TestCase(0, TestName = "lib.rev.01")>]
+[<TestCase(1, TestName = "lib.rev.02")>]
+[<TestCase(2, TestName = "lib.rev.03")>]
+[<TestCase(3, TestName = "lib.rev.04")>]
+[<TestCase(4, TestName = "lib.rev.05")>]
+[<TestCase(5, TestName = "lib.rev.06")>]
+
+[<Test>]
+let ``List rev`` idx = 
+    let (list, _) = revValues.[idx]
+    let (_, result) = revValues.[idx]
+    List.rev list
+    |> should equal result
+    rev list
+    |> should equal result
 
 // =================================================================================
 
@@ -3166,10 +3947,10 @@ let ``List merge`` idx =
 //    |> should equal @"See the dog"
     
 // lib.p004
-[<Test>]
-let ``List nth`` () =
-    List.nth [0; 1; 2; 3] 2
-    |> should equal 2
+//[<Test>]
+//let ``List nth`` () =
+//    List.nth [0; 1; 2; 3] 2
+//    |> should equal 2
     
 // lib.p005
 //[<Test>]
@@ -3255,22 +4036,22 @@ let ``String implode`` () =
 //    mapfilter (fun x -> x % 2 = 0) [1; 2; 3; 4]
 //    |> should equal [false; true; false; true]
 
-[<Test>]
-let ``List reduceBack`` () =
-    List.reduceBack (fun x y -> x * y) [1; 2; 3; 4]
-    |> should equal 24
+//[<Test>]
+//let ``List reduceBack`` () =
+//    List.reduceBack (fun x y -> x * y) [1; 2; 3; 4]
+//    |> should equal 24
 
 // lib.p019
-[<Test>]
-let ``List replicate`` () =
-    List.replicate 4 9
-    |> should equal [9; 9; 9; 9]
+//[<Test>]
+//let ``List replicate`` () =
+//    List.replicate 4 9
+//    |> should equal [9; 9; 9; 9]
 
 // lib.p020
-[<Test>]
-let ``List rev`` () =
-    List.rev [1; 2; 3; 4]
-    |> should equal [4; 3; 2; 1]
+//[<Test>]
+//let ``List rev`` () =
+//    List.rev [1; 2; 3; 4]
+//    |> should equal [4; 3; 2; 1]
 
 // lib.p021
 [<Test>]
@@ -3439,22 +4220,22 @@ let ``function can`` () =
     |> should equal false
 
 // lib.p046
-[<Test>]
-let ``List operator range (int)`` () =
-    3--5
-    |> should equal [3; 4; 5]
+//[<Test>]
+//let ``List operator range (int)`` () =
+//    3--5
+//    |> should equal [3; 4; 5]
 
 // lib.p047
-[<Test>]
-let ``List operator range (num)`` () =
-    (num_of_int 3)---(num_of_int 5)
-    |> should equal [(num_of_int 3); (num_of_int 4); (num_of_int 5)]
+//[<Test>]
+//let ``List operator range (num)`` () =
+//    (num_of_int 3)---(num_of_int 5)
+//    |> should equal [(num_of_int 3); (num_of_int 4); (num_of_int 5)]
 
 // lib.p048
-[<Test>]
-let ``List partition`` () =
-    List.partition (fun x -> x % 2 = 0) [0; 1; 2; 3; 4]
-    |> should equal ([0; 2; 4], [1; 3])
+//[<Test>]
+//let ``List partition`` () =
+//    List.partition (fun x -> x % 2 = 0) [0; 1; 2; 3; 4]
+//    |> should equal ([0; 2; 4], [1; 3])
 
 // lib.p049
 //[<Test>]
@@ -3567,10 +4348,10 @@ let ``function tryfind 2`` () =
 //    |> should equal -4
 
 // lib.p064
-[<Test>]
-let ``List minimize`` () =
-    minimize (fun x -> x * x) [-4; 1; 2]
-    |> should equal 1
+//[<Test>]
+//let ``List minimize`` () =
+//    minimize (fun x -> x * x) [-4; 1; 2]
+//    |> should equal 1
 
 // lib.p065
 [<Test>]
@@ -3615,22 +4396,22 @@ let ``List subset 3`` () =
     |> should equal true
 
 // lib.p072
-[<Test>]
-let ``List psubset 1`` () =
-    psubset [1; 2; 3; 5; 6] [2; 4; 5]
-    |> should equal false
+//[<Test>]
+//let ``List psubset 1`` () =
+//    psubset [1; 2; 3; 5; 6] [2; 4; 5]
+//    |> should equal false
 
 // lib.p073
-[<Test>]
-let ``List psubset 2`` () =
-    psubset [1; 2; 3; 5; 6] [1; 2; 3; 5; 6]
-    |> should equal false
+//[<Test>]
+//let ``List psubset 2`` () =
+//    psubset [1; 2; 3; 5; 6] [1; 2; 3; 5; 6]
+//    |> should equal false
 
 // lib.p074
-[<Test>]
-let ``List psubset 3`` () =
-    psubset [2; 5] [1; 2; 3; 5; 6]
-    |> should equal true
+//[<Test>]
+//let ``List psubset 3`` () =
+//    psubset [2; 5] [1; 2; 3; 5; 6]
+//    |> should equal true
 
 // lib.p075
 [<Test>]
