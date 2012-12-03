@@ -12,14 +12,194 @@ open FSharp.Compatibility.OCaml.Num
 open NUnit.Framework
 open FsUnit
 
-// TODO: EGT add test cases to enusre F# replacements work same as OCaml code.
-// e.g. rev with F# List.rev
-// See maximize and List.maxBy for example
+// NOTE: In the optimzed version the 
+// following lib functions are replaced with
+// equivalent F# functions or operators.
+// 
+// To add evidence that the replacements are sound,
+// the original results are tested against the
+// F# replacement results. If the results are different
+// the test will fail.
+//
+//  OCaml        F#
+//  insert       Set.add
+//  intersect    Set.intersect
+//  image        Set.map
+//  mem          Set.contains
+//  psubset      Set.isProperSubset
+//  set_eq       =
+//  subset       Set.isSubset
+//  subtract     Set.diference
+//  union        Set.union
+//  unions       Set.unionMany
 
-// TODO: EGT identify F# replacements from Set module
-// This is only to identify possible replacements, 
-// not to actually replace the code.
-// e.g. mem with Set.contains
+// ===========================================================================
+
+// NOTE: In porting the OCaml to F#, if there was a corresponding built-in F# routine
+// that was functionally equivelent, then the F# equivelent was used.
+
+// Following is the list of F# equivelent routines.
+
+// OCaml         F#
+// do_list       List.iter
+// end_itlist    List.reduceBack
+// el            List.nth
+// exists        List.exists
+// filter        List.filter
+// find          List.find
+// forall        List.forall
+// forall2       List.forall2
+// hd            List.head
+// index         List.findIndex
+// itlist        List.foldBack
+// itlist2       List.foldBack2
+// length        List.length
+// map           List.map
+// map2          List.map2
+// minimize      List.minBy
+// maximize      List.maxBy
+// partition     List.partition
+// replicate     List.replicate    not replaced. See below.
+// rev           List.rev
+// tl            List.tail
+// unzip         List.unzip
+// zip           List.zip
+//
+// To ensure that each F# routine it equivelent, 
+// both the OCaml and F# routine are run against the 
+// same test cases and test results in the same test.
+// If the results are equivelent, then the F# equivelent 
+// is used in the code.
+//
+// The noteable difference which still allowed the use
+// of an F# routine are:
+// 1. Different exception type and/or message.
+// 2. Different index result when multiple valid answers. i.e. minBy and maxBy
+//
+// The once case where the differences were signifigant 
+// enough to NOT use the F# version is F# List.replicate.
+// When the replicate count is negative
+// F# List.replicate will return exception and
+// OCaml replicate will return [].
+//
+// TODO: Replace List.replicate with replicate and retest.
+// Then do seperate commit.
+//
+// In order to be able to test against the OCaml version of the code
+// that was replaced by an F# equivelent, the F# port of the code 
+// is placed here for access by the test functions.
+
+let rec do_list f l =
+    match l with
+    | []   -> ()
+    | h::t -> f(h); do_list f t
+
+let rec end_itlist f l =
+    match l with
+    | []     -> failwith "end_itlist"
+    | [x]    -> x
+    | (h::t) -> f h (end_itlist f t)
+
+let rec el n l =
+    if n = 0 then List.head l 
+    else el (n - 1) (List.tail l)
+
+let rec exists p l =
+    match l with
+    | [] -> false
+    | h::t -> p(h) || exists p t
+
+let rec find p l =
+    match l with
+    | [] -> failwith "find"
+    | (h::t) -> if p(h) then h else find p t
+
+let rec forall p l =
+    match l with
+    | []   -> true
+    | h::t -> p(h) && forall p t
+
+let rec forall2 p l1 l2 =
+    match (l1,l2) with
+    | [],[] -> true
+    | (h1::t1,h2::t2) -> p h1 h2 && forall2 p t1 t2
+    | _ -> false
+
+let hd l =
+    match l with
+    | h::t -> h
+    | _ -> failwith "hd"
+
+let index_orig x =
+    let rec ind n l =
+        match l with
+        | []     -> failwith "index"
+        | (h::t) -> 
+            if compare x h = 0 then n 
+            else ind (n + 1) t
+    ind 0
+
+let rec itlist f l b =
+    match l with
+    | []     -> b
+    | (h::t) -> f h (itlist f t b)
+
+let rec itlist2 f l1 l2 b =
+    match (l1,l2) with
+    | ([],[])         -> b
+    | (h1::t1,h2::t2) -> f h1 h2 (itlist2 f t1 t2 b)
+    | _               -> failwith "itlist2"
+
+let length =
+    let rec len k l =
+        if l = [] then k else len (k + 1) (List.tail l)
+    fun l -> len 0 l
+
+let map f =
+    let rec mapf l =
+        match l with
+        | []     -> []
+        | (x::t) -> let y = f x in y::(mapf t)
+    mapf
+
+let rec map2 f l1 l2 =
+    match (l1,l2) with
+    | [],[] -> []
+    | (h1::t1),(h2::t2) -> let h = f h1 h2 in h::(map2 f t1 t2)
+    | _ -> failwith "map2: length mismatch"
+
+let partition p l =
+    itlist (fun a (yes,no) -> if p a then a::yes,no else yes,a::no) l ([],[])
+    
+let replicate n a = List.map (fun x -> a) (1--n)
+
+let rev =
+    let rec rev_append acc l =
+        match l with
+        | [] -> acc
+        | h::t -> rev_append (h::acc) t
+    fun l -> rev_append [] l
+
+let tl l =
+    match l with
+    | h::t -> t
+    | _ -> failwith "tl"
+
+let rec unzip l =
+    match l with
+    | [] -> [],[]
+    | (x,y)::t ->
+        let xs,ys = unzip t in x::xs,y::ys
+
+let rec zip l1 l2 =
+    match (l1,l2) with
+    | ([],[])         -> []
+    | (h1::t1,h2::t2) -> (h1,h2)::(zip t1 t2)
+    | _               -> failwith "zip"
+
+let filter p l = fst(partition p l)
+
+// ===========================================================================
 
 // Tests for library functions derived from
 // the results shown on Pg. 619-621.
@@ -1091,6 +1271,8 @@ let ``List exists`` idx =
     let (_, result) = existsValues.[idx]
     List.exists (fun x -> x % 2 = 0) list 
     |> should equal result
+    exists (fun x -> x % 2 = 0) list 
+    |> should equal result
 
 let private filterValues : (int list * int list)[] = [| 
     (
@@ -1171,6 +1353,8 @@ let ``List filter`` idx =
     let (list, _) = filterValues.[idx]
     let (_, result) = filterValues.[idx]
     List.filter (fun x -> x % 2 = 0) list 
+    |> should equal result
+    filter (fun x -> x % 2 = 0) list 
     |> should equal result
 
 let private findValues : (int list * int)[] = [| 
@@ -1257,6 +1441,28 @@ let ``List find`` idx =
     let (_, result) = findValues.[idx]
     List.find (fun x -> x % 2 = 0) list 
     |> should equal result
+    find (fun x -> x % 2 = 0) list 
+    |> should equal result
+
+// This Test is to show that they both return
+// the different exceptions when given an item not in the list.
+//
+// Since an exception will end a test case, one can not
+// run back to back functions returning exceptions
+// for one test case, thus a second test for the 
+// find exception test case.
+
+[<TestCase(0, TestName = "lib.findException.01", ExpectedException=typeof<System.Exception>, ExpectedMessage="find")>]
+[<TestCase(2, TestName = "lib.findException.02", ExpectedException=typeof<System.Exception>, ExpectedMessage="find")>]
+[<TestCase(4, TestName = "lib.findException.03", ExpectedException=typeof<System.Exception>, ExpectedMessage="find")>]
+[<TestCase(6, TestName = "lib.findException.04", ExpectedException=typeof<System.Exception>, ExpectedMessage="find")>]
+
+[<Test>]
+let ``List find exception`` idx = 
+    let (list, _) = findValues.[idx]
+    let (_, result) = findValues.[idx]
+    find (fun x -> x % 2 = 0) list 
+    |> should equal result
 
 let private foldBackValues : (int list * int * int)[] = [| 
     (
@@ -1339,6 +1545,8 @@ let ``List foldBack`` idx =
     let (_, _, result) = foldBackValues.[idx]
     List.foldBack (fun acc elem -> acc + elem) list start_value
     |> should equal result
+    itlist (fun acc elem -> acc + elem) list start_value
+    |> should equal result
 
 let private foldBack2Values : (int list * int list * int * int)[] = [| 
     (
@@ -1416,6 +1624,28 @@ let ``List foldBack2`` idx =
     let (_, _, start_value, _) = foldBack2Values.[idx]
     let (_, _, _, result) = foldBack2Values.[idx]
     List.foldBack2 (fun elem1 elem2 acc -> elem1 * elem2 + acc) list1 list2 start_value
+    |> should equal result
+    itlist2 (fun elem1 elem2 acc -> elem1 * elem2 + acc) list1 list2 start_value
+    |> should equal result
+
+// This Test is to show that they both return
+// different exceptions when the list have different lengths.
+//
+// Since an exception will end a test case, one can not
+// run back to back functions returning exceptions
+// for one test case, thus a second test for the 
+// itlist2 exception test case.
+    
+[<TestCase(1, TestName = "lib.itlistExcpetion.01", ExpectedException=typeof<System.Exception>, ExpectedMessage="itlist2")>]
+[<TestCase(2, TestName = "lib.itlistExcpetion.02", ExpectedException=typeof<System.Exception>, ExpectedMessage="itlist2")>]
+
+[<Test>]
+let ``List itlist2 exception`` idx = 
+    let (list1, _, _, _) = foldBack2Values.[idx]
+    let (_, list2, _, _) = foldBack2Values.[idx]
+    let (_, _, start_value, _) = foldBack2Values.[idx]
+    let (_, _, _, result) = foldBack2Values.[idx]
+    itlist2 (fun elem1 elem2 acc -> elem1 * elem2 + acc) list1 list2 start_value
     |> should equal result
 
 let private forallValues : (int list * bool)[] = [| 
@@ -1531,6 +1761,8 @@ let ``List forall`` idx =
     let (list, _) = forallValues.[idx]
     let (_, result) = forallValues.[idx]
     List.forall (fun x -> x % 2 = 0) list 
+    |> should equal result
+    forall (fun x -> x % 2 = 0) list 
     |> should equal result
 
 let private forall2Values : (int list * int list * bool)[] = [| 
@@ -1716,6 +1948,8 @@ let ``List forall2`` idx =
     let (_, _, result) = forall2Values.[idx]
     List.forall2 (fun elem1 elem2 -> (elem1 < elem2)) list1 list2
     |> should equal result
+    forall2 (fun elem1 elem2 -> (elem1 < elem2)) list1 list2
+    |> should equal result
 
 let private headValues : (int list * int)[] = [| 
     (
@@ -1762,6 +1996,25 @@ let ``List head`` idx =
     let (list, _) = headValues.[idx]
     let (_, result) = headValues.[idx]
     List.head list
+    |> should equal result
+    hd list 
+    |> should equal result
+
+// This Test is to show that they both return
+// different exceptions when given an empty list.
+//
+// Since an exception will end a test case, one can not
+// run back to back functions returning exceptions
+// for one test case, thus a second test for the 
+// hd exception test case.
+
+[<TestCase(0, TestName = "lib.hdException.01", ExpectedException=typeof<System.Exception>, ExpectedMessage="hd")>]
+
+[<Test>]
+let ``List hd exception`` idx = 
+    let (list, _) = headValues.[idx]
+    let (_, result) = headValues.[idx]
+    hd list 
     |> should equal result
 
 let private imageValues : (int list * int list)[] = [| 
@@ -1893,6 +2146,8 @@ let ``List image`` idx =
     let (_, result) = imageValues.[idx]
     image (fun x -> x % 2) list
     |> should equal result
+    Set.map (fun x -> x % 2) (Set.ofList list)
+    |> should equal (Set.ofList result)
     
 let private indexValues : (int * int list * int)[] = [| 
     (
@@ -2023,6 +2278,32 @@ let ``List index`` idx =
     let (_, list, _) = indexValues.[idx]
     let (_, _, result) = indexValues.[idx]
     index searchValue list
+    |> should equal result
+    index_orig searchValue list
+    |> should equal result
+
+// This Test is to show that they both return
+// the different exceptions when given an item not in the list.
+//
+// Since an exception will end a test case, one can not
+// run back to back functions returning exceptions
+// for one test case, thus a second test for the 
+// index exception test case.
+
+[<TestCase(0, TestName = "lib.indexException.01", ExpectedException=typeof<System.Exception>, ExpectedMessage="index")>]
+[<TestCase(1, TestName = "lib.indexException.02", ExpectedException=typeof<System.Exception>, ExpectedMessage="index")>]
+[<TestCase(2, TestName = "lib.indexException.03", ExpectedException=typeof<System.Exception>, ExpectedMessage="index")>]
+[<TestCase(4, TestName = "lib.indexException.04", ExpectedException=typeof<System.Exception>, ExpectedMessage="index")>]
+[<TestCase(5, TestName = "lib.indexException.05", ExpectedException=typeof<System.Exception>, ExpectedMessage="index")>]
+[<TestCase(8, TestName = "lib.indexException.06", ExpectedException=typeof<System.Exception>, ExpectedMessage="index")>]
+[<TestCase(14, TestName = "lib.indexException.07", ExpectedException=typeof<System.Exception>, ExpectedMessage="index")>]
+
+[<Test>]
+let ``List index exception`` idx = 
+    let (searchValue, _, _) = indexValues.[idx]
+    let (_, list, _) = indexValues.[idx]
+    let (_, _, result) = indexValues.[idx]
+    index_orig searchValue list
     |> should equal result
 
 let private insertValues : (int * int list * int list)[] = [| 
@@ -2155,6 +2436,8 @@ let ``List insert`` idx =
     let (_, _, result) = insertValues.[idx]
     insert insertValue list
     |> should equal result
+    Set.add insertValue (Set.ofList list)
+    |> should equal (Set.ofList result)
 
 let private insertatValues : (int * int * int list * int list)[] = [| 
     (
@@ -2385,6 +2668,8 @@ let ``List intersect`` idx =
     let (_, _, result) = intersectValues.[idx]
     intersect list1 list2
     |> should equal result
+    Set.intersect (Set.ofList list1) (Set.ofList list2)
+    |> should equal (Set.ofList result)
 
 let private iterValues : (string list * string)[] = [| 
     (
@@ -2432,6 +2717,12 @@ let ``List iter`` idx =
         sb.Append s
         |> ignore)
     sb.ToString ()
+    |> should equal result
+    let sb1 = System.Text.StringBuilder ()
+    list |> do_list (fun (s : string) ->
+        sb1.Append s
+        |> ignore)
+    sb1.ToString ()
     |> should equal result
 
 let private lastValues : (int list * int)[] = [| 
@@ -2533,6 +2824,8 @@ let ``List length`` idx =
     let (_, result) = lengthValues.[idx]
     List.length list
     |> should equal result
+    length list
+    |> should equal result
 
 let private mapValues : (int list * int list)[] = [| 
     (
@@ -2571,6 +2864,8 @@ let ``List map`` idx =
     let (list, _) = mapValues.[idx]
     let (_, result) = mapValues.[idx]
     List.map (fun x -> x + 5) list
+    |> should equal result
+    map (fun x -> x + 5) list
     |> should equal result
 
 let private map2Values : (int list * int list * int list)[] = [| 
@@ -2648,6 +2943,8 @@ let ``List map2`` idx =
     let (_, list2, _) = map2Values.[idx]
     let (_, _, result) = map2Values.[idx]
     List.map2 (fun x y -> x + y) list1 list2
+    |> should equal result
+    map2 (fun x y -> x + y) list1 list2
     |> should equal result
 
 let private mapfilterValues : (int list * bool list)[] = [| 
@@ -2795,6 +3092,7 @@ let ``List maximize`` idx =
 // 
 // The first Test is to show that they both return
 // the same exception when given an empty list.
+//
 // Since an exception will end a test case, one can not
 // run back to back functions returning exceptions
 // for one test case, thus a second test for the 
@@ -2802,7 +3100,7 @@ let ``List maximize`` idx =
 //
 // The second test is to show the different results
 // for the same input.
-[<TestCase(0, TestName = "lib.MaxBy.01", ExpectedException=typeof<System.ArgumentException>)>]
+[<TestCase(0, TestName = "lib.MaxByException.01", ExpectedException=typeof<System.ArgumentException>)>]
 
 [<Test>]
 let ``List MaxBy Exception`` idx = 
@@ -2915,6 +3213,8 @@ let ``List mem`` idx =
     let (_, list, _) = memValues.[idx]
     let (_, _, result) = memValues.[idx]
     mem elem list 
+    |> should equal result
+    Set.contains elem (Set.ofList list)
     |> should equal result
 
 let private mergeValues : (int list * int list * int list * int list * int list * int list * int list * int list)[] = [| 
@@ -3212,6 +3512,7 @@ let ``List minimize`` idx =
 // 
 // The first Test is to show that they both return
 // the same exception when given an empty list.
+//
 // Since an exception will end a test case, one can not
 // run back to back functions returning exceptions
 // for one test case, thus a second test for the 
@@ -3219,7 +3520,7 @@ let ``List minimize`` idx =
 //
 // The second test is to show the different results
 // for the same input.
-[<TestCase(0, TestName = "lib.minBy.01", ExpectedException=typeof<System.ArgumentException>)>]
+[<TestCase(0, TestName = "lib.minByException.01", ExpectedException=typeof<System.ArgumentException>)>]
 
 [<Test>]
 let ``List minBy Exception`` idx = 
@@ -3265,12 +3566,6 @@ let ``List minimize Vs minBy`` idx =
     |> should equal minimizeResult
     List.minBy (fun x -> 10) list
     |> should equal minByResult
-
-// el is here to demonstrate that
-// el and F# List.nth return same results.
-let rec el n l =
-    if n = 0 then List.head l 
-    else el (n - 1) (List.tail l)
 
 let private nthValues : (int list * int * int)[] = [| 
     (
@@ -3353,13 +3648,14 @@ let ``List nth`` idx =
 // This Test is to show that they both return
 // the same exception when given an index was outside the 
 // range of elemements in the list.
+//
 // Since an exception will end a test case, one can not
 // run back to back functions returning exceptions
 // for one test case, thus a second test for the 
 // el exception test case.
 
-[<TestCase(0, TestName = "lib.el.01", ExpectedException=typeof<System.ArgumentException>)>]
-[<TestCase(1, TestName = "lib.el.02", ExpectedException=typeof<System.ArgumentException>)>]
+[<TestCase(0, TestName = "lib.elException.01", ExpectedException=typeof<System.ArgumentException>)>]
+[<TestCase(1, TestName = "lib.elException.02", ExpectedException=typeof<System.ArgumentException>)>]
 
 [<Test>]
 let ``List el exception`` idx = 
@@ -3369,7 +3665,7 @@ let ``List el exception`` idx =
     el elem list 
     |> should equal result
 
-// (--) is here to demonstrate that
+// (--) is included here to demonstrate that
 // OCaml (--) and F# [n..m] return same results.
 let rec (--) = 
     fun m n -> 
@@ -3425,7 +3721,7 @@ let ``List operator range (Int)`` idx =
     (start -- stop) 
     |> should equal result
 
-// (---) is here to demonstrate that
+// (---) is included here to demonstrate that
 // OCaml (---) and F# [n..m] return same results.
 // Note: OCaml restricts values to Num by 
 // using num operators for > and + .
@@ -3484,16 +3780,6 @@ let ``List operator range (Num)`` idx =
     |> should equal result
     (start --- stop) 
     |> should equal result
-
-// partition is here to demonstrate that
-// OCaml partition and F# List.partition return same results.
-let rec itlist f l b =
-    match l with
-    | []     -> b
-    | (h::t) -> f h (itlist f t b)
-
-let partition p l =
-    itlist (fun a (yes,no) -> if p a then a::yes,no else yes,a::no) l ([],[])
 
 let private partitionValues : (int list * (int list * int list))[] = [| 
     (
@@ -3708,14 +3994,8 @@ let ``List psubset`` idx =
     let (_, _, result) = psubsetValues.[idx]
     psubset list1 list2
     |> should equal result
-
-// end_itlist is here to demonstrate that
-// OCaml end_itlist and F# List.reduceBack return same results.
-let rec end_itlist f l =
-    match l with
-    | []     -> failwith "end_itlist"
-    | [x]    -> x
-    | (h::t) -> f h (end_itlist f t)
+    Set.isProperSubset (Set.ofList list1) (Set.ofList list2)
+    |> should equal result
 
 let private reduceBackValues : (int list * int)[] = [| 
     (
@@ -3769,12 +4049,13 @@ let ``List reduceBack`` idx =
 
 // This Test is to show that they both return
 // different exceptions when given an empty list.
+//
 // Since an exception will end a test case, one can not
 // run back to back functions returning exceptions
 // for one test case, thus a second test for the 
-// F# List.minBy exception test case.
+// end_itlist exception test case.
 
-[<TestCase(0, TestName = "lib.end_itlist.01", ExpectedException=typeof<System.Exception>, ExpectedMessage="end_itlist")>]
+[<TestCase(0, TestName = "lib.end_itlistException.01", ExpectedException=typeof<System.Exception>, ExpectedMessage="end_itlist")>]
 
 [<Test>]
 let ``List end_itlist Exception`` idx = 
@@ -3782,11 +4063,6 @@ let ``List end_itlist Exception`` idx =
     let (_, result) = minimizeValues.[idx]
     end_itlist (fun x y -> x * y) list 
     |> should equal result
-
-// replicate is here to demonstrate that
-// OCaml replicate and F# List.replicate return different results
-// when count is negative.
-let replicate n a = List.map (fun x -> a) (1--n)
 
 let private replicateValues : (int * string * string list)[] = [| 
     (
@@ -3855,7 +4131,7 @@ let ``List replicate`` idx =
 // for one test case, thus a second test for the 
 // OCaml replicate test case.
 
-[<TestCase(0, TestName = "lib.replicate.07")>]
+[<TestCase(0, TestName = "lib.replicateDifference.01")>]
 
 [<Test>]
 let ``List replicate (OCaml) negative count`` idx = 
@@ -3864,17 +4140,6 @@ let ``List replicate (OCaml) negative count`` idx =
     let (_, _, result) = replicateValues.[idx]
     replicate count initial 
     |> should equal result
-
-// ....................................................................................
-
-// rev is here to demonstrate that
-// rev and F# List.rev return same results.
-let rev =
-    let rec rev_append acc l =
-        match l with
-        | [] -> acc
-        | h::t -> rev_append (h::acc) t
-    fun l -> rev_append [] l
 
 let private revValues : (int list * int list)[] = [| 
     (
@@ -3931,38 +4196,2000 @@ let ``List rev`` idx =
     rev list
     |> should equal result
 
-// =================================================================================
+let private set_eqValues : (int list * int list * bool)[] = [| 
+    (
+        // idx 0
+        // lib.set_eq.01
+        [], [],
+        true
+    );
+    (
+        // idx 1
+        // lib.set_eq.02
+        [], [1],
+        false
+    );
+    (
+        // idx 2
+        // lib.set_eq.03
+        [], [1; 2],
+        false
+    );
+    (
+        // idx 3
+        // lib.set_eq.04
+        [], [1; 1],
+        false
+    );
+    (
+        // idx 4
+        // lib.set_eq.05
+        [1], [],
+        false
+    );
+    (
+        // idx 5
+        // lib.set_eq.06
+        [1; 2], [],
+        false
+    );
+    (
+        // idx 6
+        // lib.set_eq.07
+        [1; 1], [],
+        false
+    );
+    (
+        // idx 7
+        // lib.set_eq.08
+        [1], [1],
+        true
+    );
+    (
+        // idx 8
+        // lib.set_eq.09
+        [1], [1; 2],
+        false
+    );
+    (
+        // idx 9
+        // lib.set_eq.10
+        [1], [1; 2; 3],
+        false
+    );
+    (
+        // idx 10
+        // lib.set_eq.11
+        [1], [1; 1],
+        true
+    );
+    (
+        // idx 11
+        // lib.set_eq.12
+        [1; 2], [1],
+        false
+    );
+    (
+        // idx 12
+        // lib.set_eq.13
+        [1; 2; 3], [1],
+        false
+    );
+    (
+        // idx 13
+        // lib.set_eq.14
+        [1; 1], [1],
+        true
+    );
+    (
+        // idx 14
+        // lib.set_eq.15
+        [1; 2], [1; 2],
+        true
+    );
+    (
+        // idx 15
+        // lib.set_eq.16
+        [1; 2], [1; 2; 3],
+        false
+    );
+    (
+        // idx 16
+        // lib.set_eq.17
+        [1; 2], [1; 2; 3; 4],
+        false
+    );
+    (
+        // idx 17
+        // lib.set_eq.18
+        [1; 2], [1; 1; 2],
+        true
+    );
+    (
+        // idx 18
+        // lib.set_eq.19
+        [1; 2], [1; 2; 2],
+        true
+    );
+    (
+        // idx 19
+        // lib.set_eq.20
+        [1; 2], [1; 2; 1; 1],
+        true
+    );
+    (
+        // idx 20
+        // lib.set_eq.21
+        [1; 2], [2; 2; 2; 1],
+        true
+    );
+    (
+        // idx 21
+        // lib.set_eq.22
+        [1; 2; 3], [1; 2],
+        false
+    );
+    (
+        // idx 22
+        // lib.set_eq.23
+        [1; 2; 3; 4], [1; 2],
+        false
+    );
+    (
+        // idx 23
+        // lib.set_eq.24
+        [1; 1; 2], [1; 2],
+        true
+    );
+    (
+        // idx 24
+        // lib.set_eq.25
+        [1; 2; 2], [1; 2],
+        true
+    );
+    (
+        // idx 25
+        // lib.set_eq.26
+        [1; 2; 1; 1], [1; 2],
+        true
+    );
+    (
+        // idx 26
+        // lib.set_eq.27
+        [2; 2; 2; 1], [1; 2],
+        true
+    );
+    |]
 
-// lib.p003
-// Note: Since List.iter returns unit, need to use function with side effect
-// i.e. sb.Append to create something to test.
-//[<Test>]
-//let ``List iter`` () =
-//    let l = ["See "; "the "; "dog"]
-//    let sb = System.Text.StringBuilder ()
-//    l |> List.iter (fun (s : string) ->
-//        sb.Append s
-//        |> ignore)
-//    sb.ToString ()
-//    |> should equal @"See the dog"
+[<TestCase(0, TestName = "lib.set_eq.01")>]
+[<TestCase(1, TestName = "lib.set_eq.02")>]
+[<TestCase(2, TestName = "lib.set_eq.03")>]
+[<TestCase(3, TestName = "lib.set_eq.04")>]
+[<TestCase(4, TestName = "lib.set_eq.05")>]
+[<TestCase(5, TestName = "lib.set_eq.06")>]
+[<TestCase(6, TestName = "lib.set_eq.07")>]
+[<TestCase(7, TestName = "lib.set_eq.08")>]
+[<TestCase(8, TestName = "lib.set_eq.09")>]
+[<TestCase(9, TestName = "lib.set_eq.10")>]
+[<TestCase(10, TestName = "lib.set_eq.11")>]
+[<TestCase(11, TestName = "lib.set_eq.12")>]
+[<TestCase(12, TestName = "lib.set_eq.13")>]
+[<TestCase(13, TestName = "lib.set_eq.14")>]
+[<TestCase(14, TestName = "lib.set_eq.15")>]
+[<TestCase(15, TestName = "lib.set_eq.16")>]
+[<TestCase(16, TestName = "lib.set_eq.17")>]
+[<TestCase(17, TestName = "lib.set_eq.18")>]
+[<TestCase(18, TestName = "lib.set_eq.19")>]
+[<TestCase(19, TestName = "lib.set_eq.20")>]
+[<TestCase(20, TestName = "lib.set_eq.21")>]
+[<TestCase(21, TestName = "lib.set_eq.22")>]
+[<TestCase(22, TestName = "lib.set_eq.23")>]
+[<TestCase(23, TestName = "lib.set_eq.24")>]
+[<TestCase(24, TestName = "lib.set_eq.25")>]
+[<TestCase(25, TestName = "lib.set_eq.26")>]
+[<TestCase(26, TestName = "lib.set_eq.27")>]
+
+[<Test>]
+let ``List set_eq`` idx = 
+    let (list1, _, _) = set_eqValues.[idx]
+    let (_, list2, _) = set_eqValues.[idx]
+    let (_, _, result) = set_eqValues.[idx]
+    set_eq list1 list2
+    |> should equal result
+    let equalResult =  (Set.ofList list1) = (Set.ofList list2)
+    equalResult
+    |> should equal result
+
+let private setifyValues : (int list * int list)[] = [| 
+    (
+        // idx 0
+        // lib.setify.01
+        [],
+        []
+    );
+    (
+        // idx 1
+        // lib.setify.02
+        [1],
+        [1]
+    );
+    (
+        // idx 2
+        // lib.setify.03
+        [1; 1],
+        [1]
+    );
+    (
+        // idx 3
+        // lib.setify.04
+        [1; 2],
+        [1; 2]
+    );
+    (
+        // idx 4
+        // lib.setify.05
+        [2; 1],
+        [1; 2]
+    );
+    (
+        // idx 5
+        // lib.setify.06
+        [1; 1; 2],
+        [1; 2]
+    );
+    (
+        // idx 6
+        // lib.setify.07
+        [1; 1; 2; 2],
+        [1; 2]
+    );
+    (
+        // idx 7
+        // lib.setify.08
+        [1; 1; 1; 2; 2; 2],
+        [1; 2]
+    );
+    (
+        // idx 8
+        // lib.setify.09
+        [1; 1; 1; 1; 2; 2; 2; 2],
+        [1; 2]
+    );
+    (
+        // idx 9
+        // lib.setify.10
+        [1; 3; 5; 7; 9; 2; 4; 6; 8],
+        [1; 2; 3; 4; 5; 6; 7; 8; 9]
+    );
+    (
+        // idx 10
+        // lib.setify.11
+        [1; 3; 5; 7; 9; 2; 4; 6; 8; 7; 6; 5; 4; 3; 2; 1],
+        [1; 2; 3; 4; 5; 6; 7; 8; 9]
+    );
+    (
+        // idx 11
+        // lib.setify.12
+        [3; 5; 9; 2; 4; 6; 8; 7; 5; 4; 3; 1],
+        [1; 2; 3; 4; 5; 6; 7; 8; 9]
+    );
+    |]
+
+[<TestCase(0, TestName = "lib.setify.01")>]
+[<TestCase(1, TestName = "lib.setify.02")>]
+[<TestCase(2, TestName = "lib.setify.03")>]
+[<TestCase(3, TestName = "lib.setify.04")>]
+[<TestCase(4, TestName = "lib.setify.05")>]
+[<TestCase(5, TestName = "lib.setify.06")>]
+[<TestCase(6, TestName = "lib.setify.07")>]
+[<TestCase(7, TestName = "lib.setify.08")>]
+[<TestCase(8, TestName = "lib.setify.09")>]
+[<TestCase(9, TestName = "lib.setify.10")>]
+[<TestCase(10, TestName = "lib.setify.11")>]
+[<TestCase(11, TestName = "lib.setify.12")>]
+
+[<Test>]
+let ``List setify`` idx = 
+    let (list, _) = setifyValues.[idx]
+    let (_, result) = setifyValues.[idx]
+    setify list
+    |> should equal result
+    let setResult = Set.ofList list
+    setResult
+    |> should equal (Set.ofList result)
     
-// lib.p004
-//[<Test>]
-//let ``List nth`` () =
-//    List.nth [0; 1; 2; 3] 2
-//    |> should equal 2
+let private sortValues : (int list * int list * int list * int list * int list * int list * int list)[] = [| 
+    (
+        // idx 0
+        // lib.sort.01
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        []
+    );
+    (
+        // idx 1
+        // lib.sort.02
+        [1],
+        [1],
+        [1],
+        [1],
+        [1],
+        [1],
+        [1]
+    );
+    (
+        // idx 2
+        // lib.sort.03
+        [1; 2],
+        [2; 1],
+        [1; 2],
+        [2; 1],
+        [2; 1],
+        [1; 2],
+        [1; 2]
+    );
+    (
+        // idx 3
+        // lib.sort.04
+        [2; 1],
+        [2; 1],
+        [1; 2],
+        [1; 2],
+        [2; 1],
+        [1; 2],
+        [2; 1]
+    );
+    (
+        // idx 4
+        // lib.sort.05
+        [1; 2; 3],
+        [3; 2; 1],
+        [1; 2; 3],
+        [2; 1; 3],
+        [3; 2; 1],
+        [1; 2; 3],
+        [3; 1; 2]
+    );
+    (
+        // idx 5
+        // lib.sort.06
+        [3; 2; 1],
+        [3; 2; 1],
+        [1; 2; 3],
+        [2; 3; 1],
+        [3; 2; 1],
+        [1; 2; 3],
+        [1; 3; 2]
+    );
+    (
+        // idx 6
+        // lib.sort.07
+        [1; 2; 3; 4],
+        [4; 3; 2; 1],
+        [1; 2; 3; 4],
+        [2; 1; 4; 3],
+        [4; 3; 2; 1],
+        [1; 2; 3; 4],
+        [3; 4; 1; 2]
+    );
+    (
+        // idx 7
+        // lib.sort.08
+        [4; 3; 2; 1],
+        [4; 3; 2; 1],
+        [1; 2; 3; 4],
+        [3; 4; 1; 2],
+        [4; 3; 2; 1],
+        [1; 2; 3; 4],
+        [2; 1; 4; 3]
+    );
+    (
+        // idx 8
+        // lib.sort.09
+        [1; 3; 2; 4],
+        [4; 3; 2; 1],
+        [1; 2; 3; 4],
+        [3; 1; 4; 2],
+        [4; 3; 2; 1],
+        [1; 2; 3; 4],
+        [2; 4; 1; 3]
+    );
+    (
+        // idx 9
+        // lib.sort.10
+        [2; 4; 1; 3],
+        [4; 3; 2; 1],
+        [1; 2; 3; 4],
+        [4; 2; 3; 1],
+        [4; 3; 2; 1],
+        [1; 2; 3; 4],
+        [1; 3; 2; 4]
+    );
+    (
+        // idx 10
+        // lib.sort.11
+        [1; 1; 2; 2],
+        [2; 2; 1; 1],
+        [1; 1; 2; 2],
+        [1; 1; 2; 2],
+        [2; 2; 1; 1],
+        [1; 1; 2; 2],
+        [2; 2; 1; 1]
+    );
+    (
+        // idx 11
+        // lib.sort.12
+        [2; 1; 2; 1],
+        [2; 2; 1; 1],
+        [1; 1; 2; 2],
+        [1; 1; 2; 2],
+        [2; 2; 1; 1],
+        [1; 1; 2; 2],
+        [2; 2; 1; 1]
+    );
+    (
+        // idx 12
+        // lib.sort.13
+        [10; 9; 8; 7; 6; 5; 4; 3; 2; 1],
+        [10; 9; 8; 7; 6; 5; 4; 3; 2; 1],
+        [1; 2; 3; 4; 5; 6; 7; 8; 9; 10],
+        [7; 8; 5; 6; 9; 10; 3; 4; 1; 2],
+        [10; 9; 8; 7; 6; 5; 4; 3; 2; 1],
+        [1; 2; 3; 4; 5; 6; 7; 8; 9; 10],
+        [2; 1; 4; 3; 10; 9; 6; 5; 8; 7]
+    );
+    (
+        // idx 13
+        // lib.sort.14
+        [1; 2; 3; 4; 5; 6; 7; 8; 9; 10],
+        [10; 9; 8; 7; 6; 5; 4; 3; 2; 1],
+        [1; 2; 3; 4; 5; 6; 7; 8; 9; 10],
+        [4; 3; 6; 5; 2; 1; 8; 7; 10; 9],
+        [10; 9; 8; 7; 6; 5; 4; 3; 2; 1],
+        [1; 2; 3; 4; 5; 6; 7; 8; 9; 10],
+        [9; 10; 7; 8; 1; 2; 5; 6; 3; 4]
+    );
+    (
+        // idx 14
+        // lib.sort.15
+        [3; 1; 4; 1; 5; 9; 2; 6; 5; 3; 5],
+        [9; 6; 5; 5; 5; 4; 3; 3; 2; 1; 1],
+        [1; 1; 2; 3; 3; 4; 5; 5; 5; 6; 9],
+        [9; 5; 6; 2; 1; 1; 3; 3; 4; 5; 5],
+        [9; 6; 5; 5; 5; 4; 3; 3; 2; 1; 1],
+        [1; 1; 2; 3; 3; 4; 5; 5; 5; 6; 9],
+        [5; 5; 3; 4; 1; 3; 1; 2; 6; 5; 9]
+    );
+    |]
+
+[<TestCase(0, TestName = "lib.sort.01")>]
+[<TestCase(1, TestName = "lib.sort.02")>]
+[<TestCase(2, TestName = "lib.sort.03")>]
+[<TestCase(3, TestName = "lib.sort.04")>]
+[<TestCase(4, TestName = "lib.sort.05")>]
+[<TestCase(5, TestName = "lib.sort.06")>]
+[<TestCase(6, TestName = "lib.sort.07")>]
+[<TestCase(7, TestName = "lib.sort.08")>]
+[<TestCase(8, TestName = "lib.sort.09")>]
+[<TestCase(9, TestName = "lib.sort.10")>]
+[<TestCase(10, TestName = "lib.sort.11")>]
+[<TestCase(11, TestName = "lib.sort.12")>]
+[<TestCase(12, TestName = "lib.sort.13")>]
+[<TestCase(13, TestName = "lib.sort.14")>]
+[<TestCase(14, TestName = "lib.sort.15")>]
+
+[<Test>]
+let ``List sort`` idx = 
+    let (list, _, _, _, _, _, _) = sortValues.[idx]
+    let (_, greaterThanResult, _, _, _, _, _) = sortValues.[idx]
+    let (_, _, lessThanResult, _, _, _, _) = sortValues.[idx]
+    let (_, _, _, equalResult, _, _, _) = sortValues.[idx]
+    let (_, _, _, _, greaterThanOrEqualResult, _, _) = sortValues.[idx]
+    let (_, _, _, _, _, lessThanOrEqualResult, _) = sortValues.[idx]
+    let (_, _, _, _, _, _, notEqualResult) = sortValues.[idx]
+    sort (>) list
+    |> should equal greaterThanResult
+    sort (<) list
+    |> should equal lessThanResult
+    sort (=) list
+    |> should equal equalResult
+    sort (>=) list
+    |> should equal greaterThanOrEqualResult
+    sort (<=) list
+    |> should equal lessThanOrEqualResult
+    sort (<>) list
+    |> should equal notEqualResult
+
+let private subsetValues : (int list * int list * bool)[] = [| 
+    (
+        // idx 0
+        // lib.subset.01
+        [], [],
+        true
+    );
+    (
+        // idx 1
+        // lib.subset.02
+        [], [1],
+        true
+    );
+    (
+        // idx 2
+        // lib.subset.03
+        [1], [],
+        false
+    );
+    (
+        // idx 3
+        // lib.subset.04
+        [1], [1],
+        true
+    );
+    (
+        // idx 4
+        // lib.subset.05
+        [1], [2],
+        false
+    );
+    (
+        // idx 5
+        // lib.subset.06
+        [], [1; 2],
+        true
+    );
+    (
+        // idx 6
+        // lib.subset.07
+        [1], [1; 2],
+        true
+    );
+    (
+        // idx 7
+        // lib.subset.08
+        [2], [1; 2],
+        true
+    );
+    (
+        // idx 8
+        // lib.subset.09
+        [1; 2], [1; 2],
+        true
+    );
+    (
+        // idx 9
+        // lib.subset.10
+        [], [2; 1],
+        true
+    );
+    (
+        // idx 10
+        // lib.subset.11
+        [1], [2; 1],
+        true
+    );
+    (
+        // idx 11
+        // lib.subset.12
+        [2], [2; 1],
+        true
+    );
+    (
+        // idx 12
+        // lib.subset.13
+        [1; 2], [2; 1],
+        true
+    );
+    (
+        // idx 13
+        // lib.subset.14
+        [1; 2; 3], [3; 2; 1],
+        true
+    );
+    (
+        // idx 14
+        // lib.subset.15
+        [1; 2; 3], [1; 1; 2; 2; 3; 3],
+        true
+    );
+    (
+        // idx 15
+        // lib.subset.16
+        [1; 2; 3], [1; 2],
+        false
+    );
+    (
+        // idx 16
+        // lib.subset.17
+        [-1; 0; 1], [-2; -1; 0; 1; 2; 3; 4],
+        true
+    );
+    |]
+
+[<TestCase(0, TestName = "lib.subset.01")>]
+[<TestCase(1, TestName = "lib.subset.02")>]
+[<TestCase(2, TestName = "lib.subset.03")>]
+[<TestCase(3, TestName = "lib.subset.04")>]
+[<TestCase(4, TestName = "lib.subset.05")>]
+[<TestCase(5, TestName = "lib.subset.06")>]
+[<TestCase(6, TestName = "lib.subset.07")>]
+[<TestCase(7, TestName = "lib.subset.08")>]
+[<TestCase(8, TestName = "lib.subset.09")>]
+[<TestCase(9, TestName = "lib.subset.10")>]
+[<TestCase(10, TestName = "lib.subset.11")>]
+[<TestCase(11, TestName = "lib.subset.12")>]
+[<TestCase(12, TestName = "lib.subset.13")>]
+[<TestCase(13, TestName = "lib.subset.14")>]
+[<TestCase(14, TestName = "lib.subset.15")>]
+[<TestCase(15, TestName = "lib.subset.16")>]
+[<TestCase(16, TestName = "lib.subset.17")>]
+
+[<Test>]
+let ``List subset`` idx = 
+    let (list1, _, _) = subsetValues.[idx]
+    let (_, list2, _) = subsetValues.[idx]
+    let (_, _, result) = subsetValues.[idx]
+    subset list1 list2
+    |> should equal result
+    Set.isSubset (Set.ofList list1) (Set.ofList list2)
+    |> should equal result
+
+let private subtractValues : (int list * int list * int list)[] = [| 
+    (
+        // idx 0
+        // lib.subtract.01
+        [], [],
+        []
+    );
+    (
+        // idx 1
+        // lib.subtract.02
+        [1], [1],
+        []
+    );
+    (
+        // idx 2
+        // lib.subtract.03
+        [1], [2],
+        [1]
+    );
+    (
+        // idx 3
+        // lib.subtract.04
+        [2], [1],
+        [2]
+    );
+    (
+        // idx 4
+        // lib.subtract.05
+        [1; 2], [1],
+        [2]
+    );
+    (
+        // idx 5
+        // lib.subtract.06
+        [1; 2], [2],
+        [1]
+    );
+    (
+        // idx 6
+        // lib.subtract.07
+        [1; 1; 2], [1],
+        [2]
+    );
+    (
+        // idx 7
+        // lib.subtract.08
+        [1; 1; 2], [2],
+        [1]
+    );
+    (
+        // idx 8
+        // lib.subtract.09
+        [1; 1; 2; 2], [1; 2],
+        []
+    );
+    (
+        // idx 9
+        // lib.subtract.10
+        [1; 2; 3], [1],
+        [2; 3]
+    );
+    (
+        // idx 10
+        // lib.subtract.11
+        [1; 2; 3], [2],
+        [1; 3]
+    );
+    (
+        // idx 11
+        // lib.subtract.12
+        [1; 2; 3], [2],
+        [1; 3]
+    );
+    (
+        // idx 12
+        // lib.subtract.13
+        [1; 2; 3], [3],
+        [1; 2]
+    );
+    (
+        // idx 13
+        // lib.subtract.14
+        [3; 2; 1], [1],
+        [2; 3]
+    );
+    (
+        // idx 14
+        // lib.subtract.15
+        [3; 2; 1], [2],
+        [1; 3]
+    );
+    (
+        // idx 15
+        // lib.subtract.16
+        [3; 2; 1], [1],
+        [2; 3]
+    );
+    (
+        // idx 16
+        // lib.subtract.17
+        [1; 2; 3], [1; 2],
+        [3]
+    );
+    (
+        // idx 17
+        // lib.subtract.18
+        [1; 2; 3], [1; 3],
+        [2]
+    );
+    (
+        // idx 18
+        // lib.subtract.19
+        [1; 2; 3], [2; 3],
+        [1]
+    );
+    (
+        // idx 19
+        // lib.subtract.20
+        [3; 2; 1], [2; 3],
+        [1]
+    );
+    (
+        // idx 20
+        // lib.subtract.21
+        [3; 2; 1], [3; 2],
+        [1]
+    );
+    |]
+
+[<TestCase(0, TestName = "lib.subtract.01")>]
+[<TestCase(1, TestName = "lib.subtract.02")>]
+[<TestCase(2, TestName = "lib.subtract.03")>]
+[<TestCase(3, TestName = "lib.subtract.04")>]
+[<TestCase(4, TestName = "lib.subtract.05")>]
+[<TestCase(5, TestName = "lib.subtract.06")>]
+[<TestCase(6, TestName = "lib.subtract.07")>]
+[<TestCase(7, TestName = "lib.subtract.08")>]
+[<TestCase(8, TestName = "lib.subtract.09")>]
+[<TestCase(9, TestName = "lib.subtract.10")>]
+[<TestCase(10, TestName = "lib.subtract.11")>]
+[<TestCase(11, TestName = "lib.subtract.12")>]
+[<TestCase(12, TestName = "lib.subtract.13")>]
+[<TestCase(13, TestName = "lib.subtract.14")>]
+[<TestCase(14, TestName = "lib.subtract.15")>]
+[<TestCase(15, TestName = "lib.subtract.16")>]
+[<TestCase(16, TestName = "lib.subtract.17")>]
+[<TestCase(17, TestName = "lib.subtract.18")>]
+[<TestCase(18, TestName = "lib.subtract.19")>]
+[<TestCase(19, TestName = "lib.subtract.20")>]
+[<TestCase(20, TestName = "lib.subtract.21")>]
+
+[<Test>]
+let ``List subtract`` idx = 
+    let (list1, _, _) = subtractValues.[idx]
+    let (_, list2, _) = subtractValues.[idx]
+    let (_, _, result) = subtractValues.[idx]
+    subtract list1 list2
+    |> should equal result
+    Set.difference (Set.ofList list1) (Set.ofList list2)
+    |> should equal (Set.ofList result)
+
+let private tailValues : (int list * int list)[] = [| 
+    (
+        // idx 0
+        // lib.tail.01
+        // System.ArgumentException - The input list was empty.
+        [],
+        [-99]  // Dummy value used as place holder
+    );
+    (
+        // idx 1
+        // lib.tail.02
+        [1],
+        []
+    );
+    (
+        // idx 2
+        // lib.tail.03
+        [1; 2],
+        [2]
+    );
+    (
+        // idx 3
+        // lib.tail.04
+        [1; 2; 3],
+        [2; 3]
+    );
+    (
+        // idx 4
+        // lib.tail.05
+        [3; 2; 1],
+        [2; 1]
+    )
+    |]
+
+[<TestCase(0, TestName = "lib.tail.01", ExpectedException=typeof<System.ArgumentException>)>]
+[<TestCase(1, TestName = "lib.tail.02")>]
+[<TestCase(2, TestName = "lib.tail.03")>]
+[<TestCase(3, TestName = "lib.tail.04")>]
+[<TestCase(4, TestName = "lib.tail.05")>]
+
+[<Test>]
+let ``List tail`` idx = 
+    let (list, _) = tailValues.[idx]
+    let (_, result) = tailValues.[idx]
+    List.tail list
+    |> should equal result
+    tl list 
+    |> should equal result
+
+// This Test is to show that they both return
+// different exceptions when given an empty list.
+//
+// Since an exception will end a test case, one can not
+// run back to back functions returning exceptions
+// for one test case, thus a second test for the 
+// tl exception test case.
+
+[<TestCase(0, TestName = "lib.tlException.01", ExpectedException=typeof<System.Exception>, ExpectedMessage="tl")>]
+
+[<Test>]
+let ``List tl exception`` idx = 
+    let (list, _) = tailValues.[idx]
+    let (_, result) = tailValues.[idx]
+    tl list 
+    |> should equal result
+
+let private unionValues : (int list * int list * int list)[] = [| 
+    (
+        // idx 0
+        // lib.union.01
+        [], [],
+        []
+    );
+    (
+        // idx 1
+        // lib.union.02
+        [], [1],
+        [1]
+    );
+    (
+        // idx 2
+        // lib.union.03
+        [1], [],
+        [1]
+    );
+    (
+        // idx 3
+        // lib.union.04
+        [1], [1],
+        [1]
+    );
+    (
+        // idx 4
+        // lib.union.05
+        [1; 1], [],
+        [1]
+    );
+    (
+        // idx 5
+        // lib.union.06
+        [], [1; 1],
+        [1]
+    );
+    (
+        // idx 6
+        // lib.union.07
+        [1; 1], [1; 1],
+        [1]
+    );
+    (
+        // idx 7
+        // lib.union.08
+        [1], [2],
+        [1; 2]
+    );
+    (
+        // idx 8
+        // lib.union.09
+        [2], [1],
+        [1; 2]
+    );
+    (
+        // idx 9
+        // lib.union.10
+        [1; 2], [1],
+        [1; 2]
+    );
+    (
+        // idx 10
+        // lib.union.11
+        [1; 2], [2],
+        [1; 2]
+    );
+    (
+        // idx 11
+        // lib.union.12
+        [1; 1; 2], [1],
+        [1; 2]
+    );
+    (
+        // idx 12
+        // lib.union.13
+        [1; 1; 2], [2],
+        [1; 2]
+    );
+    (
+        // idx 13
+        // lib.union.14
+        [1; 1; 2; 2], [1; 2],
+        [1; 2]
+    );
+    (
+        // idx 14
+        // lib.union.15
+        [1; 2; 3], [1],
+        [1; 2; 3]
+    );
+    (
+        // idx 15
+        // lib.union.16
+        [1; 2; 3], [2],
+        [1; 2; 3]
+    );
+    (
+        // idx 16
+        // lib.union.17
+        [1; 2; 3], [3],
+        [1; 2; 3]
+    );
+    (
+        // idx 17
+        // lib.union.18
+        [3; 2; 1], [1],
+        [1; 2; 3]
+    );
+    (
+        // idx 18
+        // lib.union.19
+        [3; 2; 1], [2],
+        [1; 2; 3]
+    );
+    (
+        // idx 19
+        // lib.union.20
+        [3; 2; 1], [3],
+        [1; 2; 3]
+    );
+    (
+        // idx 20
+        // lib.union.21
+        [3; 2; 1], [1; 2],
+        [1; 2; 3]
+    );
+    (
+        // idx 21
+        // lib.union.22
+        [1; 2; 3], [1; 2],
+        [1; 2; 3]
+    );
+    (
+        // idx 22
+        // lib.union.23
+        [1; 2; 3], [1; 3],
+        [1; 2; 3]
+    );
+    (
+        // idx 23
+        // lib.union.24
+        [1; 2; 3], [2; 3],
+        [1; 2; 3]
+    );
+    (
+        // idx 24
+        // lib.union.25
+        [3; 2; 1], [2; 3],
+        [1; 2; 3]
+    );
+    (
+        // idx 25
+        // lib.union.26
+        [3; 2; 1], [3; 2],
+        [1; 2; 3]
+    );
+    (
+        // idx 26
+        // lib.union.27
+        [9; 7; 5; 3; 1], [2; 4; 6; 8; 10],
+        [1; 2; 3; 4; 5; 6; 7; 8; 9; 10]
+    );
+    (
+        // idx 27
+        // lib.union.28
+        [1; 7; 9; 3; 5], [10; 6; 2; 8; 4],
+        [1; 2; 3; 4; 5; 6; 7; 8; 9; 10]
+    );
+    |]
+
+[<TestCase(0, TestName = "lib.union.01")>]
+[<TestCase(1, TestName = "lib.union.02")>]
+[<TestCase(2, TestName = "lib.union.03")>]
+[<TestCase(3, TestName = "lib.union.04")>]
+[<TestCase(4, TestName = "lib.union.05")>]
+[<TestCase(5, TestName = "lib.union.06")>]
+[<TestCase(6, TestName = "lib.union.07")>]
+[<TestCase(7, TestName = "lib.union.08")>]
+[<TestCase(8, TestName = "lib.union.09")>]
+[<TestCase(9, TestName = "lib.union.10")>]
+[<TestCase(10, TestName = "lib.union.11")>]
+[<TestCase(11, TestName = "lib.union.12")>]
+[<TestCase(12, TestName = "lib.union.13")>]
+[<TestCase(13, TestName = "lib.union.14")>]
+[<TestCase(14, TestName = "lib.union.15")>]
+[<TestCase(15, TestName = "lib.union.16")>]
+[<TestCase(16, TestName = "lib.union.17")>]
+[<TestCase(17, TestName = "lib.union.18")>]
+[<TestCase(18, TestName = "lib.union.19")>]
+[<TestCase(19, TestName = "lib.union.20")>]
+[<TestCase(20, TestName = "lib.union.21")>]
+[<TestCase(21, TestName = "lib.union.22")>]
+[<TestCase(22, TestName = "lib.union.23")>]
+[<TestCase(23, TestName = "lib.union.24")>]
+[<TestCase(24, TestName = "lib.union.25")>]
+[<TestCase(25, TestName = "lib.union.26")>]
+[<TestCase(26, TestName = "lib.union.27")>]
+[<TestCase(27, TestName = "lib.union.28")>]
+
+[<Test>]
+let ``List union`` idx = 
+    let (list1, _, _) = unionValues.[idx]
+    let (_, list2, _) = unionValues.[idx]
+    let (_, _, result) = unionValues.[idx]
+    union list1 list2
+    |> should equal result
+    Set.union (Set.ofList list1) (Set.ofList list2)
+    |> should equal (Set.ofList result)
+
+let private unionsValues : (int list list * int list)[] = [| 
+    (
+        // idx 0
+        // lib.unions.01
+        [],
+        []
+    ); 
+    (
+        // idx 1
+        // lib.unions.02
+        [ [] ],
+        []
+    ); 
+    (
+        // idx 2
+        // lib.unions.03
+        [ [1] ],
+        [1]
+    );
+    (
+        // idx 3
+        // lib.unions.04
+        [ [1; 2] ],
+        [1; 2]
+    );
+    (
+        // idx 4
+        // lib.unions.05
+        [ [2; 1] ],
+        [1; 2]
+    );
+    (
+        // idx 5
+        // lib.unions.06
+        [ [1; 2; 3] ],
+        [1; 2; 3]
+    );
+    (
+        // idx 6
+        // lib.unions.07
+        [ [3; 2; 1] ],
+        [1; 2; 3]
+    );
+    (
+        // idx 7
+        // lib.unions.08
+        [ []; [] ],
+        []
+    ); 
+    (
+        // idx 8
+        // lib.unions.09
+        [ []; [1] ],
+        [1]
+    ); 
+    (
+        // idx 9
+        // lib.unions.10
+        [ [1]; [] ],
+        [1]
+    ); 
+    (
+        // idx 10
+        // lib.unions.11
+        [ [1]; [1] ],
+        [1]
+    ); 
+    (
+        // idx 11
+        // lib.unions.12
+        [ [1; 2]; [1] ],
+        [1; 2]
+    ); 
+    (
+        // idx 12
+        // lib.unions.13
+        [ [2; 1]; [1] ],
+        [1; 2]
+    ); 
+    (
+        // idx 13
+        // lib.unions.14
+        [ [1]; [2; 1] ],
+        [1; 2]
+    ); 
+    (
+        // idx 14
+        // lib.unions.15
+        [ [1]; [2; 1] ],
+        [1; 2]
+    ); 
+    (
+        // idx 15
+        // lib.unions.16
+        [ [1]; [1; 2; 3] ],
+        [1; 2; 3]
+    ); 
+    (
+        // idx 16
+        // lib.unions.17
+        [ [2]; [1; 2; 3] ],
+        [1; 2; 3]
+    ); 
+    (
+        // idx 17
+        // lib.unions.18
+        [ [3]; [1; 2; 3] ],
+        [1; 2; 3]
+    ); 
+    (
+        // idx 18
+        // lib.unions.19
+        [ [1]; [3; 2; 1] ],
+        [1; 2; 3]
+    ); 
+    (
+        // idx 19
+        // lib.unions.20
+        [ [2]; [3; 2; 1] ],
+        [1; 2; 3]
+    ); 
+    (
+        // idx 20
+        // lib.unions.21
+        [ [3]; [3; 2; 1] ],
+        [1; 2; 3]
+    ); 
+    (
+        // idx 21
+        // lib.unions.22
+        [ [1; 2]; [1; 2] ],
+        [1; 2]
+    ); 
+    (
+        // idx 22
+        // lib.unions.23
+        [ [1; 2]; [2; 1] ],
+        [1; 2]
+    ); 
+    (
+        // idx 23
+        // lib.unions.24
+        [ [1; 1; 1]; [2; 2; 2] ],
+        [1; 2]
+    ); 
+    (
+        // idx 24
+        // lib.unions.25
+        [ [1; 2; 1]; [2; 1; 2] ],
+        [1; 2]
+    ); 
+    (
+        // idx 25
+        // lib.unions.26
+        [ []; []; [] ],
+        []
+    ); 
+    (
+        // idx 26
+        // lib.unions.27
+        [ []; []; [1] ],
+        [1]
+    ); 
+    (
+        // idx 27
+        // lib.unions.28
+        [ []; [1]; [] ],
+        [1]
+    ); 
+    (
+        // idx 28
+        // lib.unions.29
+        [ [1]; []; [] ],
+        [1]
+    ); 
+    (
+        // idx 29
+        // lib.unions.30
+        [ [1]; [2]; [] ],
+        [1; 2]
+    ); 
+    (
+        // idx 30
+        // lib.unions.31
+        [ [1]; []; [2] ],
+        [1; 2]
+    ); 
+    (
+        // idx 31
+        // lib.unions.32
+        [ [2]; []; [1] ],
+        [1; 2]
+    ); 
+    (
+        // idx 32
+        // lib.unions.33
+        [ []; [1]; [2] ],
+        [1; 2]
+    ); 
+    (
+        // idx 33
+        // lib.unions.34
+        [ [1]; [1]; [2] ],
+        [1; 2]
+    ); 
+    (
+        // idx 34
+        // lib.unions.35
+        [ []; []; [2; 1] ],
+        [1; 2]
+    ); 
+    (
+        // idx 35
+        // lib.unions.36
+        [ [1; 1]; []; [2; 2] ],
+        [1; 2]
+    ); 
+    (
+        // idx 36
+        // lib.unions.37
+        [ [1; 1]; [1; 2]; [2; 2] ],
+        [1; 2]
+    ); 
+    (
+        // idx 37
+        // lib.unions.38
+        [ [1; 1]; [2; 1]; [2; 2] ],
+        [1; 2]
+    ); 
+    (
+        // idx 38
+        // lib.unions.39
+        [ []; []; [1; 2; 1; 2] ],
+        [1; 2]
+    ); 
+    (
+        // idx 39
+        // lib.unions.40
+        [ [1]; [2]; [3] ],
+        [1; 2; 3]
+    ); 
+    (
+        // idx 40
+        // lib.unions.41
+        [ [3]; [2]; [1] ],
+        [1; 2; 3]
+    ); 
+    (
+        // idx 41
+        // lib.unions.42
+        [ [2]; [3]; [1] ],
+        [1; 2; 3]
+    ); 
+    (
+        // idx 42
+        // lib.unions.43
+        [ [1; 2; 3]; []; [] ],
+        [1; 2; 3]
+    ); 
+    (
+        // idx 43
+        // lib.unions.44
+        [ [1]; []; [2; 3] ],
+        [1; 2; 3]
+    ); 
+    (
+        // idx 44
+        // lib.unions.45
+        [ [1]; []; [3; 2] ],
+        [1; 2; 3]
+    ); 
+    (
+        // idx 45
+        // lib.unions.46
+        [ []; [3; 2; 1]; [] ],
+        [1; 2; 3]
+    ); 
+    (
+        // idx 46
+        // lib.unions.47
+        [ []; []; []; [] ],
+        []
+    ); 
+    (
+        // idx 47
+        // lib.unions.48
+        [ [1]; []; []; [] ],
+        [1]
+    ); 
+    (
+        // idx 48
+        // lib.unions.49
+        [ []; [1]; []; [] ],
+        [1]
+    ); 
+    (
+        // idx 49
+        // lib.unions.50
+        [ []; []; [1]; [] ],
+        [1]
+    );
+    (
+        // idx 50
+        // lib.unions.51
+        [ []; []; []; [1] ],
+        [1]
+    );
+    (
+        // idx 51
+        // lib.unions.52
+        [ []; []; [1]; [1] ],
+        [1]
+    );
+    (
+        // idx 52
+        // lib.unions.53
+        [ []; [1]; [1]; [1] ],
+        [1]
+    );
+    (
+        // idx 53
+        // lib.unions.54
+        [ [1]; [1]; [1]; [1] ],
+        [1]
+    );
+    (
+        // idx 54
+        // lib.unions.55
+        [ [1; 1]; [1; 1]; [1; 1]; [1; 1] ],
+        [1]
+    );
+    (
+        // idx 55
+        // lib.unions.56
+        [ [1; 2]; [1; 2]; [1; 2]; [1; 2] ],
+        [1; 2]
+    );
+    (
+        // idx 56
+        // lib.unions.57
+        [ [1; 2]; []; []; [2; 1] ],
+        [1; 2]
+    );
+    (
+        // idx 57
+        // lib.unions.58
+        [ []; [2; 1]; [1; 2]; [] ],
+        [1; 2]
+    );
+    (
+        // idx 58
+        // lib.unions.59
+        [ [1]; [2; 1]; [1; 2]; [2] ],
+        [1; 2]
+    );
+    (
+        // idx 59
+        // lib.unions.60
+        [ [1]; [2]; [2]; [2] ],
+        [1; 2]
+    );
+    (
+        // idx 60
+        // lib.unions.61
+        [ [2]; [2]; [2]; [1] ],
+        [1; 2]
+    );
+    (
+        // idx 61
+        // lib.unions.62
+        [ [7; 8]; [5; 6]; [3; 4]; [1; 2] ],
+        [1; 2; 3; 4; 5; 6; 7; 8]
+    );
+    |]
     
-// lib.p005
-//[<Test>]
-//let ``List end_itlist`` () =
-//    end_itlist (fun x y -> x * y) [1; 2; 3; 4]
-//    |> should equal 24
+[<TestCase(0, TestName = "lib.unions.01")>]
+[<TestCase(1, TestName = "lib.unions.02")>]
+[<TestCase(2, TestName = "lib.unions.03")>]
+[<TestCase(3, TestName = "lib.unions.04")>]
+[<TestCase(4, TestName = "lib.unions.05")>]
+[<TestCase(5, TestName = "lib.unions.06")>]
+[<TestCase(6, TestName = "lib.unions.07")>]
+[<TestCase(7, TestName = "lib.unions.08")>]
+[<TestCase(8, TestName = "lib.unions.09")>]
+[<TestCase(9, TestName = "lib.unions.10")>]
+[<TestCase(10, TestName = "lib.unions.11")>]
+[<TestCase(11, TestName = "lib.unions.12")>]
+[<TestCase(12, TestName = "lib.unions.13")>]
+[<TestCase(13, TestName = "lib.unions.14")>]
+[<TestCase(14, TestName = "lib.unions.15")>]
+[<TestCase(15, TestName = "lib.unions.16")>]
+[<TestCase(16, TestName = "lib.unions.17")>]
+[<TestCase(17, TestName = "lib.unions.18")>]
+[<TestCase(18, TestName = "lib.unions.19")>]
+[<TestCase(19, TestName = "lib.unions.20")>]
+[<TestCase(20, TestName = "lib.unions.21")>]
+[<TestCase(21, TestName = "lib.unions.22")>]
+[<TestCase(22, TestName = "lib.unions.23")>]
+[<TestCase(23, TestName = "lib.unions.24")>]
+[<TestCase(24, TestName = "lib.unions.25")>]
+[<TestCase(25, TestName = "lib.unions.26")>]
+[<TestCase(26, TestName = "lib.unions.27")>]
+[<TestCase(27, TestName = "lib.unions.28")>]
+[<TestCase(28, TestName = "lib.unions.29")>]
+[<TestCase(29, TestName = "lib.unions.30")>]
+[<TestCase(30, TestName = "lib.unions.31")>]
+[<TestCase(31, TestName = "lib.unions.32")>]
+[<TestCase(32, TestName = "lib.unions.33")>]
+[<TestCase(33, TestName = "lib.unions.34")>]
+[<TestCase(34, TestName = "lib.unions.35")>]
+[<TestCase(35, TestName = "lib.unions.36")>]
+[<TestCase(36, TestName = "lib.unions.37")>]
+[<TestCase(37, TestName = "lib.unions.38")>]
+[<TestCase(38, TestName = "lib.unions.39")>]
+[<TestCase(39, TestName = "lib.unions.40")>]
+[<TestCase(40, TestName = "lib.unions.41")>]
+[<TestCase(41, TestName = "lib.unions.42")>]
+[<TestCase(42, TestName = "lib.unions.43")>]
+[<TestCase(43, TestName = "lib.unions.44")>]
+[<TestCase(44, TestName = "lib.unions.45")>]
+[<TestCase(45, TestName = "lib.unions.46")>]
+[<TestCase(46, TestName = "lib.unions.47")>]
+[<TestCase(47, TestName = "lib.unions.48")>]
+[<TestCase(48, TestName = "lib.unions.49")>]
+[<TestCase(49, TestName = "lib.unions.50")>]
+[<TestCase(50, TestName = "lib.unions.51")>]
+[<TestCase(51, TestName = "lib.unions.52")>]
+[<TestCase(52, TestName = "lib.unions.53")>]
+[<TestCase(53, TestName = "lib.unions.54")>]
+[<TestCase(54, TestName = "lib.unions.55")>]
+[<TestCase(55, TestName = "lib.unions.56")>]
+[<TestCase(56, TestName = "lib.unions.57")>]
+[<TestCase(57, TestName = "lib.unions.58")>]
+[<TestCase(58, TestName = "lib.unions.59")>]
+[<TestCase(59, TestName = "lib.unions.60")>]
+[<TestCase(60, TestName = "lib.unions.61")>]
+[<TestCase(61, TestName = "lib.unions.62")>]
+
+[<Test>]
+let ``List unions`` idx = 
+    let (lists, _) = unionsValues.[idx]
+    let (_, result) = unionsValues.[idx]
+    unions lists 
+    |> should equal result
+    let listOfListToSeqOfSet lists =
+        List.fold (fun acc elem ->  
+                Set.add (Set.ofList elem) acc)
+            Set.empty lists
+        |> Set.toSeq
+    Set.unionMany (listOfListToSeqOfSet lists)
+    |> should equal (Set.ofList result)
+
+let private unzipValues : ((int * int) list * (int list * int list))[] = [| 
+    (
+        // idx 0
+        // lib.unzip.01
+        [],
+        ([], [])
+    );
+    (
+        // idx 1
+        // lib.unzip.02
+        [(1, 2)],
+        ([1], [2])
+    );
+    (
+        // idx 2
+        // lib.unzip.03
+        [(1, 2); (3, 4)],
+        ([1; 3], [2; 4])
+    );
+    (
+        // idx 3
+        // lib.unzip.04
+        [(1, 2); (3, 4); (5, 6)],
+        ([1; 3; 5], [2; 4; 6])
+    ); 
+    |]
     
-// lib.p006
-//[<Test>]
-//let ``List exists`` () =
-//    List.exists (fun x -> x % 2 = 0) [1; 2; 3]
-//    |> should equal true
+[<TestCase(0, TestName = "lib.unzip.01")>]
+[<TestCase(1, TestName = "lib.unzip.02")>]
+[<TestCase(2, TestName = "lib.unzip.03")>]
+[<TestCase(3, TestName = "lib.unzip.04")>]
+
+[<Test>]
+let ``List unzip`` idx = 
+    let (list, _) = unzipValues.[idx]
+    let (_, result) = unzipValues.[idx]
+    unzip list
+    |> should equal result
+    List.unzip list
+    |> should equal result
+
+let private zipValues : (int list * int list * (int * int) list)[] = [| 
+    (
+        // idx 0
+        // lib.zip.01
+        [], [],
+        []
+    );
+    (
+        // idx 1
+        // lib.zip.02
+        // F#:   System.ArgumentException - The lists had different lengths.
+        // OCaml: System.Exception - zip
+        [], [1],
+        [(-99, -99)] // Dummy value used as place holder
+    );
+    (
+        // idx 2
+        // lib.zip.03
+        // F#: System.ArgumentException - The lists had different lengths.
+        // OCaml: System.Exception - zip
+        [1], [],
+        [(-99, -99)] // Dummy value used as place holder
+    );
+    (
+        // idx 3
+        // lib.zip.04
+        [1], [1],
+        [(1,1)]
+    );
+    (
+        // idx 4
+        // lib.zip.05
+        [1], [2],
+        [(1, 2)]
+    );
+    (
+        // idx 5
+        // lib.zip.06
+        [1; 3], [2; 4],
+        [(1, 2); (3, 4)]
+    );
+    (
+        // idx 6
+        // lib.zip.07
+        [1; 3; 5], [2; 4; 6],
+        [(1, 2); (3, 4); (5, 6)]
+    ); 
+    |]
+    
+[<TestCase(0, TestName = "lib.zip.01")>]
+[<TestCase(1, TestName = "lib.zip.02",ExpectedException=typeof<System.ArgumentException>)>]
+[<TestCase(2, TestName = "lib.zip.03",ExpectedException=typeof<System.ArgumentException>)>]
+[<TestCase(3, TestName = "lib.zip.04")>]
+[<TestCase(4, TestName = "lib.zip.05")>]
+[<TestCase(5, TestName = "lib.zip.06")>]
+[<TestCase(6, TestName = "lib.zip.07")>]
+
+[<Test>]
+let ``List zip`` idx = 
+    let (list1, _, _) = zipValues.[idx]
+    let (_, list2, _) = zipValues.[idx]
+    let (_, _, result) = zipValues.[idx]
+    List.zip list1 list2
+    |> should equal result
+    zip list1 list2
+    |> should equal result
+
+// This Test is to show that they both return
+// different exceptions when the list have different lengths.
+//
+// Since an exception will end a test case, one can not
+// run back to back functions returning exceptions
+// for one test case, thus a second test for the 
+// zip exception test case.
+
+[<TestCase(1, TestName = "lib.zipException.01",ExpectedException=typeof<System.Exception>, ExpectedMessage="zip")>]
+[<TestCase(2, TestName = "lib.zipException.02",ExpectedException=typeof<System.Exception>, ExpectedMessage="zip")>]
+
+[<Test>]
+let ``List zip exception`` idx = 
+    let (list1, _, _) = zipValues.[idx]
+    let (_, list2, _) = zipValues.[idx]
+    let (_, _, result) = zipValues.[idx]
+    zip list1 list2
+    |> should equal result
+
+let private allnonemptysubsetsValues : (int list * int list list)[] = [| 
+    (
+        // idx 0
+        // lib.allnonemptysubsets.01
+        [],
+        [ ]
+    );
+    (
+        // idx 1
+        // lib.allnonemptysubsets.02
+        [1],
+        [ [1] ]
+    );
+    (
+        // idx 2
+        // lib.allnonemptysubsets.03
+        [1; 2],
+        [ [1]; [1; 2]; [2] ]
+    );
+    (
+        // idx 3
+        // lib.allnonemptysubsets.04
+        [1; 2; 3],
+        [[1]; [1; 2]; [1; 2; 3]; [1; 3]; [2]; [2; 3]; [3]]
+    ); 
+    |]
+    
+[<TestCase(0, TestName = "lib.allnonemptysubsets.01")>]
+[<TestCase(1, TestName = "lib.allnonemptysubsets.02")>]
+[<TestCase(2, TestName = "lib.allnonemptysubsets.03")>]
+[<TestCase(3, TestName = "lib.allnonemptysubsets.04")>]
+
+[<Test>]
+let ``List allnonemptysubsets`` idx = 
+    let (list, _) = allnonemptysubsetsValues.[idx]
+    let (_, result) = allnonemptysubsetsValues.[idx]
+    allnonemptysubsets list
+    |> should equal result
+
+let private allpairsValues : (int list * int list * int list)[] = [| 
+    (
+        // idx 0
+        // lib.allpairs.01
+        [], [],
+        []
+    );
+    (
+        // idx 1
+        // lib.allpairs.02
+        [], [1],
+        []
+    );
+    (
+        // idx 2
+        // lib.allpairs.03
+        [1], [],
+        []
+    );
+    (
+        // idx 3
+        // lib.allpairs.04
+        [1], [1],
+        [1]
+    );
+    (
+        // idx 4
+        // lib.allpairs.05
+        [1], [2],
+        [2]
+    );
+    (
+        // idx 5
+        // lib.allpairs.06
+        [1; 2], [1; 2],
+        [1; 2; 2; 4]
+    );
+    (
+        // idx 6
+        // lib.allpairs.07
+        [1; 2], [2; 3],
+        [2; 3; 4; 6]
+    );
+    (
+        // idx 7
+        // lib.allpairs.08
+        [1; 2; 3], [1],
+        [1; 2; 3]
+    );
+    (
+        // idx 8
+        // lib.allpairs.09
+        [1; 2; 3], [2],
+        [2; 4; 6]
+    );
+    (
+        // idx 9
+        // lib.allpairs.10
+        [1; 2; 3], [3],
+        [3; 6; 9]
+    );
+    (
+        // idx 10
+        // lib.allpairs.11
+        [1; 2; 3], [1; 2],
+        [1; 2; 2; 4; 3; 6]
+    );
+    (
+        // idx 11
+        // lib.allpairs.12
+        [1; 2; 3], [2; 3],
+        [2; 3; 4; 6; 6; 9]
+    );
+    (
+        // idx 12
+        // lib.allpairs.13
+        [1; 2; 3], [1; 2; 3],
+        [1; 2; 3; 2; 4; 6; 3; 6; 9]
+    );
+    (
+        // idx 13
+        // lib.allpairs.14
+        [1; 2; 3], [3; 2; 1],
+        [3; 2; 1; 6; 4; 2; 9; 6; 3]
+    );
+    (
+        // idx 14
+        // lib.allpairs.15
+        [1; 2; 3], [1; 1; 2; 2],
+        [1; 1; 2; 2; 2; 2; 4; 4; 3; 3; 6; 6]
+    );
+    (
+        // idx 15
+        // lib.allpairs.16
+        [1; 2; 3], [1; 1; 2; 2; 4; 4],
+        [1; 1; 2; 2; 4; 4; 2; 2; 4; 4; 8; 8; 3; 3; 6; 6; 12; 12]
+    );
+    (
+        // idx 16
+        // lib.allpairs.17
+        [1; 2; 3], [-2; -1; 0; 1; 2; 3; 4],
+        [-2; -1; 0; 1; 2; 3; 4; -4; -2; 0; 2; 4; 6; 8; -6; -3; 0; 3; 6; 9; 12]
+    );
+    |]
+    
+[<TestCase(0, TestName = "lib.allpairs.01")>]
+[<TestCase(1, TestName = "lib.allpairs.02")>]
+[<TestCase(2, TestName = "lib.allpairs.03")>]
+[<TestCase(3, TestName = "lib.allpairs.04")>]
+[<TestCase(4, TestName = "lib.allpairs.05")>]
+[<TestCase(5, TestName = "lib.allpairs.06")>]
+[<TestCase(6, TestName = "lib.allpairs.07")>]
+[<TestCase(7, TestName = "lib.allpairs.08")>]
+[<TestCase(8, TestName = "lib.allpairs.09")>]
+[<TestCase(9, TestName = "lib.allpairs.10")>]
+[<TestCase(10, TestName = "lib.allpairs.11")>]
+[<TestCase(11, TestName = "lib.allpairs.12")>]
+[<TestCase(12, TestName = "lib.allpairs.13")>]
+[<TestCase(13, TestName = "lib.allpairs.14")>]
+[<TestCase(14, TestName = "lib.allpairs.15")>]
+[<TestCase(15, TestName = "lib.allpairs.16")>]
+[<TestCase(16, TestName = "lib.allpairs.17")>]
+
+[<Test>]
+let ``List allpairs`` idx = 
+    let (list1, _, _) = allpairsValues.[idx]
+    let (_, list2, _) = allpairsValues.[idx]
+    let (_, _, result) = allpairsValues.[idx]
+    allpairs (fun x y -> x * y) list1 list2
+    |> should equal result
+
+let private allsetsValues : (int * int list * int list list)[] = [| 
+    (
+        // idx 0
+        // lib.allsets.01
+        0, [],
+        [ [] ]
+    );
+    (
+        // idx 1
+        // lib.allsets.02
+        0, [1],
+        [ [] ]
+    );
+    (
+        // idx 2
+        // lib.allsets.03
+        0, [1; 2],
+        [ [] ]
+    );
+    (
+        // idx 3
+        // lib.allsets.04
+        0, [1; 2; 3],
+        [ [] ]
+    ); 
+    (
+        // idx 4
+        // lib.allsets.05
+        1, [],
+        [ ]
+    );
+    (
+        // idx 5
+        // lib.allsets.06
+        1, [1],
+        [ [1] ]
+    );
+    (
+        // idx 6
+        // lib.allsets.07
+        1, [1; 2],
+        [ [1]; [2] ]
+    );
+    (
+        // idx 7
+        // lib.allsets.08
+        1, [1; 2; 3],
+        [ [1]; [2]; [3] ]
+    ); 
+    (
+        // idx 8
+        // lib.allsets.09
+        2, [],
+        [ ]
+    );
+    (
+        // idx 9
+        // lib.allsets.10
+        2, [1],
+        []
+    );
+    (
+        // idx 10
+        // lib.allsets.11
+        2, [1; 2],
+        [ [1; 2] ]
+    );
+    (
+        // idx 11
+        // lib.allsets.12
+        2, [1; 2; 3],
+        [ [1; 2]; [1; 3]; [2; 3] ]
+    ); 
+    (
+        // idx 12
+        // lib.allsets.13
+        3, [],
+        [ ]
+    );
+    (
+        // idx 13
+        // lib.allsets.14
+        3, [1],
+        [ ]
+    );
+    (
+        // idx 14
+        // lib.allsets.15
+        3, [1; 2],
+        [ ]
+    );
+    (
+        // idx 15
+        // lib.allsets.16
+        3, [1; 2; 3],
+        [ [1; 2; 3] ]
+    ); 
+    |]
+    
+[<TestCase(0, TestName = "lib.allsets.01")>]
+[<TestCase(1, TestName = "lib.allsets.02")>]
+[<TestCase(2, TestName = "lib.allsets.03")>]
+[<TestCase(3, TestName = "lib.allsets.04")>]
+[<TestCase(4, TestName = "lib.allsets.05")>]
+[<TestCase(5, TestName = "lib.allsets.06")>]
+[<TestCase(6, TestName = "lib.allsets.07")>]
+[<TestCase(7, TestName = "lib.allsets.08")>]
+[<TestCase(8, TestName = "lib.allsets.09")>]
+[<TestCase(9, TestName = "lib.allsets.10")>]
+[<TestCase(10, TestName = "lib.allsets.11")>]
+[<TestCase(11, TestName = "lib.allsets.12")>]
+[<TestCase(12, TestName = "lib.allsets.13")>]
+[<TestCase(13, TestName = "lib.allsets.14")>]
+[<TestCase(14, TestName = "lib.allsets.15")>]
+[<TestCase(15, TestName = "lib.allsets.16")>]
+
+[<Test>]
+let ``List allsets`` idx = 
+    let (size, _, _) = allsetsValues.[idx]
+    let (_, list, _) = allsetsValues.[idx]
+    let (_, _, result) = allsetsValues.[idx]
+    allsets size list
+    |> should equal result
+    
+// ....................................................................................
+
+
+let private allsubsetsValues : (int list * int list list)[] = [| 
+    (
+        // idx 0
+        // lib.allsubsets.01
+        [],
+        [ [] ]
+    );
+    (
+        // idx 1
+        // lib.allsubsets.02
+        [1],
+        [ []; [1] ]
+    );
+    (
+        // idx 2
+        // lib.allsubsets.03
+        [1; 2],
+        [ []; [1]; [1; 2]; [2] ]
+    );
+    (
+        // idx 3
+        // lib.allsubsets.04
+        [1; 2; 3],
+        [ []; [1]; [1; 2]; [1; 2; 3]; [1; 3]; [2]; [2; 3]; [3] ]
+    ); 
+    |]
+    
+[<TestCase(0, TestName = "lib.allsubsets.01")>]
+[<TestCase(1, TestName = "lib.allsubsets.02")>]
+[<TestCase(2, TestName = "lib.allsubsets.03")>]
+[<TestCase(3, TestName = "lib.allsubsets.04")>]
+
+[<Test>]
+let ``List allsubsets`` idx = 
+    let (list, _) = allsubsetsValues.[idx]
+    let (_, result) = allsubsetsValues.[idx]
+    allsubsets list
+    |> should equal result
+
+// =================================================================================
 
 // lib.p007
 [<Test>]
@@ -3970,166 +6197,11 @@ let ``String explode`` () =
     explode "hello"
     |> should equal ["h"; "e"; "l"; "l"; "o"]
 
-// lib.p008
-//[<Test>]
-//let ``List forall`` () =
-//    List.forall (fun x -> (x < 5)) [1; 2; 3]
-//    |> should equal true
-
-// lib.p009
-//[<Test>]
-//let ``List forall2`` () =
-//    List.forall2 (fun x y -> (x < y)) [1; 2; 3; 4] [3; 4; 5; 6]
-//    |> should equal true
-
-// lib.p010
-//[<Test>]
-//let ``List head`` () =
-//    List.head [1; 2; 3]
-//    |> should equal 1
-
 // lib.p011
 [<Test>]
 let ``String implode`` () =
     implode ["w"; "x"; "y"; "z"]
     |> should equal "wxyz"
-
-// lib.p012
-//[<Test>]
-//let ``List insertat`` () =
-//    insertat 3 9 [0; 1; 2; 3; 4; 5]
-//    |> should equal [0; 1; 2; 9; 3; 4; 5]
-
-// lib.p013
-//[<Test>]
-//let ``List foldBack`` () =
-//    List.foldBack (fun x y -> x + y) [1; 2; 3] 5
-//    |> should equal 11
-
-// lib.p014
-//[<Test>]
-//let ``List foldBack2`` () =
-//    List.foldBack2 (fun a x y -> a + x + y) ["a"; "b"; "c"] ["1"; "2"; "3"] " Hello"
-//    |> should equal "a1b2c3 Hello"
-
-// lib.p015
-//[<Test>]
-//let ``List last`` () =
-//    last [1; 2; 3; 4]
-//    |> should equal 4
-
-// lib.p016
-//[<Test>]
-//let ``List map`` () =
-//    List.map (fun x -> x + 5) [1; 2; 3]
-//    |> should equal [6; 7; 8]
-
-// lib.p017
-//[<Test>]
-//let ``List map2`` () =
-//    List.map2 (fun x y -> x + y) [1; 2; 3] [10; 11; 12]
-//    |> should equal [11; 13; 15]
-
-// lib.p018
-//[<Test>]
-//let ``List mapfilter`` () =
-//    mapfilter (fun x -> x % 2 = 0) [1; 2; 3; 4]
-//    |> should equal [false; true; false; true]
-
-//[<Test>]
-//let ``List reduceBack`` () =
-//    List.reduceBack (fun x y -> x * y) [1; 2; 3; 4]
-//    |> should equal 24
-
-// lib.p019
-//[<Test>]
-//let ``List replicate`` () =
-//    List.replicate 4 9
-//    |> should equal [9; 9; 9; 9]
-
-// lib.p020
-//[<Test>]
-//let ``List rev`` () =
-//    List.rev [1; 2; 3; 4]
-//    |> should equal [4; 3; 2; 1]
-
-// lib.p021
-[<Test>]
-let ``List tail`` () =
-    List.tail [1; 2; 3; 4]
-    |> should equal [2; 3; 4]
-
-// lib.p022
-[<Test>]
-let ``List unzip`` () =
-    List.unzip [(1,"a"); (2,"b"); (3,"c")]
-    |> should equal ([1; 2; 3], ["a"; "b"; "c"])
-
-// lib.p023
-[<Test>]
-let ``List zip`` () =
-    List.zip [1; 2; 3] ["a"; "b"; "c"]
-    |> should equal [(1, "a"); (2, "b"); (3, "c")]
-
-// lib.p024
-[<Test>]
-let ``List sort all`` () =
-    sort (<) [3; 1; 4; 1; 5; 9; 2; 6; 5; 3; 5]
-    |> should equal [1; 1; 2; 3; 3; 4; 5; 5; 5; 6; 9]
-
-// lib.p025
-[<Test>]
-let ``List sort uniq`` () =
-    uniq (sort (<) [3; 1; 4; 1; 5; 9; 2; 6; 5; 3; 5])
-    |> should equal [1; 2; 3; 4; 5; 6; 9]
-
-// lib.p026
-[<Test>]
-let ``List sort by increasing length`` () =
-    sort (increasing List.length) [[1]; [1;2;3]; []; [3; 4]]
-    |> should equal [[]; [1]; [3; 4]; [1; 2; 3]]
-
-// lib.p027
-[<Test>]
-let ``List unions`` () =
-    unions [[1; 2; 3]; [4; 8; 12]; [3; 6; 9; 12]; [1]]
-    |> should equal [1; 2; 3; 4; 6; 8; 9; 12]
-
-// lib.p028
-//[<Test>]
-//let ``List image`` () =
-//    image (fun x -> x % 2) [1; 2; 3; 4; 5]
-//    |> should equal [0; 1]    
-
-// lib.p029
-[<Test>]
-let ``List allsubsets`` () =
-    allsubsets [1; 2; 3]
-    |> should equal [[]; [1]; [1; 2]; [1; 2; 3]; [1; 3]; [2]; [2; 3]; [3]]
-
-// lib.p030
-[<Test>]
-let ``List allnonemptysubsets`` () =
-    allnonemptysubsets [1; 2; 3]
-    |> should equal [[1]; [1; 2]; [1; 2; 3]; [1; 3]; [2]; [2; 3]; [3]]
-
-// lib.p031
-[<Test>]
-let ``List allsets`` () =
-    allsets 2 [1; 2; 3]
-    |> should equal [[1; 2]; [1; 3]; [2; 3]]
-
-// lib.p032
-[<Test>]
-let ``List allpairs`` () =
-    allpairs (fun x y -> x * y) [2; 3; 5] [7; 11]
-    |> should equal [14; 22; 21; 33; 35; 55]
-
-// lib.p033
-//[<Test>]
-//let ``List distinctpairs`` () =
-//    distinctpairs [1; 2; 3; 4]
-//    |> should equal [(1, 2); (1, 3); (1, 4); (2, 3); (2, 4); (3, 4)]
 
 // lib.p034
 [<Test>]
@@ -4219,78 +6291,6 @@ let ``function can`` () =
     can divideBy 0
     |> should equal false
 
-// lib.p046
-//[<Test>]
-//let ``List operator range (int)`` () =
-//    3--5
-//    |> should equal [3; 4; 5]
-
-// lib.p047
-//[<Test>]
-//let ``List operator range (num)`` () =
-//    (num_of_int 3)---(num_of_int 5)
-//    |> should equal [(num_of_int 3); (num_of_int 4); (num_of_int 5)]
-
-// lib.p048
-//[<Test>]
-//let ``List partition`` () =
-//    List.partition (fun x -> x % 2 = 0) [0; 1; 2; 3; 4]
-//    |> should equal ([0; 2; 4], [1; 3])
-
-// lib.p049
-//[<Test>]
-//let ``List filter`` () =
-//    List.filter (fun x -> x % 2 = 0) [0; 1; 2; 3; 4]
-//    |> should equal [0; 2; 4]
-
-// lib.p050
-//[<Test>]
-//let ``List length`` () =
-//    List.length [1; 2; 3]
-//    |> should equal 3
-
-// lib.p051
-//[<Test>]
-//let ``List find`` () =
-//    List.find (fun x -> x % 2 = 0) [1; 2; 3; 4]
-//    |> should equal 2
-
-// lib.p052
-//[<Test>]
-//let ``List index`` () =
-//    index 1 [1; 2; 3; 1]
-//    |> should equal 0
-
-// lib.p053
-//[<Test>]
-//let ``List earlier`` () =
-//    earlier [1; 2; 3] 3 2
-//    |> should equal false
-
-// lib.p054
-//[<Test>]
-//let ``List merge 1`` () =
-//    merge (<) [3] [1]
-//    |> should equal [1; 3]
-
-// lib.p055
-//[<Test>]
-//let ``List merge 2`` () =
-//    merge (>) [1] [3]
-//    |> should equal [3; 1]
-
-// lib.p056
-//[<Test>]
-//let ``List mergepairs 1`` () =
-//    mergepairs (<) [[1;10]; [3;7]; [5;8]] [[2;11]; [4;12]; [6;9]]
-//    |> should equal [1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11; 12]
-
-// lib.p057
-//[<Test>]
-//let ``List mergepairs 2`` () =
-//    mergepairs (>) [[10;1]; [7;3]; [8;5]] [[11;2]; [12;4]; [9;6]]
-//    |> should equal [12; 11; 10; 9; 8; 7; 6; 5; 4; 3; 2; 1]
-
 // lib.p058
 [<Test>]
 let ``Predicate increasing`` () =
@@ -4330,124 +6330,6 @@ let ``function tryfind 2`` () =
         | Failure _ -> false
         | _ -> true  
     |> should equal false
-
-// lib.p062
-//[<Test>]
-//let ``List mapfilter 2`` () =
-//    mapfilter (fun x -> 
-//        match x with
-//        | _ when x % 2 = 0 -> x
-//        | _ -> failwith "invalid")
-//        [1; 2; 3; 4]
-//    |> should equal [2; 4]
-
-// lib.p063
-//[<Test>]
-//let ``List maximize`` () =
-//    maximize (fun x -> x * x) [-4; 1; 2]
-//    |> should equal -4
-
-// lib.p064
-//[<Test>]
-//let ``List minimize`` () =
-//    minimize (fun x -> x * x) [-4; 1; 2]
-//    |> should equal 1
-
-// lib.p065
-[<Test>]
-let ``List setify`` () =
-    setify [1; 5; 2; 1; 3; 6; 4; 5]
-    |> should equal [1; 2; 3; 4; 5; 6]
-
-// lib.p066
-[<Test>]
-let ``List union`` () =
-    union [1; 2; 3; 5; 6] [2; 4; 5]
-    |> should equal [1; 2; 3; 4; 5; 6]
-
-// lib.p067
-//[<Test>]
-//let ``List intersect`` () =
-//    intersect [1; 2; 3; 5; 6] [2; 4; 5]
-//    |> should equal [2; 5]
-
-// lib.p068
-[<Test>]
-let ``List substract`` () =
-    subtract [1; 2; 3; 5; 6] [2; 4; 5]
-    |> should equal [1; 3; 6]
-
-// lib.p069
-[<Test>]
-let ``List subset 1`` () =
-    subset [1; 2; 3; 5; 6] [2; 4; 5]
-    |> should equal false
-
-// lib.p070
-[<Test>]
-let ``List subset 2`` () =
-    subset [1; 2; 3; 5; 6] [1; 2; 3; 5; 6]
-    |> should equal true
-
-// lib.p071
-[<Test>]
-let ``List subset 3`` () =
-    subset [2; 5] [1; 2; 3; 5; 6]
-    |> should equal true
-
-// lib.p072
-//[<Test>]
-//let ``List psubset 1`` () =
-//    psubset [1; 2; 3; 5; 6] [2; 4; 5]
-//    |> should equal false
-
-// lib.p073
-//[<Test>]
-//let ``List psubset 2`` () =
-//    psubset [1; 2; 3; 5; 6] [1; 2; 3; 5; 6]
-//    |> should equal false
-
-// lib.p074
-//[<Test>]
-//let ``List psubset 3`` () =
-//    psubset [2; 5] [1; 2; 3; 5; 6]
-//    |> should equal true
-
-// lib.p075
-[<Test>]
-let ``List set eq 1`` () =
-    set_eq [1; 2; 3; 5; 6] [2; 4; 5]
-    |> should equal false
-
-// lib.p076
-[<Test>]
-let ``List set eq 2`` () =
-    set_eq [1; 2; 3; 6; 5] [1; 2; 3; 5; 6]
-    |> should equal true
-
-// lib.p077
-[<Test>]
-let ``List set eq 3`` () =
-    set_eq [] []
-    |> should equal true
-
-// lib.p078
-//[<Test>]
-//let ``List insert`` () =
-//    insert 3 [1; 2; 4]
-//    |> should equal [1; 2; 3; 4]
-
-// lib.p079
-//[<Test>]
-//let ``List mem 1`` () =
-//    mem 3 [1; 2; 4]
-//    |> should equal false
-
-// lib.p080
-//[<Test>]
-//let ``List mem 2`` () =
-//    mem 2 [1; 2; 4]
-//    |> should equal true
 
 // lib.p081
 [<Test>]
