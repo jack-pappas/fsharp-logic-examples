@@ -77,13 +77,14 @@ open FsUnit
 // 2. Different index result when multiple valid answers. i.e. minBy and maxBy
 //
 // The once case where the differences were signifigant 
-// enough to NOT use the F# version is F# List.replicate.
+// is F# List.replicate.
 // When the replicate count is negative
 // F# List.replicate will return exception and
 // OCaml replicate will return [].
 //
-// TODO: Replace List.replicate with replicate and retest.
-// Then do seperate commit.
+// NOTE: replicate is not used in code, so no need to replace replicate with List.replicate.
+// replicate is in the original OCaml code but not used. It was ported with the lib module;
+// upon further investigation it was found to be dead code.
 //
 // In order to be able to test against the OCaml version of the code
 // that was replaced by an F# equivelent, the F# port of the code 
@@ -522,14 +523,12 @@ let private earlierValues : (int list * int * int * bool)[] = [|
     (
         // idx 15
         // lib.earlier.016
-        // TODO: EGT Is this correct result?  argument(s) exceed list size
         [1], 1, -1, 
         true
     );
     (
         // idx 16
         // lib.earlier.017
-        // TODO: EGT Is this correct result?  argument(s) exceed list size
         [1], 1, 0,
         true
     );
@@ -602,7 +601,6 @@ let private earlierValues : (int list * int * int * bool)[] = [|
     (
         // idx 28
         // lib.earlier.029
-        // TODO: EGT Is this correct result?  argument(s) exceed list size
         [1; 2], 1, -1, 
         true
     );
@@ -621,28 +619,24 @@ let private earlierValues : (int list * int * int * bool)[] = [|
     (
         // idx 31
         // lib.earlier.032
-        // TODO: EGT Is this correct result?  argument(s) exceed list size
         [1; 2], 1, 2, 
         true
     );
     (
         // idx 32
         // lib.earlier.033
-        // TODO: EGT Is this correct result?  argument(s) exceed list size
         [1; 2], 1, 3, 
         true
     );
     (
         // idx 33
         // lib.earlier.034
-        // TODO: EGT Is this correct result?  argument(s) exceed list size
         [1; 2], 2, -1, 
         true
     );
     (
         // idx 34
         // lib.earlier.035
-        // TODO: EGT Is this correct result?  argument(s) exceed list size
         [1; 2], 2, 0,
         true
     );
@@ -661,7 +655,6 @@ let private earlierValues : (int list * int * int * bool)[] = [|
     (
         // idx 37
         // lib.earlier.038
-        // TODO: EGT Is this correct result?  argument(s) exceed list size
         [1; 2], 2, 3, 
         true
     );
@@ -760,7 +753,6 @@ let private earlierValues : (int list * int * int * bool)[] = [|
     (
         // idx 53
         // lib.earlier.054
-        // TODO: EGT Is this correct result?  argument(s) exceed list size
         [1; 2; 3], 1, -1,
         true
     );
@@ -785,14 +777,12 @@ let private earlierValues : (int list * int * int * bool)[] = [|
     (
         // idx 57
         // lib.earlier.058
-        // TODO: EGT Is this correct result?  argument(s) exceed list size
         [1; 2; 3], 1, 3,
         true
     );
     (
         // idx 58
         // lib.earlier.059
-        // TODO: EGT Is this correct result?  argument(s) exceed list size
         [1; 2; 3], 2, -1,
         true
     );
@@ -817,21 +807,18 @@ let private earlierValues : (int list * int * int * bool)[] = [|
     (
         // idx 62
         // lib.earlier.063
-        // TODO: EGT Is this correct result?  argument(s) exceed list size
         [1; 2; 3], 2, 3,
         true
     );
     (
         // idx 63
         // lib.earlier.064
-        // TODO: EGT Is this correct result?  argument(s) exceed list size
         [1; 2; 3], 3, -1,
         true
     );
     (
         // idx 64
         // lib.earlier.065
-        // TODO: EGT Is this correct result?  argument(s) exceed list size
         [1; 2; 3], 3, 0,
         true
     );
@@ -928,7 +915,6 @@ let private earlierValues : (int list * int * int * bool)[] = [|
     (
         // idx 80
         // lib.earlier.081
-        // TODO: EGT Is this correct result?  argument(s) exceed list size
         [1; 2; 3; 4], 1, -1,
         true
     );
@@ -965,7 +951,6 @@ let private earlierValues : (int list * int * int * bool)[] = [|
     (
         // idx 86
         // lib.earlier.087
-        // TODO: EGT Is this correct result?  argument(s) exceed list size
         [1; 2; 3; 4], 2, -1,
         true
     );
@@ -996,14 +981,12 @@ let private earlierValues : (int list * int * int * bool)[] = [|
     (
         // idx 91
         // lib.earlier.092
-        // TODO: EGT Is this correct result?  argument(s) exceed list size
         [1; 2; 3; 4], 2, 4,
         true
     );
     (
         // idx 92
         // lib.earlier.093
-        // TODO: EGT Is this correct result?  argument(s) exceed list size
         [1; 2; 3; 4], 3, -1,
         true
     );
@@ -1040,14 +1023,12 @@ let private earlierValues : (int list * int * int * bool)[] = [|
     (
         // idx 98
         // lib.earlier.099
-        // TODO: EGT Is this correct result?  argument(s) exceed list size
         [1; 2; 3; 4], 4, -1,
         true
     );
     (
         // idx 99
         // lib.earlier.100
-        // TODO: EGT Is this correct result?  argument(s) exceed list size
         [1; 2; 3; 4], 4, 0,
         true
     );
@@ -6146,9 +6127,6 @@ let ``List allsets`` idx =
     let (_, _, result) = allsetsValues.[idx]
     allsets size list
     |> should equal result
-    
-// ....................................................................................
-
 
 let private allsubsetsValues : (int list * int list list)[] = [| 
     (
@@ -6189,25 +6167,883 @@ let ``List allsubsets`` idx =
     allsubsets list
     |> should equal result
 
+let private gcd_numValues : (num * num * num)[] = [| 
+    (
+        // idx 0
+        // lib.gcd_num.01
+        (num_of_int 0), (num_of_int 0),
+        (num_of_int 0)
+    );
+    (
+        // idx 1
+        // lib.gcd_num.02
+        (num_of_int 0), (num_of_int 1),
+        (num_of_int 1)
+    );
+    (
+        // idx 2
+        // lib.gcd_num.03
+        (num_of_int 0), (num_of_int 2),
+        (num_of_int 2)
+    );
+    (
+        // idx 3
+        // lib.gcd_num.04
+        (num_of_int 1), (num_of_int 0),
+        (num_of_int 1)
+    );
+    (
+        // idx 4
+        // lib.gcd_num.05
+        (num_of_int 1), (num_of_int 1),
+        (num_of_int 1)
+    );
+    (
+        // idx 5
+        // lib.gcd_num.06
+        (num_of_int 1), (num_of_int 2),
+        (num_of_int 1)
+    );
+    (
+        // idx 6
+        // lib.gcd_num.07
+        (num_of_int 2), (num_of_int 0),
+        (num_of_int 2)
+    );
+    (
+        // idx 7
+        // lib.gcd_num.08
+        (num_of_int 2), (num_of_int 1),
+        (num_of_int 1)
+    );
+    (
+        // idx 8
+        // lib.gcd_num.09
+        (num_of_int 2), (num_of_int 2),
+        (num_of_int 2)
+    );
+    (
+        // idx 9
+        // lib.gcd_num.10
+        (num_of_int 2), (num_of_int 3),
+        (num_of_int 1)
+    );
+    (
+        // idx 10
+        // lib.gcd_num.11
+        (num_of_int 2), (num_of_int 4),
+        (num_of_int 2)
+    );
+    (
+        // idx 11
+        // lib.gcd_num.12
+        (num_of_int 2), (num_of_int 5),
+        (num_of_int 1)
+    );
+    (
+        // idx 12
+        // lib.gcd_num.13
+        (num_of_int 2), (num_of_int 6),
+        (num_of_int 2)
+    );
+    (
+        // idx 13
+        // lib.gcd_num.14
+        (num_of_int 3), (num_of_int 0),
+        (num_of_int 3)
+    );
+    (
+        // idx 14
+        // lib.gcd_num.15
+        (num_of_int 3), (num_of_int 1),
+        (num_of_int 1)
+    );
+    (
+        // idx 15
+        // lib.gcd_num.16
+        (num_of_int 3), (num_of_int 2),
+        (num_of_int 1)
+    );
+    (
+        // idx 16
+        // lib.gcd_num.17
+        (num_of_int 3), (num_of_int 3),
+        (num_of_int 3)
+    );
+    (
+        // idx 17
+        // lib.gcd_num.18
+        (num_of_int 3), (num_of_int 4),
+        (num_of_int 1)
+    );
+    (
+        // idx 18
+        // lib.gcd_num.19
+        (num_of_int 3), (num_of_int 5),
+        (num_of_int 1)
+    );
+    (
+        // idx 19
+        // lib.gcd_num.20
+        (num_of_int 3), (num_of_int 6),
+        (num_of_int 3)
+    );
+    |]
+    
+[<TestCase(0, TestName = "lib.gcd_num.01")>]
+[<TestCase(1, TestName = "lib.gcd_num.02")>]
+[<TestCase(2, TestName = "lib.gcd_num.03")>]
+[<TestCase(3, TestName = "lib.gcd_num.04")>]
+[<TestCase(4, TestName = "lib.gcd_num.05")>]
+[<TestCase(5, TestName = "lib.gcd_num.06")>]
+[<TestCase(6, TestName = "lib.gcd_num.07")>]
+[<TestCase(7, TestName = "lib.gcd_num.08")>]
+[<TestCase(8, TestName = "lib.gcd_num.09")>]
+[<TestCase(9, TestName = "lib.gcd_num.10")>]
+[<TestCase(10, TestName = "lib.gcd_num.11")>]
+[<TestCase(11, TestName = "lib.gcd_num.12")>]
+[<TestCase(12, TestName = "lib.gcd_num.13")>]
+[<TestCase(13, TestName = "lib.gcd_num.14")>]
+[<TestCase(14, TestName = "lib.gcd_num.15")>]
+[<TestCase(15, TestName = "lib.gcd_num.16")>]
+[<TestCase(16, TestName = "lib.gcd_num.17")>]
+[<TestCase(17, TestName = "lib.gcd_num.18")>]
+[<TestCase(18, TestName = "lib.gcd_num.19")>]
+[<TestCase(19, TestName = "lib.gcd_num.20")>]
+
+[<Test>]
+let ``math gcd_num`` idx = 
+    let (value1, _, _) = gcd_numValues.[idx]
+    let (_, value2, _) = gcd_numValues.[idx]
+    let (_, _, result) = gcd_numValues.[idx]
+    gcd_num value1 value2
+    |> should equal result
+
+let private lcm_numValues : (num * num * num)[] = [| 
+    (
+        // idx 0
+        // lib.lcm_num.01
+        (num_of_int 0), (num_of_int 0),
+        (num_of_int -99) // Dummy value used as place holder
+    );
+    (
+        // idx 1
+        // lib.lcm_num.02
+        (num_of_int 0), (num_of_int 1),
+        (num_of_int 0)
+    );
+    (
+        // idx 2
+        // lib.lcm_num.03
+        (num_of_int 0), (num_of_int 2),
+        (num_of_int 0)
+    );
+    (
+        // idx 3
+        // lib.lcm_num.04
+        (num_of_int 1), (num_of_int 0),
+        (num_of_int 0)
+    );
+    (
+        // idx 4
+        // lib.lcm_num.05
+        (num_of_int 1), (num_of_int 1),
+        (num_of_int 1)
+    );
+    (
+        // idx 5
+        // lib.lcm_num.06
+        (num_of_int 1), (num_of_int 2),
+        (num_of_int 2)
+    );
+    (
+        // idx 6
+        // lib.lcm_num.07
+        (num_of_int 2), (num_of_int 0),
+        (num_of_int 0)
+    );
+    (
+        // idx 7
+        // lib.lcm_num.08
+        (num_of_int 2), (num_of_int 1),
+        (num_of_int 2)
+    );
+    (
+        // idx 8
+        // lib.lcm_num.09
+        (num_of_int 2), (num_of_int 2),
+        (num_of_int 2)
+    );
+    (
+        // idx 9
+        // lib.lcm_num.10
+        (num_of_int 2), (num_of_int 3),
+        (num_of_int 6)
+    );
+    (
+        // idx 10
+        // lib.lcm_num.11
+        (num_of_int 2), (num_of_int 4),
+        (num_of_int 4)
+    );
+    (
+        // idx 11
+        // lib.lcm_num.12
+        (num_of_int 2), (num_of_int 5),
+        (num_of_int 10)
+    );
+    (
+        // idx 12
+        // lib.lcm_num.13
+        (num_of_int 2), (num_of_int 6),
+        (num_of_int 6)
+    );
+    (
+        // idx 13
+        // lib.lcm_num.14
+        (num_of_int 3), (num_of_int 0),
+        (num_of_int 0)
+    );
+    (
+        // idx 14
+        // lib.lcm_num.15
+        (num_of_int 3), (num_of_int 1),
+        (num_of_int 3)
+    );
+    (
+        // idx 15
+        // lib.lcm_num.16
+        (num_of_int 3), (num_of_int 2),
+        (num_of_int 6)
+    );
+    (
+        // idx 16
+        // lib.lcm_num.17
+        (num_of_int 3), (num_of_int 3),
+        (num_of_int 3)
+    );
+    (
+        // idx 17
+        // lib.lcm_num.18
+        (num_of_int 3), (num_of_int 4),
+        (num_of_int 12)
+    );
+    (
+        // idx 18
+        // lib.lcm_num.19
+        (num_of_int 3), (num_of_int 5),
+        (num_of_int 15)
+    );
+    (
+        // idx 19
+        // lib.lcm_num.20
+        (num_of_int 3), (num_of_int 6),
+        (num_of_int 6)
+    );
+    |]
+    
+[<TestCase(0, TestName = "lib.lcm_num.01", ExpectedException=typeof<System.Exception>, ExpectedMessage="Division_by_zero")>]
+[<TestCase(1, TestName = "lib.lcm_num.02")>]
+[<TestCase(2, TestName = "lib.lcm_num.03")>]
+[<TestCase(3, TestName = "lib.lcm_num.04")>]
+[<TestCase(4, TestName = "lib.lcm_num.05")>]
+[<TestCase(5, TestName = "lib.lcm_num.06")>]
+[<TestCase(6, TestName = "lib.lcm_num.07")>]
+[<TestCase(7, TestName = "lib.lcm_num.08")>]
+[<TestCase(8, TestName = "lib.lcm_num.09")>]
+[<TestCase(9, TestName = "lib.lcm_num.10")>]
+[<TestCase(10, TestName = "lib.lcm_num.11")>]
+[<TestCase(11, TestName = "lib.lcm_num.12")>]
+[<TestCase(12, TestName = "lib.lcm_num.13")>]
+[<TestCase(13, TestName = "lib.lcm_num.14")>]
+[<TestCase(14, TestName = "lib.lcm_num.15")>]
+[<TestCase(15, TestName = "lib.lcm_num.16")>]
+[<TestCase(16, TestName = "lib.lcm_num.17")>]
+[<TestCase(17, TestName = "lib.lcm_num.18")>]
+[<TestCase(18, TestName = "lib.lcm_num.19")>]
+[<TestCase(19, TestName = "lib.lcm_num.20")>]
+
+[<Test>]
+let ``math lcm_num`` idx = 
+    let (value1, _, _) = lcm_numValues.[idx]
+    let (_, value2, _) = lcm_numValues.[idx]
+    let (_, _, result) = lcm_numValues.[idx]
+    lcm_num value1 value2
+    |> should equal result
+
+let private explodeValues : (string * string list)[] = [| 
+    (
+        // idx 0
+        // lib.explode.01
+        "",
+        []
+    );
+    (
+        // idx 1
+        // lib.explode.02
+        "a",
+        ["a"]
+    );
+    (
+        // idx 2
+        // lib.explode.03
+        "ab",
+        ["a"; "b"]
+    );
+    (
+        // idx 3
+        // lib.explode.04
+        "abc",
+        ["a"; "b"; "c"]
+    );
+    |]
+    
+[<TestCase(0, TestName = "lib.explode.01")>]
+[<TestCase(1, TestName = "lib.explode.02")>]
+[<TestCase(2, TestName = "lib.explode.03")>]
+[<TestCase(3, TestName = "lib.explode.04")>]
+
+[<Test>]
+let ``String explode`` idx = 
+    let (string1, _) = explodeValues.[idx]
+    let (_, result) = explodeValues.[idx]
+    explode string1
+    |> should equal result
+
+let private implodeValues : (string list * string)[] = [| 
+    (
+        // idx 0
+        // lib.implode.01
+        [],
+        ""
+    );
+    (
+        // idx 1
+        // lib.implode.02
+        ["a"],
+        "a"
+    );
+    (
+        // idx 2
+        // lib.implode.03
+        ["a"; "b"],
+        "ab"
+    );
+    (
+        // idx 3
+        // lib.implode.04
+        ["a"; "b"; "c"],
+        "abc"
+    );
+    |]
+    
+[<TestCase(0, TestName = "lib.implode.01")>]
+[<TestCase(1, TestName = "lib.implode.02")>]
+[<TestCase(2, TestName = "lib.implode.03")>]
+[<TestCase(3, TestName = "lib.implode.04")>]
+
+[<Test>]
+let ``String implode`` idx = 
+    let (list, _) = implodeValues.[idx]
+    let (_, result) = implodeValues.[idx]
+    implode list
+    |> should equal result
+
+let private increasingValues : (int * int * bool)[] = [| 
+    (
+        // idx 0
+        // lib.increasing.01
+        -2, -2,
+        false
+    );
+    (
+        // idx 1
+        // lib.increasing.02
+        -2, -1,
+        true
+    );
+    (
+        // idx 2
+        // lib.increasing.03
+        -2, 0,
+        true
+    );
+    (
+        // idx 3
+        // lib.increasing.04
+        -2, 1,
+        true
+    );
+    (
+        // idx 4
+        // lib.increasing.05
+        -2, 2,
+        true
+    );
+    (
+        // idx 5
+        // lib.increasing.06
+        -1, -2,
+        false
+    );
+    (
+        // idx 6
+        // lib.increasing.07
+        -1, -1,
+        false
+    );
+    (
+        // idx 7
+        // lib.increasing.08
+        -1, 0,
+        true
+    );
+    (
+        // idx 8
+        // lib.increasing.09
+        -1, 1,
+        true
+    );
+    (
+        // idx 9
+        // lib.increasing.10
+        -1, 2,
+        true
+    );
+    (
+        // idx 10
+        // lib.increasing.11
+        0, -2,
+        false
+    );
+    (
+        // idx 11
+        // lib.increasing.12
+        0, -1,
+        false
+    );
+    (
+        // idx 12
+        // lib.increasing.13
+        0, 0,
+        false
+    );
+    (
+        // idx 13
+        // lib.increasing.14
+        0, 1,
+        true
+    );
+    (
+        // idx 14
+        // lib.increasing.15
+        0, 2,
+        true
+    );
+    (
+        // idx 15
+        // lib.increasing.16
+        1, -2,
+        false
+    );
+    (
+        // idx 16
+        // lib.increasing.17
+        1, -1,
+        false
+    );
+    (
+        // idx 17
+        // lib.increasing.18
+        1, 0,
+        false
+    );
+    (
+        // idx 18
+        // lib.increasing.19
+        1, 1,
+        false
+    );
+    (
+        // idx 19
+        // lib.increasing.20
+        1, 2,
+        true
+    );
+    (
+        // idx 20
+        // lib.increasing.21
+        2, -2,
+        false
+    );
+    (
+        // idx 21
+        // lib.increasing.22
+        2, -1,
+        false
+    );
+    (
+        // idx 22
+        // lib.increasing.23
+        2, 0,
+        false
+    );
+    (
+        // idx 23
+        // lib.increasing.24
+        2, 1,
+        false
+    );
+    (
+        // idx 24
+        // lib.increasing.25
+        2, 2,
+        false
+    );
+    |]
+    
+[<TestCase(0, TestName = "lib.increasing.01")>]
+[<TestCase(1, TestName = "lib.increasing.02")>]
+[<TestCase(2, TestName = "lib.increasing.03")>]
+[<TestCase(3, TestName = "lib.increasing.04")>]
+[<TestCase(4, TestName = "lib.increasing.05")>]
+[<TestCase(5, TestName = "lib.increasing.06")>]
+[<TestCase(6, TestName = "lib.increasing.07")>]
+[<TestCase(7, TestName = "lib.increasing.08")>]
+[<TestCase(8, TestName = "lib.increasing.09")>]
+[<TestCase(9, TestName = "lib.increasing.10")>]
+[<TestCase(10, TestName = "lib.increasing.11")>]
+[<TestCase(11, TestName = "lib.increasing.12")>]
+[<TestCase(12, TestName = "lib.increasing.13")>]
+[<TestCase(13, TestName = "lib.increasing.14")>]
+[<TestCase(14, TestName = "lib.increasing.15")>]
+[<TestCase(15, TestName = "lib.increasing.16")>]
+[<TestCase(16, TestName = "lib.increasing.17")>]
+[<TestCase(17, TestName = "lib.increasing.18")>]
+[<TestCase(18, TestName = "lib.increasing.19")>]
+[<TestCase(19, TestName = "lib.increasing.20")>]
+[<TestCase(20, TestName = "lib.increasing.21")>]
+[<TestCase(21, TestName = "lib.increasing.22")>]
+[<TestCase(22, TestName = "lib.increasing.23")>]
+[<TestCase(23, TestName = "lib.increasing.24")>]
+[<TestCase(24, TestName = "lib.increasing.25")>]
+
+[<Test>]
+let ``Predicate increasing`` idx = 
+    let (x, _, _) = increasingValues.[idx]
+    let (_, y, _) = increasingValues.[idx]
+    let (_, _, result) = increasingValues.[idx]
+    increasing (fun x -> x ) x y
+    |> should equal result
+
+let private decreasingValues : (int * int * bool)[] = [| 
+    (
+        // idx 0
+        // lib.decreasing.01
+        -2, -2,
+        false
+    );
+    (
+        // idx 1
+        // lib.decreasing.02
+        -2, -1,
+        false
+    );
+    (
+        // idx 2
+        // lib.decreasing.03
+        -2, 0,
+        false
+    );
+    (
+        // idx 3
+        // lib.decreasing.04
+        -2, 1,
+        false
+    );
+    (
+        // idx 4
+        // lib.decreasing.05
+        -2, 2,
+        false
+    );
+    (
+        // idx 5
+        // lib.decreasing.06
+        -1, -2,
+        true
+    );
+    (
+        // idx 6
+        // lib.decreasing.07
+        -1, -1,
+        false
+    );
+    (
+        // idx 7
+        // lib.decreasing.08
+        -1, 0,
+        false
+    );
+    (
+        // idx 8
+        // lib.decreasing.09
+        -1, 1,
+        false
+    );
+    (
+        // idx 9
+        // lib.decreasing.10
+        -1, 2,
+        false
+    );
+    (
+        // idx 10
+        // lib.decreasing.11
+        0, -2,
+        true
+    );
+    (
+        // idx 11
+        // lib.decreasing.12
+        0, -1,
+        true
+    );
+    (
+        // idx 12
+        // lib.decreasing.13
+        0, 0,
+        false
+    );
+    (
+        // idx 13
+        // lib.decreasing.14
+        0, 1,
+        false
+    );
+    (
+        // idx 14
+        // lib.decreasing.15
+        0, 2,
+        false
+    );
+    (
+        // idx 15
+        // lib.decreasing.16
+        1, -2,
+        true
+    );
+    (
+        // idx 16
+        // lib.decreasing.17
+        1, -1,
+        true
+    );
+    (
+        // idx 17
+        // lib.decreasing.18
+        1, 0,
+        true
+    );
+    (
+        // idx 18
+        // lib.decreasing.19
+        1, 1,
+        false
+    );
+    (
+        // idx 19
+        // lib.decreasing.20
+        1, 2,
+        false
+    );
+    (
+        // idx 20
+        // lib.decreasing.21
+        2, -2,
+        true
+    );
+    (
+        // idx 21
+        // lib.decreasing.22
+        2, -1,
+        true
+    );
+    (
+        // idx 22
+        // lib.decreasing.23
+        2, 0,
+        true
+    );
+    (
+        // idx 23
+        // lib.decreasing.24
+        2, 1,
+        true
+    );
+    (
+        // idx 24
+        // lib.decreasing.25
+        2, 2,
+        false
+    );
+    |]
+    
+[<TestCase(0, TestName = "lib.decreasing.01")>]
+[<TestCase(1, TestName = "lib.decreasing.02")>]
+[<TestCase(2, TestName = "lib.decreasing.03")>]
+[<TestCase(3, TestName = "lib.decreasing.04")>]
+[<TestCase(4, TestName = "lib.decreasing.05")>]
+[<TestCase(5, TestName = "lib.decreasing.06")>]
+[<TestCase(6, TestName = "lib.decreasing.07")>]
+[<TestCase(7, TestName = "lib.decreasing.08")>]
+[<TestCase(8, TestName = "lib.decreasing.09")>]
+[<TestCase(9, TestName = "lib.decreasing.10")>]
+[<TestCase(10, TestName = "lib.decreasing.11")>]
+[<TestCase(11, TestName = "lib.decreasing.12")>]
+[<TestCase(12, TestName = "lib.decreasing.13")>]
+[<TestCase(13, TestName = "lib.decreasing.14")>]
+[<TestCase(14, TestName = "lib.decreasing.15")>]
+[<TestCase(15, TestName = "lib.decreasing.16")>]
+[<TestCase(16, TestName = "lib.decreasing.17")>]
+[<TestCase(17, TestName = "lib.decreasing.18")>]
+[<TestCase(18, TestName = "lib.decreasing.19")>]
+[<TestCase(19, TestName = "lib.decreasing.20")>]
+[<TestCase(20, TestName = "lib.decreasing.21")>]
+[<TestCase(21, TestName = "lib.decreasing.22")>]
+[<TestCase(22, TestName = "lib.decreasing.23")>]
+[<TestCase(23, TestName = "lib.decreasing.24")>]
+[<TestCase(24, TestName = "lib.decreasing.25")>]
+
+[<Test>]
+let ``Predicate decreasing`` idx = 
+    let (x, _, _) = decreasingValues.[idx]
+    let (_, y, _) = decreasingValues.[idx]
+    let (_, _, result) = decreasingValues.[idx]
+    decreasing (fun x -> x ) x y
+    |> should equal result
+
+let private assocValues : (int * (int * int) list * int)[] = [| 
+    (
+        // idx 0
+        // lib.assoc.01
+        // System.Exception - find
+        1, [],
+        -99
+    );
+    (
+        // idx 1
+        // lib.assoc.02
+        // System.Exception - find
+        2, [1,2],
+        -99
+    );
+    (
+        // idx 2
+        // lib.assoc.03
+        1, [1,2],
+        2
+    );
+    (
+        // idx 3
+        // lib.assoc.04
+        1, [1,2; 1,3],
+        2
+    );
+    (
+        // idx 4
+        // lib.assoc.05
+        4, [1,2; 2,4; 3,9; 4,16],
+        16
+    );
+    |]
+
+[<TestCase(0, TestName = "lib.assoc.01", ExpectedException=typeof<System.Exception>, ExpectedMessage="find")>]
+[<TestCase(1, TestName = "lib.assoc.02", ExpectedException=typeof<System.Exception>, ExpectedMessage="find")>]
+[<TestCase(2, TestName = "lib.assoc.03")>]
+[<TestCase(3, TestName = "lib.assoc.04")>]
+[<TestCase(4, TestName = "lib.assoc.05")>]
+
+[<Test>]
+let ``Association List assoc`` idx = 
+    let (x, _, _) = assocValues.[idx]
+    let (_, list, _) = assocValues.[idx]
+    let (_, _, result) = assocValues.[idx]
+    assoc x list
+    |> should equal result
+
+// ....................................................................................
+
+
+let private rev_assocValues : (int * (int * int) list * int)[] = [| 
+    (
+        // idx 0
+        // lib.rev_assoc.01
+        // System.Exception - find
+        1, [],
+        -99
+    );
+    (
+        // idx 1
+        // lib.rev_assoc.02
+        // System.Exception - find
+        2, [1,2],
+        1
+    );
+    (
+        // idx 2
+        // lib.rev_assoc.03
+        1, [1,2],
+        2
+    );
+    (
+        // idx 3
+        // lib.rev_assoc.04
+        4, [1,4; 2,4],
+        1
+    );
+    (
+        // idx 4
+        // lib.rev_assoc.05
+        // System.IndexOutOfRangeException - Index was outside the bounds of the array.
+        16, [1,2; 2,4; 3,9; 4,16],
+        4
+    );
+    |]
+
+[<TestCase(0, TestName = "lib.rev_assoc.01", ExpectedException=typeof<System.Exception>, ExpectedMessage="find")>]
+[<TestCase(1, TestName = "lib.rev_assoc.02")>]
+[<TestCase(2, TestName = "lib.rev_assoc.03", ExpectedException=typeof<System.Exception>, ExpectedMessage="find")>]
+[<TestCase(3, TestName = "lib.rev_assoc.04")>]
+[<TestCase(4, TestName = "lib.rev_assoc.05")>]
+
+[<Test>]
+let ``Association List rev_assoc`` idx = 
+    let (x, _, _) = rev_assocValues.[idx]
+    let (_, list, _) = rev_assocValues.[idx]
+    let (_, _, result) = rev_assocValues.[idx]
+    rev_assoc x list
+    |> should equal result
+
 // =================================================================================
 
 // lib.p007
-[<Test>]
-let ``String explode`` () =
-    explode "hello"
-    |> should equal ["h"; "e"; "l"; "l"; "o"]
+//[<Test>]
+//let ``String explode`` () =
+//    explode "hello"
+//    |> should equal ["h"; "e"; "l"; "l"; "o"]
 
 // lib.p011
-[<Test>]
-let ``String implode`` () =
-    implode ["w"; "x"; "y"; "z"]
-    |> should equal "wxyz"
+//[<Test>]
+//let ``String implode`` () =
+//    implode ["w"; "x"; "y"; "z"]
+//    |> should equal "wxyz"
 
 // lib.p034
-[<Test>]
-let ``Association List assoc`` () =
-    assoc 3 [1,2; 2,4; 3,9; 4,16]
-    |> should equal 9
+//[<Test>]
+//let ``Association List assoc`` () =
+//    assoc 3 [1,2; 2,4; 3,9; 4,16]
+//    |> should equal 9
 
 // pg. 621
 let smallsqs = fpf [1; 2; 3] [1; 4; 9]
@@ -6257,16 +7093,16 @@ let ``function operator forward composition`` () =
     |> should equal 28
 
 // lib.p041
-[<Test>]
-let ``math gcd`` () =
-    gcd_num (num_of_int 12) (num_of_int 15)
-    |> should equal (num_of_int 3)
+//[<Test>]
+//let ``math gcd`` () =
+//    gcd_num (num_of_int 12) (num_of_int 15)
+//    |> should equal (num_of_int 3)
 
 // lib.p042
-[<Test>]
-let ``math lcm`` () =
-    lcm_num (num_of_int 12) (num_of_int 15)
-    |> should equal (num_of_int 60)
+//[<Test>]
+//let ``math lcm`` () =
+//    lcm_num (num_of_int 12) (num_of_int 15)
+//    |> should equal (num_of_int 60)
 
 // lib.p043
 [<Test>]
@@ -6292,16 +7128,16 @@ let ``function can`` () =
     |> should equal false
 
 // lib.p058
-[<Test>]
-let ``Predicate increasing`` () =
-    increasing List.length [1] [1;2;3]
-    |> should equal true
+//[<Test>]
+//let ``Predicate increasing`` () =
+//    increasing List.length [1] [1;2;3]
+//    |> should equal true
 
 // lib.p059
-[<Test>]
-let ``Predicate decreasing`` () =
-    decreasing List.length [1] [1;2;3]
-    |> should equal false
+//[<Test>]
+//let ``Predicate decreasing`` () =
+//    decreasing List.length [1] [1;2;3]
+//    |> should equal false
 
 let list1 = [1; 2; 3]
 let list2 = [1; 3; 5]

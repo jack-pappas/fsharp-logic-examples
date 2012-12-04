@@ -87,8 +87,7 @@ List.map2 (fun x y -> x + y) [1; 2; 3] [10; 11; 12];;
 mapfilter (fun x -> x % 2 = 0) [1; 2; 3; 4];;
 
 // lib.p019
-// NOTE: replicate has been replaced with the equivalent built-in F# function List.replicate.
-List.replicate 4 9;;
+// NOTE: replicate is not used in code.
 
 // lib.p020
 // NOTE: rev has been replaced with the equivalent built-in F# function List.rev.

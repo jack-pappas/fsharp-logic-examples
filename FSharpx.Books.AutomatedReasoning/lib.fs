@@ -204,7 +204,7 @@ let rec chop_list n l =
             failwith "chop_list"
         
 // pg. 619
-// NOTE: replicate has been replaced with the equivalent built-in F# function List.replicate.
+// NOTE: replicate is not used in code.
     
 // pg. 619
 let rec insertat i x l =
@@ -307,6 +307,9 @@ let sort ord =
 // ------------------------------------------------------------------------- //
 
 // pg. 619
+// Note: increasing is dead code but since
+// decreasing is not dead code this
+// is left as is.
 let increasing f x y =
     compare (f x) (f y) < 0
     
