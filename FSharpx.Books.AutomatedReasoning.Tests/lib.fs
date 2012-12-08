@@ -6929,14 +6929,14 @@ let private assocValues : (int * (int * int) list * int)[] = [|
         // lib.assoc.01
         // System.Exception - find
         1, [],
-        -99
+        -99 // Dummy value used as place holder
     );
     (
         // idx 1
         // lib.assoc.02
         // System.Exception - find
         2, [1,2],
-        -99
+        -99 // Dummy value used as place holder
     );
     (
         // idx 2
@@ -6972,16 +6972,13 @@ let ``Association List assoc`` idx =
     assoc x list
     |> should equal result
 
-// ....................................................................................
-
-
 let private rev_assocValues : (int * (int * int) list * int)[] = [| 
     (
         // idx 0
         // lib.rev_assoc.01
         // System.Exception - find
         1, [],
-        -99
+        -99 // Dummy value used as place holder
     );
     (
         // idx 1
@@ -7025,25 +7022,179 @@ let ``Association List rev_assoc`` idx =
     rev_assoc x list
     |> should equal result
 
+// ....................................................................................
+
+//let private canValues : (int * bool * int)[] = [| 
+//    (
+//        // idx 
+//        // lib.can.0
+//        -2,
+//        true,
+//        -1
+//    );
+//    (
+//        // idx 
+//        // lib.can.0
+//        -1,
+//        true,
+//        -2
+//    );
+//    (
+//        // idx 
+//        // lib.can.0
+//        // can:         false
+//        // without can: System.Exception - Attempted to divide by zero.
+//        0,
+//        false,
+//        -99 // Dummy value used as place holder
+//    );
+//    (
+//        // idx 
+//        // lib.can.0
+//        1,
+//        true,
+//        2
+//    );
+//    (
+//        // idx 
+//        // lib.can.0
+//        2,
+//        true,
+//        1
+//    );
+//    |]
+//
+//[<TestCase(0, TestName = "lib.can.01")>]
+//[<TestCase(1, TestName = "lib.can.02")>]
+//[<TestCase(2, TestName = "lib.can.03")>]
+//[<TestCase(3, TestName = "lib.can.04")>]
+//[<TestCase(4, TestName = "lib.can.05")>]
+//
+//[<Test>]
+//let ``function can`` idx =
+//    let (x, _, _) = canValues.[idx]
+//    let (_, can_result, _) = canValues.[idx]
+//    let divideBy x =
+//        match x with
+//        | 0 -> failwith "zero"
+//        | _ -> true
+//    can divideBy x
+//    |> should equal can_result
+//
+//[<TestCase(0, TestName = "lib.cause_exception.01")>]
+//[<TestCase(1, TestName = "lib.cause_exception.02")>]
+//[<TestCase(2, TestName = "lib.cause_exception.03", ExpectedException=typeof<System.DivideByZeroException>, ExpectedMessage="Attempted to divide by zero.")>]
+//[<TestCase(3, TestName = "lib.cause_exception.04")>]
+//[<TestCase(4, TestName = "lib.cause_exception.05")>]
+//
+//[<Test>]
+//let ``function cause exception`` idx = 
+//    let (x, _, _) = canValues.[idx]
+//    let (_, _, result) = canValues.[idx]
+//    2 / x
+//    |> should equal result
+
+// --------------------------------------------------------------------
+
+let divideBy x =
+    match x with
+    | 0 -> failwith "divide by zero."
+    | _ -> true
+
+let countItems x =
+    match x with
+    | x when x >= 0 -> true
+    | _ -> raise (System.ArgumentException("x"))
+
+let displayValue x =
+    match x with 
+    | x when (x > 32 && x < 127) -> true
+    | _ -> invalidArg "x" "value is not printable."
+
+let keyBeFound x =
+    match x with
+    | x when x >= 0 -> true
+    | _ -> raise (System.Collections.Generic.KeyNotFoundException("x"))
+
+let private canValues : ((int -> bool) * int * int)[] = [| 
+    (
+        // idx 0
+        // lib.can01.01
+        divideBy,
+        -1, 
+        0
+    );
+    (
+        // idx 1
+        // lib.can01.02
+        countItems,
+        1,
+        -2
+    );
+    (
+        // idx 2
+        // lib.can01.03
+        displayValue,
+        33,
+        4
+    );
+    (
+        // idx 3
+        // lib.can01.04
+        displayValue,
+        33,
+        4
+    );
+    (
+        // idx 4
+        // lib.can01.05
+        keyBeFound,
+        33,
+        -10
+    );
+    |]
+
+// Run the can test with the false value to show that an exception will occur.
+[<TestCase(0, TestName = "lib.can_Exception.01", ExpectedException=typeof<System.Exception>, ExpectedMessage="divide by zero.")>]
+[<TestCase(1, TestName = "lib.can_Exception.02", ExpectedException=typeof<System.ArgumentException>, ExpectedMessage="x")>]
+[<TestCase(2, TestName = "lib.can_Exception.03", ExpectedException=typeof<System.ArgumentException>)>]
+[<TestCase(3, TestName = "lib.can_Exception.04", ExpectedException=typeof<System.ArgumentException>)>]
+[<TestCase(4, TestName = "lib.can_Exception.05", ExpectedException=typeof<System.Collections.Generic.KeyNotFoundException>, ExpectedMessage="x")>]
+
+[<Test>]
+let ``function can exception`` idx =
+    let (func, _, _) = canValues.[idx]
+    let (_, _, falseValue) = canValues.[idx]
+    func falseValue
+    |> should equal () // Dummy value used as place holder
+
+[<TestCase(0, TestName = "lib.can.01")>]
+[<TestCase(1, TestName = "lib.can.02")>]
+[<TestCase(2, TestName = "lib.can.03")>]
+[<TestCase(3, TestName = "lib.can.04")>]
+[<TestCase(4, TestName = "lib.can.05")>]
+
+// Run the can test with both the true and the false value to show that
+// the results are either true or false, and that no exception is returned
+// when the false value is used.
+[<Test>]
+let ``function can`` idx =
+    let (func, _, _) = canValues.[idx]
+    let (_, trueValue, _) = canValues.[idx]
+    let (_, _, falseValue) = canValues.[idx]
+    can func trueValue
+    |> should equal true
+    can func falseValue
+    |> should equal false
+
+// ....................................................................................
+
+[<Test>]
+let ``function funpow`` () =
+    funpow 10 (fun x -> x + x) 1
+    |> should equal 1024
+
 // =================================================================================
-
-// lib.p007
-//[<Test>]
-//let ``String explode`` () =
-//    explode "hello"
-//    |> should equal ["h"; "e"; "l"; "l"; "o"]
-
-// lib.p011
-//[<Test>]
-//let ``String implode`` () =
-//    implode ["w"; "x"; "y"; "z"]
-//    |> should equal "wxyz"
-
-// lib.p034
-//[<Test>]
-//let ``Association List assoc`` () =
-//    assoc 3 [1,2; 2,4; 3,9; 4,16]
-//    |> should equal 9
 
 // pg. 621
 let smallsqs = fpf [1; 2; 3] [1; 4; 9]
@@ -7092,18 +7243,6 @@ let ``function operator forward composition`` () =
     (addFive >> timesFour) 2
     |> should equal 28
 
-// lib.p041
-//[<Test>]
-//let ``math gcd`` () =
-//    gcd_num (num_of_int 12) (num_of_int 15)
-//    |> should equal (num_of_int 3)
-
-// lib.p042
-//[<Test>]
-//let ``math lcm`` () =
-//    lcm_num (num_of_int 12) (num_of_int 15)
-//    |> should equal (num_of_int 60)
-
 // lib.p043
 [<Test>]
 let ``idiom non`` () =
@@ -7111,33 +7250,10 @@ let ``idiom non`` () =
     |> should equal true
 
 // lib.p044
-[<Test>]
-let ``function funpow`` () =
-    funpow 10 (fun x -> x + x) 1
-    |> should equal 1024
-
-let divideBy x =
-    match x with
-    | 0 -> failwith "zero"
-    | _ -> true
-
-// lib.p045
-[<Test>]
-let ``function can`` () =
-    can divideBy 0
-    |> should equal false
-
-// lib.p058
 //[<Test>]
-//let ``Predicate increasing`` () =
-//    increasing List.length [1] [1;2;3]
-//    |> should equal true
-
-// lib.p059
-//[<Test>]
-//let ``Predicate decreasing`` () =
-//    decreasing List.length [1] [1;2;3]
-//    |> should equal false
+//let ``function funpow`` () =
+//    funpow 10 (fun x -> x + x) 1
+//    |> should equal 1024
 
 let list1 = [1; 2; 3]
 let list2 = [1; 3; 5]
