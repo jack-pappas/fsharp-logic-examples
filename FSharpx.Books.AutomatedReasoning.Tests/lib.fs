@@ -7115,8 +7115,6 @@ let ``function can`` idx =
     can func falseValue
     |> should equal false
 
-// ....................................................................................
-
 let stepTwo x =
     x + 2;;
 
@@ -7350,6 +7348,49 @@ let ``function funpow truthCaseGenerator`` idx =
     funpow reps truthCaseGenerator init
     |> should equal result
 
+// ....................................................................................
+
+
+// NOTE: The ( ** ) operator has been replaced with the equivalent built-in F# operator ( << ).
+let addFive x = x + 5
+let timesFour x = x * 4
+
+// (2 * 4) + 5 = 13
+[<Test>]
+let ``function operator backward composition 1`` () =
+    (addFive << timesFour) 2
+    |> should equal 13
+
+// (2 * 4) + 5 + 5 = 18
+[<Test>]
+let ``function operator backward composition 2`` () =
+    (addFive << addFive << timesFour) 2
+    |> should equal 18
+    
+// ((2 * 4) + 5 + 5) * 4 = 18
+[<Test>]
+let ``function operator backward composition 3`` () =
+    (timesFour << addFive << addFive << timesFour) 2
+    |> should equal 72
+
+// (2 + 5) * 4 = 28
+[<Test>]
+let ``function operator forward composition 1`` () =
+    (addFive >> timesFour) 2
+    |> should equal 28
+
+// (2 + 5 + 5) * 4 = 48
+[<Test>]
+let ``function operator forward composition 2`` () =
+    (addFive >> addFive >> timesFour) 2
+    |> should equal 48
+
+// ((2 * 4) + 5 + 5) * 4 = 72
+[<Test>]
+let ``function operator forward composition 3`` () =
+    (timesFour >> addFive >> addFive >> timesFour) 2
+    |> should equal 72
+
 // =================================================================================
 
 // pg. 621
@@ -7380,24 +7421,6 @@ let ``finite partial function apply`` () =
     |> should equal 9
 
 // Some additional tests (not in the book)
-
-// NOTE: The ( ** ) operator has been replaced with the equivalent built-in F# operator ( << ).
-let addFive x = x + 5
-let timesFour x = x * 4
-
-// lib.p039
-// (2 * 4) + 5 = 13
-[<Test>]
-let ``function operator backward composition`` () =
-    (addFive << timesFour) 2
-    |> should equal 13
-
-// lib.p040
-// (2 + 5) * 4 = 28
-[<Test>]
-let ``function operator forward composition`` () =
-    (addFive >> timesFour) 2
-    |> should equal 28
 
 // lib.p043
 [<Test>]
