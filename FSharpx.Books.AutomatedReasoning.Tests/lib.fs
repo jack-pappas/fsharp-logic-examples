@@ -7281,7 +7281,6 @@ let ``function funpow pi`` idx =
     funpow reps pi init
     |> should equal result
 
-
 let truthCaseGenerator values =
     match values with
     | [] -> [ "0"; "1" ]
@@ -7348,9 +7347,6 @@ let ``function funpow truthCaseGenerator`` idx =
     funpow reps truthCaseGenerator init
     |> should equal result
 
-// ....................................................................................
-
-
 // NOTE: The ( ** ) operator has been replaced with the equivalent built-in F# operator ( << ).
 let addFive x = x + 5
 let timesFour x = x * 4
@@ -7391,6 +7387,129 @@ let ``function operator forward composition 3`` () =
     (timesFour >> addFive >> addFive >> timesFour) 2
     |> should equal 72
 
+// Crate a function that returns failure 
+// for use with tryfind
+let containsEven x =
+    match x with
+    | _ when  x % 2 = 0 -> true
+    | _ -> failwith "not even"
+
+let private tryFindValues : ((int list) * bool)[] = [| 
+    (
+        // idx 0
+        // lib.tryFind.01
+        [], 
+        false
+    );
+    (
+        // idx 1
+        // lib.tryFind.02
+        [1], 
+        false
+    );
+    (
+        // idx 2
+        // lib.tryFind.03
+        [2], 
+        true
+    );
+    (
+        // idx 3
+        // lib.tryFind.04
+        [1; 2], 
+        true
+    );
+    (
+        // idx 4
+        // lib.tryFind.05
+        [2; 3], 
+        true
+    );
+    (
+        // idx 5
+        // lib.tryFind.06
+        [1; 2; 3], 
+        true
+    );
+    (
+        // idx 6
+        // lib.tryFind.07
+        [1; 3], 
+        false
+    );
+    (
+        // idx 7
+        // lib.tryFind.08
+        [2; 4], 
+        true
+    );
+    (
+        // idx 7
+        // lib.tryFind.08
+        [1; 3], 
+        false
+    );
+    |]
+
+[<TestCase(0, TestName = "lib.tryFind.01")>]
+[<TestCase(1, TestName = "lib.tryFind.02")>]
+[<TestCase(2, TestName = "lib.tryFind.03")>]
+[<TestCase(3, TestName = "lib.tryFind.04")>]
+[<TestCase(4, TestName = "lib.tryFind.05")>]
+[<TestCase(5, TestName = "lib.tryFind.06")>]
+[<TestCase(6, TestName = "lib.tryFind.07")>]
+[<TestCase(7, TestName = "lib.tryFind.08")>]
+[<TestCase(8, TestName = "lib.tryFind.09")>]
+
+[<Test>]
+let ``function tryfind`` idx =
+    let (list, _) = tryFindValues.[idx]
+    let (_, result) = tryFindValues.[idx]
+    try
+        tryfind containsEven list
+    with
+        | Failure _ -> false
+        | _ -> true 
+    |> should equal result
+
+let even x =
+    x % 2 = 0
+
+let private nonValues : (int * bool)[] = [| 
+    (
+        // idx 0
+        // lib.non.01
+        0, 
+        false
+    );
+    (
+        // idx 1
+        // lib.non.02
+        1, 
+        true
+    );
+    (
+        // idx 2
+        // lib.non.03
+        2, 
+        false
+    );
+    |]
+
+[<TestCase(0, TestName = "lib.non.01")>]
+[<TestCase(1, TestName = "lib.non.02")>]
+[<TestCase(2, TestName = "lib.non.03")>]
+
+[<Test>]
+let ``function non`` idx =
+    let (value, _) = nonValues.[idx]
+    let (_, result) = nonValues.[idx]
+    non even value
+    |> should equal result
+
+// ....................................................................................
+
+
 // =================================================================================
 
 // pg. 621
@@ -7421,46 +7540,6 @@ let ``finite partial function apply`` () =
     |> should equal 9
 
 // Some additional tests (not in the book)
-
-// lib.p043
-[<Test>]
-let ``idiom non`` () =
-    non (fun x -> x % 2 = 0) 5
-    |> should equal true
-
-// lib.p044
-//[<Test>]
-//let ``function funpow`` () =
-//    funpow 10 (fun x -> x + x) 1
-//    |> should equal 1024
-
-let list1 = [1; 2; 3]
-let list2 = [1; 3; 5]
-// Crate a function that returns failure
-let containsEven x =
-    match x with
-    | _ when  x % 2 = 0 -> true
-    | _ -> failwith "not even"
-
-// lib.p060
-[<Test>]
-let ``function tryfind 1`` () =
-    try
-        tryfind containsEven list1
-    with
-        | Failure _ -> false
-        | _ -> true 
-    |> should equal true
-
-// lib.p061
-[<Test>]
-let ``function tryfind 2`` () =
-    try
-        tryfind containsEven list2
-    with
-        | Failure _ -> false
-        | _ -> true  
-    |> should equal false
 
 // lib.p081
 [<Test>]
