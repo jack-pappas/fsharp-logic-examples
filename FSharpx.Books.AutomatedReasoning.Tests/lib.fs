@@ -7022,78 +7022,6 @@ let ``Association List rev_assoc`` idx =
     rev_assoc x list
     |> should equal result
 
-// ....................................................................................
-
-//let private canValues : (int * bool * int)[] = [| 
-//    (
-//        // idx 
-//        // lib.can.0
-//        -2,
-//        true,
-//        -1
-//    );
-//    (
-//        // idx 
-//        // lib.can.0
-//        -1,
-//        true,
-//        -2
-//    );
-//    (
-//        // idx 
-//        // lib.can.0
-//        // can:         false
-//        // without can: System.Exception - Attempted to divide by zero.
-//        0,
-//        false,
-//        -99 // Dummy value used as place holder
-//    );
-//    (
-//        // idx 
-//        // lib.can.0
-//        1,
-//        true,
-//        2
-//    );
-//    (
-//        // idx 
-//        // lib.can.0
-//        2,
-//        true,
-//        1
-//    );
-//    |]
-//
-//[<TestCase(0, TestName = "lib.can.01")>]
-//[<TestCase(1, TestName = "lib.can.02")>]
-//[<TestCase(2, TestName = "lib.can.03")>]
-//[<TestCase(3, TestName = "lib.can.04")>]
-//[<TestCase(4, TestName = "lib.can.05")>]
-//
-//[<Test>]
-//let ``function can`` idx =
-//    let (x, _, _) = canValues.[idx]
-//    let (_, can_result, _) = canValues.[idx]
-//    let divideBy x =
-//        match x with
-//        | 0 -> failwith "zero"
-//        | _ -> true
-//    can divideBy x
-//    |> should equal can_result
-//
-//[<TestCase(0, TestName = "lib.cause_exception.01")>]
-//[<TestCase(1, TestName = "lib.cause_exception.02")>]
-//[<TestCase(2, TestName = "lib.cause_exception.03", ExpectedException=typeof<System.DivideByZeroException>, ExpectedMessage="Attempted to divide by zero.")>]
-//[<TestCase(3, TestName = "lib.cause_exception.04")>]
-//[<TestCase(4, TestName = "lib.cause_exception.05")>]
-//
-//[<Test>]
-//let ``function cause exception`` idx = 
-//    let (x, _, _) = canValues.[idx]
-//    let (_, _, result) = canValues.[idx]
-//    2 / x
-//    |> should equal result
-
 // --------------------------------------------------------------------
 
 let divideBy x =
@@ -7189,10 +7117,238 @@ let ``function can`` idx =
 
 // ....................................................................................
 
+let stepTwo x =
+    x + 2;;
+
+let private stepTwoValues : (int * int * int)[] = [| 
+    (
+        // idx 0
+        // lib.stepTwo.01
+        1,
+        -1, 
+        1
+    );
+    (
+        // idx 1
+        // lib.stepTwo.02
+        2,
+        -1, 
+        3
+    );
+    (
+        // idx 2
+        // lib.stepTwo.03
+        3,
+        -1, 
+        5
+    );
+    (
+        // idx 3
+        // lib.stepTwo.04
+        10,
+        -1, 
+        19
+    );
+    (
+        // idx 4
+        // lib.stepTwo.05
+        100,
+        -1, 
+        199
+    );
+    |]
+
+[<TestCase(0, TestName = "lib.funpow.stepTwo.01")>]
+[<TestCase(1, TestName = "lib.funpow.stepTwo.02")>]
+[<TestCase(2, TestName = "lib.funpow.stepTwo.03")>]
+[<TestCase(3, TestName = "lib.funpow.stepTwo.04")>]
+[<TestCase(4, TestName = "lib.funpow.stepTwo.05")>]
+
 [<Test>]
-let ``function funpow`` () =
-    funpow 10 (fun x -> x + x) 1
-    |> should equal 1024
+let ``function funpow stepTwo`` idx =
+    let (reps, _, _) = stepTwoValues.[idx]
+    let (_, init, _) = stepTwoValues.[idx]
+    let (_, _, result) = stepTwoValues.[idx]
+    funpow reps stepTwo init
+    |> should equal result
+
+// Based on BSD formula. See: http://rosettacode.org/wiki/Linear_congruential_generator
+let rnd seed =
+    (1103515245 * seed + 12345) &&& System.Int32.MaxValue;;
+
+let private rndValues : (int * int * int)[] = [| 
+    (
+        // idx 0
+        // lib.rnd.01
+        1,
+        -1, 
+        1043980748
+    );
+    (
+        // idx 1
+        // lib.rnd.02
+        2,
+        -1, 
+        288979989
+    );
+    (
+        // idx 2
+        // lib.rnd.03
+        3,
+        -1, 
+        646343466
+    );
+    (
+        // idx 3
+        // lib.rnd.04
+        10,
+        -1, 
+        834541773
+    );
+    (
+        // idx 4
+        // lib.rnd.05
+        100,
+        -1, 
+        402220219
+    );
+    |]
+
+[<TestCase(0, TestName = "lib.funpow.rnd.01")>]
+[<TestCase(1, TestName = "lib.funpow.rnd.02")>]
+[<TestCase(2, TestName = "lib.funpow.rnd.03")>]
+[<TestCase(3, TestName = "lib.funpow.rnd.04")>]
+[<TestCase(4, TestName = "lib.funpow.rnd.05")>]
+
+[<Test>]
+let ``function funpow rnd`` idx =
+    let (reps, _, _) = rndValues.[idx]
+    let (_, init, _) = rndValues.[idx]
+    let (_, _, result) = rndValues.[idx]
+    funpow reps rnd init
+    |> should equal result
+
+let pi (x : double) =
+    x + (sin x);;
+
+let private piValues : (int * double * double)[] = [| 
+    (
+        // idx 0
+        // lib.pi.01
+        1,
+        3.0, 
+        3.1411200080598674
+    );
+    (
+        // idx 1
+        // lib.pi.02
+        2,
+        3.0, 
+        3.1415926535721956
+    );
+    (
+        // idx 2
+        // lib.pi.03
+        3,
+        3.0, 
+        3.1415926535897931
+    );
+    (
+        // idx 3
+        // lib.pi.04
+        10,
+        3.0, 
+        3.1415926535897931
+    );
+    (
+        // idx 4
+        // lib.pi.05
+        100,
+        3.0, 
+        3.1415926535897931
+    );
+    |]
+
+[<TestCase(0, TestName = "lib.funpow.pi.01")>]
+[<TestCase(1, TestName = "lib.funpow.pi.02")>]
+[<TestCase(2, TestName = "lib.funpow.pi.03")>]
+[<TestCase(3, TestName = "lib.funpow.pi.04")>]
+[<TestCase(4, TestName = "lib.funpow.pi.05")>]
+
+[<Test>]
+let ``function funpow pi`` idx =
+    let (reps, _, _) = piValues.[idx]
+    let (_, init, _) = piValues.[idx]
+    let (_, _, result) = piValues.[idx]
+    funpow reps pi init
+    |> should equal result
+
+
+let truthCaseGenerator values =
+    match values with
+    | [] -> [ "0"; "1" ]
+    | _ -> 
+        let zeroList = List.map (fun item ->  "0" + item) values
+        let oneList = List.map (fun item ->  "1" + item) values
+        let newList = List.append zeroList oneList
+        (newList : string list);;
+
+let private truthCaseGeneratorValues : (int * string list * string list)[] = [| 
+    (
+        // idx 0
+        // lib.truthCaseGenerator.01
+        1,
+        [], 
+        ["0"; "1"]
+    );
+    (
+        // idx 1
+        // lib.truthCaseGenerator.02
+        2,
+        [], 
+        ["00"; "01"; "10"; "11"]
+    );
+    (
+        // idx 2
+        // lib.truthCaseGenerator.03
+        3,
+        [], 
+        ["000"; "001"; "010"; "011"; "100"; "101"; "110"; "111"]
+    );
+    (
+        // idx 3
+        // lib.truthCaseGenerator.04
+        4,
+        [], 
+        ["0000"; "0001"; "0010"; "0011"; "0100"; "0101"; "0110"; "0111";
+         "1000"; "1001"; "1010"; "1011"; "1100"; "1101"; "1110"; "1111"]
+    );
+    (
+        // idx 4
+        // lib.truthCaseGenerator.05
+        5,
+        [], 
+        ["00000"; "00001"; "00010"; "00011"; "00100"; "00101"; "00110";
+         "00111"; "01000"; "01001"; "01010"; "01011"; "01100"; "01101";
+         "01110"; "01111"; "10000"; "10001"; "10010"; "10011"; "10100";
+         "10101"; "10110"; "10111"; "11000"; "11001"; "11010"; "11011";
+         "11100"; "11101"; "11110"; "11111"]
+    );
+    |]
+
+[<TestCase(0, TestName = "lib.funpow.truthCaseGenerator.01")>]
+[<TestCase(1, TestName = "lib.funpow.truthCaseGenerator.02")>]
+[<TestCase(2, TestName = "lib.funpow.truthCaseGenerator.03")>]
+[<TestCase(3, TestName = "lib.funpow.truthCaseGenerator.04")>]
+[<TestCase(4, TestName = "lib.funpow.truthCaseGenerator.05")>]
+
+[<Test>]
+let ``function funpow truthCaseGenerator`` idx =
+    let (reps, _, _) = truthCaseGeneratorValues.[idx]
+    let (_, init, _) = truthCaseGeneratorValues.[idx]
+    let (_, _, result) = truthCaseGeneratorValues.[idx]
+    funpow reps truthCaseGenerator init
+    |> should equal result
 
 // =================================================================================
 
