@@ -3762,7 +3762,7 @@ let ``List operator range (Num)`` idx =
     (start --- stop) 
     |> should equal result
 
-let private partitionValues : (int list * (int list * int list))[] = [| 
+let private listPartitionValues : (int list * (int list * int list))[] = [| 
     (
         // idx 0
         // lib.partition.001
@@ -3838,8 +3838,8 @@ let private partitionValues : (int list * (int list * int list))[] = [|
 
 [<Test>]
 let ``List partition`` idx = 
-    let (list, _) = partitionValues.[idx]
-    let (_, result ) = partitionValues.[idx]
+    let (list, _) = listPartitionValues.[idx]
+    let (_, result ) = listPartitionValues.[idx]
     List.partition (fun x -> x % 2 = 0) list 
     |> should equal result
     partition (fun x -> x % 2 = 0) list 
@@ -7506,9 +7506,351 @@ let ``function non`` idx =
     let (_, result) = nonValues.[idx]
     non even value
     |> should equal result
+           
+let private patriciaTreeValues : (int list * int list * func<int,int> * bool)[] = [| 
+    (
+        // idx 0
+        // lib.patriciaTree.01
+        [], [],
+        undefined,
+        true
+    );
+    (
+        // idx 1
+        // lib.patriciaTree.02
+        [1], [1],
+        (Leaf (1, [(1,1)])),
+        false
+    );
+    (
+        // idx 2
+        // lib.patriciaTree.03
+        [1;2], [1;4],
+        (Branch (0,1, 
+            (Leaf (2, [(2, 4)])),
+            (Leaf (1, [(1, 1)]))
+        )),
+        false
+    );
+    (
+        // idx 3
+        // lib.patriciaTree.04
+        [1;2;3], [1;4;9], 
+        (Branch (0,1, 
+            (Leaf (2, [(2, 4)])), 
+            (Branch (1,2, 
+                (Leaf (1, [(1, 1)])), 
+                (Leaf (3, [(3, 9)])) 
+            ))
+        )),
+        false
+    );
+    (
+        // idx 4
+        // lib.patriciaTree.05
+        [1;2;3;4], [1;4;9;16],
+        (Branch (0,1,
+            (Branch (0,2,
+                (Leaf (4, [(4, 16)])),
+                (Leaf (2, [(2, 4)]))
+            )),
+            (Branch (1,2,
+                (Leaf (1, [(1, 1)])),
+                (Leaf (3, [(3, 9)]))
+            ))
+        )),
+        false
+    );
+    |]
+
+[<TestCase(0, TestName = "lib.patriciaTree.creation.01")>]
+[<TestCase(1, TestName = "lib.patriciaTree.creation.02")>]
+[<TestCase(2, TestName = "lib.patriciaTree.creation.03")>]
+[<TestCase(3, TestName = "lib.patriciaTree.creation.04")>]
+[<TestCase(4, TestName = "lib.patriciaTree.creation.05")>]
+
+[<Test>]
+let ``Patricia tree creation`` idx =
+    let (keys, _, _, _) = patriciaTreeValues.[idx]
+    let (_, values, _, _) = patriciaTreeValues.[idx]
+    let (_, _, createResult, _) = patriciaTreeValues.[idx]
+    let patricia_tree = (fpf keys values)
+    patricia_tree
+    |> should equal createResult
+
+[<TestCase(0, TestName = "lib.patriciaTree.is_undefined.01")>]
+[<TestCase(1, TestName = "lib.patriciaTree.is_undefined.02")>]
+[<TestCase(2, TestName = "lib.patriciaTree.is_undefined.03")>]
+[<TestCase(3, TestName = "lib.patriciaTree.is_undefined.04")>]
+[<TestCase(4, TestName = "lib.patriciaTree.is_undefined.05")>]
+
+[<Test>]
+let ``Patricia tree is_undefined`` idx =
+    let (keys, _, _, _) = patriciaTreeValues.[idx]
+    let (_, values, _, _) = patriciaTreeValues.[idx]
+    let (_, _, _, undefinedResult) = patriciaTreeValues.[idx]
+    let patricia_tree = (fpf keys values)
+    is_undefined patricia_tree
+    |> should equal undefinedResult
 
 // ....................................................................................
+ 
+let pairsToPartition (pairs : (int * int) list) =
+    List.fold (fun ptn pair -> equate pair ptn) unequal pairs;;
 
+let private partitionValues : ( (int * int) list * int list * int list * int * int * (int * int) list * int list)[] = [| 
+    (
+        // idx 0
+        // lib.partition.canonize.01
+        [],
+        [0],
+        [0],
+        -1, 1,
+        [(-1, -1); 
+         (0, 0); 
+         (1, 1)],
+        []
+    );
+    (
+        // idx 1
+        // lib.partition.canonize.02
+        [ (1,1) ],
+        [1],
+        [1],
+        -1, 2,
+        [(-1, -1); 
+         (0, 0); 
+         (1, 1); 
+         (2, 2)],
+        []
+    );
+    (
+        // idx 2
+        // lib.partition.canonize.03
+        [ (1,1); (2,2) ],
+        [1; 2],
+        [1; 2],
+        -1, 3,
+        [(-1, -1); 
+         (0, 0); 
+         (1, 1); 
+         (2, 2); 
+         (3, 3)],
+        []
+    );
+    (
+        // idx 3
+        // lib.partition.canonize.04
+        [ (1,2) ],
+        [1],
+        [2],
+        -1, 3,
+        [(-1, -1); 
+         (0, 0); 
+         (1, 1); (1, 2); 
+         (2, 1); (2, 2); 
+         (3, 3)],
+        [1;2]
+    );
+    (
+        // idx 4
+        // lib.partition.canonize.05
+        [ (2,1) ],
+        [2],
+        [1],
+        -1, 3,
+        [(-1, -1); 
+         (0, 0); 
+         (1, 1); (1, 2); 
+         (2, 1); (2, 2); 
+         (3, 3)],
+        [1;2]
+    );
+    (
+        // idx 5
+        // lib.partition.canonize.06
+        [ (1,2); (2,1) ],
+        [1; 2],
+        [2; 2],
+        -1, 3,
+        [(-1, -1); 
+         (0, 0); 
+         (1, 1); (1, 2); 
+         (2, 1); (2, 2); 
+         (3, 3)],
+        [1;2]
+    );
+    (
+        // idx 6
+        // lib.partition.canonize.07
+        [ (2,1); (1,2) ],
+        [1; 2],
+        [1; 1],
+        -1, 3,
+        [(-1, -1); 
+         (0, 0); 
+         (1, 1); (1, 2); 
+         (2, 1); (2, 2); 
+         (3, 3)],
+        [1;2]
+    );
+    (
+        // idx 7
+        // lib.partition.canonize.08
+        [ (1,2); (1,3) ],
+        [1; 2; 3],
+        [2; 2; 2],
+        -1, 4,
+        [(-1, -1); 
+         (0, 0); 
+         (1, 1); (1, 2); (1, 3); 
+         (2, 1); (2, 2); (2, 3); 
+         (3, 1); (3, 2); (3, 3); 
+         (4, 4)],
+        [1;2;3]
+    );
+    (
+        // idx 8
+        // lib.partition.canonize.09
+        [ (1,2); (1,3); (2,4) ],
+        [1; 2; 3; 4],
+        [2; 2; 2; 2],
+        -1, 5,
+        [(-1, -1); 
+         (0, 0); 
+         (1, 1); (1, 2); (1, 3); (1, 4); 
+         (2, 1); (2, 2); (2, 3); (2, 4); 
+         (3, 1); (3, 2); (3, 3); (3, 4); 
+         (4, 1); (4, 2); (4, 3); (4, 4); 
+         (5, 5)],
+        [1;2;3;4]
+    );
+    (
+        // idx 9
+        // lib.partition.canonize.10
+        [ (1,2); (4,5); (8,10)],
+        [1; 2; 3; 4; 5; 6; 7; 8; 9; 10],
+        [2; 2; 3; 5; 5; 6; 7; 10; 9; 10],
+        -1, 11,
+        [(-1, -1); 
+         (0, 0); 
+         (1, 1); (1, 2); 
+         (2, 1); (2, 2); 
+         (3, 3); 
+         (4, 4); (4, 5);
+         (5, 4); (5, 5); 
+         (6, 6); 
+         (7, 7); 
+         (8, 8); (8, 10); 
+         (9, 9); 
+         (10, 8); (10, 10);
+         (11, 11)],
+        [1;2;4;5;8;10]
+    );
+    (
+        // idx 10
+        // lib.partition.canonize.11
+        [ (2,1); (10,8); (5,4)],
+        [1; 2; 3; 4; 5; 6; 7; 8; 9; 10],
+        [1; 1; 3; 4; 4; 6; 7; 8; 9; 8],
+        -1, 11,
+        [(-1, -1); 
+         (0, 0); 
+         (1, 1); (1, 2); 
+         (2, 1); (2, 2); 
+         (3, 3); 
+         (4, 4); (4, 5); 
+         (5, 4); (5, 5); 
+         (6, 6); 
+         (7, 7); 
+         (8, 8); (8, 10); 
+         (9, 9); 
+         (10, 8); (10, 10);
+         (11, 11)],
+        [1;2;4;5;8;10]
+    );
+    |]
+
+[<TestCase(0, TestName = "lib.partition.canonize.01")>]
+[<TestCase(1, TestName = "lib.partition.canonize.02")>]
+[<TestCase(2, TestName = "lib.partition.canonize.03")>]
+[<TestCase(3, TestName = "lib.partition.canonize.04")>]
+[<TestCase(4, TestName = "lib.partition.canonize.05")>]
+[<TestCase(5, TestName = "lib.partition.canonize.06")>]
+[<TestCase(6, TestName = "lib.partition.canonize.07")>]
+[<TestCase(7, TestName = "lib.partition.canonize.08")>]
+[<TestCase(8, TestName = "lib.partition.canonize.09")>]
+[<TestCase(9, TestName = "lib.partition.canonize.10")>]
+[<TestCase(10, TestName = "lib.partition.canonize.11")>]
+
+[<Test>]
+let ``Partition canonize`` idx =
+    let (pairs, _, _, _, _, _, _) = partitionValues.[idx]
+    let (_, keys, _, _, _, _, _) = partitionValues.[idx]
+    let (_, _, canonizeResult, _, _, _, _) = partitionValues.[idx]
+    let ptn = pairsToPartition pairs
+    List.map (fun x -> canonize ptn x) keys
+    |> should equal canonizeResult
+
+[<TestCase(0, TestName = "lib.partition.equivalent.01")>]
+[<TestCase(1, TestName = "lib.partition.equivalent.02")>]
+[<TestCase(2, TestName = "lib.partition.equivalent.03")>]
+[<TestCase(3, TestName = "lib.partition.equivalent.04")>]
+[<TestCase(4, TestName = "lib.partition.equivalent.05")>]
+[<TestCase(5, TestName = "lib.partition.equivalent.06")>]
+[<TestCase(6, TestName = "lib.partition.equivalent.07")>]
+[<TestCase(7, TestName = "lib.partition.equivalent.08")>]
+[<TestCase(8, TestName = "lib.partition.equivalent.09")>]
+[<TestCase(9, TestName = "lib.partition.equivalent.10")>]
+[<TestCase(10, TestName = "lib.partition.equivalent.11")>]
+
+[<Test>]
+let ``Partition equivalent`` idx =
+    let (pairs, _, _, _, _, _, _) = partitionValues.[idx]
+    let (_, _, _, start, _, _, _) = partitionValues.[idx]
+    let (_, _, _, _, stop, _, _) = partitionValues.[idx]
+    let (_, _, _, _, _, equivalentResult, _) = partitionValues.[idx]
+    let ptn = pairsToPartition pairs
+    let testValues = 
+        seq { 
+            for x in start .. stop do
+                for y in start .. stop do
+                    yield (x,y)
+        }
+    let mapEq items =
+        let (x,y) = items
+        let eq = equivalent ptn x y
+        (x,y,eq)
+    let filterEq items =
+        let (x,y,eq) = items
+        eq
+    let simplifyEq items =
+        let (x,y,eq) = items
+        (x,y)
+    List.map mapEq (Seq.toList testValues)
+    |> List.filter filterEq
+    |> List.map simplifyEq
+    |> should equal equivalentResult
+
+[<TestCase(0, TestName = "lib.partition.equated.01")>]
+[<TestCase(1, TestName = "lib.partition.equated.02")>]
+[<TestCase(2, TestName = "lib.partition.equated.03")>]
+[<TestCase(3, TestName = "lib.partition.equated.04")>]
+[<TestCase(4, TestName = "lib.partition.equated.05")>]
+[<TestCase(5, TestName = "lib.partition.equated.06")>]
+[<TestCase(6, TestName = "lib.partition.equated.07")>]
+[<TestCase(7, TestName = "lib.partition.equated.08")>]
+[<TestCase(8, TestName = "lib.partition.equated.09")>]
+[<TestCase(9, TestName = "lib.partition.equated.10")>]
+[<TestCase(10, TestName = "lib.partition.equated.11")>]
+
+[<Test>]
+let ``Partition equated`` idx =
+    let (pairs, _, _, _, _, _, _) = partitionValues.[idx]
+    let (_, _, _, _, _, _, equatedResult) = partitionValues.[idx]
+    let ptn = pairsToPartition pairs
+    equated ptn
+    |> should equal equatedResult
 
 // =================================================================================
 
@@ -7540,62 +7882,6 @@ let ``finite partial function apply`` () =
     |> should equal 9
 
 // Some additional tests (not in the book)
-
-// lib.p081
-[<Test>]
-let ``Patricia tree empty`` () =
-    let patricia_tree_empty = (fpf [] [])
-    is_undefined patricia_tree_empty
-    |> should equal true
-
-// lib.p082
-[<Test>]
-let ``Patricia tree one leaf`` () =
-    let patricia_tree = (fpf [1] [1])
-    patricia_tree
-    |> should equal (Leaf (1, [(1,1)]))
-
-// lib.p083
-[<Test>]
-let ``Patricia tree one branch`` () =
-    let patricia_tree = (fpf [1;2] [1;4])
-    patricia_tree
-    |> should equal (
-        Branch (0,1, 
-            (Leaf (2, [(2, 4)])),
-            (Leaf (1, [(1, 1)])) 
-        ))
-
-// lib.p084
-[<Test>]
-let ``Patricia tree branch with single leaf`` () =
-    let patricia_tree = (fpf [1;2;3] [1;4;9])
-    patricia_tree
-    |> should equal (
-        Branch (0,1, 
-            (Leaf (2, [(2, 4)])), 
-            (Branch (1,2, 
-                (Leaf (1, [(1, 1)])), 
-                (Leaf (3, [(3, 9)])) 
-            ))
-        ))
-        
-// lib.p085
-[<Test>]
-let ``Patricia tree two branches with two leaves`` () =
-    let patricia_tree = (fpf [1;2;3;4] [1;4;9;16])
-    patricia_tree
-    |> should equal (
-        Branch (0,1,
-            (Branch (0,2,
-                (Leaf (4, [(4, 16)])),
-                (Leaf (2, [(2, 4)]))
-            )),
-            (Branch (1,2,
-                (Leaf (1, [(1, 1)])),
-                (Leaf (3, [(3, 9)]))
-            ))
-        ))
 
 // lib.p086
 [<Test>]
@@ -7718,63 +8004,3 @@ let ``finite partial function undefined function`` () =
     let y = fun x -> undef x
     printfn "y: %A" (y 1)
     |> should equal ()
-
-let ptn =
-    let ptn1 = equate (1,2) unequal
-    let ptn2 = equate (1,3) ptn1
-    let ptn3 = equate (2,4) ptn2
-    let ptn4 = equate (5,6) ptn3
-    let ptn5 = equate (5,7) ptn4
-    let ptn6 = equate (5,8) ptn5
-    let ptn7 = equate (5,9) ptn6
-    let ptn8 = equate (10,10) ptn7
-    let ptn9 = equate (11,12) ptn8
-    let ptn10 = equate (11,13) ptn9
-    let ptn11 = equate (11,14) ptn10
-    let ptn12 = equate (15,17) ptn11
-    ptn12;;
-
-// lib.p102
-[<Test>]
-let ``Partition canonize`` () =
-    List.map (fun x -> canonize ptn x) [-1;0;1;2;3;4;5;6;7;8;9;10;11;12;13;14;15;16;17;18;19]
-    |> should equal [-1; 0; 2; 2; 2; 2; 6; 6; 6; 6; 6; 10; 12; 12; 12; 12; 17; 16; 17; 18; 19]
-
-// lib.p103
-[<Test>]
-let ``Partition equivalent`` () =
-    let testValues = 
-        seq { 
-            for x in -1 .. 18 do
-                for y in -1 .. 18 do
-                    yield (x,y)
-        }
-    let mapEq items =
-        let (x,y) = items
-        let eq = equivalent ptn x y
-        (x,y,eq)
-    let filterEq items =
-        let (x,y,eq) = items
-        eq
-    let simplifyEq items =
-        let (x,y,eq) = items
-        (x,y)
-    List.map mapEq (Seq.toList testValues)
-    |> List.filter filterEq
-    |> List.map simplifyEq
-    |> should equal [
-        (-1, -1); (0, 0); (1, 1); (1, 2); (1, 3); (1, 4); (2, 1); (2, 2);
-        (2, 3); (2, 4); (3, 1); (3, 2); (3, 3); (3, 4); (4, 1); (4, 2);
-        (4, 3); (4, 4); (5, 5); (5, 6); (5, 7); (5, 8); (5, 9); (6, 5);
-        (6, 6); (6, 7); (6, 8); (6, 9); (7, 5); (7, 6); (7, 7); (7, 8);
-        (7, 9); (8, 5); (8, 6); (8, 7); (8, 8); (8, 9); (9, 5); (9, 6);
-        (9, 7); (9, 8); (9, 9); (10, 10); (11, 11); (11, 12); (11, 13);
-        (11, 14); (12, 11); (12, 12); (12, 13); (12, 14); (13, 11); (13, 12);
-        (13, 13); (13, 14); (14, 11); (14, 12); (14, 13); (14, 14); (15, 15);
-        (15, 17); (16, 16); (17, 15); (17, 17); (18, 18)]
-
-// lib.p103
-[<Test>]
-let ``Partition equated`` () =
-    equated ptn
-    |> should equal [1; 2; 3; 4; 5; 6; 7; 8; 9; 11; 12; 13; 14; 15; 17]
