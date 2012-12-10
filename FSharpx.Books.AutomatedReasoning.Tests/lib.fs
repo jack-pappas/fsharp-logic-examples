@@ -7593,8 +7593,6 @@ let ``Patricia tree is_undefined`` idx =
     is_undefined patricia_tree
     |> should equal undefinedResult
 
-// ....................................................................................
- 
 let pairsToPartition (pairs : (int * int) list) =
     List.fold (fun ptn pair -> equate pair ptn) unequal pairs;;
 
@@ -7602,6 +7600,8 @@ let private partitionValues : ( (int * int) list * int list * int list * int * i
     (
         // idx 0
         // lib.partition.canonize.01
+        // lib.partition.equivalent.01
+        // lib.partition.equated.01
         [],
         [0],
         [0],
@@ -7614,6 +7614,8 @@ let private partitionValues : ( (int * int) list * int list * int list * int * i
     (
         // idx 1
         // lib.partition.canonize.02
+        // lib.partition.equivalent.02
+        // lib.partition.equated.02
         [ (1,1) ],
         [1],
         [1],
@@ -7627,6 +7629,8 @@ let private partitionValues : ( (int * int) list * int list * int list * int * i
     (
         // idx 2
         // lib.partition.canonize.03
+        // lib.partition.equivalent.03
+        // lib.partition.equated.03
         [ (1,1); (2,2) ],
         [1; 2],
         [1; 2],
@@ -7641,6 +7645,8 @@ let private partitionValues : ( (int * int) list * int list * int list * int * i
     (
         // idx 3
         // lib.partition.canonize.04
+        // lib.partition.equivalent.04
+        // lib.partition.equated.04
         [ (1,2) ],
         [1],
         [2],
@@ -7655,6 +7661,8 @@ let private partitionValues : ( (int * int) list * int list * int list * int * i
     (
         // idx 4
         // lib.partition.canonize.05
+        // lib.partition.equivalent.05
+        // lib.partition.equated.05
         [ (2,1) ],
         [2],
         [1],
@@ -7669,6 +7677,8 @@ let private partitionValues : ( (int * int) list * int list * int list * int * i
     (
         // idx 5
         // lib.partition.canonize.06
+        // lib.partition.equivalent.06
+        // lib.partition.equated.06
         [ (1,2); (2,1) ],
         [1; 2],
         [2; 2],
@@ -7683,6 +7693,8 @@ let private partitionValues : ( (int * int) list * int list * int list * int * i
     (
         // idx 6
         // lib.partition.canonize.07
+        // lib.partition.equivalent.07
+        // lib.partition.equated.07
         [ (2,1); (1,2) ],
         [1; 2],
         [1; 1],
@@ -7697,6 +7709,8 @@ let private partitionValues : ( (int * int) list * int list * int list * int * i
     (
         // idx 7
         // lib.partition.canonize.08
+        // lib.partition.equivalent.08
+        // lib.partition.equated.08
         [ (1,2); (1,3) ],
         [1; 2; 3],
         [2; 2; 2],
@@ -7712,6 +7726,8 @@ let private partitionValues : ( (int * int) list * int list * int list * int * i
     (
         // idx 8
         // lib.partition.canonize.09
+        // lib.partition.equivalent.09
+        // lib.partition.equated.09
         [ (1,2); (1,3); (2,4) ],
         [1; 2; 3; 4],
         [2; 2; 2; 2],
@@ -7728,6 +7744,8 @@ let private partitionValues : ( (int * int) list * int list * int list * int * i
     (
         // idx 9
         // lib.partition.canonize.10
+        // lib.partition.equivalent.10
+        // lib.partition.equated.10
         [ (1,2); (4,5); (8,10)],
         [1; 2; 3; 4; 5; 6; 7; 8; 9; 10],
         [2; 2; 3; 5; 5; 6; 7; 10; 9; 10],
@@ -7750,6 +7768,8 @@ let private partitionValues : ( (int * int) list * int list * int list * int * i
     (
         // idx 10
         // lib.partition.canonize.11
+        // lib.partition.equivalent.11
+        // lib.partition.equated.11
         [ (2,1); (10,8); (5,4)],
         [1; 2; 3; 4; 5; 6; 7; 8; 9; 10],
         [1; 1; 3; 4; 4; 6; 7; 8; 9; 8],
@@ -7851,6 +7871,9 @@ let ``Partition equated`` idx =
     let ptn = pairsToPartition pairs
     equated ptn
     |> should equal equatedResult
+
+// ....................................................................................
+ 
 
 // =================================================================================
 
