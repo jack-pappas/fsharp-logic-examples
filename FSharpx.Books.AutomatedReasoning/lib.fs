@@ -976,6 +976,19 @@ let valmod a y f x =
     else f x
     
 // pg. 618
+// In a non-functional world you can create a list of values and
+// initialize the list signifiying nothing. e.g. []
+// Then when you process the list it could return without exception
+// or if you wanted the processing of the list to return with
+// exception when there is nothing in the list, you would check
+// the list for nothing and return an exception.
+//
+// In a functinal world you can create a list of functions and
+// initialize the list with a function causing an exception given that
+// the items is the list are evaluated as functions.
+// 
+// undef is that function which is used to initialize a list to
+// cause an exception if the list is empty when evaluated.
 let undef x =
     failwith "undefined function"
 

@@ -12,27 +12,6 @@ open FSharp.Compatibility.OCaml.Num
 open NUnit.Framework
 open FsUnit
 
-// NOTE: In the optimzed version the 
-// following lib functions are replaced with
-// equivalent F# functions or operators.
-// 
-// To add evidence that the replacements are sound,
-// the original results are tested against the
-// F# replacement results. If the results are different
-// the test will fail.
-//
-//  OCaml        F#
-//  insert       Set.add
-//  intersect    Set.intersect
-//  image        Set.map
-//  mem          Set.contains
-//  psubset      Set.isProperSubset
-//  set_eq       =
-//  subset       Set.isSubset
-//  subtract     Set.diference
-//  union        Set.union
-//  unions       Set.unionMany
-
 // ===========================================================================
 
 // NOTE: In porting the OCaml to F#, if there was a corresponding built-in F# routine
@@ -199,6 +178,121 @@ let rec zip l1 l2 =
     | _               -> failwith "zip"
 
 let filter p l = fst(partition p l)
+
+// ===========================================================================
+
+// NOTE: In the optimzed version the 
+// following lib functions are replaced with
+// equivalent F# functions or operators.
+// 
+// To add evidence that the replacements are sound,
+// the original results are tested against the
+// F# replacement results. If the results are different
+// the test will fail.
+//
+//  OCaml          F# Optimized
+//  insert         Set.add
+//  intersect      Set.intersect
+//  image          Set.map
+//  mem            Set.contains
+//  psubset        Set.isProperSubset
+//  set_eq         =
+//  subset         Set.isSubset
+//  subtract       Set.diference
+//  union          Set.union
+//  unions         Set.unionMany
+
+//  OCaml          F# Optimized
+//  ('a, 'b) func  Map<'a, 'b>
+//  undefined      Map.empty
+//  is_undefined   Map.isEmpty
+//  mapf           Map.map
+//  foldl          Map.fold
+//  foldr          Map.foldBack
+//  graph          Map.toList
+//  dom            new function based on Map.fold
+//  ran            new function based on Map.fold
+//  applyd         new function based on Map.tryFind
+//  apply          new function based on Map.tryFind
+//  tryapplyd      new function based on Map.tryFind
+//  tryapplyl      based on tryapplyd
+//  defined        Map.containsKey
+//  undefine       Map.remove
+//  |->            Map.add
+//  |=>            Map.add initialized wtih Map.Empty
+//  fpf            new function based on List.zip and Map.ofList
+//
+// In order to be able to test against the F# version of the code
+// that was replaced by an F# optimized equivelent, the F# optimized version of the code 
+// is placed here for access by the test functions.
+
+type func_opt<'a, 'b when 'a : comparison> = Map<'a, 'b>
+
+let undefined_opt : func_opt<_,_> = 
+    Map.empty
+
+let inline is_undefined_opt (f : func_opt<_,_>) = 
+    Map.isEmpty f
+
+let inline mapf_opt mapping (f : func_opt<_,_>) : func_opt<_,_> =
+    Map.map (fun _ v -> mapping v) f
+
+let inline foldl_opt folder state (f : func_opt<_,_>) = 
+    Map.fold folder state f 
+
+let inline foldr_opt folder (f : func_opt<_,_>) state = 
+    Map.foldBack folder f state
+
+let inline graph_opt (f : func_opt<_,_>) = 
+    Map.toList f
+
+let dom_opt (f : func_opt<_,_>) =    
+    (Set.empty, f)    
+    ||> Map.fold (fun dom x _ ->
+        Set.add x dom)
+    |> Set.toList
+
+let ran_opt (f : func_opt<_,_>) =
+    (Set.empty, f)
+        ||> Map.fold (fun range _ y ->
+            Set.add y range)   
+    |> Set.toList
+
+let applyd_opt (f : func_opt<_,_>) defaultValueGenerator value : 'b =
+    match Map.tryFind value f with
+    | Some x -> x
+    | None ->
+        defaultValueGenerator value
+
+let apply_opt (f : func_opt<_,_>) a =
+    match Map.tryFind a f with
+    | Some x -> x    
+    | None ->        
+        failwith "apply"
+
+let tryapplyd_opt (f : func_opt<_,_>) a d =
+    match Map.tryFind a f with
+    | Some x -> x    
+    | None -> d
+
+let inline tryapplyl_opt (f : func_opt<_,_>) x =
+    tryapplyd_opt f x []
+
+let inline defined_opt (f : func_opt<_,_>) a =
+    Map.containsKey a f
+
+let inline undefine_opt x (f : func_opt<_,_>) : func_opt<_,_> =
+    Map.remove x f
+
+let inline (|->+) x y (f : func_opt<_,_>) : func_opt<_,_> =
+    Map.add x y f
+
+let inline (|=>+) x y : func_opt<_,_> =
+    Map.add x y undefined_opt
+
+let inline fpf_opt keys values : func_opt<_,_> =
+    List.zip keys values
+    |> Map.ofList 
 
 // ===========================================================================
 
@@ -2808,7 +2902,7 @@ let ``List length`` idx =
     length list
     |> should equal result
 
-let private mapValues : (int list * int list)[] = [| 
+let private listMapValues : (int list * int list)[] = [| 
     (
         // idx 0
         // lib.map.01
@@ -2842,8 +2936,8 @@ let private mapValues : (int list * int list)[] = [|
 
 [<Test>]
 let ``List map`` idx = 
-    let (list, _) = mapValues.[idx]
-    let (_, result) = mapValues.[idx]
+    let (list, _) = listMapValues.[idx]
+    let (_, result) = listMapValues.[idx]
     List.map (fun x -> x + 5) list
     |> should equal result
     map (fun x -> x + 5) list
@@ -6312,7 +6406,7 @@ let private gcd_numValues : (num * num * num)[] = [|
 [<TestCase(19, TestName = "lib.gcd_num.20")>]
 
 [<Test>]
-let ``math gcd_num`` idx = 
+let ``math gcd (Num)`` idx = 
     let (value1, _, _) = gcd_numValues.[idx]
     let (_, value2, _) = gcd_numValues.[idx]
     let (_, _, result) = gcd_numValues.[idx]
@@ -6464,7 +6558,7 @@ let private lcm_numValues : (num * num * num)[] = [|
 [<TestCase(19, TestName = "lib.lcm_num.20")>]
 
 [<Test>]
-let ``math lcm_num`` idx = 
+let ``math lcm (Num)`` idx = 
     let (value1, _, _) = lcm_numValues.[idx]
     let (_, value2, _) = lcm_numValues.[idx]
     let (_, _, result) = lcm_numValues.[idx]
@@ -7022,8 +7116,6 @@ let ``Association List rev_assoc`` idx =
     rev_assoc x list
     |> should equal result
 
-// --------------------------------------------------------------------
-
 let divideBy x =
     match x with
     | 0 -> failwith "divide by zero."
@@ -7353,37 +7445,37 @@ let timesFour x = x * 4
 
 // (2 * 4) + 5 = 13
 [<Test>]
-let ``function operator backward composition 1`` () =
+let ``function operator backward composition (<<) 1`` () =
     (addFive << timesFour) 2
     |> should equal 13
 
 // (2 * 4) + 5 + 5 = 18
 [<Test>]
-let ``function operator backward composition 2`` () =
+let ``function operator backward composition (<<) 2`` () =
     (addFive << addFive << timesFour) 2
     |> should equal 18
     
 // ((2 * 4) + 5 + 5) * 4 = 18
 [<Test>]
-let ``function operator backward composition 3`` () =
+let ``function operator backward composition (<<) 3`` () =
     (timesFour << addFive << addFive << timesFour) 2
     |> should equal 72
 
 // (2 + 5) * 4 = 28
 [<Test>]
-let ``function operator forward composition 1`` () =
+let ``function operator forward composition (>>) 1`` () =
     (addFive >> timesFour) 2
     |> should equal 28
 
 // (2 + 5 + 5) * 4 = 48
 [<Test>]
-let ``function operator forward composition 2`` () =
+let ``function operator forward composition (>>) 2`` () =
     (addFive >> addFive >> timesFour) 2
     |> should equal 48
 
 // ((2 * 4) + 5 + 5) * 4 = 72
 [<Test>]
-let ``function operator forward composition 3`` () =
+let ``function operator forward composition (>>) 3`` () =
     (timesFour >> addFive >> addFive >> timesFour) 2
     |> should equal 72
 
@@ -7507,12 +7599,13 @@ let ``function non`` idx =
     non even value
     |> should equal result
            
-let private patriciaTreeValues : (int list * int list * func<int,int> * bool)[] = [| 
+let private patriciaTreeValues : (int list * int list * func<int,int> * (int * int) list * bool)[] = [| 
     (
         // idx 0
         // lib.patriciaTree.01
         [], [],
         undefined,
+        [],
         true
     );
     (
@@ -7520,6 +7613,7 @@ let private patriciaTreeValues : (int list * int list * func<int,int> * bool)[] 
         // lib.patriciaTree.02
         [1], [1],
         (Leaf (1, [(1,1)])),
+        [(1,1)],
         false
     );
     (
@@ -7530,6 +7624,7 @@ let private patriciaTreeValues : (int list * int list * func<int,int> * bool)[] 
             (Leaf (2, [(2, 4)])),
             (Leaf (1, [(1, 1)]))
         )),
+        [(1,1); (2,4)],
         false
     );
     (
@@ -7543,6 +7638,7 @@ let private patriciaTreeValues : (int list * int list * func<int,int> * bool)[] 
                 (Leaf (3, [(3, 9)])) 
             ))
         )),
+        [(1,1); (2,4); (3,9)],
         false
     );
     (
@@ -7559,6 +7655,7 @@ let private patriciaTreeValues : (int list * int list * func<int,int> * bool)[] 
                 (Leaf (3, [(3, 9)]))
             ))
         )),
+        [(1,1); (2,4); (3,9); (4,16)],
         false
     );
     |]
@@ -7570,13 +7667,19 @@ let private patriciaTreeValues : (int list * int list * func<int,int> * bool)[] 
 [<TestCase(4, TestName = "lib.patriciaTree.creation.05")>]
 
 [<Test>]
-let ``Patricia tree creation`` idx =
-    let (keys, _, _, _) = patriciaTreeValues.[idx]
-    let (_, values, _, _) = patriciaTreeValues.[idx]
-    let (_, _, createResult, _) = patriciaTreeValues.[idx]
-    let patricia_tree = (fpf keys values)
-    patricia_tree
-    |> should equal createResult
+let ``finite partial function creation`` idx =
+    let (keys, _, _, _, _) = patriciaTreeValues.[idx]
+    let (_, values, _, _, _) = patriciaTreeValues.[idx]
+    let (_, _, astResult, _, _) = patriciaTreeValues.[idx]
+    let (_, _, _, graphResult, _) = patriciaTreeValues.[idx]
+    fpf keys values
+    |> should equal astResult
+    fpf keys values
+    |> graph
+    |> should equal graphResult
+    fpf_opt keys values
+    |> graph_opt
+    |> should equal graphResult
 
 [<TestCase(0, TestName = "lib.patriciaTree.is_undefined.01")>]
 [<TestCase(1, TestName = "lib.patriciaTree.is_undefined.02")>]
@@ -7585,13 +7688,16 @@ let ``Patricia tree creation`` idx =
 [<TestCase(4, TestName = "lib.patriciaTree.is_undefined.05")>]
 
 [<Test>]
-let ``Patricia tree is_undefined`` idx =
-    let (keys, _, _, _) = patriciaTreeValues.[idx]
-    let (_, values, _, _) = patriciaTreeValues.[idx]
-    let (_, _, _, undefinedResult) = patriciaTreeValues.[idx]
-    let patricia_tree = (fpf keys values)
-    is_undefined patricia_tree
-    |> should equal undefinedResult
+let ``finite partial function is_undefined`` idx =
+    let (keys, _, _, _, _) = patriciaTreeValues.[idx]
+    let (_, values, _, _, _) = patriciaTreeValues.[idx]
+    let (_, _, _, _, result) = patriciaTreeValues.[idx]
+    fpf keys values
+    |> is_undefined
+    |> should equal result
+    fpf_opt keys values
+    |> is_undefined_opt
+    |> should equal result
 
 let pairsToPartition (pairs : (int * int) list) =
     List.fold (fun ptn pair -> equate pair ptn) unequal pairs;;
@@ -7872,158 +7978,779 @@ let ``Partition equated`` idx =
     equated ptn
     |> should equal equatedResult
 
-// ....................................................................................
- 
+let private fpfValues : ( int list * int list * (int * int) list * int list * int list)[] = [| 
+    (
+        // idx 0
+        // lib.fpf.graph.creation.01
+        // lib.fpf.graph.domain.01
+        // lib.fpf.graph.range.01
+        [], [],
+        [],
+        [],
+        []
+    );
+    (
+        // idx 1
+        // lib.fpf.graph.creation.02
+        // lib.fpf.graph.domain.02
+        // lib.fpf.graph.range.02
+        [1], [1],
+        [(1, 1)],
+        [1],
+        [1]
+    );
+    (
+        // idx 2
+        // lib.fpf.graph.creation.03
+        // lib.fpf.graph.domain.03
+        // lib.fpf.graph.range.03
+        [1; 2], [1; 4],
+        [(1, 1); (2, 4)],
+        [1; 2],
+        [1; 4]
+    );
+    (
+        // idx 3
+        // lib.fpf.graph.creation.04
+        // lib.fpf.graph.domain.04
+        // lib.fpf.graph.range.04
+        [1; 2; 3], [1; 4; 9],
+        [(1, 1); (2, 4); (3, 9)],
+        [1; 2; 3],
+        [1; 4; 9]
+    );
+    |]
 
-// =================================================================================
+[<TestCase(0, TestName = "lib.fpf.graph.creation.01")>]
+[<TestCase(1, TestName = "lib.fpf.graph.creation.02")>]
+[<TestCase(2, TestName = "lib.fpf.graph.creation.03")>]
+[<TestCase(3, TestName = "lib.fpf.graph.creation.04")>]
 
-// pg. 621
-let smallsqs = fpf [1; 2; 3] [1; 4; 9]
-
-// lib.p035
 [<Test>]
-let ``finite partial function`` () =
-    graph smallsqs        
-    |> should equal [(1, 1); (2, 4); (3, 9)]
+let ``finite partial function graph creation`` idx =
+    let (keys, _, _, _, _) = fpfValues.[idx]
+    let (_, values, _, _, _) = fpfValues.[idx]
+    let (_, _, result, _, _) = fpfValues.[idx]
+    fpf keys values
+    |> graph
+    |> should equal result
+    fpf_opt keys values
+    |> graph_opt
+    |> should equal result
 
-// lib.p036
+[<TestCase(0, TestName = "lib.fpf.graph.domain.01")>]
+[<TestCase(1, TestName = "lib.fpf.graph.domain.02")>]
+[<TestCase(2, TestName = "lib.fpf.graph.domain.03")>]
+[<TestCase(3, TestName = "lib.fpf.graph.domain.04")>]
+
 [<Test>]
-let ``finite partial function with undefine`` () =
-    graph (undefine 2 smallsqs)
-    |> should equal [(1, 1); (3, 9)]
+let ``finite partial function graph domain`` idx =
+    let (keys, _, _, _, _) = fpfValues.[idx]
+    let (_, values, _, _, _) = fpfValues.[idx]
+    let (_, _, _, domain, _) = fpfValues.[idx]
+    fpf keys values
+    |> dom
+    |> should equal domain
+    fpf_opt keys values
+    |> dom_opt
+    |> should equal domain
+    
+[<TestCase(0, TestName = "lib.fpf.graph.range.01")>]
+[<TestCase(1, TestName = "lib.fpf.graph.range.02")>]
+[<TestCase(2, TestName = "lib.fpf.graph.range.03")>]
+[<TestCase(3, TestName = "lib.fpf.graph.range.04")>]
 
-// lib.p037
 [<Test>]
-let ``finite partial function update`` () =
-    graph ((3 |-> 0) smallsqs)        
-    |> should equal [(1, 1); (2, 4); (3, 0)]
+let ``finite partial function graph range`` idx =
+    let (keys, _, _, _, _) = fpfValues.[idx]
+    let (_, values, _, _, _) = fpfValues.[idx]
+    let (_, _, _, _, range) = fpfValues.[idx]
+    fpf keys values
+    |> ran
+    |> should equal range
+    fpf_opt keys values
+    |> ran_opt
+    |> should equal range
 
-// lib.p038
+let private fpfApplyValues : ( int list * int list * int * int)[] = [| 
+    (
+        // idx 0
+        // lib.fpf.graph.apply.01
+        [], [],
+        1,
+        -99  // Dummy value used as place holder
+    );
+    (
+        // idx 1
+        // lib.fpf.graph.apply.02
+        [1], [1],
+        1,
+        1
+    );
+    (
+        // idx 2
+        // lib.fpf.graph.apply.03
+        [1], [1],
+        2,
+        -99  // Dummy value used as place holder
+    );
+    (
+        // idx 3
+        // lib.fpf.graph.apply.04
+        [1; 2], [1; 4],
+        1,
+        1
+    );
+    (
+        // idx 4
+        // lib.fpf.graph.apply.05
+        [1; 2], [1; 4],
+        2,
+        4
+    );
+    (
+        // idx 5
+        // lib.fpf.graph.apply.06
+        [1; 2; 3], [1; 4; 9],
+        1,
+        1
+    );
+    (
+        // idx 6
+        // lib.fpf.graph.apply.07
+        [1; 2; 3], [1; 4; 9],
+        2,
+        4
+    );
+    (
+        // idx 7
+        // lib.fpf.graph.apply.08
+        [1; 2; 3], [1; 4; 9],
+        3,
+        9
+    );
+    |]
+    
+[<TestCase(0, TestName = "lib.fpf.apply.01", ExpectedException=typeof<System.Exception>, ExpectedMessage="apply")>]
+[<TestCase(1, TestName = "lib.fpf.apply.02")>]
+[<TestCase(2, TestName = "lib.fpf.apply.03", ExpectedException=typeof<System.Exception>, ExpectedMessage="apply")>]
+[<TestCase(3, TestName = "lib.fpf.apply.04")>]
+[<TestCase(4, TestName = "lib.fpf.apply.05")>]
+[<TestCase(5, TestName = "lib.fpf.apply.06")>]
+[<TestCase(6, TestName = "lib.fpf.apply.07")>]
+[<TestCase(7, TestName = "lib.fpf.apply.08")>]
+
 [<Test>]
-let ``finite partial function apply`` () =
-    apply smallsqs 3
-    |> should equal 9
+let ``finite partial function graph apply`` idx =
+    let (keys, _, _, _) = fpfApplyValues.[idx]
+    let (_, values, _, _) = fpfApplyValues.[idx]
+    let (_, _, applyKey, _) = fpfApplyValues.[idx]
+    let (_, _, _, applyValue) = fpfApplyValues.[idx]
+    let map = fpf keys values
+    apply map applyKey
+    |> should equal applyValue
+    let map_opt = fpf_opt keys values
+    apply_opt map_opt applyKey
+    |> should equal applyValue
 
-// Some additional tests (not in the book)
+let private undefineValues : ( int list * int list * int * (int * int) list )[] = [| 
+    (
+        // idx 0
+        // lib.fpf.graph.01
+        [], [],
+        1,
+        []
+    );
+    (
+        // idx 1
+        // lib.fpf.graph.02
+        [1], [1],
+        1,
+        []
+    );
+    (
+        // idx 2
+        // lib.fpf.graph.03
+        [1; 2], [1; 4],
+        1,
+        [ (2, 4) ]
+    );
+    (
+        // idx 3
+        // lib.fpf.graph.04
+        [1; 2; 3], [1; 4; 9],
+        1,
+        [ (2, 4); (3, 9) ]
+    );
+    (
+        // idx 4
+        // lib.fpf.graph.05
+        [1; 2; 3], [1; 4; 9],
+        5,
+        [ (1,1); (2, 4); (3, 9) ]
+    );
+    |]
 
-// lib.p086
+[<TestCase(0, TestName = "lib.fpf.graph.undefine.01")>]
+[<TestCase(1, TestName = "lib.fpf.graph.undefine.02")>]
+[<TestCase(2, TestName = "lib.fpf.graph.undefine.03")>]
+[<TestCase(3, TestName = "lib.fpf.graph.undefine.04")>]
+[<TestCase(4, TestName = "lib.fpf.graph.undefine.05")>]
+
 [<Test>]
-let ``finite partial function mapf`` () =
-    mapf (fun x -> x + 5) smallsqs
-    |> should equal (
-        Branch (0,1,
-            (Leaf (2, [(2, 9)])),
-            (Branch (1,2,
-                (Leaf (1,[(1, 6)])),
-                (Leaf (3,[(3, 14)]))
-            ))
-        ))
+let ``finite partial function graph undefine`` idx =
+    let (keys, _, _, _) = undefineValues.[idx]
+    let (_, values, _, _) = undefineValues.[idx]
+    let (_, _, removeValue, _) = undefineValues.[idx]
+    let (_, _, _, result) = undefineValues.[idx]
+    fpf keys values
+    |> undefine removeValue
+    |> graph
+    |> should equal result
+    fpf_opt keys values
+    |> undefine_opt removeValue
+    |> graph_opt
+    |> should equal result
 
-// lib.p087
+let private updateValues : ( int list * int list * int * int * (int * int) list )[] = [| 
+    (
+        // idx 0
+        // lib.fpf.graph.01
+        [], [],
+        1, -6,
+        [(1, -6)]
+    );
+    (
+        // idx 1
+        // lib.fpf.graph.02
+        [1], [1],
+        1, -6,
+        [(1, -6)]
+    );
+    (
+        // idx 2
+        // lib.fpf.graph.03
+        [1; 2], [1; 4],
+        1, -6,
+        [ (1,-6); (2, 4) ]
+    );
+    (
+        // idx 3
+        // lib.fpf.graph.04
+        [1; 2; 3], [1; 4; 9],
+        1, -6,
+        [ (1,-6); (2, 4); (3, 9) ]
+    );
+    |]
+
+[<TestCase(0, TestName = "lib.fpf.graph.update.01")>]
+[<TestCase(1, TestName = "lib.fpf.graph.update.02")>]
+[<TestCase(2, TestName = "lib.fpf.graph.update.03")>]
+[<TestCase(3, TestName = "lib.fpf.graph.update.04")>]
+
 [<Test>]
-let ``finite partial function domain`` () =
-    dom smallsqs
-    |> should equal [1; 2; 3]
+let ``finite partial function graph operator update (|->)`` idx =
+    let (keys, _, _, _, _) = updateValues.[idx]
+    let (_, values, _, _, _) = updateValues.[idx]
+    let (_, _, updateKey, _, _) = updateValues.[idx]
+    let (_, _, _, updateValue, _) = updateValues.[idx]
+    let (_, _, _, _, result) = updateValues.[idx]
+    fpf keys values
+    |> (updateKey |-> updateValue) 
+    |> graph
+    |> should equal result
+    fpf_opt keys values 
+    |> (updateKey |->+ updateValue) 
+    |> graph_opt
+    |> should equal result
 
-// lib.p088
+let private independentFunctionValues : (int * int * (int * int) list )[] = [| 
+    (
+        // idx 0
+        // lib.fpf.graph.01
+        1, 1,
+        [(1, 1)]
+    );
+    (
+        // idx 1
+        // lib.fpf.graph.02
+        2, 4,
+        [(2, 4)]
+    );
+    |]
+
+[<TestCase(0, TestName = "lib.fpf.graph.independentFunction.01")>]
+[<TestCase(1, TestName = "lib.fpf.graph.independentFunction.02")>]
+
 [<Test>]
-let ``finite partial function range`` () =
-    ran smallsqs
-    |> should equal [1; 4; 9]
+let ``finite partial function graph operator independent function (|=>)`` idx =
+    let (key, _, _) = independentFunctionValues.[idx]
+    let (_, value, _) = independentFunctionValues.[idx]
+    let (_, _, result) = independentFunctionValues.[idx]
+    key |=> value
+    |> graph
+    |> should equal result
+    key |=>+ value
+    |> graph_opt
+    |> should equal result
+    
+let private undefFunctionValues : ((int -> int -> int) list * int)[] = [| 
+    (
+        // idx 0
+        // lib.fpf.undef.Function.01
+        [undef],
+        -99  // Dummy value used as place holder
+    );
+    (
+        // idx 1
+        // lib.fpf.undef.Function.02
+        [],
+        0
+    );
+    (
+        // idx 2
+        // lib.fpf.undef.Function.03
+        [(+)],
+        2
+    );
+    (
+        // idx 3
+        // lib.fpf.undef.Function.04
+        [(+); (*); (-)],
+        2
+    );
+    // Note: This will compile but will cause all these test to fail.
+    //(
+    //    // idx 4
+    //    // lib.fpf.undef.Function.05
+    //    [failwith "undefined function"],
+    //    -99  // Dummy value used as place holder
+    //);
+    |]
 
-// lib.p089
+[<TestCase(0, TestName = "lib.fpf.undef.Function.01", ExpectedException=typeof<System.Exception>, ExpectedMessage="undefined function")>]
+[<TestCase(1, TestName = "lib.fpf.undef.Function.02")>]
+[<TestCase(2, TestName = "lib.fpf.undef.Function.03")>]
+[<TestCase(3, TestName = "lib.fpf.undef.Function.04")>]
+
 [<Test>]
-[<ExpectedException("System.Exception",ExpectedMessage="apply")>]
-let ``finite partial function apply exception`` () =
-    apply smallsqs 9
-    |> should equal ()
+let ``finite partial function undef function`` idx =
+    let (funcs, _) = undefFunctionValues.[idx]
+    let (_, result) = undefFunctionValues.[idx]
+    List.fold (fun acc f -> f acc 2) 0 funcs
+    |> should equal result
+    
+let private mapfValues : (int list * int list * ( int * int) list)[] = [| 
+    (
+        // idx 0
+        // lib.fpf.graph.mapf.01
+        [], [],
+        []
+    );
+    (
+        // idx 1
+        // lib.fpf.graph.mapf.02
+        [1], [1],
+        [(1,5)]
+    );
+    (
+        // idx 2
+        // lib.fpf.graph.mapf.03
+        [1;2;3;4;5;6;7;8;9;10], [1;4;9;16;25;36;49;64;81;100],
+        [(1,5); (2,20); (3,45); (4,80); (5,125); (6,180); (7,245); (8,320); (9,405); (10,500)]
+    );
+    |]
 
-// lib.p090
+[<TestCase(0, TestName = "lib.fpf.mapf.01")>]
+[<TestCase(1, TestName = "lib.fpf.mapf.02")>]
+[<TestCase(2, TestName = "lib.fpf.mapf.03")>]
+
 [<Test>]
-let ``finite partial function tryapplyd default value`` () =
-    tryapplyd smallsqs 9 -1
-    |> should equal -1
+let ``finite partial function graph mapf`` idx =
+    let (keys, _, _) = mapfValues.[idx]
+    let (_, values, _) = mapfValues.[idx]
+    let (_, _, result) = mapfValues.[idx]
+    fpf keys values
+    |> mapf (fun x -> x * 5) 
+    |> graph
+    |> should equal result
+    fpf_opt keys values
+    |> mapf_opt (fun x -> x * 5) 
+    |> graph_opt
+    |> should equal result
 
-// lib.p091
+let private foldlValues : (int list * int list * int)[] = [| 
+    (
+        // idx 0
+        // lib.fpf.graph.foldl.01
+        // lib.fpf.graph.foldr.01
+        [], [],
+        0
+    );
+    (
+        // idx 1
+        // lib.fpf.graph.foldl.02
+        // lib.fpf.graph.foldr.02
+        // (1 * 2) + 1 = 3
+        [1], [1],
+        3
+    );
+    (
+        // idx 2
+        // lib.fpf.graph.foldl.03
+        // lib.fpf.graph.foldr.03
+        // (1 * 2) + 1 + (2 * 2) + 4 = 11
+        [1;2], [1;4],
+        11
+    );
+    (
+        // idx 3
+        // lib.fpf.graph.foldl.04
+        // lib.fpf.graph.foldr.04
+        // (1 * 2) + 1 + (2 * 2) + 4 + (3 * 2) + 9 = 26
+        [1;2;3], [1;4;9],
+        26
+    );
+    (
+        // idx 4
+        // lib.fpf.graph.foldl.05
+        // lib.fpf.graph.foldr.05
+        [1;2;3;4;5;6;7;8;9;10], [1;4;9;16;25;36;49;64;81;100],
+        495
+    );
+    |]
+
+[<TestCase(0, TestName = "lib.fpf.graph.foldl.01")>]
+[<TestCase(1, TestName = "lib.fpf.graph.foldl.02")>]
+[<TestCase(2, TestName = "lib.fpf.graph.foldl.03")>]
+[<TestCase(3, TestName = "lib.fpf.graph.foldl.04")>]
+[<TestCase(4, TestName = "lib.fpf.graph.foldl.05")>]
+
 [<Test>]
-let ``finite partial function tryapplyd`` () =
-    tryapplyd smallsqs 3 -1
-    |> should equal 9
+let ``finite partial function graph foldl`` idx =
+    let (keys, _, _) = foldlValues.[idx]
+    let (_, values, _) = foldlValues.[idx]
+    let (_, _, result) = foldlValues.[idx]
+    fpf keys values
+    |> foldl (fun state key value -> state + (key * 2) + value) 0
+    |> should equal result
+    fpf_opt keys values
+    |> foldl_opt (fun state key value -> state + (key * 2) + value) 0
+    |> should equal result
 
-let words = fpf [1;2;3] [ ["a"]; ["i";"t"]; ["d";"o";"g"] ];;
+[<TestCase(0, TestName = "lib.fpf.graph.foldr.01")>]
+[<TestCase(1, TestName = "lib.fpf.graph.foldr.02")>]
+[<TestCase(2, TestName = "lib.fpf.graph.foldr.03")>]
+[<TestCase(3, TestName = "lib.fpf.graph.foldr.04")>]
+[<TestCase(4, TestName = "lib.fpf.graph.foldr.05")>]
 
-// lib.p092
 [<Test>]
-let ``finite partial function tryapplyl 1`` () =
-    tryapplyl words 1
-    |> should equal ["a"]
+let ``finite partial function graph foldr`` idx =
+    let (keys, _, _) = foldlValues.[idx]
+    let (_, values, _) = foldlValues.[idx]
+    let (_, _, result) = foldlValues.[idx]
+    let map = fpf keys values
+    foldr (fun key value state -> state + (key * 2) + value) map 0
+    |> should equal result
+    let map_opt = fpf_opt keys values
+    foldr_opt (fun key value state -> state + (key * 2) + value) map_opt 0
+    |> should equal result
 
-// lib.p093
-[<Test>]
-let ``finite partial function tryapplyl 2`` () =
-    tryapplyl words 3
-    |> should equal ["d";"o";"g"]
+let private tryapplydValues : ( int list * int list * int * int * int)[] = [| 
+    (
+        // idx 0
+        // lib.fpf.graph.tryapplyd.01
+        [], [],
+        1,
+        0,
+        0
+    );
+    (
+        // idx 1
+        // lib.fpf.graph.tryapplyd.02
+        [1], [1],
+        1,
+        0,
+        1
+    );
+    (
+        // idx 2
+        // lib.fpf.graph.tryapplyd.03
+        [1], [1],
+        2,
+        0,
+        0
+    );
+    (
+        // idx 3
+        // lib.fpf.graph.tryapplyd.04
+        [1; 2], [1; 4],
+        1,
+        0,
+        1
+    );
+    (
+        // idx 4
+        // lib.fpf.graph.tryapplyd.05
+        [1; 2], [1; 4],
+        2,
+        0,
+        4
+    );
+    (
+        // idx 5
+        // lib.fpf.graph.tryapplyd.06
+        [1; 2; 3], [1; 4; 9],
+        1,
+        0,
+        1
+    );
+    (
+        // idx 6
+        // lib.fpf.graph.tryapplyd.07
+        [1; 2; 3], [1; 4; 9],
+        2,
+        0,
+        4
+    );
+    (
+        // idx 7
+        // lib.fpf.graph.tryapplyd.08
+        [1; 2; 3], [1; 4; 9],
+        3,
+        0,
+        9
+    );
+    |]
 
-// lib.p094
-[<Test>]
-let ``finite partial function defined failure`` () =
-    defined smallsqs 9
-    |> should equal false
+[<TestCase(0, TestName = "lib.fpf.graph.tryapplyd.01")>]
+[<TestCase(1, TestName = "lib.fpf.graph.tryapplyd.02")>]
+[<TestCase(2, TestName = "lib.fpf.graph.tryapplyd.03")>]
+[<TestCase(3, TestName = "lib.fpf.graph.tryapplyd.04")>]
+[<TestCase(4, TestName = "lib.fpf.graph.tryapplyd.05")>]
+[<TestCase(5, TestName = "lib.fpf.graph.tryapplyd.06")>]
+[<TestCase(6, TestName = "lib.fpf.graph.tryapplyd.07")>]
+[<TestCase(7, TestName = "lib.fpf.graph.tryapplyd.08")>]
 
-// lib.p095
 [<Test>]
-let ``finite partial function defined success`` () =
-    defined smallsqs 3
-    |> should equal true
+let ``finite partial function graph tryapplyd`` idx =
+    let (keys, _, _, _, _) = tryapplydValues.[idx]
+    let (_, values, _, _, _) = tryapplydValues.[idx]
+    let (_, _, applyKey, _, _) = tryapplydValues.[idx]
+    let (_, _, _, defaultValue, _) = tryapplydValues.[idx]
+    let (_, _, _, _, result) = tryapplydValues.[idx]
+    let map = fpf keys values
+    tryapplyd map applyKey defaultValue
+    |> should equal result
+    let map_opt =fpf_opt keys values
+    tryapplyd_opt map_opt applyKey defaultValue
+    |> should equal result
 
-// lib.p096
-[<Test>]
-let ``finite partial function undefine failure`` () =
-    let smallsqs = fpf [1;2;3] [1;4;9]
-    undefine 9 smallsqs
-    |> should equal (
-        Branch (0,1,
-            (Leaf (2,[(2, 4)])),
-            (Branch (1,2,
-                (Leaf (1,[(1, 1)])),
-                (Leaf (3,[(3, 9)]))
-            ))
-        ))
+let private tryapplylValues : ( int list * (int list) list * int * int list)[] = [| 
+    (
+        // idx 0
+        // lib.fpf.graph.tryapplyl.01
+        [], [],
+        1,
+        []
+    );
+    (
+        // idx 1
+        // lib.fpf.graph.tryapplyl.02
+        [1], [ [1] ],
+        1,
+        [1]
+    );
+    (
+        // idx 2
+        // lib.fpf.graph.tryapplyl.03
+        [1], [ [1] ],
+        2,
+        []
+    );
+    (
+        // idx 3
+        // lib.fpf.graph.tryapplyl.04
+        [1; 2], [ [1]; [4] ],
+        1,
+        [1]
+    );
+    (
+        // idx 4
+        // lib.fpf.graph.tryapplyl.05
+        [1; 2], [ [1]; [4] ],
+        2,
+        [4]
+    );
+    (
+        // idx 5
+        // lib.fpf.graph.tryapplyl.06
+        [1; 2; 3], [ [1]; [4]; [9] ],
+        1,
+        [1]
+    );
+    (
+        // idx 6
+        // lib.fpf.graph.tryapplyl.07
+        [1; 2; 3], [ [1]; [4]; [9] ],
+        2,
+        [4]
+    );
+    (
+        // idx 7
+        // lib.fpf.graph.tryapplyl.08
+        [1; 2; 3], [ [1]; [4]; [9] ],
+        3,
+        [9]
+    );
+    |]
 
-// lib.p097
-[<Test>]
-let ``finite partial function undefine success`` () =
-    let smallsqs = fpf [1;2;3] [1;4;9]
-    undefine 3 smallsqs
-    |> should equal (
-        Branch (0,1,
-            (Leaf (2,[(2, 4)])),
-            (Leaf (1,[(1, 1)]))
-        ))
+[<TestCase(0, TestName = "lib.fpf.graph.tryapplyl.01")>]
+[<TestCase(1, TestName = "lib.fpf.graph.tryapplyl.02")>]
+[<TestCase(2, TestName = "lib.fpf.graph.tryapplyl.03")>]
+[<TestCase(3, TestName = "lib.fpf.graph.tryapplyl.04")>]
+[<TestCase(4, TestName = "lib.fpf.graph.tryapplyl.05")>]
+[<TestCase(5, TestName = "lib.fpf.graph.tryapplyl.06")>]
+[<TestCase(6, TestName = "lib.fpf.graph.tryapplyl.07")>]
+[<TestCase(7, TestName = "lib.fpf.graph.tryapplyl.08")>]
 
-// lib.p098
 [<Test>]
-let ``finite partial function operator update`` () =
-    let pt = 10 |=> 100
-    pt
-    |> should equal (Leaf (10 ,[(10, 100)]))
+let ``finite partial function graph tryapplyl`` idx =
+    let (keys, _, _, _) = tryapplylValues.[idx]
+    let (_, values, _, _) = tryapplylValues.[idx]
+    let (_, _, applyKey, _) = tryapplylValues.[idx]
+    let (_, _, _, result) = tryapplylValues.[idx]
+    let map = fpf keys values
+    tryapplyl map applyKey
+    |> should equal result
+    let map_opt = fpf_opt keys values
+    tryapplyl_opt map_opt applyKey
+    |> should equal result
 
-// lib.p099
-[<Test>]
-let ``finite partial function modifier value`` () =
-    valmod 0 1 (fun z -> z + 5) 0
-    |> should equal 1
+let private definedValues : (int list * int list * int * bool)[] = [| 
+    (
+        // idx 0
+        // lib.fpf.graph.defined.01
+        [], [],
+        1,
+        false
+    );
+    (
+        // idx 1
+        // lib.fpf.graph.defined.02
+        [1], [1],
+        1,
+        true
+    );
+    (
+        // idx 2
+        // lib.fpf.graph.defined.03
+        [1], [1],
+        0,
+        false
+    );
+    (
+        // idx 3
+        // lib.fpf.graph.defined.04
+        [1;2;3;4;5;6;7;8;9;10], [1;4;9;16;25;36;49;64;81;100],
+        1,
+        true
+    );
+    (
+        // idx 4
+        // lib.fpf.graph.defined.05
+        [1;2;3;4;5;6;7;8;9;10], [1;4;9;16;25;36;49;64;81;100],
+        11,
+        false
+    );
+    |]
 
-// lib.p100
-[<Test>]
-let ``finite partial function modifier function`` () =
-    valmod 0 1 (fun z -> z + 5) -1
-    |> should equal 4
+[<TestCase(0, TestName = "lib.fpf.defined.01")>]
+[<TestCase(1, TestName = "lib.fpf.defined.02")>]
+[<TestCase(2, TestName = "lib.fpf.defined.03")>]
+[<TestCase(3, TestName = "lib.fpf.defined.04")>]
+[<TestCase(4, TestName = "lib.fpf.defined.05")>]
 
-// lib.p101
 [<Test>]
-[<ExpectedException("System.Exception",ExpectedMessage="undefined function")>]
-let ``finite partial function undefined function`` () =
-    let y = fun x -> undef x
-    printfn "y: %A" (y 1)
-    |> should equal ()
+let ``finite partial function graph defined`` idx =
+    let (keys, _, _, _) = definedValues.[idx]
+    let (_, values, _, _) = definedValues.[idx]
+    let (_, _, keyValue, _) = definedValues.[idx]
+    let (_, _, _, result) = definedValues.[idx]
+    let map = fpf keys values
+    defined map keyValue
+    |> should equal result
+    let map_opt = fpf_opt keys values
+    defined_opt map_opt keyValue 
+    |> should equal result
+
+let private valmodValues : (int * int * int list * int list)[] = [| 
+    (
+        // idx 0
+        // lib.fpf.graph.valmod.01
+        0, 0,
+        [],
+        []
+    );
+    (
+        // idx 1
+        // lib.fpf.graph.valmod.02
+        0, 1,
+        [],
+        [1]
+    );
+    (
+        // idx 2
+        // lib.fpf.graph.valmod.03
+        1, 0,
+        [],
+        []
+    );
+    (
+        // idx 3
+        // lib.fpf.graph.valmod.04
+        1, 1,
+        [],
+        []
+    );
+    (
+        // idx 4
+        // lib.fpf.graph.valmod.05
+        1, 2,
+        [],
+        [1; 1]
+    );
+    (
+        // idx 5
+        // lib.fpf.graph.valmod.06
+        1, 3,
+        [],
+        [1; 1; 1]
+    );
+    (
+        // idx 6
+        // lib.fpf.graph.valmod.07
+        1, 4,
+        [],
+        [1; 1; 1; 1]
+    );
+    |]
+
+[<TestCase(0, TestName = "lib.fpf.valmod.01")>]
+[<TestCase(1, TestName = "lib.fpf.valmod.02")>]
+[<TestCase(2, TestName = "lib.fpf.valmod.03")>]
+[<TestCase(3, TestName = "lib.fpf.valmod.04")>]
+[<TestCase(4, TestName = "lib.fpf.valmod.05")>]
+[<TestCase(5, TestName = "lib.fpf.valmod.06")>]
+[<TestCase(6, TestName = "lib.fpf.valmod.07")>]
+
+[<Test>]
+let ``finite partial function valdmod`` idx =
+    let (a, _, _, _) = valmodValues.[idx]
+    let (_, x, _, _) = valmodValues.[idx]
+    let (_, _, y, _) = valmodValues.[idx]
+    let (_, _, _, result) = valmodValues.[idx]
+    let result1 = valmod a [] (fun x -> List.replicate x 1) x
+    printfn "result1 : %A" result1
+    result1
+    |> should equal result
