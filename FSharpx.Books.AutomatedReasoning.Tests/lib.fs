@@ -8750,7 +8750,5 @@ let ``finite partial function valdmod`` idx =
     let (_, x, _, _) = valmodValues.[idx]
     let (_, _, y, _) = valmodValues.[idx]
     let (_, _, _, result) = valmodValues.[idx]
-    let result1 = valmod a [] (fun x -> List.replicate x 1) x
-    printfn "result1 : %A" result1
-    result1
+    valmod a [] (fun x -> List.replicate x 1) x
     |> should equal result
