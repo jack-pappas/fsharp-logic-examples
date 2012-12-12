@@ -88,3 +88,88 @@ let private subst_results = [|
 let ``subst`` (f, idx) =
     subst ("y" |=> Var "x") (parse f)
     |> should equal subst_results.[idx]
+
+
+
+let private parseValues : (string * formula<fol>)[] = [| 
+    (
+        // idx 0
+        // fol.p018
+        @"exists a b. a > 1 /\ b > 1 /\
+               ((2 * b = a) \/ (2 * b = 3 * a + 1)) /\ (a = b)",
+        Exists ("a",
+            Exists ("b",
+                And (Atom (R (">", [Var "a"; Fn ("1", [])])),
+                    And (Atom (R (">", [Var "b"; Fn ("1", [])])),
+                        And
+                            (Or (Atom (R ("=", [Fn ("*", [Fn ("2", []); Var "b"]); Var "a"])),
+                                Atom
+                                    (R ("=",
+                                        [Fn ("*", [Fn ("2", []); Var "b"]);
+                                         Fn ("+", [Fn ("*", [Fn ("3", []); Var "a"]); Fn ("1", [])])]))),
+                            Atom (R ("=", [Var "a"; Var "b"])))))))
+    );
+    (
+        // idx 1
+        // fol.p019
+        @"((w + x)^4 + (w + y)^4 + (w + z)^4 +
+           (x + y)^4 + (x + z)^4 + (y + z)^4 +
+           (w - x)^4 + (w - y)^4 + (w - z)^4 +
+           (x - y)^4 + (x - z)^4 + (y - z)^4) / 6 =
+           (w^2 + x^2 + y^2 + z^2)^2",
+            Atom
+             (R ("=",
+               [Fn ("/",
+                 [Fn ("+",
+                   [Fn ("^", [Fn ("+", [Var "w"; Var "x"]); Fn ("4", [])]);
+                    Fn ("+",
+                     [Fn ("^", [Fn ("+", [Var "w"; Var "y"]); Fn ("4", [])]);
+                      Fn ("+",
+                       [Fn ("^", [Fn ("+", [Var "w"; Var "z"]); Fn ("4", [])]);
+                        Fn ("+",
+                         [Fn ("^", [Fn ("+", [Var "x"; Var "y"]); Fn ("4", [])]);
+                          Fn ("+",
+                           [Fn ("^", [Fn ("+", [Var "x"; Var "z"]); Fn ("4", [])]);
+                            Fn ("+",
+                             [Fn ("^",
+                               [Fn ("+", [Var "y"; Var "z"]); Fn ("4", [])]);
+                              Fn ("+",
+                               [Fn ("^",
+                                 [Fn ("-", [Var "w"; Var "x"]); Fn ("4", [])]);
+                                Fn ("+",
+                                 [Fn ("^",
+                                   [Fn ("-", [Var "w"; Var "y"]); Fn ("4", [])]);
+                                  Fn ("+",
+                                   [Fn ("^",
+                                     [Fn ("-", [Var "w"; Var "z"]); Fn ("4", [])]);
+                                    Fn ("+",
+                                     [Fn ("^",
+                                       [Fn ("-", [Var "x"; Var "y"]); Fn ("4", [])]);
+                                      Fn ("+",
+                                       [Fn ("^",
+                                         [Fn ("-", [Var "x"; Var "z"]);
+                                          Fn ("4", [])]);
+                                        Fn ("^",
+                                         [Fn ("-", [Var "y"; Var "z"]);
+                                          Fn ("4", [])])])])])])])])])])])])]);
+                  Fn ("6", [])]);
+                Fn ("^",
+                 [Fn ("+",
+                   [Fn ("^", [Var "w"; Fn ("2", [])]);
+                    Fn ("+",
+                     [Fn ("^", [Var "x"; Fn ("2", [])]);
+                      Fn ("+",
+                       [Fn ("^", [Var "y"; Fn ("2", [])]);
+                        Fn ("^", [Var "z"; Fn ("2", [])])])])]);
+                  Fn ("2", [])])]))
+    )
+    |]
+
+[<TestCase(0, TestName = "fol.p018")>]
+[<TestCase(1, TestName = "fol.p019")>]
+
+let ``parse tests`` (idx) =
+    let (text, _) = parseValues.[idx]
+    let (_, result) = parseValues.[idx]
+    parse text
+    |> should equal result
