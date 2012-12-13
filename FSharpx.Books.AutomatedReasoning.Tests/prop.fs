@@ -10,82 +10,329 @@ open FSharpx.Books.AutomatedReasoning.lib
 open FSharpx.Books.AutomatedReasoning.intro
 open FSharpx.Books.AutomatedReasoning.formulas
 open FSharpx.Books.AutomatedReasoning.prop
+
 open NUnit.Framework
 open FsUnit
 
-// pg. 33
-// ------------------------------------------------------------------------- //
-// Example of use.                                                           //
-// ------------------------------------------------------------------------- //
+let private evalPropFormula_1_Values : (string * (formula<prop> -> formula<prop>) * formula<prop> * string)[] = [| 
+    (
+        // idx 0
+        // prop.p001
+        @"p ==> q <=> r /\ s \/ (t <=> ~ ~u /\ v)",
+        (fun x -> And(x,x)),
+        And
+          (Iff
+             (Imp (Atom (P "p"),Atom (P "q")),
+              Or
+                (And (Atom (P "r"),Atom (P "s")),
+                 Iff (Atom (P "t"),And (Not (Not (Atom (P "u"))),Atom (P "v"))))),
+           Iff
+             (Imp (Atom (P "p"),Atom (P "q")),
+              Or
+                (And (Atom (P "r"),Atom (P "s")),
+                 Iff (Atom (P "t"),And (Not (Not (Atom (P "u"))),Atom (P "v")))))),
+        @"<<(p ==> q <=> r /\ s \/ (t <=> ~(~u) /\ v)) /\ (p ==> q <=> r /\ s \/ (t <=> ~(~u) /\ v))>>"
+    );
+    (
+        // idx 1
+        // prop.p002
+        @"p ==> q <=> r /\ s \/ (t <=> ~ ~u /\ v)",
+        (fun x -> And (Or (x, x), x)),
+        And
+          (Or
+             (Iff
+                (Imp (Atom (P "p"),Atom (P "q")),
+                 Or
+                   (And (Atom (P "r"),Atom (P "s")),
+                    Iff (Atom (P "t"),And (Not (Not (Atom (P "u"))),Atom (P "v"))))),
+              Iff
+                (Imp (Atom (P "p"),Atom (P "q")),
+                 Or
+                   (And (Atom (P "r"),Atom (P "s")),
+                    Iff (Atom (P "t"),And (Not (Not (Atom (P "u"))),Atom (P "v")))))),
+           Iff
+             (Imp (Atom (P "p"),Atom (P "q")),
+              Or
+                (And (Atom (P "r"),Atom (P "s")),
+                 Iff (Atom (P "t"),And (Not (Not (Atom (P "u"))),Atom (P "v")))))),
+        @"<<((p ==> q <=> r /\ s \/ (t <=> ~(~u) /\ v)) \/ (p ==> q <=> r /\ s \/ (t <=> ~(~u) /\ v))) /\ (p ==> q <=> r /\ s \/ (t <=> ~(~u) /\ v))>>"
+    );
+    |]
 
-// prop.p007
-[<TestCase(true, false, true, Result = true)>]
-// prop.p008
-// Harrison #01
-[<TestCase(true, true, false, Result = false)>]
-let ``eval``(p, q, r) =
-    function
+[<TestCase(0, TestName = "prop.p001")>]
+[<TestCase(1, TestName = "prop.p002")>]
+
+[<Test>]
+let ``eval prop formula 1`` idx = 
+    let (prop_formula_1, _, _, _) = evalPropFormula_1_Values.[idx]
+    let (_, prop_formula_2, _, _) = evalPropFormula_1_Values.[idx]
+    let (_, _, astResult, _) = evalPropFormula_1_Values.[idx]
+    let (_, _, _, stringResult) = evalPropFormula_1_Values.[idx]
+    let result = 
+        parse_prop_formula prop_formula_1
+        |> prop_formula_2
+    result
+    |> should equal astResult
+    sprint_prop_formula result
+    |> should equal stringResult
+
+let private eavlBoolOperatorValues : ((bool -> bool -> bool) * bool * bool * bool)[] = [| 
+    (
+        // idx 0
+        // prop.p003
+        (&&),
+        false, false,
+        false
+    );
+    (
+        // idx 
+        // prop.p00
+        (&&),
+        false, true,
+        false
+    );
+    (
+        // idx 
+        // prop.p00
+        (&&),
+        true, false,
+        false
+    );
+    (
+        // idx 
+        // prop.p00
+        (&&),
+        true, true,
+        true
+    );
+    |]
+
+[<TestCase(0, TestName = "prop.p003")>]
+[<TestCase(1, TestName = "prop.p004")>]
+[<TestCase(2, TestName = "prop.p005")>]
+[<TestCase(3, TestName = "prop.p006")>]
+
+[<Test>]
+let ``eval bool operator`` idx = 
+    let (boolOperator, _, _, _) = eavlBoolOperatorValues.[idx]
+    let (_, boolValue_1, _, _) = eavlBoolOperatorValues.[idx]
+    let (_, _, boolValue_2, _) = eavlBoolOperatorValues.[idx]
+    let (_, _, _, result) = eavlBoolOperatorValues.[idx]
+    (boolOperator boolValue_1 boolValue_2)
+    |> should equal result
+
+let private evalPropFormula_2_Values : ((bool -> bool -> bool -> prop -> bool) * string * bool * bool * bool * bool)[] = [| 
+    (
+        // idx 0
+        // prop.p007
+        (fun p q r -> function
         | P "p" -> p
         | P "q" -> q
         | P "r" -> r
-        | _ -> failwith "Invalid property name"
-    |> eval (parse_prop_formula "p /\ q ==> q /\ r")
+        | _ -> failwith "Invalid property name"),
+        @"p /\ q ==> q /\ r",
+        true, false, false,
+        true
+    );
+    (
+        // idx 1
+        // prop.p008
+        (fun p q r -> function
+        | P "p" -> p
+        | P "q" -> q
+        | P "r" -> r
+        | _ -> failwith "Invalid property name"),
+        @"p /\ q ==> q /\ r",
+        true, true, false,
+        false
+    );
+    |]
 
-// pg. 35
-// ------------------------------------------------------------------------- //
-// Example.                                                                  //
-// ------------------------------------------------------------------------- //
+[<TestCase(0, TestName = "prop.p007")>]
+[<TestCase(1, TestName = "prop.p008")>]
 
-// prop.p009
 [<Test>]
-let ``atoms``() =
-    atoms (parse_prop_formula "p /\ q \/ s ==> ~p \/ (r <=> s)")
-    |> should equal [P "p"; P "q"; P "r"; P "s"]
+let ``eval prop formula 2`` idx = 
+    let (func, _, _, _, _, _) = evalPropFormula_2_Values.[idx]
+    let (_, propFormula, _, _, _, _) = evalPropFormula_2_Values.[idx]
+    let (_, _, boolValue_1, _, _, _) = evalPropFormula_2_Values.[idx]
+    let (_, _, _, boolValue_2, _, _) = evalPropFormula_2_Values.[idx]
+    let (_, _, _, _, boolValue_3, _) = evalPropFormula_2_Values.[idx]
+    let (_, _, _, _, _, result) = evalPropFormula_2_Values.[idx]
+    (func boolValue_1 boolValue_2 boolValue_3)
+    |> eval (parse_prop_formula propFormula)
+    |> should equal result
 
-// pg. 41
-// ------------------------------------------------------------------------- //
-// Examples.                                                                 //
-// ------------------------------------------------------------------------- //
+let private atomValues : (string * prop list)[] = [| 
+    (
+        // idx 0
+        // prop.p009
+        "p /\ q \/ s ==> ~p \/ (r <=> s)",
+        [P "p"; P "q"; P "r"; P "s"]
+    );
+    |]
 
-// prop.p014
-// Pelletier #06
-[<TestCase(@"p \/ ~p", Result = true)>]
-// prop.p015
-[<TestCase(@"p \/ q ==> p", Result = false)>]
-// prop.p016
-[<TestCase(@"p \/ q ==> q \/ (p <=> q)", Result = false)>]
-// prop.p017
-[<TestCase(@"(p \/ q) /\ ~(p /\ q) ==> (~p <=> q)", Result = true)>]
-let ``tautology all`` formula  =
-    tautology (parse_prop_formula formula)
+[<TestCase(0, TestName = "prop.p009")>]
 
-// pg. 43
-// ------------------------------------------------------------------------- //
-// Surprising tautologies including Dijkstra's "Golden rule".                //
-// ------------------------------------------------------------------------- //
+[<Test>]
+let ``atom tests`` idx = 
+    let (prop_formula, _) = atomValues.[idx]
+    let (_, result) = atomValues.[idx]
+    atoms (parse_prop_formula prop_formula)
+    |> should equal result
 
-// prop.p019
-// Pelletier #16
-[<TestCase(@"(p ==> q) \/ (q ==> p)", Result = true)>]
-// prop.p020
-[<TestCase(@"p \/ (q <=> r) <=> (p \/ q <=> p \/ r)", Result = true)>]
-// prop.p021
-// Harrison #02 - Equations within equations
-[<TestCase(@"p /\ q <=> ((p <=> q) <=> p \/ q)", Result = true)>]
-// prop.p022
-// Harrison #03 - Equations within equations
-[<TestCase(@"(p ==> q) <=> (~q ==> ~p)", Result = true)>]
-// prop.p023
-[<TestCase(@"(p ==> ~q) <=> (q ==> ~p)", Result = true)>]
-// prop.p024
-[<TestCase(@"(p ==> q) <=> (q ==> p)", Result = false)>]
-let ``surprising tautology`` formula =
-    tautology (parse_prop_formula formula)
+let private tautologyValues : (formula<prop> * bool)[] = [| 
+    (
+        // idx 0
+        // prop.p014
+        // Pelletier #06
+        parse_prop_formula @"p \/ ~p",
+        true
+    );
+    (
+        // idx 1
+        // prop.p015
+        parse_prop_formula @"p \/ q ==> p",
+        false
+    );
+    (
+        // idx 2
+        // prop.p016
+        parse_prop_formula @"p \/ q ==> q \/ (p <=> q)",
+        false
+    );
+    (
+        // idx 3
+        // prop.p017
+        parse_prop_formula @"(p \/ q) /\ ~(p /\ q) ==> (~p <=> q)",
+        true
+    );
+    (
+        // idx 4
+        // prop.p019
+        // Pelletier #16
+        parse_prop_formula @"(p ==> q) \/ (q ==> p)",
+        true
+    );
+    (
+        // idx 5
+        // prop.p020
+        parse_prop_formula @"p \/ (q <=> r) <=> (p \/ q <=> p \/ r)",
+        true
+    );
+    (
+        // idx 6
+        // prop.p021
+        // Harrison #02 - Equations within equations
+        parse_prop_formula @"p /\ q <=> ((p <=> q) <=> p \/ q)",
+        true
+    );
+    (
+        // idx 7
+        // prop.p022 
+        // Harrison #03 - Equations within equations
+        parse_prop_formula @"(p ==> q) <=> (~q ==> ~p)",
+        true
+    );
+    (
+        // idx 8
+        // prop.p023
+        parse_prop_formula @"(p ==> ~q) <=> (q ==> ~p)",
+        true
+    );
+    (
+        // idx 9
+        // prop.p024
+        parse_prop_formula @"(p ==> q) <=> (q ==> p)",
+        false
+    );
+    (
+        // idx 10
+        // prop.p029
+        Iff((parse_prop_formula @"(p <=> q) <=> ~(r ==> s)"),
+         nnf (parse_prop_formula @"(p <=> q) <=> ~(r ==> s)")),
+        true
+    );
+    (
+        // idx 11
+        // prop.p030
+        parse_prop_formula @"(p ==> p') /\ (q ==> q') ==> (p /\ q ==> p' /\ q')",
+        true
+    );
+    (
+        // idx 12
+        // prop.p031
+        parse_prop_formula @"(p ==> p') /\ (q ==> q') ==> (p \/ q ==> p' \/ q')",
+        true
+    );
+    (
+        // idx 13
+        // prop.p039
+        // Harrison #04
+        Iff((parse_prop_formula @"(p \/ q /\ r) /\ (~p \/ ~r)"),
+         dnf (parse_prop_formula @"(p \/ q /\ r) /\ (~p \/ ~r)")),
+        true
+    );
+    (
+        // idx 14
+        // prop.p041
+        // Harrison #04
+        Iff((parse_prop_formula @"(p \/ q /\ r) /\ (~p \/ ~r)"),
+         cnf (parse_prop_formula @"(p \/ q /\ r) /\ (~p \/ ~r)")),
+        true
+    );
+    |]
 
-// pg. 47
-// ------------------------------------------------------------------------- //
-// Some logical equivalences allowing elimination of connectives.            //
-// ------------------------------------------------------------------------- //
+[<TestCase(0, TestName = "prop.p014")>]
+[<TestCase(1, TestName = "prop.p015")>]
+[<TestCase(2, TestName = "prop.p016")>]
+[<TestCase(3, TestName = "prop.p017")>]
+[<TestCase(4, TestName = "prop.p019")>]
+[<TestCase(5, TestName = "prop.p020")>]
+[<TestCase(6, TestName = "prop.p021")>]
+[<TestCase(7, TestName = "prop.p022")>]
+[<TestCase(8, TestName = "prop.p023")>]
+[<TestCase(9, TestName = "prop.p024")>]
+[<TestCase(10, TestName = "prop.p029")>]
+[<TestCase(11, TestName = "prop.p030")>]
+[<TestCase(12, TestName = "prop.p031")>]
+[<TestCase(13, TestName = "prop.p039")>]
+[<TestCase(14, TestName = "prop.p041")>]
+
+[<Test>]
+let ``tautology tests`` idx = 
+    let (prop_formula, _) = tautologyValues.[idx]
+    let (_, result) = tautologyValues.[idx]
+    tautology prop_formula
+    |> should equal result
+
+let private psubstValues : (func<prop,formula<prop>> * string * formula<prop> * string)[] = [| 
+    (
+        // idx 0
+        // prop.p018
+        ((P"p") |=> (parse_prop_formula @"p /\ q")),
+        @"p /\ q /\ p /\ q",
+        And
+            (And (Atom (P "p"),Atom (P "q")),
+                And
+                    (Atom (P "q"),And (And (Atom (P "p"),Atom (P "q")),Atom (P "q")))),
+        @"<<(p /\ q) /\ q /\ (p /\ q) /\ q>>"
+    );
+    |]
+
+[<TestCase(0, TestName = "prop.p018")>]
+
+[<Test>]
+let ``psubst tests`` idx = 
+    let (subst_function, _, _, _) = psubstValues.[idx]
+    let (_, formula, _, _) = psubstValues.[idx]
+    let (_, _, astResult, _) = psubstValues.[idx]
+    let (_, _, _, stringResult) = psubstValues.[idx]
+    let result = psubst subst_function (parse_prop_formula formula)
+    result 
+    |> should equal astResult
+    sprint_prop_formula result
+    |> should equal stringResult
 
 // prop.p025
 [<Test>]
@@ -98,81 +345,816 @@ let ``equivalences``() =
         parse_prop_formula "(p <=> q) <=> ((p ==> q) ==> (q ==> p) ==> false) ==> false"; ]
     |> should be True
 
-// pg. 53
-// ------------------------------------------------------------------------- //
-// Example of NNF function in action.                                        //
-// ------------------------------------------------------------------------- //
+let private dualValues : (string * formula<prop> * string)[] = [| 
+    (
+        // idx 0
+        // prop.p026
+        // Pelletier #06
+        @"p \/ ~p",
+        And (Atom (P "p"),Not (Atom (P "p"))),
+        @"<<p /\ ~p>>"
+    );
+    |]
 
-// prop.p029
+[<TestCase(0, TestName = "prop.p026")>]
+
 [<Test>]
-let ``nnf``() =
-    let fm003 = (parse_prop_formula ("(p <=> q) <=> ~(r ==> s)"))
-    let fm003' = nnf fm003
-    tautology(Iff(fm003,fm003'))
-    |> should be True
+let ``dual tests`` idx = 
+    let (formula, _, _) = dualValues.[idx]
+    let (_, astResult, _) = dualValues.[idx]
+    let (_, _, stringResult) = dualValues.[idx]
+    let result = dual (parse_prop_formula formula)
+    result 
+    |> should equal astResult
+    sprint_prop_formula result
+    |> should equal stringResult
 
-// pg. 54
-// ------------------------------------------------------------------------- //
-// Some tautologies remarked on.                                             //
-// ------------------------------------------------------------------------- //
+let private psimplifyValues : (string * formula<prop> * string)[] = [| 
+    (
+        // idx 0
+        // prop.p027
+        @"(true ==> (x <=> false)) ==> ~(y \/ false /\ z)",
+        Imp (Not (Atom (P "x")),Not (Atom (P "y"))),
+        @"<<~x ==> ~y>>"
+    );
+    (
+        // idx 1
+        // prop.p028
+        @"((x ==> y) ==> true) \/ ~false",
+        formula<prop>.True,
+        @"<<true>>"
+    );
+    |]
 
-// prop.p030
-[<TestCase(@"(p ==> p') /\ (q ==> q') ==> (p /\ q ==> p' /\ q')", Result = true)>]
-// prop.p031
-[<TestCase(@"(p ==> p') /\ (q ==> q') ==> (p \/ q ==> p' \/ q')", Result = true)>]
-let ``remarked tautology`` formula  =
-    tautology (parse_prop_formula formula)
+[<TestCase(0, TestName = "prop.p027")>]
+[<TestCase(1, TestName = "prop.p028")>]
 
-// pg. 58
-// ------------------------------------------------------------------------- //
-// Example.                                                                  //
-// ------------------------------------------------------------------------- //
-
-// prop.p036
-// Harrison #04 - dnf
 [<Test>]
-let ``purednf all``() =
-    purednf (parse_prop_formula ("(p \/ q /\ r) /\ (~p \/ ~r)"))
-    |> should equal [[Atom (P "p"); Not (Atom (P "p"))]; 
-                        [Atom (P "p"); Not (Atom (P "r"))]; 
-                        [Atom (P "q"); Atom (P "r"); Not (Atom (P "p"))]; 
-                        [Atom (P "q"); Atom (P "r"); Not (Atom (P "r"))]]
+let ``psimplify tests`` idx = 
+    let (formula, _, _) = psimplifyValues.[idx]
+    let (_, astResult, _) = psimplifyValues.[idx]
+    let (_, _, stringResult) = psimplifyValues.[idx]
+    let result = psimplify (parse_prop_formula formula)
+    result 
+    |> should equal astResult
+    sprint_prop_formula result
+    |> should equal stringResult
 
-// pg. 59
-// ------------------------------------------------------------------------- //
-// Example.                                                                  //
-// ------------------------------------------------------------------------- //
+let private dnfOrigValues : (string * formula<prop> * string)[] = [| 
+    (
+        // idx 0
+        // prop.p032
+        // Harrison #04 
+        @"(p \/ q /\ r) /\ (~p \/ ~r)",
+        Or
+          (And (Not (Atom (P "p")),And (Atom (P "q"),Atom (P "r"))),
+           Or
+             (And (Atom (P "p"),And (Not (Atom (P "q")),Not (Atom (P "r")))),
+              And (Atom (P "p"),And (Atom (P "q"),Not (Atom (P "r")))))),
+        @"<<~p /\ q /\ r \/ p /\ ~q /\ ~r \/ p /\ q /\ ~r>>"
+    ); 
+    (
+        // idx 1
+        // prop.p034
+        @"p /\ q /\ r /\ s /\ t /\ u \/ u /\ v",
+        Or
+            (And
+               (Not (Atom (P "p")),
+                And
+                  (Not (Atom (P "q")),
+                   And
+                     (Not (Atom (P "r")),
+                      And
+                        (Not (Atom (P "s")),
+                         And
+                           (Not (Atom (P "t")),And (Atom (P "u"),Atom (P "v"))))))),
+             Or
+               (And
+                  (Not (Atom (P "p")),
+                   And
+                     (Not (Atom (P "q")),
+                      And
+                        (Not (Atom (P "r")),
+                         And
+                           (Not (Atom (P "s")),
+                            And (Atom (P "t"),And (Atom (P "u"),Atom (P "v"))))))),
+                Or
+                  (And
+                     (Not (Atom (P "p")),
+                      And
+                        (Not (Atom (P "q")),
+                         And
+                           (Not (Atom (P "r")),
+                            And
+                              (Atom (P "s"),
+                               And
+                                 (Not (Atom (P "t")),
+                                  And (Atom (P "u"),Atom (P "v"))))))),
+                   Or
+                     (And
+                        (Not (Atom (P "p")),
+                         And
+                           (Not (Atom (P "q")),
+                            And
+                              (Not (Atom (P "r")),
+                               And
+                                 (Atom (P "s"),
+                                  And
+                                    (Atom (P "t"),
+                                     And (Atom (P "u"),Atom (P "v"))))))),
+                      Or
+                        (And
+                           (Not (Atom (P "p")),
+                            And
+                              (Not (Atom (P "q")),
+                               And
+                                 (Atom (P "r"),
+                                  And
+                                    (Not (Atom (P "s")),
+                                     And
+                                       (Not (Atom (P "t")),
+                                        And (Atom (P "u"),Atom (P "v"))))))),
+                         Or
+                           (And
+                              (Not (Atom (P "p")),
+                               And
+                                 (Not (Atom (P "q")),
+                                  And
+                                    (Atom (P "r"),
+                                     And
+                                       (Not (Atom (P "s")),
+                                        And
+                                          (Atom (P "t"),
+                                           And (Atom (P "u"),Atom (P "v"))))))),
+                            Or
+                              (And
+                                 (Not (Atom (P "p")),
+                                  And
+                                    (Not (Atom (P "q")),
+                                     And
+                                       (Atom (P "r"),
+                                        And
+                                          (Atom (P "s"),
+                                           And
+                                             (Not (Atom (P "t")),
+                                              And (Atom (P "u"),Atom (P "v"))))))),
+                               Or
+                                 (And
+                                    (Not (Atom (P "p")),
+                                     And
+                                       (Not (Atom (P "q")),
+                                        And
+                                          (Atom (P "r"),
+                                           And
+                                             (Atom (P "s"),
+                                              And
+                                                (Atom (P "t"),
+                                                 And (Atom (P "u"),Atom (P "v"))))))),
+                                  Or
+                                    (And
+                                       (Not (Atom (P "p")),
+                                        And
+                                          (Atom (P "q"),
+                                           And
+                                             (Not (Atom (P "r")),
+                                              And
+                                                (Not (Atom (P "s")),
+                                                 And
+                                                   (Not (Atom (P "t")),
+                                                    And
+                                                      (Atom (P "u"),Atom (P "v"))))))),
+                                     Or
+                                       (And
+                                          (Not (Atom (P "p")),
+                                           And
+                                             (Atom (P "q"),
+                                              And
+                                                (Not (Atom (P "r")),
+                                                 And
+                                                   (Not (Atom (P "s")),
+                                                    And
+                                                      (Atom (P "t"),
+                                                       And
+                                                         (Atom (P "u"),
+                                                          Atom (P "v"))))))),
+                                        Or
+                                          (And
+                                             (Not (Atom (P "p")),
+                                              And
+                                                (Atom (P "q"),
+                                                 And
+                                                   (Not (Atom (P "r")),
+                                                    And
+                                                      (Atom (P "s"),
+                                                       And
+                                                         (Not (Atom (P "t")),
+                                                          And
+                                                            (Atom (P "u"),
+                                                             Atom (P "v"))))))),
+                                           Or
+                                             (And
+                                                (Not (Atom (P "p")),
+                                                 And
+                                                   (Atom (P "q"),
+                                                    And
+                                                      (Not (Atom (P "r")),
+                                                       And
+                                                         (Atom (P "s"),
+                                                          And
+                                                            (Atom (P "t"),
+                                                             And
+                                                               (Atom (P "u"),
+                                                                Atom (P "v"))))))),
+                                              Or
+                                                (And
+                                                   (Not (Atom (P "p")),
+                                                    And
+                                                      (Atom (P "q"),
+                                                       And
+                                                         (Atom (P "r"),
+                                                          And
+                                                            (Not (Atom (P "s")),
+                                                             And
+                                                               (Not
+                                                                  (Atom (P "t")),
+                                                                And
+                                                                  (Atom (P "u"),
+                                                                   Atom (P "v"))))))),
+                                                 Or
+                                                   (And
+                                                      (Not (Atom (P "p")),
+                                                       And
+                                                         (Atom (P "q"),
+                                                          And
+                                                            (Atom (P "r"),
+                                                             And
+                                                               (Not
+                                                                  (Atom (P "s")),
+                                                                And
+                                                                  (Atom (P "t"),
+                                                                   And
+                                                                     (Atom
+                                                                        (P "u"),
+                                                                      Atom
+                                                                        (P "v"))))))),
+                                                    Or
+                                                      (And
+                                                         (Not (Atom (P "p")),
+                                                          And
+                                                            (Atom (P "q"),
+                                                             And
+                                                               (Atom (P "r"),
+                                                                And
+                                                                  (Atom (P "s"),
+                                                                   And
+                                                                     (Not
+                                                                        (Atom
+                                                                           (P "t")),
+                                                                      And
+                                                                        (Atom
+                                                                           (P "u"),
+                                                                         Atom
+                                                                           (P "v"))))))),
+                                                       Or
+                                                         (And
+                                                            (Not (Atom (P "p")),
+                                                             And
+                                                               (Atom (P "q"),
+                                                                And
+                                                                  (Atom (P "r"),
+                                                                   And
+                                                                     (Atom
+                                                                        (P "s"),
+                                                                      And
+                                                                        (Atom
+                                                                           (P "t"),
+                                                                         And
+                                                                           (Atom
+                                                                              (P "u"),
+                                                                            Atom
+                                                                              (P "v"))))))),
+                                                          Or
+                                                            (And
+                                                               (Atom (P "p"),
+                                                                And
+                                                                  (Not
+                                                                     (Atom
+                                                                        (P "q")),
+                                                                   And
+                                                                     (Not
+                                                                        (Atom
+                                                                           (P "r")),
+                                                                      And
+                                                                        (Not
+                                                                           (Atom
+                                                                              (P "s")),
+                                                                         And
+                                                                           (Not
+                                                                              (Atom
+                                                                                 (P "t")),
+                                                                            And
+                                                                              (Atom
+                                                                                 (P "u"),
+                                                                               Atom
+                                                                                 (P "v"))))))),
+                                                             Or
+                                                               (And
+                                                                  (Atom (P "p"),
+                                                                   And
+                                                                     (Not
+                                                                        (Atom
+                                                                           (P "q")),
+                                                                      And
+                                                                        (Not
+                                                                           (Atom
+                                                                              (P "r")),
+                                                                         And
+                                                                           (Not
+                                                                              (Atom
+                                                                                 (P "s")),
+                                                                            And
+                                                                              (Atom
+                                                                                 (P "t"),
+                                                                               And
+                                                                                 (Atom
+                                                                                    (P "u"),
+                                                                                  Atom
+                                                                                    (P "v"))))))),
+                                                                Or
+                                                                  (And
+                                                                     (Atom
+                                                                        (P "p"),
+                                                                      And
+                                                                        (Not
+                                                                           (Atom
+                                                                              (P "q")),
+                                                                         And
+                                                                           (Not
+                                                                              (Atom
+                                                                                 (P "r")),
+                                                                            And
+                                                                              (Atom
+                                                                                 (P "s"),
+                                                                               And
+                                                                                 (Not
+                                                                                    (Atom
+                                                                                       (P "t")),
+                                                                                  And
+                                                                                    (Atom
+                                                                                       (P "u"),
+                                                                                     Atom
+                                                                                       (P "v"))))))),
+                                                                   Or
+                                                                     (And
+                                                                        (Atom
+                                                                           (P "p"),
+                                                                         And
+                                                                           (Not
+                                                                              (Atom
+                                                                                 (P "q")),
+                                                                            And
+                                                                              (Not
+                                                                                 (Atom
+                                                                                    (P "r")),
+                                                                               And
+                                                                                 (Atom
+                                                                                    (P "s"),
+                                                                                  And
+                                                                                    (Atom
+                                                                                       (P "t"),
+                                                                                     And
+                                                                                       (Atom
+                                                                                          (P "u"),
+                                                                                        Atom
+                                                                                          (P "v"))))))),
+                                                                      Or
+                                                                        (And
+                                                                           (Atom
+                                                                              (P "p"),
+                                                                            And
+                                                                              (Not
+                                                                                 (Atom
+                                                                                    (P "q")),
+                                                                               And
+                                                                                 (Atom
+                                                                                    (P "r"),
+                                                                                  And
+                                                                                    (Not
+                                                                                       (Atom
+                                                                                          (P "s")),
+                                                                                     And
+                                                                                       (Not
+                                                                                          (Atom
+                                                                                             (P "t")),
+                                                                                        And
+                                                                                          (Atom
+                                                                                             (P "u"),
+                                                                                           Atom
+                                                                                             (P "v"))))))),
+                                                                         Or
+                                                                           (And
+                                                                              (Atom
+                                                                                 (P "p"),
+                                                                               And
+                                                                                 (Not
+                                                                                    (Atom
+                                                                                       (P "q")),
+                                                                                  And
+                                                                                    (Atom
+                                                                                       (P "r"),
+                                                                                     And
+                                                                                       (Not
+                                                                                          (Atom
+                                                                                             (P "s")),
+                                                                                        And
+                                                                                          (Atom
+                                                                                             (P "t"),
+                                                                                           And
+                                                                                             (Atom
+                                                                                                (P "u"),
+                                                                                              Atom
+                                                                                                (P "v"))))))),
+                                                                            Or
+                                                                              (And
+                                                                                 (Atom
+                                                                                    (P "p"),
+                                                                                  And
+                                                                                    (Not
+                                                                                       (Atom
+                                                                                          (P "q")),
+                                                                                     And
+                                                                                       (Atom
+                                                                                          (P "r"),
+                                                                                        And
+                                                                                          (Atom
+                                                                                             (P "s"),
+                                                                                           And
+                                                                                             (Not
+                                                                                                (Atom
+                                                                                                   (P "t")),
+                                                                                              And
+                                                                                                (Atom
+                                                                                                   (P "u"),
+                                                                                                 Atom
+                                                                                                   (P "v"))))))),
+                                                                               Or
+                                                                                 (And
+                                                                                    (Atom
+                                                                                       (P "p"),
+                                                                                     And
+                                                                                       (Not
+                                                                                          (Atom
+                                                                                             (P "q")),
+                                                                                        And
+                                                                                          (Atom
+                                                                                             (P "r"),
+                                                                                           And
+                                                                                             (Atom
+                                                                                                (P "s"),
+                                                                                              And
+                                                                                                (Atom
+                                                                                                   (P "t"),
+                                                                                                 And
+                                                                                                   (Atom
+                                                                                                      (P "u"),
+                                                                                                    Atom
+                                                                                                      (P "v"))))))),
+                                                                                  Or
+                                                                                    (And
+                                                                                       (Atom
+                                                                                          (P "p"),
+                                                                                        And
+                                                                                          (Atom
+                                                                                             (P "q"),
+                                                                                           And
+                                                                                             (Not
+                                                                                                (Atom
+                                                                                                   (P "r")),
+                                                                                              And
+                                                                                                (Not
+                                                                                                   (Atom
+                                                                                                      (P "s")),
+                                                                                                 And
+                                                                                                   (Not
+                                                                                                      (Atom
+                                                                                                         (P "t")),
+                                                                                                    And
+                                                                                                      (Atom
+                                                                                                         (P "u"),
+                                                                                                       Atom
+                                                                                                         (P "v"))))))),
+                                                                                     Or
+                                                                                       (And
+                                                                                          (Atom
+                                                                                             (P "p"),
+                                                                                           And
+                                                                                             (Atom
+                                                                                                (P "q"),
+                                                                                              And
+                                                                                                (Not
+                                                                                                   (Atom
+                                                                                                      (P "r")),
+                                                                                                 And
+                                                                                                   (Not
+                                                                                                      (Atom
+                                                                                                         (P "s")),
+                                                                                                    And
+                                                                                                      (Atom
+                                                                                                         (P "t"),
+                                                                                                       And
+                                                                                                         (Atom
+                                                                                                            (P "u"),
+                                                                                                          Atom
+                                                                                                            (P "v"))))))),
+                                                                                        Or
+                                                                                          (And
+                                                                                             (Atom
+                                                                                                (P "p"),
+                                                                                              And
+                                                                                                (Atom
+                                                                                                   (P "q"),
+                                                                                                 And
+                                                                                                   (Not
+                                                                                                      (Atom
+                                                                                                         (P "r")),
+                                                                                                    And
+                                                                                                      (Atom
+                                                                                                         (P "s"),
+                                                                                                       And
+                                                                                                         (Not
+                                                                                                            (Atom
+                                                                                                               (P "t")),
+                                                                                                          And
+                                                                                                            (Atom
+                                                                                                               (P "u"),
+                                                                                                             Atom
+                                                                                                               (P "v"))))))),
+                                                                                           Or
+                                                                                             (And
+                                                                                                (Atom
+                                                                                                   (P "p"),
+                                                                                                 And
+                                                                                                   (Atom
+                                                                                                      (P "q"),
+                                                                                                    And
+                                                                                                      (Not
+                                                                                                         (Atom
+                                                                                                            (P "r")),
+                                                                                                       And
+                                                                                                         (Atom
+                                                                                                            (P "s"),
+                                                                                                          And
+                                                                                                            (Atom
+                                                                                                               (P "t"),
+                                                                                                             And
+                                                                                                               (Atom
+                                                                                                                  (P "u"),
+                                                                                                                Atom
+                                                                                                                  (P "v"))))))),
+                                                                                              Or
+                                                                                                (And
+                                                                                                   (Atom
+                                                                                                      (P "p"),
+                                                                                                    And
+                                                                                                      (Atom
+                                                                                                         (P "q"),
+                                                                                                       And
+                                                                                                         (Atom
+                                                                                                            (P "r"),
+                                                                                                          And
+                                                                                                            (Not
+                                                                                                               (Atom
+                                                                                                                  (P "s")),
+                                                                                                             And
+                                                                                                               (Not
+                                                                                                                  (Atom
+                                                                                                                     (P "t")),
+                                                                                                                And
+                                                                                                                  (Atom
+                                                                                                                     (P "u"),
+                                                                                                                   Atom
+                                                                                                                     (P "v"))))))),
+                                                                                                 Or
+                                                                                                   (And
+                                                                                                      (Atom
+                                                                                                         (P "p"),
+                                                                                                       And
+                                                                                                         (Atom
+                                                                                                            (P "q"),
+                                                                                                          And
+                                                                                                            (Atom
+                                                                                                               (P "r"),
+                                                                                                             And
+                                                                                                               (Not
+                                                                                                                  (Atom
+                                                                                                                     (P "s")),
+                                                                                                                And
+                                                                                                                  (Atom
+                                                                                                                     (P "t"),
+                                                                                                                   And
+                                                                                                                     (Atom
+                                                                                                                        (P "u"),
+                                                                                                                      Atom
+                                                                                                                        (P "v"))))))),
+                                                                                                    Or
+                                                                                                      (And
+                                                                                                         (Atom
+                                                                                                            (P "p"),
+                                                                                                          And
+                                                                                                            (Atom
+                                                                                                               (P "q"),
+                                                                                                             And
+                                                                                                               (Atom
+                                                                                                                  (P "r"),
+                                                                                                                And
+                                                                                                                  (Atom
+                                                                                                                     (P "s"),
+                                                                                                                   And
+                                                                                                                     (Not
+                                                                                                                        (Atom
+                                                                                                                           (P "t")),
+                                                                                                                      And
+                                                                                                                        (Atom
+                                                                                                                           (P "u"),
+                                                                                                                         Atom
+                                                                                                                           (P "v"))))))),
+                                                                                                       Or
+                                                                                                         (And
+                                                                                                            (Atom
+                                                                                                               (P "p"),
+                                                                                                             And
+                                                                                                               (Atom
+                                                                                                                  (P "q"),
+                                                                                                                And
+                                                                                                                  (Atom
+                                                                                                                     (P "r"),
+                                                                                                                   And
+                                                                                                                     (Atom
+                                                                                                                        (P "s"),
+                                                                                                                      And
+                                                                                                                        (Atom
+                                                                                                                           (P "t"),
+                                                                                                                         And
+                                                                                                                           (Atom
+                                                                                                                              (P "u"),
+                                                                                                                            Not
+                                                                                                                              (Atom
+                                                                                                                                 (P "v")))))))),
+                                                                                                          And
+                                                                                                            (Atom
+                                                                                                               (P "p"),
+                                                                                                             And
+                                                                                                               (Atom
+                                                                                                                  (P "q"),
+                                                                                                                And
+                                                                                                                  (Atom
+                                                                                                                     (P "r"),
+                                                                                                                   And
+                                                                                                                     (Atom
+                                                                                                                        (P "s"),
+                                                                                                                      And
+                                                                                                                        (Atom
+                                                                                                                           (P "t"),
+                                                                                                                         And
+                                                                                                                           (Atom
+                                                                                                                              (P "u"),
+                                                                                                                            Atom
+                                                                                                                              (P "v"))))))))))))))))))))))))))))))))))))))),
+        @"<<~p /\ ~q /\ ~r /\ ~s /\ ~t /\ u /\ v \/ ~p /\ ~q /\ ~r /\ ~s /\ t /\ u /\ v \/ ~p /\ ~q /\ ~r /\ s /\ ~t /\ u /\ v \/ ~p /\ ~q /\ ~r /\ s /\ t /\ u /\ v \/ ~p /\ ~q /\ r /\ ~s /\ ~t /\ u /\ v \/ ~p /\ ~q /\ r /\ ~s /\ t /\ u /\ v \/ ~p /\ ~q /\ r /\ s /\ ~t /\ u /\ v \/ ~p /\ ~q /\ r /\ s /\ t /\ u /\ v \/ ~p /\ q /\ ~r /\ ~s /\ ~t /\ u /\ v \/ ~p /\ q /\ ~r /\ ~s /\ t /\ u /\ v \/ ~p /\ q /\ ~r /\ s /\ ~t /\ u /\ v \/ ~p /\ q /\ ~r /\ s /\ t /\ u /\ v \/ ~p /\ q /\ r /\ ~s /\ ~t /\ u /\ v \/ ~p /\ q /\ r /\ ~s /\ t /\ u /\ v \/ ~p /\ q /\ r /\ s /\ ~t /\ u /\ v \/ ~p /\ q /\ r /\ s /\ t /\ u /\ v \/ p /\ ~q /\ ~r /\ ~s /\ ~t /\ u /\ v \/ p /\ ~q /\ ~r /\ ~s /\ t /\ u /\ v \/ p /\ ~q /\ ~r /\ s /\ ~t /\ u /\ v \/ p /\ ~q /\ ~r /\ s /\ t /\ u /\ v \/ p /\ ~q /\ r /\ ~s /\ ~t /\ u /\ v \/ p /\ ~q /\ r /\ ~s /\ t /\ u /\ v \/ p /\ ~q /\ r /\ s /\ ~t /\ u /\ v \/ p /\ ~q /\ r /\ s /\ t /\ u /\ v \/ p /\ q /\ ~r /\ ~s /\ ~t /\ u /\ v \/ p /\ q /\ ~r /\ ~s /\ t /\ u /\ v \/ p /\ q /\ ~r /\ s /\ ~t /\ u /\ v \/ p /\ q /\ ~r /\ s /\ t /\ u /\ v \/ p /\ q /\ r /\ ~s /\ ~t /\ u /\ v \/ p /\ q /\ r /\ ~s /\ t /\ u /\ v \/ p /\ q /\ r /\ s /\ ~t /\ u /\ v \/ p /\ q /\ r /\ s /\ t /\ u /\ ~v \/ p /\ q /\ r /\ s /\ t /\ u /\ v>>"
+    );
+    |]
+
+[<TestCase(0, TestName = "prop.p032")>]
+[<TestCase(1, TestName = "prop.p034")>]
+
+[<Test>]
+let ``dnf original tests`` idx = 
+    let (formula, _, _) = dnfOrigValues.[idx]
+    let (_, astResult, _) = dnfOrigValues.[idx]
+    let (_, _, stringResult) = dnfOrigValues.[idx]
+    let result = dnfOrig (parse_prop_formula formula)
+    result 
+    |> should equal astResult
+    sprint_prop_formula result
+    |> should equal stringResult
+
+let private dnfRawValues : (string * formula<prop> * string)[] = [| 
+    (
+        // idx 0
+        // prop.p035
+        // Harrison #04 
+        @"(p \/ q /\ r) /\ (~p \/ ~r)",
+        Or
+            (Or
+               (And (Atom (P "p"),Not (Atom (P "p"))),
+                And (And (Atom (P "q"),Atom (P "r")),Not (Atom (P "p")))),
+             Or
+               (And (Atom (P "p"),Not (Atom (P "r"))),
+                And (And (Atom (P "q"),Atom (P "r")),Not (Atom (P "r"))))),
+        @"<<(p /\ ~p \/ (q /\ r) /\ ~p) \/ p /\ ~r \/ (q /\ r) /\ ~r>>"
+    );
+    |]
+
+[<TestCase(0, TestName = "prop.p035")>]
+
+[<Test>]
+let ``dnf raw tests`` idx = 
+    let (formula, _, _) = dnfRawValues.[idx]
+    let (_, astResult, _) = dnfRawValues.[idx]
+    let (_, _, stringResult) = dnfRawValues.[idx]
+    let result = rawdnf (parse_prop_formula formula)
+    result 
+    |> should equal astResult
+    sprint_prop_formula result
+    |> should equal stringResult
+
+let private dnfPureValues : (string * formula<prop> list list * string)[] = [| 
+    (
+        // idx 0
+        // prop.p036
+        // Harrison #04 
+        @"(p \/ q /\ r) /\ (~p \/ ~r)",
+        [[Atom (P "p"); Not (Atom (P "p"))];
+         [Atom (P "p"); Not (Atom (P "r"))];
+         [Atom (P "q"); Atom (P "r"); Not (Atom (P "p"))];
+         [Atom (P "q"); Atom (P "r"); Not (Atom (P "r"))]],
+        @"[[<<p>>; <<~p>>]; [<<p>>; <<~r>>]; [<<q>>; <<r>>; <<~p>>];
+          [<<q>>; <<r>>; <<~r>>]]"
+    );
+    |]
+
+[<TestCase(0, TestName = "prop.p036")>]
+
+[<Test>]
+let ``dnf Pure tests`` idx = 
+    let (formula, _, _) = dnfPureValues.[idx]
+    let (_, astResult, _) = dnfPureValues.[idx]
+    let (_, _, stringResult) = dnfPureValues.[idx]
+    let result = purednf (parse_prop_formula formula)
+    result 
+    |> should equal astResult
+    // TODO: Figure out how to generate stringResult. Works in FSI but not here.
+//    sprint_prop_formula result
+//    |> should equal stringResult
 
 // prop.p037
-// Harrison #04 - dnf
+// Harrison #04
 [<Test>]
 let ``non-trivial purednf``() =
     List.filter (non trivial) (purednf (parse_prop_formula ("(p \/ q /\ r) /\ (~p \/ ~r)")))
     |> should equal [[Atom (P "p"); Not (Atom (P "r"))]; 
                         [Atom (P "q"); Atom (P "r"); Not (Atom (P "p"))]]
 
-// pg. 59
-// ------------------------------------------------------------------------- //
-// Example.                                                                  //
-// ------------------------------------------------------------------------- //
-    
-// prop.p038
-// Harrison #04 - dnf
-[<Test>]
-let ``dnf``() =
-    let fm005 = (parse_prop_formula ("(p \/ q /\ r) /\ (~p \/ ~r)"))
-    tautology(Iff(fm005,dnf fm005))
-    |> should be True
+let private dnfValues : (string * formula<prop> * string)[] = [| 
+    (
+        // idx 0
+        // prop.p038
+        // Harrison #04 
+        @"(p \/ q /\ r) /\ (~p \/ ~r)",
+        Or
+            (And (Atom (P "p"),Not (Atom (P "r"))),
+             And (Atom (P "q"),And (Atom (P "r"),Not (Atom (P "p"))))),
+        @"<<p /\ ~r \/ q /\ r /\ ~p>>"
+    );
+    |]
 
-// pg. 61
-// ------------------------------------------------------------------------- //
-// Example.                                                                  //
-// ------------------------------------------------------------------------- //
-    
-// prop.p040
-// Harrison #04 - dnf
+[<TestCase(0, TestName = "prop.p038")>]
+
 [<Test>]
-let ``cnf``() =
-    let fm006 = (parse_prop_formula ("(p \/ q /\ r) /\ (~p \/ ~r)"))
-    tautology(Iff(fm006,cnf fm006))
-    |> should be True
+let ``dnf tests`` idx = 
+    let (formula, _, _) = dnfValues.[idx]
+    let (_, astResult, _) = dnfValues.[idx]
+    let (_, _, stringResult) = dnfValues.[idx]
+    let result = dnf (parse_prop_formula formula)
+    result 
+    |> should equal astResult
+    sprint_prop_formula result
+    |> should equal stringResult
+
+let private cnfValues : (string * formula<prop> * string)[] = [| 
+    (
+        // idx 0
+        // prop.p040
+        // Harrison #04 
+        @"(p \/ q /\ r) /\ (~p \/ ~r)",
+        And
+            (Or (Atom (P "p"),Atom (P "q")),
+             And
+               (Or (Atom (P "p"),Atom (P "r")),
+                Or (Not (Atom (P "p")),Not (Atom (P "r"))))),
+        @"<<(p \/ q) /\ (p \/ r) /\ (~p \/ ~r)>>"
+    );
+    |]
+
+[<TestCase(0, TestName = "prop.p040")>]
+
+[<Test>]
+let ``cnf tests`` idx = 
+    let (formula, _, _) = cnfValues.[idx]
+    let (_, astResult, _) = cnfValues.[idx]
+    let (_, _, stringResult) = cnfValues.[idx]
+    let result = cnf (parse_prop_formula formula)
+    result 
+    |> should equal astResult
+    sprint_prop_formula result
+    |> should equal stringResult

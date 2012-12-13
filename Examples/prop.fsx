@@ -208,7 +208,7 @@ tautology (parse_prop_formula (@"(p ==> p') /\ (q ==> q') ==> (p \/ q ==> p' \/ 
 // Examples.                                                                 //
 // ------------------------------------------------------------------------- //
 
-// Harrison #04 - dnf
+// Harrison #04
 let fm004 = parse_prop_formula (@"(p \/ q /\ r) /\ (~p \/ ~r)");;
 
 // prop.p032
@@ -227,7 +227,7 @@ dnfOrig (parse_prop_formula (@"p /\ q /\ r /\ s /\ t /\ u \/ u /\ v"));;
 //
 
 // prop.p035
-// Harrison #04 - dnf
+// Harrison #04
 rawdnf (parse_prop_formula (@"(p \/ q /\ r) /\ (~p \/ ~r)"));;
 
 // pg. 58
@@ -236,7 +236,7 @@ rawdnf (parse_prop_formula (@"(p \/ q /\ r) /\ (~p \/ ~r)"));;
 // ------------------------------------------------------------------------- //
 
 // prop.p036
-// Harrison #04 - dnf
+// Harrison #04
 purednf (parse_prop_formula (@"(p \/ q /\ r) /\ (~p \/ ~r)"));;
 
 // pg. 59
@@ -245,7 +245,7 @@ purednf (parse_prop_formula (@"(p \/ q /\ r) /\ (~p \/ ~r)"));;
 // ------------------------------------------------------------------------- //
 
 // prop.p037
-// Harrison #04 - dnf
+// Harrison #04
 List.filter (non trivial) (purednf (parse_prop_formula (@"(p \/ q /\ r) /\ (~p \/ ~r)")));;
 
 // pg. 59
@@ -253,7 +253,7 @@ List.filter (non trivial) (purednf (parse_prop_formula (@"(p \/ q /\ r) /\ (~p \
 // Example.                                                                  //
 // ------------------------------------------------------------------------- //
 
-// Harrison #04 - dnf
+// Harrison #04
 let fm005 = parse_prop_formula (@"(p \/ q /\ r) /\ (~p \/ ~r)");;
 
 // prop.p038
@@ -267,7 +267,7 @@ tautology(Iff(fm005,dnf fm005));;
 // Example.                                                                  //
 // ------------------------------------------------------------------------- //
 
-// Harrison #04 - dnf
+// Harrison #04
 let fm006 = parse_prop_formula (@"(p \/ q /\ r) /\ (~p \/ ~r)");;
 
 // prop.p040
