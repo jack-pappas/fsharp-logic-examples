@@ -31,7 +31,8 @@ let private evalPropFormula_1_Values : (string * (formula<prop> -> formula<prop>
               Or
                 (And (Atom (P "r"),Atom (P "s")),
                  Iff (Atom (P "t"),And (Not (Not (Atom (P "u"))),Atom (P "v")))))),
-        @"<<(p ==> q <=> r /\ s \/ (t <=> ~(~u) /\ v)) /\ (p ==> q <=> r /\ s \/ (t <=> ~(~u) /\ v))>>"
+        @"<<(p ==> q <=> r /\ s \/ (t <=> ~(~u) /\ v)) /\" + 
+          " (p ==> q <=> r /\ s \/ (t <=> ~(~u) /\ v))>>"
     );
     (
         // idx 1
@@ -55,7 +56,9 @@ let private evalPropFormula_1_Values : (string * (formula<prop> -> formula<prop>
               Or
                 (And (Atom (P "r"),Atom (P "s")),
                  Iff (Atom (P "t"),And (Not (Not (Atom (P "u"))),Atom (P "v")))))),
-        @"<<((p ==> q <=> r /\ s \/ (t <=> ~(~u) /\ v)) \/ (p ==> q <=> r /\ s \/ (t <=> ~(~u) /\ v))) /\ (p ==> q <=> r /\ s \/ (t <=> ~(~u) /\ v))>>"
+        @"<<((p ==> q <=> r /\ s \/ (t <=> ~(~u) /\ v)) \/ " + 
+            "(p ==> q <=> r /\ s \/ (t <=> ~(~u) /\ v))) /\ " + 
+            "(p ==> q <=> r /\ s \/ (t <=> ~(~u) /\ v))>>"
     );
     |]
 
@@ -86,21 +89,21 @@ let private eavlBoolOperatorValues : ((bool -> bool -> bool) * bool * bool * boo
     );
     (
         // idx 
-        // prop.p00
+        // prop.p004
         (&&),
         false, true,
         false
     );
     (
         // idx 
-        // prop.p00
+        // prop.p005
         (&&),
         true, false,
         false
     );
     (
         // idx 
-        // prop.p00
+        // prop.p006
         (&&),
         true, true,
         true
@@ -125,6 +128,7 @@ let private evalPropFormula_2_Values : ((bool -> bool -> bool -> prop -> bool) *
     (
         // idx 0
         // prop.p007
+        // Harrison #01 
         (fun p q r -> function
         | P "p" -> p
         | P "q" -> q
@@ -137,6 +141,7 @@ let private evalPropFormula_2_Values : ((bool -> bool -> bool -> prop -> bool) *
     (
         // idx 1
         // prop.p008
+        // Harrison #01 
         (fun p q r -> function
         | P "p" -> p
         | P "q" -> q
@@ -1020,7 +1025,39 @@ let private dnfOrigValues : (string * formula<prop> * string)[] = [|
                                                                                                                               (P "u"),
                                                                                                                             Atom
                                                                                                                               (P "v"))))))))))))))))))))))))))))))))))))))),
-        @"<<~p /\ ~q /\ ~r /\ ~s /\ ~t /\ u /\ v \/ ~p /\ ~q /\ ~r /\ ~s /\ t /\ u /\ v \/ ~p /\ ~q /\ ~r /\ s /\ ~t /\ u /\ v \/ ~p /\ ~q /\ ~r /\ s /\ t /\ u /\ v \/ ~p /\ ~q /\ r /\ ~s /\ ~t /\ u /\ v \/ ~p /\ ~q /\ r /\ ~s /\ t /\ u /\ v \/ ~p /\ ~q /\ r /\ s /\ ~t /\ u /\ v \/ ~p /\ ~q /\ r /\ s /\ t /\ u /\ v \/ ~p /\ q /\ ~r /\ ~s /\ ~t /\ u /\ v \/ ~p /\ q /\ ~r /\ ~s /\ t /\ u /\ v \/ ~p /\ q /\ ~r /\ s /\ ~t /\ u /\ v \/ ~p /\ q /\ ~r /\ s /\ t /\ u /\ v \/ ~p /\ q /\ r /\ ~s /\ ~t /\ u /\ v \/ ~p /\ q /\ r /\ ~s /\ t /\ u /\ v \/ ~p /\ q /\ r /\ s /\ ~t /\ u /\ v \/ ~p /\ q /\ r /\ s /\ t /\ u /\ v \/ p /\ ~q /\ ~r /\ ~s /\ ~t /\ u /\ v \/ p /\ ~q /\ ~r /\ ~s /\ t /\ u /\ v \/ p /\ ~q /\ ~r /\ s /\ ~t /\ u /\ v \/ p /\ ~q /\ ~r /\ s /\ t /\ u /\ v \/ p /\ ~q /\ r /\ ~s /\ ~t /\ u /\ v \/ p /\ ~q /\ r /\ ~s /\ t /\ u /\ v \/ p /\ ~q /\ r /\ s /\ ~t /\ u /\ v \/ p /\ ~q /\ r /\ s /\ t /\ u /\ v \/ p /\ q /\ ~r /\ ~s /\ ~t /\ u /\ v \/ p /\ q /\ ~r /\ ~s /\ t /\ u /\ v \/ p /\ q /\ ~r /\ s /\ ~t /\ u /\ v \/ p /\ q /\ ~r /\ s /\ t /\ u /\ v \/ p /\ q /\ r /\ ~s /\ ~t /\ u /\ v \/ p /\ q /\ r /\ ~s /\ t /\ u /\ v \/ p /\ q /\ r /\ s /\ ~t /\ u /\ v \/ p /\ q /\ r /\ s /\ t /\ u /\ ~v \/ p /\ q /\ r /\ s /\ t /\ u /\ v>>"
+        @"<<~p /\ ~q /\ ~r /\ ~s /\ ~t /\ u /\ v \/ " + 
+           "~p /\ ~q /\ ~r /\ ~s /\ t /\ u /\ v \/ " + 
+           "~p /\ ~q /\ ~r /\ s /\ ~t /\ u /\ v \/ " + 
+           "~p /\ ~q /\ ~r /\ s /\ t /\ u /\ v \/ " + 
+           "~p /\ ~q /\ r /\ ~s /\ ~t /\ u /\ v \/ " + 
+           "~p /\ ~q /\ r /\ ~s /\ t /\ u /\ v \/ " + 
+           "~p /\ ~q /\ r /\ s /\ ~t /\ u /\ v \/ " + 
+           "~p /\ ~q /\ r /\ s /\ t /\ u /\ v \/ " + 
+           "~p /\ q /\ ~r /\ ~s /\ ~t /\ u /\ v \/ " + 
+           "~p /\ q /\ ~r /\ ~s /\ t /\ u /\ v \/ " + 
+           "~p /\ q /\ ~r /\ s /\ ~t /\ u /\ v \/ " + 
+           "~p /\ q /\ ~r /\ s /\ t /\ u /\ v \/ " + 
+           "~p /\ q /\ r /\ ~s /\ ~t /\ u /\ v \/ " + 
+           "~p /\ q /\ r /\ ~s /\ t /\ u /\ v \/ " + 
+           "~p /\ q /\ r /\ s /\ ~t /\ u /\ v \/ " + 
+           "~p /\ q /\ r /\ s /\ t /\ u /\ v \/ " + 
+           "p /\ ~q /\ ~r /\ ~s /\ ~t /\ u /\ v \/ " + 
+           "p /\ ~q /\ ~r /\ ~s /\ t /\ u /\ v \/ " + 
+           "p /\ ~q /\ ~r /\ s /\ ~t /\ u /\ v \/ " + 
+           "p /\ ~q /\ ~r /\ s /\ t /\ u /\ v \/ " + 
+           "p /\ ~q /\ r /\ ~s /\ ~t /\ u /\ v \/ " + 
+           "p /\ ~q /\ r /\ ~s /\ t /\ u /\ v \/ " + 
+           "p /\ ~q /\ r /\ s /\ ~t /\ u /\ v \/ " + 
+           "p /\ ~q /\ r /\ s /\ t /\ u /\ v \/ " + 
+           "p /\ q /\ ~r /\ ~s /\ ~t /\ u /\ v \/ " + 
+           "p /\ q /\ ~r /\ ~s /\ t /\ u /\ v \/ " + 
+           "p /\ q /\ ~r /\ s /\ ~t /\ u /\ v \/ " + 
+           "p /\ q /\ ~r /\ s /\ t /\ u /\ v \/ " + 
+           "p /\ q /\ r /\ ~s /\ ~t /\ u /\ v \/ " + 
+           "p /\ q /\ r /\ ~s /\ t /\ u /\ v \/ " + 
+           "p /\ q /\ r /\ s /\ ~t /\ u /\ v \/ " + 
+           "p /\ q /\ r /\ s /\ t /\ u /\ ~v \/ " + 
+           "p /\ q /\ r /\ s /\ t /\ u /\ v>>"
     );
     |]
 
@@ -1158,3 +1195,59 @@ let ``cnf tests`` idx =
     |> should equal astResult
     sprint_prop_formula result
     |> should equal stringResult
+
+let private truthTableValues : (string * string)[] = [| 
+    (
+        // idx 0
+        // prop.p010
+        // Harrison #01 
+        @"p /\ q ==> q /\ r", 
+        "p     q     r     | formula\r\n" + 
+        "---------------------------\r\n" + 
+        "false false false | true  \r\n" + 
+        "false false true  | true  \r\n" + 
+        "false true  false | true  \r\n" + 
+        "false true  true  | true  \r\n" + 
+        "true  false false | true  \r\n" + 
+        "true  false true  | true  \r\n" + 
+        "true  true  false | false \r\n" + 
+        "true  true  true  | true  \r\n" + 
+        "---------------------------\r\n\r\n"
+    );
+    (
+        // idx 1
+        // prop.p012
+        // Pelletier #08
+        @"((p ==> q) ==> p) ==> p", 
+        "p     q     | formula\r\n" + 
+        "---------------------\r\n" + 
+        "false false | true  \r\n" + 
+        "false true  | true  \r\n" + 
+        "true  false | true  \r\n" + 
+        "true  true  | true  \r\n" +
+         "---------------------\r\n\r\n"
+    );
+    (
+        // idx 2
+        // prop.p013
+        @"p /\ ~p", 
+        "p     | formula\r\n" + 
+        "---------------\r\n" + 
+        "false | false \r\n" + 
+        "true  | false \r\n" + 
+        "---------------\r\n\r\n"
+    );
+    |]
+
+[<TestCase(0, TestName = "prop.p010")>]
+[<TestCase(1, TestName = "prop.p012")>]
+[<TestCase(2, TestName = "prop.p013")>]
+
+[<Test>]
+let ``truthTable tests`` idx = 
+    let (formula, _) = truthTableValues.[idx]
+    let (_, result) = truthTableValues.[idx]
+    let result1 = sprint_truthtable (parse_prop_formula formula)
+    printfn "result1: %A" result1
+    result1
+    |> should equal result

@@ -98,8 +98,8 @@ let rec onallvaluations subfn v ats =
             else v q
         onallvaluations subfn (v' false) ps
         && onallvaluations subfn (v' true) ps
-            
-let print_truthtable fm =
+
+let fprint_truthtable sw fm =
     // [P "p"; P "q"; P "r"]
     let ats = atoms fm
     // 5 + 1 = length of false + length of space
@@ -109,15 +109,19 @@ let print_truthtable fm =
     let mk_row v =
         let lis = List.map (fun x -> truthstring (v x)) ats
         let ans = truthstring (eval fm v)
-        printf "%s" (List.foldBack (+) lis ("| " + ans))
-        printfn ""
+        fprintf sw "%s" (List.foldBack (+) lis ("| " + ans))
+        fprintfn sw ""
         true
     let seperator = String.replicate (width * (List.length ats) + 9) "-"
-    printfn "%s" (List.foldBack (fun s t -> fixw(pname s) + t) ats "| formula")
-    printfn "%s" seperator
+    fprintfn sw "%s" (List.foldBack (fun s t -> fixw(pname s) + t) ats "| formula")
+    fprintfn sw "%s" seperator
     let _ = onallvaluations mk_row (fun x -> false) ats
-    printfn "%s" seperator
-    printfn ""
+    fprintfn sw "%s" seperator
+    fprintfn sw ""
+
+// Actuals functions to call from other modules
+let inline print_truthtable f = fprint_truthtable stdout f
+let inline sprint_truthtable f = writeToString (fun sw -> fprint_truthtable sw f)
 
 // pg. 41
 // ------------------------------------------------------------------------- //
