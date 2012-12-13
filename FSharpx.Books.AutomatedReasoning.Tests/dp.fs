@@ -12,46 +12,92 @@ open FSharpx.Books.AutomatedReasoning.prop
 open FSharpx.Books.AutomatedReasoning.propexamples
 open FSharpx.Books.AutomatedReasoning.defcnf
 open FSharpx.Books.AutomatedReasoning.dp
+
 open NUnit.Framework
 open FsUnit
 
-(* NOTE : Below tests take a few seconds to complete! *)
+let private dptautValues : (formula<prop> * bool)[] = [| 
+    (
+        // idx 0
+        // dp.p002
+        (prime 11),
+        true
+    );
+    |]
 
-// pg. 84
-// ------------------------------------------------------------------------- //
-// Examples.                                                                 //
-// ------------------------------------------------------------------------- //
+[<TestCase(0, TestName = "dp.p002")>]
 
-// dp.p002
 [<Test>]
-let ``dptaut``() =
-    dptaut(prime 11)
-    |> should be True
+let ``dptaut tests`` idx = 
+    let (prop_formula, _) = dptautValues.[idx]
+    let (_, result) = dptautValues.[idx]
+    dptaut prop_formula
+    |> should equal result
 
-// pg. 85
-// ------------------------------------------------------------------------- //
-// Example.                                                                  //
-// ------------------------------------------------------------------------- //
+let private dplltautValues : (formula<prop> * bool)[] = [| 
+    (
+        // idx 0
+        // dp.p003
+        (prime 11),
+        true
+    );
+    |]
 
-// dp.p003
+[<TestCase(0, TestName = "dp.p003")>]
+
 [<Test>]
-let ``dplltaut``() =
-    dplltaut(prime 11)
-    |> should be True
+let ``dplltaut tests`` idx = 
+    let (prop_formula, _) = dplltautValues.[idx]
+    let (_, result) = dplltautValues.[idx]
+    dplltaut prop_formula
+    |> should equal result
 
-// pg. 89
-// ------------------------------------------------------------------------- //
-// Examples.                                                                 //
-// ------------------------------------------------------------------------- //
+let private dplitautValues : (formula<prop> * bool)[] = [| 
+    (
+        // idx 0
+        // dp.p004
+        (prime 101),
+        true
+    );
+    (
+        // idx 1
+        // dp.p006
+        (prime 11),
+        true
+    );
+    |]
 
-// dp.p004
+[<TestCase(0, TestName = "dp.p004", Category = "LongRunning")>]
+[<TestCase(1, TestName = "dp.p006")>]
+
 [<Test>]
-let ``dplitaut``() =
-    dplitaut(prime 13) // Use 13 instead of 101 for fast response
-    |> should be True
+let ``dplitaut tests`` idx = 
+    let (prop_formula, _) = dplitautValues.[idx]
+    let (_, result) = dplitautValues.[idx]
+    dplitaut prop_formula
+    |> should equal result
+    
+let private dplbtautValues : (formula<prop> * bool)[] = [| 
+    (
+        // idx 0
+        // dp.p005
+        (prime 101),
+        true
+    );
+    (
+        // idx 1
+        // dp.p007
+        (prime 11),
+        true
+    );
+    |]
 
-// dp.p005
+[<TestCase(0, TestName = "dp.p004", Category = "LongRunning")>]
+[<TestCase(1, TestName = "dp.p006")>]
+
 [<Test>]
-let ``dplbtaut``() =
-    dplbtaut(prime 13)  // Use 13 instead of 101 for fast response
-    |> should be True
+let ``dplbtaut tests`` idx = 
+    let (prop_formula, _) = dplbtautValues.[idx]
+    let (_, result) = dplbtautValues.[idx]
+    dplbtaut prop_formula
+    |> should equal result
