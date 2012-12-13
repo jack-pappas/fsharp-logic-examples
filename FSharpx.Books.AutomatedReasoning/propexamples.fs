@@ -178,4 +178,3 @@ let prime p =
             Not (And (multiplier m u v out (n - 1), congruent_to out p (max n (2 * n - 2))))
         | _ -> failwith "prime"
     | _ -> failwith "prime"
-

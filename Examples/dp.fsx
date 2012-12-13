@@ -19,11 +19,9 @@ open FSharpx.Books.AutomatedReasoning.dp
 // ------------------------------------------------------------------------- //
 
 // dp.p001
-// Harrison #05 - prime
 tautology(prime 11);;
 
 // dp.p002
-// Harrison #05 - prime
 dptaut(prime 11);;
 
 // pg. 85
@@ -32,7 +30,6 @@ dptaut(prime 11);;
 // ------------------------------------------------------------------------- //
 
 // dp.p003
-// Harrison #05 - prime
 dplltaut(prime 11);;
 
 // pg. 89
@@ -41,11 +38,9 @@ dplltaut(prime 11);;
 // ------------------------------------------------------------------------- //
 
 // dp.p004
-// Harrison #05 - prime
 // Real: 00:05:30.392, CPU: 00:05:30.031, GC gen0: 1458, gen1: 137, gen2: 4
 dplitaut(prime 101);;
 
 // dp.p005
-// Harrison #05 - prime
 // Real: 00:01:37.614, CPU: 00:01:37.453, GC gen0: 426, gen1: 14, gen2: 1
 dplbtaut(prime 101);;

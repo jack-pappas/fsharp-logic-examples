@@ -42,14 +42,10 @@ ripplecarry x y c out 2;;
 // ------------------------------------------------------------------------- //
 
 // propexamples.p005
-// Harrison #05 - prime
 tautology(prime 7);;
 
 // propexamples.p006
-// Harrison #05 - prime
 tautology(prime 9);;
 
 // propexamples.p007
-// Harrison #05 - prime
 tautology(prime 11);;
-

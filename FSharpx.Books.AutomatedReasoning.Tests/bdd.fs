@@ -32,7 +32,6 @@ let ``bddtaut``() =
 // ------------------------------------------------------------------------- //
 
 // bdd.p002
-// Harrison #05 - prime
 [<Test>]
 let ``ebddtaut with prime``() =
     ebddtaut (prime 101)
@@ -43,5 +42,3 @@ let ``ebddtaut with prime``() =
 let ``ebddtaut with mk_adder_test``() =
     ebddtaut (mk_adder_test 9 5)
     |> should be True
-
-
