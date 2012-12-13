@@ -15,30 +15,45 @@ open FSharpx.Books.AutomatedReasoning.bdd
 open NUnit.Framework
 open FsUnit
 
-// pg. 105
-// ------------------------------------------------------------------------- //
-// Examples.                                                                 //
-// ------------------------------------------------------------------------- //
+let private bddtautValues : (formula<prop> * bool)[] = [| 
+    (
+        // idx 0
+        // bdd.p001
+        (mk_adder_test 4 2),
+        true
+    );
+    |]
 
-// bdd.p001
+[<TestCase(0, TestName = "bdd.p001")>]
+
 [<Test>]
-let ``bddtaut``() =
-    bddtaut (mk_adder_test 4 2)
-    |> should be True
+let ``bddtaut tests`` idx = 
+    let (formula, _) = bddtautValues.[idx]
+    let (_, result) = bddtautValues.[idx]
+    bddtaut formula
+    |> should equal result
 
-// pg. 107
-// ------------------------------------------------------------------------- //
-// Examples.                                                                 //
-// ------------------------------------------------------------------------- //
+let private ebddtautValues : (formula<prop> * bool)[] = [| 
+    (
+        // idx 0
+        // bdd.p002
+        (prime 101),
+        true
+    );
+    (
+        // idx 1
+        // bdd.p003
+        (mk_adder_test 9 5),
+        true
+    );
+    |]
 
-// bdd.p002
+[<TestCase(0, TestName = "bdd.p002")>]
+[<TestCase(1, TestName = "bdd.p003")>]
+
 [<Test>]
-let ``ebddtaut with prime``() =
-    ebddtaut (prime 101)
-    |> should be True
-
-// bdd.p003
-[<Test>]
-let ``ebddtaut with mk_adder_test``() =
-    ebddtaut (mk_adder_test 9 5)
-    |> should be True
+let ``ebddtaut tests`` idx = 
+    let (formula, _) = ebddtautValues.[idx]
+    let (_, result) = ebddtautValues.[idx]
+    ebddtaut formula
+    |> should equal result
