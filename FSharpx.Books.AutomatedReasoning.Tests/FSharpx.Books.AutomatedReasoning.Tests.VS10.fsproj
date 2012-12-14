@@ -50,6 +50,7 @@
     <Compile Include="intro.fs" />
     <Compile Include="prop.fs" />
     <Compile Include="propexamples.fs" />
+    <Compile Include="defcnf.fs" />
     <Compile Include="dp.fs" />
     <Compile Include="stal.fs" />
     <Compile Include="bdd.fs" />
