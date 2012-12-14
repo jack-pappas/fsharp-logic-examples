@@ -83,17 +83,16 @@ let p20dp = davisputnam (parse @"
 
 // herbrand.p007
 // Pelletier #36
-let p36 = davisputnam' (parse @"
+let p36 = davisputnam002 (parse @"
     (forall x. exists y. P(x,y)) 
     /\ (forall x. exists y. G(x,y)) 
     /\ (forall x y. P(x,y) \/ G(x,y) ==> (forall z. P(y,z) \/ G(y,z) ==> H(x,z)))
     ==> (forall x. exists y. H(x,y))");;
 
 // herbrand.p008
-
 // Real: 00:01:50.847, CPU: 00:01:50.687, GC gen0: 382, gen1: 111, gen2: 1
 // Pelletier #29
-let p29 = davisputnam' (parse @"
+let p29 = davisputnam002 (parse @"
     (exists x. P(x)) /\ (exists x. G(x)) ==>
     ((forall x. P(x) ==> H(x)) /\ (forall x. G(x) ==> J(x)) <=>
     (forall x y. P(x) /\ G(y) ==> H(x) /\ J(y)))");;

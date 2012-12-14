@@ -74,66 +74,56 @@ let ``gilmore tests`` (idx) =
     match stackSize with
     | Standard -> 
         gilmore (parse formula)
-        |> should equal result
     | Large ->
         runWithEnlargedStack (fun () -> gilmore (parse formula))
-        |> should equal result
+    |> should equal result
 
-// pg. 161
-// ------------------------------------------------------------------------- //
-// First example and a little tracing.                                       //
-// ------------------------------------------------------------------------- //
+let private davisputnamValues : (string * int)[] = [| 
+    (
+        // idx 0
+        // herbrand.p006
+        // Pelletier #20
+        @"(forall x y. exists z. forall w. P(x) /\ Q(y) ==> R(z) /\ U(w))
+        ==> (exists x y. P(x) /\ Q(y)) ==> (exists z. R(z))",
+        19
+    );
+    |]
     
-// herbrand.p001
-// Harrison #07
-//[<Test>]
-//let ``gilmore simple``() =
-//    "exists x. forall y. P(x) ==> P(y)"
-//    |> parse
-//    |> gilmore
-//    |> should equal 2
+[<TestCase(0, TestName = "herbrand.p001")>]
 
-// pg. 161
-// ------------------------------------------------------------------------- //
-// Quick example.                                                            //
-// ------------------------------------------------------------------------- //
+let ``davisputnam tests`` (idx) =
+    let (formula, _) = davisputnamValues.[idx]
+    let (_, result) = davisputnamValues.[idx]
+    davisputnam (parse formula)
+    |> should equal result
 
-// herbrand.p003
-// Pelletier #24
-//[<Test>]
-//let ``gilmore quick``() =
-//    @"~(exists x. U(x) /\ Q(x)) 
-//        /\ (forall x. P(x) ==> Q(x) \/ R(x)) 
-//        /\ ~(exists x. P(x) ==> (exists x. Q(x))) 
-//        /\ (forall x. Q(x) 
-//        /\ R(x) ==> U(x)) ==> (exists x. P(x) /\ R(x))"
-//    |> parse
-//    |> gilmore
-//    |> should equal 1
-
-
-// herbrand.p006
-// Pelletier #20
-[<Test>]
-let ``davis putnam``() =
-    @"(forall x y. exists z. forall w. P(x) /\ Q(y) ==> R(z) /\ U(w))
-        ==> (exists x y. P(x) /\ Q(y)) ==> (exists z. R(z))"
-    |> parse
-    |> davisputnam
-    |> should equal 19
-
-// herbrand.p007
-// Pelletier #36
-[<TestCase(@"(forall x. exists y. P(x,y)) 
+let private davisputnam002Values : (string * int)[] = [| 
+    (
+        // idx 0
+        // herbrand.p007
+        // Pelletier #36
+        @"(forall x. exists y. P(x,y)) 
         /\ (forall x. exists y. G(x,y)) 
         /\ (forall x y. P(x,y) \/ G(x,y) ==> (forall z. P(y,z) \/ G(y,z) ==> H(x,z)))
-        ==> (forall x. exists y. H(x,y))", Result = 3)>]
-// herbrand.p008
-// Pelletier #29
-[<TestCase(@"(exists x. P(x)) /\ (exists x. G(x)) ==>
+        ==> (forall x. exists y. H(x,y))",
+        3
+    );
+    (
+        // idx 1
+        // herbrand.p008
+        // Pelletier #29
+        @"(exists x. P(x)) /\ (exists x. G(x)) ==>
         ((forall x. P(x) ==> H(x)) /\ (forall x. G(x) ==> J(x)) <=>
         (forall x y. P(x) /\ G(y) ==> H(x) /\ J(y)))",
-        Result = 5, Category = "LongRunning")>]
-let ``davis putnam'`` f =
-    parse f
-    |> davisputnam'
+        5
+    );
+    |]
+    
+[<TestCase(0, TestName = "herbrand.p007")>]
+[<TestCase(1, TestName = "herbrand.p008", Category = "LongRunning")>]
+
+let ``davisputnam002 tests`` (idx) =
+    let (formula, _) = davisputnam002Values.[idx]
+    let (_, result) = davisputnam002Values.[idx]
+    davisputnam002 (parse formula)
+    |> should equal result

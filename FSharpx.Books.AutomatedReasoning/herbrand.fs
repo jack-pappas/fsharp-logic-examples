@@ -132,7 +132,7 @@ let dp_refine_loop cjs0 cntms funcs fvs n cjs tried tuples =
 // Show how few of the instances we really need. Hence unification!          //
 // ------------------------------------------------------------------------- //
 
-let davisputnam' fm =
+let davisputnam002 fm =
     let sfm = skolemize (Not (generalize fm))
     let fvs = fv sfm 
     let consts,funcs = herbfuns sfm
