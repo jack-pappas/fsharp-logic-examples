@@ -39,6 +39,7 @@
   <Import Project="$(MSBuildExtensionsPath32)\..\Microsoft F#\v4.0\Microsoft.FSharp.Targets" Condition=" Exists('$(MSBuildBinPath)\Microsoft.Build.Tasks.v4.0.dll')" />
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
   <ItemGroup>
+    <Compile Include="initialization.fs" />
     <Compile Include="lib.fs" />
     <Compile Include="intro.fs" />
     <Compile Include="formulas.fs" />

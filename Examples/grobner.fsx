@@ -6,6 +6,7 @@
 
 #load "initialization.fsx"
 
+open FSharpx.Books.AutomatedReasoning.initialization
 open FSharpx.Books.AutomatedReasoning.lib
 open FSharpx.Books.AutomatedReasoning.fol
 open FSharpx.Books.AutomatedReasoning.complex
@@ -131,7 +132,7 @@ time grobner_decide (parse @"
 // grobner.p016
 //**** Corrected with non-isotropy conditions; even lengthier
 // long running
-Initialization.runWithEnlargedStack (fun () -> 
+runWithEnlargedStack (fun () -> 
     time grobner_decide (parse @"
         (x1 - x0)^2 + (y1 - y0)^2 =
         (x2 - x0)^2 + (y2 - y0)^2 /\
@@ -148,7 +149,7 @@ Initialization.runWithEnlargedStack (fun () ->
 // grobner.p017
 //*** Maybe this is more efficient? (No?)
 // long running
-Initialization.runWithEnlargedStack (fun () -> 
+runWithEnlargedStack (fun () -> 
     time grobner_decide (parse @"
         (x1 - x0)^2 + (y1 - y0)^2 = d /\
         (x2 - x0)^2 + (y2 - y0)^2 = d /\

@@ -6,6 +6,7 @@
 
 #load "initialization.fsx"
 
+open FSharpx.Books.AutomatedReasoning.initialization
 open FSharpx.Books.AutomatedReasoning.lib
 open FSharpx.Books.AutomatedReasoning.formulas
 open FSharpx.Books.AutomatedReasoning.prop
@@ -522,7 +523,7 @@ let p60 = time splittab (parse @"
 //**** This is still too hard for us! Amazing...
 // long running
 let gilmore_1 =
-    time Initialization.runWithEnlargedStack (fun () ->
+    time runWithEnlargedStack (fun () ->
         splittab (parse @"
             exists x. forall y z. 
             ((F(y) ==> G(y)) <=> F(x)) /\ 
@@ -535,7 +536,7 @@ let gilmore_1 =
 //** This is not valid, according to Gilmore
 // long running
 let gilmore_2 = 
-    time Initialization.runWithEnlargedStack (fun () ->
+    time runWithEnlargedStack (fun () ->
         splittab (parse @"
             exists x y. forall z. 
             (F(x,z) <=> F(z,y)) /\ (F(z,y) <=> F(z,z)) /\ (F(x,y) <=> F(y,x)) 

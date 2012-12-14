@@ -6,6 +6,7 @@
 
 #load "initialization.fsx"
 
+open FSharpx.Books.AutomatedReasoning.initialization
 open FSharpx.Books.AutomatedReasoning.lib
 open FSharpx.Books.AutomatedReasoning.intro
 open FSharpx.Books.AutomatedReasoning.formulas
@@ -65,7 +66,7 @@ let eqs = complete_and_simplify ["1"; "*"; "i"] [(parse @"1 * x = x"); (parse @"
 let fm = list_conj (List.map grpform eqs);;
 
 // real.p012
-Initialization.runWithEnlargedStack (fun () ->
+runWithEnlargedStack (fun () ->
     real_qelim fm);;
 
 // real.p013

@@ -6,6 +6,7 @@
 
 #load "initialization.fsx"
 
+open FSharpx.Books.AutomatedReasoning.initialization
 open FSharpx.Books.AutomatedReasoning.lib
 open FSharpx.Books.AutomatedReasoning.formulas
 open FSharpx.Books.AutomatedReasoning.prop
@@ -51,7 +52,7 @@ let p24 = gilmore (parse @"
 // herbrand.p004
 // Pelletier #45
 // Real: 00:00:27.907, CPU: 00:00:27.906, GC gen0: 7, gen1: 6, gen2: 1
-let p45 = Initialization.runWithEnlargedStack (fun () -> 
+let p45 = runWithEnlargedStack (fun () -> 
     gilmore (parse @"
         (forall x. P(x) 
         /\ (forall y. G(y) /\ H(x,y) ==> J(x,y)) ==> (forall y. G(y) /\ H(x,y) ==> R(y))) 

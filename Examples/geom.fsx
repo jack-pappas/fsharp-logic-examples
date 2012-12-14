@@ -6,6 +6,7 @@
 
 #load "initialization.fsx"
 
+open FSharpx.Books.AutomatedReasoning.initialization
 open FSharpx.Books.AutomatedReasoning.lib
 open FSharpx.Books.AutomatedReasoning.formulas
 open FSharpx.Books.AutomatedReasoning.fol
@@ -39,7 +40,7 @@ List.forall (grobner_decide << invariant_under_rotation) coordinations;;
 
 // geom.p004
 // Real: 00:00:23.087, CPU: 00:00:23.046, GC gen0: 653, gen1: 148, gen2: 1
-Initialization.runWithEnlargedStack (fun () -> real_qelim (parse @"
+runWithEnlargedStack (fun () -> real_qelim (parse @"
     forall x y. exists s c. s^2 + c^2 = 1 /\ s * x + c * y = 0"));;
 
 // geom.p005
