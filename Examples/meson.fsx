@@ -21,11 +21,9 @@ open FSharpx.Books.AutomatedReasoning.meson
 // ------------------------------------------------------------------------- //
 
 // meson.p001
-// Harrison #08.a
 tab (parse @"forall a. ~(P(a) /\ (forall y z. Q(y) \/ R(z)) /\ ~P(a))");;
 
 // meson.p002
-// Harrison #08.b
 tab (parse @"forall a. ~(P(a) /\ ~P(a) /\ (forall y z. Q(y) \/ R(z)))");;
 
 // pg. 218
@@ -69,6 +67,7 @@ let los = time meson002 (parse @"
     ==> (forall x y. P(x,y)) \/ (forall x y. Q(x,y))");;
 
 // meson.p006
+// Pelletier #47
 // long running. Quit at depth limit 51
 let steamroller = time meson002 (parse @"
     ((forall x. P1(x) ==> P0(x)) /\ (exists x. P1(x))) /\ 
