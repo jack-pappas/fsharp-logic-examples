@@ -497,7 +497,7 @@ let p57 = time splittab (parse @"
 // ------------------------------------------------------------------------- //
 
 // tableaux.p062
-// Pelletier #58
+// Pelletier #58 1
 // TODO: Is this a conrrect translation from Pelletier #58?
 let p58 = time splittab (parse @"
     forall P Q R. forall x. exists v. exists w. forall y. forall z. 
