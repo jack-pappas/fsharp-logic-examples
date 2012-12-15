@@ -17,7 +17,7 @@ open FsUnit
 
 
 
-let private rewriteValues : (formula<fol> list * term * term)[] = [|
+let private rewriteValues : (formula<fol> list * term * term * string)[] = [|
     (
         // idx 0
         // rewrite.p001
@@ -41,7 +41,8 @@ let private rewriteValues : (formula<fol> list * term * term)[] = [|
                                [Fn
                                   ("S",
                                    [Fn
-                                      ("S",[Fn ("S",[Fn ("S",[Fn ("0",[])])])])])])])])])])])
+                                      ("S",[Fn ("S",[Fn ("S",[Fn ("0",[])])])])])])])])])])]),
+        @"<<|S(S(S(S(S(S(S(S(S(S(0))))))))))|>>"
     )
     |]
 
@@ -49,8 +50,12 @@ let private rewriteValues : (formula<fol> list * term * term)[] = [|
 
 [<Test>]
 let ``rewrite tests`` idx =
-    let (eqs, _, _) = rewriteValues.[idx]
-    let (_, tm, _) = rewriteValues.[idx]
-    let (_, _, result) = rewriteValues.[idx]
-    rewrite eqs tm
+    let (eqs, _, _, _) = rewriteValues.[idx]
+    let (_, tm, _, _) = rewriteValues.[idx]
+    let (_, _, astResult, _) = rewriteValues.[idx]
+    let (_, _, _, stringResult) = rewriteValues.[idx]
+    let result = rewrite eqs tm
+    result
     |> should equal result
+    sprint_term result
+    |> should equal stringResult
