@@ -150,9 +150,6 @@ let ``tab tests`` (idx) =
     let (_, result) = tabValues.[idx]
     tab (parse formula)
     |> should equal result
-    
-// ------------------------------------------------------------------------------------
-
 
 let private splittabIntValues : (string * int list)[] = [| 
     (
