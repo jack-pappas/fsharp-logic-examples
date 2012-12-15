@@ -15,24 +15,42 @@ open FSharpx.Books.AutomatedReasoning.rewrite
 open NUnit.Framework
 open FsUnit
 
-// pg. 263
-// ------------------------------------------------------------------------- //
-// Example: 3 * 2 + 4 in successor notation.                                 //
-// ------------------------------------------------------------------------- //
 
-let private terms : term[] = [|
-    Fn ("S", [Fn ("S", [Fn ("S", [Fn ("S", [Fn ("S", [Fn ("S", [Fn ("S", [Fn ("S",[Fn ("S",[Fn ("S",[Fn ("0",[])])])])])])])])])])])
-    |]
 
-// rewrite.p001
-[<Test>]
-let ``rewrite 1``() =
-    rewrite 
-        [
-        parse @"0 + x = x";
+let private rewriteValues : (formula<fol> list * term * term)[] = [|
+    (
+        // idx 0
+        // rewrite.p001
+        [parse @"0 + x = x";
         parse @"S(x) + y = S(x + y)";
         parse @"0 * x = 0";
-        parse @"S(x) * y = y + x * y"; 
-        ]
-        (parset @"S(S(S(0))) * S(S(0)) + S(S(S(S(0))))")
-    |> should equal terms.[0]
+        parse @"S(x) * y = y + x * y"],
+        (parset @"S(S(S(0))) * S(S(0)) + S(S(S(S(0))))"),
+        Fn
+          ("S",
+           [Fn
+              ("S",
+               [Fn
+                  ("S",
+                   [Fn
+                      ("S",
+                       [Fn
+                          ("S",
+                           [Fn
+                              ("S",
+                               [Fn
+                                  ("S",
+                                   [Fn
+                                      ("S",[Fn ("S",[Fn ("S",[Fn ("0",[])])])])])])])])])])])
+    )
+    |]
+
+[<TestCase(0, TestName = "rewrite.p001")>]
+
+[<Test>]
+let ``rewrite tests`` idx =
+    let (eqs, _, _) = rewriteValues.[idx]
+    let (_, tm, _) = rewriteValues.[idx]
+    let (_, _, result) = rewriteValues.[idx]
+    rewrite eqs tm
+    |> should equal result
