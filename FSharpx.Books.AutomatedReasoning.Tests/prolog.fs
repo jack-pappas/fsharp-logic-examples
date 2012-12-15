@@ -20,188 +20,254 @@ open FSharpx.Books.AutomatedReasoning.prolog
 open NUnit.Framework
 open FsUnit
 
-// pg. 208
-// ------------------------------------------------------------------------- //
-// A Horn example.                                                           //
-// ------------------------------------------------------------------------- //
-
-// prolog.p001
-// Pelletier #32
-[<Test>]
-let ``Pelletier #32``() =    
-    hornprove (parse @" 
-        (forall x. P(x) /\ (G(x) \/ H(x)) ==> Q(x)) /\ 
+let private hornproveValues : (string * (func<string,term> * int))[] = [| 
+    (
+        // idx 0
+        // prolog.p001
+        // Pelletier #32
+        @"(forall x. P(x) /\ (G(x) \/ H(x)) ==> Q(x)) /\ 
         (forall x. Q(x) /\ H(x) ==> J(x)) /\ 
         (forall x. R(x) ==> H(x)) 
-        ==> (forall x. P(x) /\ R(x) ==> J(x))")
-    |> should equal (Branch
-                         (47089,65536,
-                          Branch
-                            (47089,131072,Leaf (-843532303,[("_2", Var "_0")]),
-                             Leaf (-843401231,[("_0", Fn ("c_x",[]))])),
-                          Branch
-                            (112625,131072,Leaf (-843466767,[("_1", Var "_0")]),
-                             Leaf (-843597839,[("_3", Var "_2")]))), 8)
+        ==> (forall x. P(x) /\ R(x) ==> J(x))",
+        (Branch
+           (47089,65536,
+            Branch
+              (47089,131072,Leaf (-843532303,[("_2", Var "_0")]),
+               Leaf (-843401231,[("_0", Fn ("c_x",[]))])),
+            Branch
+              (112625,131072,Leaf (-843466767,[("_1", Var "_0")]),
+               Leaf (-843597839,[("_3", Var "_2")]))), 8)
+    );
+    (
+        // idx 1
+        // prolog.p002
+        // Pelletier #09
+        @"(p \/ q) /\ (~p \/ q) /\ (p \/ ~q) ==> ~(~q \/ ~q)",
+        (undefined, -99) // Dummy value used as place holder
+    );
+    |]
+    
+[<TestCase(0, TestName = "prolog.p001")>]
+[<TestCase(1, TestName = "prolog.p002", ExpectedException=typeof<System.Exception>, ExpectedMessage="non-Horn clause")>]
 
-// pg. 208
-// ------------------------------------------------------------------------- //
-// A non-Horn example.                                                       //
-// ------------------------------------------------------------------------- //
+let ``hornprove tests`` (idx) =
+    let (formula, _) = hornproveValues.[idx]
+    let (_, result) = hornproveValues.[idx]
+    let (proof,size) = hornprove (parse formula)
+    (proof,size)
+    |> should equal result
 
-// prolog.p002
-// System.Exception: non-Horn clause. - This is the expected result.
-// Pelletier #09
-// TODO: Figure out how to get NUnit to work with exception
-//[<Test>]
-//let ``non-Horn``() = 
-//    hornprove (parse @"(p \/ q) /\ (~p \/ q) /\ (p \/ ~q) ==> ~(~q \/ ~q)") 
+let private simpleprologValues : (string list * string * func<string,term>)[] = [| 
+    (
+        // idx 0
+        // prolog.p003
+        ["0 <= X"; "S(X) <= S(Y) :- X <= Y"],
+        @"S(S(0)) <= S(S(S(0)))",
+        Branch
+          (47089,65536,
+           Branch
+             (47089,131072,Leaf (-843532303,[("_2", Fn ("0",[]))]),
+              Branch
+                (178161,262144,
+                 Leaf (-843401231,[("_0", Fn ("S",[Fn ("0",[])]))]),
+                 Leaf (-843663375,[("_4", Var "_3")]))),
+           Branch
+             (112625,131072,
+              Leaf (-843466767,[("_1", Fn ("S",[Fn ("S",[Fn ("0",[])])]))]),
+              Leaf (-843597839,[("_3", Fn ("S",[Fn ("0",[])]))])))
+    );
+    (
+        // idx 1
+        // prolog.p004
+        ["0 <= X"; "S(X) <= S(Y) :- X <= Y"],
+        @"S(S(0)) <= S(0)",
+        undefined // Dummy value used as place holder
+    );
+    |]
+    
+[<TestCase(0, TestName = "prolog.p003")>]
+[<TestCase(1, TestName = "prolog.p004", ExpectedException=typeof<System.Exception>, ExpectedMessage="tryfind")>]
 
-// pg. 210
-// ------------------------------------------------------------------------- //
-// Ordering example.                                                         //
-// ------------------------------------------------------------------------- //
+let ``simpleprolog tests`` (idx) =
+    let (rules, _, _) = simpleprologValues.[idx]
+    let (_,  gl, _) = simpleprologValues.[idx]
+    let (_, _, result) = simpleprologValues.[idx]
+    simpleprolog rules gl
+    |> should equal result
 
-let lerules = ["0 <= X"; "S(X) <= S(Y) :- X <= Y"]
+let private applyValues : (func<string,term> * string * term)[] = [| 
+    (
+        // idx 0
+        // prolog.p005
+        (simpleprolog ["0 <= X"; "S(X) <= S(Y) :- X <= Y"] @"S(S(0)) <= X" ),
+        "X",
+        Fn ("S",[Var "_1"])
+    );
+    |]
+    
+[<TestCase(0, TestName = "prolog.p005")>]
 
-// prolog.p003
-[<Test>]
-let ``backchaining``() =  
-    simpleprolog lerules @"S(S(0)) <= S(S(S(0)))"
-    |> should equal (Branch
-                        (47089,65536,
-                         Branch
-                           (47089,131072,Leaf (-843532303,[("_2", Fn ("0",[]))]),
-                            Branch
-                              (178161,262144,
-                               Leaf (-843401231,[("_0", Fn ("S",[Fn ("0",[])]))]),
-                               Leaf (-843663375,[("_4", Var "_3")]))),
-                         Branch
-                           (112625,131072,
-                            Leaf (-843466767,[("_1", Fn ("S",[Fn ("S",[Fn ("0",[])])]))]),
-                            Leaf (-843597839,[("_3", Fn ("S",[Fn ("0",[])]))]))))
+let ``apply tests`` (idx) =
+    let (formula, _, _) = applyValues.[idx]
+    let (_, x, _) = applyValues.[idx]
+    let (_, _, result) = applyValues.[idx]
+    apply formula x
+    |> should equal result
 
-// prolog.p005
-[<Test>]
-let ``apply``() = 
-    let env = simpleprolog lerules @"S(S(0)) <= X"
-    apply env "X"
-    |> should equal (Fn ("S",[Var "_1"]))
-
-// pg. 211
-// ------------------------------------------------------------------------- //
-// Example again.                                                            //
-// ------------------------------------------------------------------------- //
-   
-// prolog.p006
-[<Test>]
-let ``binding``() = 
-    prolog lerules @"S(S(0)) <= X"
-    |> should equal [Atom (R ("=",[Var "X"; Fn ("S",[Fn ("S",[Var "_3"])])]))]
-
-
-// pg. 211
-// ------------------------------------------------------------------------- //
-// Append example, showing symmetry between inputs and outputs.              //
-// ------------------------------------------------------------------------- //
-
-let appendrules = [
-    @"append(nil,L,L)";
-    @"append(H::T,L,H::A) :- append(T,L,A)";]
-
-// prolog.p007
-[<Test>]
-let ``appened 1``() = 
-    prolog appendrules @"append(1::2::nil,3::4::nil,Z)"
-    |> should equal [Atom
-                        (R ("=",
-                            [Var "Z";
-                            Fn
-                            ("::",
-                                [Fn ("1",[]);
-                                Fn
-                                ("::",
-                                    [Fn ("2",[]);
-                                    Fn
-                                    ("::",
-                                        [Fn ("3",[]);
-                                        Fn ("::",[Fn ("4",[]); Fn ("nil",[])])])])])]))]
-
-// prolog.p008
-[<Test>]
-let ``appened 2``() = 
-    prolog appendrules @"append(1::2::nil,Y,1::2::3::4::nil)"
-    |> should equal [Atom
-                            (R ("=",
-                                [Var "Y";
-                                Fn
-                                ("::",[Fn ("3",[]); Fn ("::",[Fn ("4",[]); Fn ("nil",[])])])]))]
-
-// prolog.p009
-[<Test>]
-let ``appened 3``() = 
-    prolog appendrules @"append(X,3::4::nil,1::2::3::4::nil)"
-    |> should equal [Atom
-                            (R ("=",
-                                [Var "X";
-                                Fn
-                                ("::",[Fn ("1",[]); Fn ("::",[Fn ("2",[]); Fn ("nil",[])])])]))]
-
-// prolog.p010
-[<Test>]
-let ``appened 4``() = 
-    prolog appendrules @"append(X,Y,1::2::3::4::nil)"
-    |> should equal [Atom (R ("=",[Var "X"; Fn ("nil",[])]));
-                            Atom
-                                (R ("=",
-                                    [Var "Y";
-                                    Fn
-                                    ("::",
-                                        [Fn ("1",[]);
-                                        Fn
-                                        ("::",
-                                            [Fn ("2",[]);
-                                            Fn
-                                            ("::",
-                                                [Fn ("3",[]);
-                                                Fn ("::",[Fn ("4",[]); Fn ("nil",[])])])])])]))] 
-
-let sortrules = [
-    @"sort(X,Y) :- perm(X,Y),sorted(Y)";
-    @"sorted(nil)";
-    @"sorted(X::nil)";
-    @"sorted(X::Y::Z) :- X <= Y, sorted(Y::Z)";
-    @"perm(nil,nil)";
-    @"perm(X::Y,U::V) :- delete(U,X::Y,Z), perm(Z,V)";
-    @"delete(X,X::Y,Y)";
-    @"delete(X,Y::Z,Y::W) :- delete(X,Z,W)";
-    @"0 <= X";
-    @"S(X) <= S(Y) :- X <= Y"; ];;
-
-// prolog.p012
-[<Test>]
-let ``sort``() = 
-    prolog sortrules
-        @"sort(S(S(S(S(0))))::S(0)::0::S(S(0))::S(0)::nil,X)"
-    |> should equal [Atom
-     (R ("=",
-         [Var "X";
-          Fn
-            ("::",
-             [Fn ("0",[]);
-              Fn
+// TODO: Modify printers to handle list of type also.
+// i.e. sprint_fol_formula should handle formula<fol> and formula<fol> list
+let private prologValues : (string list * string * formula<fol> list)[] =  [| 
+    (
+        // idx 0
+        // prolog.p006
+        ["0 <= X"; "S(X) <= S(Y) :- X <= Y"],
+        @"S(S(0)) <= X",
+        [Atom (R ("=",[Var "X"; Fn ("S",[Fn ("S",[Var "_3"])])]))]
+    );
+    (
+        // idx 1
+        // prolog.p007
+        [@"append(nil,L,L)";
+        @"append(H::T,L,H::A) :- append(T,L,A)";],
+        @"append(1::2::nil,3::4::nil,Z)",
+        [Atom
+            (R ("=",
+                [Var "Z";
+                Fn
                 ("::",
-                 [Fn ("S",[Fn ("0",[])]);
-                  Fn
+                    [Fn ("1",[]);
+                    Fn
                     ("::",
-                     [Fn ("S",[Fn ("0",[])]);
-                      Fn
+                        [Fn ("2",[]);
+                        Fn
                         ("::",
-                         [Fn ("S",[Fn ("S",[Fn ("0",[])])]);
-                          Fn
-                            ("::",
-                             [Fn
-                                ("S",
-                                 [Fn
-                                    ("S",
-                                     [Fn ("S",[Fn ("S",[Fn ("0",[])])])])]);
-                              Fn ("nil",[])])])])])])]))]
+                            [Fn ("3",[]);
+                            Fn ("::",[Fn ("4",[]); Fn ("nil",[])])])])])]))]
+    );
+    (
+        // idx 2
+        // prolog.p008
+        [@"append(nil,L,L)";
+        @"append(H::T,L,H::A) :- append(T,L,A)";],
+        @"append(1::2::nil,Y,1::2::3::4::nil)",
+        [Atom
+           (R ("=",
+               [Var "Y";
+                Fn
+                  ("::",[Fn ("3",[]); Fn ("::",[Fn ("4",[]); Fn ("nil",[])])])]))]
+    );
+    (
+        // idx 3
+        // prolog.p009
+        [@"append(nil,L,L)";
+        @"append(H::T,L,H::A) :- append(T,L,A)";],
+        @"append(X,3::4::nil,1::2::3::4::nil)",
+        [Atom
+           (R ("=",
+               [Var "X";
+                Fn
+                  ("::",[Fn ("1",[]); Fn ("::",[Fn ("2",[]); Fn ("nil",[])])])]))]
+    );
+    (
+        // idx 4
+        // prolog.p010
+        [@"append(nil,L,L)";
+        @"append(H::T,L,H::A) :- append(T,L,A)";],
+        @"append(X,Y,1::2::3::4::nil)",
+        [Atom (R ("=",[Var "X"; Fn ("nil",[])]));
+         Atom
+           (R ("=",
+               [Var "Y";
+                Fn
+                  ("::",
+                   [Fn ("1",[]);
+                    Fn
+                      ("::",
+                       [Fn ("2",[]);
+                        Fn
+                          ("::",
+                           [Fn ("3",[]);
+                            Fn ("::",[Fn ("4",[]); Fn ("nil",[])])])])])]))]
+    );
+    (
+        // idx 5
+        // prolog.p011
+        [@"append(nil,L,L)";
+        @"append(H::T,L,H::A) :- append(T,L,A)";],
+        @"append(X,3::4::nil,X)",
+        [] // Dummy value used as place holder
+        // Note: Causes StackOverflowException which NUnit can't handle correctly.
+        // Tried using try with around prolog, but NUnit still captures exceptions and aborts.
+    );
+    (
+        // idx 6
+        // prolog.p012
+        [@"sort(X,Y) :- perm(X,Y),sorted(Y)";
+        @"sorted(nil)";
+        @"sorted(X::nil)";
+        @"sorted(X::Y::Z) :- X <= Y, sorted(Y::Z)";
+        @"perm(nil,nil)";
+        @"perm(X::Y,U::V) :- delete(U,X::Y,Z), perm(Z,V)";
+        @"delete(X,X::Y,Y)";
+        @"delete(X,Y::Z,Y::W) :- delete(X,Z,W)";
+        @"0 <= X";
+        @"S(X) <= S(Y) :- X <= Y"; ],
+        @"sort(S(S(S(S(0))))::S(0)::0::S(S(0))::S(0)::nil,X)",
+        [Atom
+           (R ("=",
+               [Var "X";
+                Fn
+                  ("::",
+                   [Fn ("0",[]);
+                    Fn
+                      ("::",
+                       [Fn ("S",[Fn ("0",[])]);
+                        Fn
+                          ("::",
+                           [Fn ("S",[Fn ("0",[])]);
+                            Fn
+                              ("::",
+                               [Fn ("S",[Fn ("S",[Fn ("0",[])])]);
+                                Fn
+                                  ("::",
+                                   [Fn
+                                      ("S",
+                                       [Fn
+                                          ("S",
+                                           [Fn ("S",[Fn ("S",[Fn ("0",[])])])])]);
+                                    Fn ("nil",[])])])])])])]))]
+    );
+    (
+        // idx 7
+        // prolog.p013
+        [@"sort(X,Y) :- sorted(Y), perm(X,Y)";
+        @"sorted(nil)";
+        @"sorted(X::nil)";
+        @"sorted(X::Y::Z) :- X <= Y, sorted(Y::Z)";
+        @"perm(nil,nil)";
+        @"perm(X::Y,U::V) :- delete(U,X::Y,Z), perm(Z,V)";
+        @"delete(X,X::Y,Y)";
+        @"delete(X,Y::Z,Y::W) :- delete(X,Z,W)";
+        @"0 <= X";
+        @"S(X) <= S(Y) :- X <= Y"; ],
+        @"sort(S(S(S(S(0))))::S(0)::0::S(S(0))::S(0)::nil,X)",
+        [] // Dummy value used as place holder
+        // Note: Causes StackOverflowException which NUnit can't handle correctly.
+        // Tried using try with around prolog, but NUnit still captures exceptions and aborts.
+    );
+    |]
+    
+[<TestCase(0, TestName = "prolog.p006")>]
+[<TestCase(1, TestName = "prolog.p007")>]
+[<TestCase(2, TestName = "prolog.p008")>]
+[<TestCase(3, TestName = "prolog.p009")>]
+[<TestCase(4, TestName = "prolog.p010")>]
+[<TestCase(6, TestName = "prolog.p012")>]
+
+let ``prolog tests`` (idx) =
+    let (rules, _, _) = prologValues.[idx]
+    let (_, gl, _) = prologValues.[idx]
+    let (_, _, resultAst) = prologValues.[idx]
+    let result = prolog rules gl
+    result
+    |> should equal resultAst

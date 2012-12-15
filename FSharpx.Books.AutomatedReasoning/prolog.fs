@@ -81,7 +81,7 @@ let parserule s =
     if rest1 = [] then asm, c
     else failwith "Extra material after rule"
 
-// pg. 120
+// pg. 210
 // ------------------------------------------------------------------------- //
 // Prolog interpreter: just use depth-first search not iterative deepening.  //
 // ------------------------------------------------------------------------- //
