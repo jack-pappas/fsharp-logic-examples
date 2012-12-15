@@ -39,47 +39,7 @@ let ``simpcnf tests`` (idx) =
     simpcnf(skolemize(Not (parse formula))) 
     |> should equal result    
 
-let private resolution001Values : (string * bool list)[] = [| 
-    (
-        // idx 0
-        // resolution.p002
-        // Davis Putnam #1
-        @"exists x. exists y. forall z. 
-            (F(x,y) ==> (F(y,z) /\ F(z,z))) /\ 
-            ((F(x,y) /\ G(x,y)) ==> (G(x,z) /\ G(z,z)))",
-        [true]
-    );
-    |]
-    
-[<TestCase(0, TestName = "Davis Putnam #1")>]
-
-let ``Basic Resolution`` (idx) =
-    let (formula, _) = resolution001Values.[idx]
-    let (_, result) = resolution001Values.[idx]
-    resolution001 (parse formula) 
-    |> should equal result
-
-let private resolution002Values : (string * bool list)[] = [| 
-    (
-        // idx 0
-        // resolution.p003
-        // Davis Putnam #1
-        @"exists x. exists y. forall z. 
-            (F(x,y) ==> (F(y,z) /\ F(z,z))) /\ 
-            ((F(x,y) /\ G(x,y)) ==> (G(x,z) /\ G(z,z)))",
-        [true]
-    );
-    |]
-    
-[<TestCase(0, TestName = "Davis Putnam #1")>]
-
-let ``Resolution with subsumption and tautology deletion`` (idx) =
-    let (formula, _) = resolution002Values.[idx]
-    let (_, result) = resolution002Values.[idx]
-    resolution002 (parse formula) 
-    |> should equal result
-
-let private presolutionValues : (string * bool list)[] = [| 
+let private resolutionValues : (string * bool list)[] = [| 
     (
         // idx 0
         // resolution.p005
@@ -926,17 +886,12 @@ let private presolutionValues : (string * bool list)[] = [|
 [<TestCase(81, TestName = "Gilmore #7")>]
 [<TestCase(82, TestName = "Gilmore #8")>]
 [<TestCase(83, TestName = "Gilmore #9", Category = "LongRunning")>]
-//[<TestCase(58, TestName = "Pelletier #59")>]
-//[<TestCase(59, TestName = "Pelletier #60")>]
 [<TestCase(84, TestName = "Davis Putnam #1")>]
-//[<TestCase(85, TestName = "Dijkstra #1")>]
-//[<TestCase(86, TestName = "Dijkstra #2")>]
-//[<TestCase(87, TestName = "Pelletier #58 2")>]
 [<TestCase(88, TestName = "Los #1")>]
 
 let ``Pure Resolution`` (idx) =
-    let (formula, _) = presolutionValues.[idx]
-    let (_, result) = presolutionValues.[idx]
+    let (formula, _) = resolutionValues.[idx]
+    let (_, result) = resolutionValues.[idx]
     presolution (parse formula) 
     |> should equal result
 
@@ -998,16 +953,27 @@ let ``Pure Resolution`` (idx) =
 [<TestCase(81, TestName = "Gilmore #7")>]
 [<TestCase(82, TestName = "Gilmore #8")>]
 [<TestCase(83, TestName = "Gilmore #9", Category = "LongRunning")>]
-//[<TestCase(58, TestName = "Pelletier #59")>]
-//[<TestCase(59, TestName = "Pelletier #60")>]
 [<TestCase(84, TestName = "Davis Putnam #1")>]
-//[<TestCase(85, TestName = "Dijkstra #1")>]
-//[<TestCase(86, TestName = "Dijkstra #2")>]
-//[<TestCase(87, TestName = "Pelletier #58 2")>]
 [<TestCase(88, TestName = "Los #1")>]
 
 let ``Positive Resolution`` (idx) =
-    let (formula, _) = presolutionValues.[idx]
-    let (_, result) = presolutionValues.[idx]
+    let (formula, _) = resolutionValues.[idx]
+    let (_, result) = resolutionValues.[idx]
     resolution003 (parse formula) 
+    |> should equal result
+
+[<TestCase(84, TestName = "Davis Putnam #1")>]
+
+let ``Basic Resolution`` (idx) =
+    let (formula, _) = resolutionValues.[idx]
+    let (_, result) = resolutionValues.[idx]
+    resolution001 (parse formula) 
+    |> should equal result
+
+[<TestCase(84, TestName = "Davis Putnam #1")>]
+
+let ``Resolution with subsumption and tautology deletion`` (idx) =
+    let (formula, _) = resolutionValues.[idx]
+    let (_, result) = resolutionValues.[idx]
+    resolution002 (parse formula) 
     |> should equal result
