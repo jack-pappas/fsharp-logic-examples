@@ -85,10 +85,13 @@ skolemize (parse @"
 // ------------------------------------------------------------------------- //
 
 // completion.p007
+// commutativity example
 // long running
 complete_and_simplify ["1"; "*"; "i"]
     [parse @"(x * y) * z = x * (y * z)";
-    parse @"1 * x = x"; parse @"x * 1 = x"; parse @"x * x = 1"]
+    parse @"1 * x = x"; 
+    parse @"x * 1 = x"; 
+    parse @"x * x = 1"]
 
 // Not in book
 // ------------------------------------------------------------------------- //
@@ -122,7 +125,8 @@ complete_and_simplify ["1"; "*"; "i"] eqs002;;
 
 // completion.p010
 (meson002 << equalitize) (parse @"
-    (forall x y z. x * y = x * z ==> y = z) <=> (forall x z. exists w. forall y. z = x * y ==> w = y)");;
+    (forall x y z. x * y = x * z ==> y = z) <=> 
+    (forall x z. exists w. forall y. z = x * y ==> w = y)");;
 
 // completion.p011
 skolemize (parse @"
@@ -268,8 +272,8 @@ let eqs014 = [(parse @"f(a,f(b,c,a),d) = c")];;
 // Can't orient
 complete_and_simplify ["f"] eqs014;;
 
-let eqs015 =  [
-    parse @"f(a,f(b,c,a),d) = c";
+let eqs015 =
+    [parse @"f(a,f(b,c,a),d) = c";
     parse @"f(a,b,c) = g(a,b)";
     parse @"g(a,b) = h(b)"; ];;
 
@@ -321,7 +325,10 @@ let eqs019 =
 // long running
 complete_and_simplify ["1"; "*"; "f"; "g"] eqs019;;
 
-let eqs020 = [(parse @"(x * y) * z = x * y * z"); (parse @"f(a,a*b) = b"); (parse @"g(a*b,b) = a")];;
+let eqs020 = 
+    [(parse @"(x * y) * z = x * y * z"); 
+    (parse @"f(a,a*b) = b"); 
+    (parse @"g(a*b,b) = a")];;
 
 // completion.p029
 // long running
@@ -540,12 +547,10 @@ complete_and_simplify ["g"; "f"] eqs036;;
 
 // completion.p047
 // Baader & Nipkow #2
-// TODO: Figure out how to capture result without ellipsis in the result, i.e. ...
 let eqs1,def1,crits1 = funpow 122 (complete1 ord) (eqs036,def,crits);;
 
 // completion.p048
 // Baader & Nipkow #3
-// TODO: Figure out how to capture result without ellipsis in the result, i.e. ...
 let eqs2,def2,crits2 = funpow 123 (complete1 ord) (eqs036,def,crits);;
 
 // ------------------------------------------------------------------------- //

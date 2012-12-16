@@ -20,22 +20,22 @@ open FSharpx.Books.AutomatedReasoning.completion
 open NUnit.Framework
 open FsUnit
 
-let private criticalPairValues =  
-    [|
-        ( // completion.p001  // idx 0
-            (parse @"f(f(x)) = g(x)"), 
-            [Atom
-                (R ("=",
-                    [Fn ("f", [Fn ("g", [Var "x0"])]);
-                        Fn ("g", [Fn ("f", [Var "x0"])])]));
-            Atom (R ("=", [Fn ("g", [Var "x1"]); Fn ("g", [Var "x1"])]))]
-        );
+let private criticalPairValues : (formula<fol> * formula<fol> list)[] =  [|
+    ( 
+        // idx 0
+        // completion.p001  
+        (parse @"f(f(x)) = g(x)"), 
+        [Atom
+           (R ("=",
+               [Fn ("f",[Fn ("g",[Var "x0"])]); Fn ("g",[Fn ("f",[Var "x0"])])]));
+         Atom (R ("=",[Fn ("g",[Var "x1"]); Fn ("g",[Var "x1"])]))] 
+    );
     |]
 
 // completion.p001
 [<TestCase(0, TestName = "completion.p001")>]
 
-let ``critical pairs`` idx =
+let ``critical pairs tests`` idx =
     let (eq, _) = criticalPairValues.[idx]
     let (_, result) = criticalPairValues.[idx]
     critical_pairs eq eq
@@ -61,163 +61,109 @@ let eqs' =
         complete ord (eqs, [], unions (allpairs critical_pairs eqs eqs))
     )   
 
-let private rewriteValues =  
-    [|
-        ( // completion.p002  // idx 0
-            (eqs'.Force()),
-            (parset @"i(x * i(x)) * (i(i((y * z) * u) * y) * i(u))"),
-            Var "z"
-        );
+let private rewriteValues : (formula<fol> list * term * term)[] = [|
+    ( 
+        // idx 0
+        // completion.p002  
+        (eqs'.Force()),
+        (parset @"i(x * i(x)) * (i(i((y * z) * u) * y) * i(u))"),
+        Var "z"
+    );
     |]
 
-// completion.p002
-// long running
-[<TestCase(0, Category = "LongRunning", TestName = "completion.p002")>]
+[<TestCase(0, TestName = "completion.p002")>]
 
-let ``rewrite test`` idx =
+let ``rewrite tests`` idx =
     let (eqs, _, _) = rewriteValues.[idx]
     let (_, tm, _) = rewriteValues.[idx]
     let (_, _, result) = rewriteValues.[idx]
     rewrite eqs tm
     |> should equal result
     
-let private interreduceValues =  
-    [|
-        ( // completion.p003  // idx 0
-            [],
-            (eqs'.Force()),
-            [Atom
-                (R ("=",
-                    [Fn ("i",[Fn ("*",[Var "x4"; Var "x5"])]);
-                    Fn ("*",[Fn ("i",[Var "x5"]); Fn ("i",[Var "x4"])])]));
-            Atom (R ("=",[Fn ("i",[Fn ("i",[Var "x1"])]); Var "x1"]));
-            Atom (R ("=",[Fn ("i",[Fn ("1",[])]); Fn ("1",[])]));
-            Atom
-                (R ("=",[Fn ("*",[Var "x0"; Fn ("i",[Var "x0"])]); Fn ("1",[])]));
-            Atom
-                (R ("=",
-                    [Fn ("*",[Var "x0"; Fn ("*",[Fn ("i",[Var "x0"]); Var "x3"])]);
-                    Var "x3"]));
-            Atom (R ("=",[Fn ("*",[Var "x1"; Fn ("1",[])]); Var "x1"]));
-            Atom
-                (R ("=",
-                    [Fn ("*",[Fn ("i",[Var "x1"]); Fn ("*",[Var "x1"; Var "x2"])]);
-                    Var "x2"]));
-            Atom (R ("=",[Fn ("*",[Fn ("1",[]); Var "x"]); Var "x"]));
-            Atom (R ("=",[Fn ("*",[Fn ("i",[Var "x"]); Var "x"]); Fn ("1",[])]));
-            Atom
-                (R ("=",
-                    [Fn ("*",[Fn ("*",[Var "x"; Var "y"]); Var "z"]);
-                    Fn ("*",[Var "x"; Fn ("*",[Var "y"; Var "z"])])]))]
-        );
+let private interreduceValues : (formula<fol> list * formula<fol> list * formula<fol> list)[] = [|
+    ( 
+        // idx 0
+        // completion.p003  
+        [],
+        (eqs'.Force()),
+        [Atom
+           (R ("=",
+               [Fn ("i",[Fn ("*",[Var "x4"; Var "x5"])]);
+                Fn ("*",[Fn ("i",[Var "x5"]); Fn ("i",[Var "x4"])])]));
+         Atom (R ("=",[Fn ("i",[Fn ("i",[Var "x1"])]); Var "x1"]));
+         Atom (R ("=",[Fn ("i",[Fn ("1",[])]); Fn ("1",[])]));
+         Atom
+           (R ("=",[Fn ("*",[Var "x0"; Fn ("i",[Var "x0"])]); Fn ("1",[])]));
+         Atom
+           (R ("=",
+               [Fn ("*",[Var "x0"; Fn ("*",[Fn ("i",[Var "x0"]); Var "x3"])]);
+                Var "x3"]));
+         Atom (R ("=",[Fn ("*",[Var "x1"; Fn ("1",[])]); Var "x1"]));
+         Atom
+           (R ("=",
+               [Fn ("*",[Fn ("i",[Var "x1"]); Fn ("*",[Var "x1"; Var "x2"])]);
+                Var "x2"]));
+         Atom (R ("=",[Fn ("*",[Fn ("1",[]); Var "x"]); Var "x"]));
+         Atom (R ("=",[Fn ("*",[Fn ("i",[Var "x"]); Var "x"]); Fn ("1",[])]));
+         Atom
+           (R ("=",
+               [Fn ("*",[Fn ("*",[Var "x"; Var "y"]); Var "z"]);
+                Fn ("*",[Var "x"; Fn ("*",[Var "y"; Var "z"])])]))]
+    );
     |]
 
-// completion.p003
 [<TestCase(0, TestName = "completion.p003")>]
 
-let ``interreduce test`` idx =
+let ``interreduce tests`` idx =
     let (dun, _, _) = interreduceValues.[idx]
     let (_, eqs, _) = interreduceValues.[idx]
     let (_, _, result) = interreduceValues.[idx]
     interreduce dun eqs
     |> should equal result
     
-let private equivalentValues =  
-    [|
-        ( // completion.p005  // idx 0
-            (parse @" (forall x y z. x * y = x * z ==> y = z) <=> 
-            (forall x z. exists w. forall y. z = x * y ==> w = y)"),
-            [5; 4]
-        );
+let private equivalentValues = [|
+    ( 
+        // idx 0
+        // completion.p005  
+        (parse @" (forall x y z. x * y = x * z ==> y = z) <=> 
+        (forall x z. exists w. forall y. z = x * y ==> w = y)"),
+        [5; 4]
+    );
     |]
 
-// completion.p005
-[<TestCase(0, TestName = "completion.p005")>]
+[<TestCase(0, TestName = "completion.p005")>]   // completion.p010 is completion.p005
 
-// completion.p010 is completion.p005
-
-let ``equivalent`` idx =
+let ``equivalent tests`` idx =
     let (eqs, _) = equivalentValues.[idx]
     let (_, result) = equivalentValues.[idx]
     (meson002 << equalitize) eqs
     |> should equal result
 
-let private skolemizeEquivalentValues =  
-    [|
-        ( // completion.p006  // idx 0
-            (parse @"forall x z. exists w. forall y. z = x * y ==> w = y"),
-            Or (Not (Atom (R ("=", [Var "z"; Fn ("*", [Var "x"; Var "y"])]))),
-                Atom (R ("=", [Fn ("f_w", [Var "x"; Var "z"]); Var "y"])))
-        );
+let private skolemizeEquivalentValues = [|
+    ( 
+        // idx 0
+        // completion.p006  
+        (parse @"forall x z. exists w. forall y. z = x * y ==> w = y"),
+        Or (Not (Atom (R ("=", [Var "z"; Fn ("*", [Var "x"; Var "y"])]))),
+          Atom (R ("=", [Fn ("f_w", [Var "x"; Var "z"]); Var "y"])))
+    );
     |]
 
-// completion.p006
-[<TestCase(0, TestName = "completion.p006")>]
+[<TestCase(0, TestName = "completion.p006")>] // completion.p011 is completion.p006
 
-// completion.p011 is completion.p006
-
-let ``skolemize equivalent`` idx =
+let ``skolemize tests`` idx =
     let (eqs, _) = skolemizeEquivalentValues.[idx]
     let (_, result) = skolemizeEquivalentValues.[idx]
     skolemize eqs
-    |> should equal result
+    |> should equal result    
     
-let private completeAndSimplifyCantOrientValues =  
+let private completeAndSimplifyValues : (string list * formula<fol> list * formula<fol> list)[] =  
     [|
-        ( // K&B #7    // idx 0
-            ["f"], 
-            [(parse @"f(a,f(b,c,a),d) = c")]
-        );
-        ( // K&B #8    // idx 1
-            ["*"], 
-            [(parse @"(a * b) * (c * b * a) = b")]
-        );
-        ( // completion.p041    // idx 2
-            ["*"; "one"; "two"], 
-            [(parse @"(a*a * a) = one(a)");
-            (parse @"(a * a*a) = two(a)");
-            (parse @"(a*b * b*c) = b")]
-        );
-        ( // completion.p044    // idx 3
-            ["1"; "/"], 
-            [(parse @"((1 / (x / (y / (((x / x) / x) / z)))) / z) = y")]
-        );
-    |]
-
-// completion.p013
-// K&B #7
-[<TestCase(0, TestName = "K&B #7")>]
-
-// completion.p025
-// K&B #8
-[<TestCase(1, TestName = "K&B #8")>]
-
-// completion.p040
-[<TestCase(2, TestName = "completion.p040")>]
-
-// completion.p023 is  completion.p013
-
-// completion.p0??
-[<TestCase(3, TestName = "completion.p0??")>]
-
-[<ExpectedException("System.Collections.Generic.KeyNotFoundException")>]
-let ``complete and simplify can't orient`` idx =
-    let (wts, _) = completeAndSimplifyCantOrientValues.[idx]
-    let (_, eqs) = completeAndSimplifyCantOrientValues.[idx]
-    complete_and_simplify wts eqs
-    |> should equal ()
-    
-// ------------------------------------------------------------------------- //
-// Another random axiom (K&B example 8).                                     //
-// ------------------------------------------------------------------------- //
-
-// completion.p025 - fails
-
-// ====================================================================================================
-
-let private completeAndSimplifyValues =  
-    [|
-        ( // K&B #4    // old idx 0
+        ( 
+            // idx 0
+            // completion.p004
+            // completion.p019
+            // K&B #4    
             ["1"; "*"; "i"], 
             [parse @"i(a) * (a * b) = b"],
             [Atom
@@ -233,7 +179,11 @@ let private completeAndSimplifyValues =
                 [Fn ("*", [Fn ("i", [Var "a"]); Fn ("*", [Var "a"; Var "b"])]);
                     Var "b"]))] 
         );
-        ( // K&B #6    // old idx 1
+        ( 
+            // idx 1
+            // completion.p008
+            // completion.p022
+            // K&B #6    
             ["*"], 
             [parse @"(a * b) * (b * c) = b"],
             [Atom
@@ -256,7 +206,11 @@ let private completeAndSimplifyValues =
                         [Fn ("*",[Var "a"; Var "b"]); Fn ("*",[Var "b"; Var "c"])]);
                     Var "b"]))]            
         );
-        ( // K&B #12    // old idx 2
+        ( 
+            // idx 2
+            // completion.p009
+            // completion.p034
+            // K&B #12    
             ["1"; "*"; "i"], 
             [(parse @"(x * y) * z = x * y * z"); 
             (parse @"1 * x = x"); 
@@ -289,7 +243,10 @@ let private completeAndSimplifyValues =
             Atom (R ("=",[Fn ("*",[Fn ("1",[]); Var "x"]); Var "x"]));
             Atom (R ("=",[Fn ("*",[Var "x"; Fn ("i",[Var "x"])]); Fn ("1",[])]))]
         );
-        ( // K&B #10    // old idx 3
+        ( 
+            // idx 3
+            // completion.p031
+            // K&B #10    
             ["1"; "*"; "\\"; "/"],
             [parse @"a * \(a,b) = b";
             parse @"/(a,b) * b = a";
@@ -304,7 +261,11 @@ let private completeAndSimplifyValues =
             Atom (R ("=",[Fn ("*",[Fn ("1",[]); Var "a"]); Var "a"]));
             Atom (R ("=",[Fn ("*",[Var "a"; Fn ("1",[])]); Var "a"]))]
         );
-        ( // K&B #7    // old idx 4
+        ( 
+            //idx 4
+            // completion.p014
+            // completion.p024
+            // K&B #7   
             ["h"; "g"; "f"],
             [parse @"f(a,f(b,c,a),d) = c";
             parse @"f(a,b,c) = g(a,b)";
@@ -314,7 +275,10 @@ let private completeAndSimplifyValues =
                 (R ("=",[Fn ("f",[Var "a"; Var "b"; Var "c"]); Fn ("h",[Var "b"])]));
             Atom (R ("=",[Fn ("g",[Var "a"; Var "b"]); Fn ("h",[Var "b"])]))]
         );
-        ( // completion.p012    // old idx 5
+        ( 
+            //idx 5
+            // completion.p012    
+            // completion.p027
             ["1"; "*"; "f"; "g"],
             [parse @"f(a,a*b) = b";
             parse @"g(a*b,b) = a";
@@ -331,7 +295,9 @@ let private completeAndSimplifyValues =
             Atom (R ("=",[Fn ("*",[Fn ("1",[]); Var "a"]); Var "a"]));
             Atom (R ("=",[Fn ("*",[Var "a"; Fn ("1",[])]); Var "a"]))]
         );
-        ( // K&B #1    // old idx 6
+        ( 
+            //idx 6
+            // K&B #1    
             ["1"; "*"; "i"],
             [parse @"1 * x = x";
             parse @"i(x) * x = 1";
@@ -360,7 +326,9 @@ let private completeAndSimplifyValues =
                     [Fn ("*",[Fn ("*",[Var "x"; Var "y"]); Var "z"]);
                     Fn ("*",[Var "x"; Fn ("*",[Var "y"; Var "z"])])]))]
         );
-        ( // completion.p016    // old idx 7
+        ( 
+            //idx 7
+            // completion.p016    
             ["1"; "*"; "i"],
             [parse @"(x * y) * z = x * y * z";
             parse @"1 * x = x";
@@ -389,7 +357,8 @@ let private completeAndSimplifyValues =
             Atom (R ("=",[Fn ("*",[Fn ("1",[]); Var "x"]); Var "x"]));
             Atom (R ("=",[Fn ("*",[Fn ("i",[Var "x"]); Var "x"]); Fn ("1",[])]))]
         );
-        (    // old idx 8
+        (   //idx 8
+            // completion.p020
             ["1"; "*"; "i"],
             [parse @"a * (i(a) * b) = b"],
             [Atom
@@ -405,7 +374,10 @@ let private completeAndSimplifyValues =
                     [Fn ("*",[Var "a"; Fn ("*",[Fn ("i",[Var "a"]); Var "b"])]);
                     Var "b"]))]
         );
-        ( // K&B #5    // old idx 9
+        (    
+            // idx 9
+            // completion.p021
+            // K&B #5   
             ["1"; "11"; "*"; "i"; "j"],
             [parse @"(x * y) * z = x * y * z";
             parse @"1 * x = x";
@@ -438,7 +410,10 @@ let private completeAndSimplifyValues =
             Atom (R ("=",[Fn ("*",[Fn ("1",[]); Var "x"]); Var "x"]));
             Atom (R ("=",[Fn ("*",[Fn ("i",[Var "x"]); Var "x"]); Fn ("1",[])]))]
         );
-        ( // K&B #9    // old idx 10
+        ( 
+            // idx 10
+            // completion.p026
+            // K&B #9    
             ["*"; "f"; "g"],
             [parse @"f(a,a*b) = b";
             parse @"g(a*b,b) = a"; ],
@@ -447,7 +422,9 @@ let private completeAndSimplifyValues =
             Atom
                 (R ("=",[Fn ("g",[Fn ("*",[Var "a"; Var "b"]); Var "b"]); Var "a"]))]
         );
-        ( // completion.p032    // old idx 11
+        ( 
+            // idx 11
+            // completion.p032    
             ["1"; "*"; "\\"; "/"; "f"; "g"],
             [parse @"a * \(a,b) = b";
             parse @"/(a,b) * b = a";
@@ -484,7 +461,10 @@ let private completeAndSimplifyValues =
             Atom (R ("=",[Fn ("*",[Fn ("1",[]); Var "a"]); Var "a"]));
             Atom (R ("=",[Fn ("*",[Var "a"; Fn ("1",[])]); Var "a"]))]
         );
-        ( // K&B #13    // old idx 12
+        ( 
+            // idx 12
+            // completion.p035
+            // K&B #13    
             ["1"; "*"; "i"],
             [parse @"(x * y) * z = x * y * z";
             parse @"x * 1 = x";
@@ -535,7 +515,10 @@ let private completeAndSimplifyValues =
             Atom (R ("=",[Fn ("*",[Var "x"; Fn ("1",[])]); Var "x"]));
             Atom (R ("=",[Fn ("*",[Fn ("i",[Var "x"]); Var "x"]); Fn ("1",[])]))]
         );
-        ( // K&B #14    // old idx 13
+        (  
+            // idx 13
+            // completion.p036
+            // K&B #14   
             ["1"; "11"; "*"; "i"; "j"],
             [(parse @"(x * y) * z = x * y * z"); 
             (parse @"1 * x = x"); 
@@ -576,7 +559,10 @@ let private completeAndSimplifyValues =
             Atom (R ("=",[Fn ("*",[Fn ("11",[]); Var "x"]); Var "x"]));
             Atom (R ("=",[Fn ("*",[Var "x"; Fn ("i",[Var "x"])]); Fn ("1",[])]))]
         );
-        ( // K&B #15    // old idx 14
+        (   
+            // idx 14
+            // completion.p037
+            // K&B #15    
             ["1"; "*"; "star"; "prime"],
             [(parse @"(x * y) * z = x * y * z"); 
             (parse @"1 * x = x");  
@@ -638,72 +624,91 @@ let private completeAndSimplifyValues =
                     Fn ("star",[Var "a"])]));
             Atom (R ("=",[Fn ("*",[Fn ("star",[Var "a"]); Var "b"]); Var "b"]))]
         );
-        ( // The commutativity example (of course it fails...).  // old idx 15
+        ( 
+            // idx 15
+            // completion.p007
+            // commutativity example
             ["1"; "*"; "i"], 
             [parse @"(x * y) * z = x * (y * z)";
             parse @"1 * x = x";
             parse @"x * 1 = x";
             parse @"x * x = 1"],
-            [formula<fol>.False]        // The result was unknown when test created. False used as place holder.
+            []  // Dummy value used as place holder
         );
-        ( // completion.p017  // old idx 16
+        (   
+            // idx 16
+            // completion.p017  
             ["1"; "i"; "*"], 
             [(parse @"1 * x = x"); 
             (parse @"i(x) * x = 1"); 
             (parse @"(x * y) * z = x * y * z")],
-            [formula<fol>.False]        // The result was unknown when test created. False used as place holder.
+            []  // Dummy value used as place holder
         );
-        ( // completion.p018  // old idx 17
+        ( 
+            // idx 17
+            // completion.p018  
+            // K&B #3
             ["1"; "*"; "i"], 
             [parse @"(x * y) * z = x * y * z";
             parse @"x * 1 = x";
             parse @"x * i(x) = 1"; ],
-            [formula<fol>.False]        // The result was unknown when test created. False used as place holder.
+            []  // Dummy value used as place holder
         );
-        ( // completion.p028  // old idx 18
+        ( 
+            // idx 18
+            // completion.p028  
             ["1"; "*"; "f"; "g"], 
             [(parse @"(x * y) * z = x * y * z"); 
             (parse @"f(a,a*b) = b"); 
             (parse @"g(a*b,b) = a"); 
             (parse @"1 * a = a"); 
             (parse @"a * 1 = a")],
-            [formula<fol>.False]        // The result was unknown when test created. False used as place holder.
+            []  // Dummy value used as place holder
         );
-        ( // completion.p029  // old idx 19
+        (  
+            // idx 19
+            // completion.p029 
             ["*"; "f"; "g"], 
             [(parse @"(x * y) * z = x * y * z"); 
             (parse @"f(a,a*b) = b"); 
             (parse @"g(a*b,b) = a"); 
             (parse @"1 * a = a"); 
             (parse @"a * 1 = a")],
-            [formula<fol>.False]        // The result was unknown when test created. False used as place holder.
+            []  // Dummy value used as place holder
         );
-        ( // completion.p030  // old idx 20
+        (   
+            // idx 20
+            // completion.p030  
             ["f"; "g"; "*"], 
             [(parse @"(x * y) * z = x * y * z"); 
             (parse @"f(a,a*b) = b"); 
-            (parse @"g(a*b,b) = a"); 
-            (parse @"1 * a = a"); 
-            (parse @"a * 1 = a")],
-            [formula<fol>.False]        // The result was unknown when test created. False used as place holder.
+            (parse @"g(a*b,b) = a")],
+            []  // Dummy value used as place holder
         );
-        ( // K&B 11  // old idx 21
+        ( 
+            // idx 21
+            // completion.p033
+            // K&B 11  
             ["1"; "g"; "f"; "*"; "i"], 
             [(parse @"(x * y) * z = x * y * z");
             (parse @"1 * 1 = 1");
             (parse @"a * i(a) = 1");
             (parse @"f(1,a,b) = a");
             (parse @"f(a*b,a,b) = g(a*b,b)")],
-            [formula<fol>.False]        // The result was unknown when test created. False used as place holder.
+            []  // Dummy value used as place holder
         );
-        ( // K&B 12  // old idx 22
+        ( 
+            // idx 22
+            // K&B 12  
             ["1"; "*"; "i"], 
             [(parse @"(x * y) * z = x * y * z"); 
             (parse @"1 * x = x"); 
             (parse @"x * i(x) = 1")],
-            [formula<fol>.False]        // The result was unknown when test created. False used as place holder.
+            []  // Dummy value used as place holder
         );
-        ( // completion.p038  // old idx 23
+        ( 
+            // idx 23
+            // completion.p038  
             ["1"; "hash"; "star"; "*"; "dollar"], 
             [(parse @"(x * y) * z = x * y * z"); 
             (parse @"1 * x = x");  
@@ -712,9 +717,11 @@ let private completeAndSimplifyValues =
             (parse @"a * hash(a) = 1"); 
             (parse @"a * 1 = hash(hash(a))"); 
             (parse @"hash(hash(hash(a))) = hash(a)")],
-            [formula<fol>.False]        // The result was unknown when test created. False used as place holder.
+            []  // Dummy value used as place holder
         );
-        ( // completion.p039  // old idx 24
+        ( 
+            // idx 24
+            // completion.p039  
             ["1"; "star"; "*"; "hash"; "dollar"], 
             [(parse @"(x * y) * z = x * y * z"); 
             (parse @"1 * x = x"); 
@@ -723,9 +730,12 @@ let private completeAndSimplifyValues =
             (parse @"a * hash(a) = 1"); 
             (parse @"hash(hash(a)) = a * 1"); 
             (parse @"hash(hash(hash(a))) = hash(a)")],
-            [formula<fol>.False]        // The result was unknown when test created. False used as place holder.
+            []  // Dummy value used as place holder
         );
-        ( // completion.p040 // K&B #16 // old idx 25
+        ( 
+            // idx 25
+            // completion.p040 
+            // K&B #16 
             ["one"; "two"; "*"], 
             [parse @"(a * a) * a = one(a)";
             parse @"a * (a * a) = two(a)";
@@ -776,23 +786,32 @@ let private completeAndSimplifyValues =
                     [Fn ("*",[Fn ("two",[Var "a"]); Var "b"]);
                     Fn ("*",[Var "a"; Var "b"])]))]
         );
-        ( // completion.p042 // old idx 26
+        (   
+            // idx 26
+            // completion.p042 
             ["1"; "f"], 
             [parse @"f(f(f(f(f(1))))) = 1";
             parse @"f(f(f(1))) = 1"; ],
             [Atom (R ("=",[Fn ("f",[Fn ("1",[])]); Fn ("1",[])]))]
         );
-        ( // completion.p043 // old idx 27
+        (   
+            // idx 27
+            // completion.p043 
             ["1"; "*"; "i"], 
             [(parse @"x * i(y * (((z * i(z)) * i(u * y)) * x)) = u")],
-            [formula<fol>.False]        // The result was unknown when test created. False used as place holder.
+            []  // Dummy value used as place holder
         );
-        ( // completion.p045 // old idx 28
+        ( 
+            // idx 28
+            // completion.p045 
             ["*"; "i"], 
             [(parse @"i(x * i(x)) * (i(i((y * z) * u) * y) * i(u)) = z")],
-            [formula<fol>.False]        // The result was unknown when test created. False used as place holder.
+            []  // Dummy value used as place holder
         );
-        ( // completion.p046 // Baader & Nipkow #1 // old idx 29
+        ( 
+            // idx 29
+            // completion.p046 
+            // Baader & Nipkow #1 
             ["g"; "f"], 
             [parse @"f(f(x)) = g(x)"],
             [Atom
@@ -800,7 +819,10 @@ let private completeAndSimplifyValues =
                     [Fn ("f",[Fn ("g",[Var "x0"])]); Fn ("g",[Fn ("f",[Var "x0"])])]));
             Atom (R ("=",[Fn ("f",[Fn ("f",[Var "x"])]); Fn ("g",[Var "x"])]))]
         );
-        ( // completion.p049 // Baader & Nipkow #4 // old idx 30
+        ( 
+            // idx 30
+            // completion.p049 
+            // Baader & Nipkow #4 
             ["f"; "g"], 
             [parse @"f(f(x)) = f(x)";
             parse @"g(g(x)) = f(x)";
@@ -809,7 +831,10 @@ let private completeAndSimplifyValues =
             [Atom (R ("=",[Fn ("g",[Var "x0"]); Fn ("f",[Var "x0"])]));
             Atom (R ("=",[Fn ("f",[Fn ("f",[Var "x"])]); Fn ("f",[Var "x"])]))]
         );
-        ( // completion.p050 // Baader & Nipkow #5 // old idx 31
+        ( 
+            // idx 31
+            // completion.p050 
+            // Baader & Nipkow #5 
             ["f"; "g"], 
             [parse @"f(g(f(x))) = g(x)"],
             [Atom
@@ -820,7 +845,9 @@ let private completeAndSimplifyValues =
                 (R ("=",
                     [Fn ("f",[Fn ("g",[Fn ("f",[Var "x"])])]); Fn ("g",[Var "x"])]))]
         );
-        ( // completion.p051 // old idx 32
+        ( 
+            // idx 32
+            // completion.p051 
             ["0"; "nil"; "SUC"; "::"; "+"; "length"; "append"; "rev"], 
             [parse @"0 + y = y";
             parse @"SUC(x) + y = SUC(x + y)";
@@ -853,158 +880,219 @@ let private completeAndSimplifyValues =
                     ("append",
                         [Fn ("rev",[Var "t"]); Fn ("::",[Var "h"; Fn ("nil",[])])])]))]
         );
+    (   
+        // idx 33
+        // completion.p013
+        // completion.p023
+        // K&B #7    
+        ["f"], 
+        [(parse @"f(a,f(b,c,a),d) = c")],
+        [] // Dummy value used as place holder
+    );
+    (     
+        // idx 34
+        // completion.p025
+        // K&B #8  
+        ["*"], 
+        [(parse @"(a * b) * (c * b * a) = b")],
+        [] // Dummy value used as place holder
+    );
+    ( 
+        // idx 35
+        // completion.p041 
+        // K&B #17   
+        ["*"; "one"; "two"], 
+        [(parse @"(a*a * a) = one(a)");
+        (parse @"(a * a*a) = two(a)");
+        (parse @"(a*b * b*c) = b")],
+        [] // Dummy value used as place holder
+    );
+    (   
+        // idx 36
+        // completion.p044  
+        ["1"; "/"], 
+        [(parse @"((1 / (x / (y / (((x / x) / x) / z)))) / z) = y")],
+        [] // Dummy value used as place holder
+    );
     |]
-
-// completion.p007
-// commutativity example
-[<TestCase(15, Category = "LongRunning", TestName = "commutativity example")>]
-
-// completion.p015
-// K&B #1
+    
+[<TestCase(15, TestName = "commutativity example", Category = "LongRunning")>]
 [<TestCase(6, TestName = "K&B #1")>]
-
-// completion.p004
-// K&B #4
+[<TestCase(17, TestName = "K&B #3", Category = "LongRunning")>]
 [<TestCase(0, TestName = "K&B #4")>]
-
-// completion.p019 is completion.p005
-
-// completion.p021
-// K&B #5
 [<TestCase(9, TestName = "K&B #5")>]
-
-// completion.p008
-// K&B #6
 [<TestCase(1, TestName = "K&B #6")>]
-
-// completion.p022 is completion.p008
-
-// completion.p006
-// K&B #7
 [<TestCase(4, TestName = "K&B #7")>]
-
-// completion.p014 is completion.p006
-// completion.p024 is completion.p006 
-
-// completion.p026
-// K&B #9
+[<TestCase(33, TestName = "K&B #7", ExpectedException=typeof<System.Collections.Generic.KeyNotFoundException>)>]
+[<TestCase(34, TestName = "K&B #8", ExpectedException=typeof<System.Collections.Generic.KeyNotFoundException>)>]
 [<TestCase(10, TestName = "K&B #9")>]
-
-// completion.p031
-// K&B #10
 [<TestCase(3, TestName = "K&B #10")>]
-
-// completion.p033
-// K&B 11
-[<TestCase(21, Category = "LongRunning", TestName = "K&B 11")>]
-
-// completion.p034
-// K&B 12
-[<TestCase(22, Category = "LongRunning", TestName = "K&B 12")>]
-
-// completion.p009
-// K&B #12
-[<TestCase(2, Category = "LongRunning", TestName = "K&B #12")>]
-
-// completion.p035
-// K&B #13
-[<TestCase(12, Category = "LongRunning", TestName = "K&B #13")>]
-
-// completion.p036
-// K&B #14
-[<TestCase(13, Category = "LongRunning", TestName = "K&B #14")>]
-
-// completion.p037
-// K&B #15
+[<TestCase(21, TestName = "K&B 11", Category = "LongRunning")>]
+[<TestCase(22, TestName = "K&B 12", Category = "LongRunning")>]
+[<TestCase(2, TestName = "K&B #12", Category = "LongRunning")>]
+[<TestCase(12, TestName = "K&B #13", Category = "LongRunning")>]
+[<TestCase(13, TestName = "K&B #14", Category = "LongRunning")>]
 [<TestCase(14, TestName = "K&B #15")>]
-
-// completion.p040
-// K&B #16
 [<TestCase(25, TestName = "K&B #16")>]
-
-// completion.p012
-[<TestCase(5, TestName = "completion p012")>]
-
-// completion.p027 is completion.p012
-
-// completion.p016
-[<TestCase(7, TestName = "completion p016")>]
-
-// completion.p017
-[<TestCase(16, Category = "LongRunning", TestName = "completion.p017")>]
-
-// completion.p018
-[<TestCase(17, Category = "LongRunning", TestName = "completion.p018")>]
-
-// completion.p020
-[<TestCase(8, TestName = "completion p020")>]
-
-// completion.p028
-[<TestCase(18, Category = "LongRunning", TestName = "completion.p028")>]
-
-// completion.p029
-[<TestCase(19, Category = "LongRunning", TestName = "completion.p029")>]
-
-// completion.p030
-[<TestCase(20, Category = "LongRunning", TestName = "completion.p030")>]
-
-// completion.p032
-[<TestCase(11, TestName = "completion p032")>]
-
-// completion.p038
-[<TestCase(23, Category = "LongRunning", TestName = "completion.p038")>]
-
-// completion.p039
-[<TestCase(24, Category = "LongRunning", TestName = "completion.p039")>]
-
-// completion.p042
-[<TestCase(26, TestName = "completion.p043")>]
-
-// completion.p043
-[<TestCase(27, Category = "LongRunning", TestName = "completion.p044")>]
-
-// completion.p045
-[<TestCase(28, Category = "LongRunning", TestName = "completion.p045")>]
-
-// completion.p046
-// Baader & Nipkow #1
+[<TestCase(35, TestName = "K&B #17", ExpectedException=typeof<System.Collections.Generic.KeyNotFoundException>)>]
 [<TestCase(29, TestName = "Baader & Nipkow #1")>]
-
-// completion.p049
-// Baader & Nipkow #4
 [<TestCase(30, TestName = "Baader & Nipkow #4")>]
-
-// completion.p050
-// Baader & Nipkow #5
 [<TestCase(31, TestName = "Baader & Nipkow #5")>]
+[<TestCase(5, TestName = "completion.p012")>]
+[<TestCase(7, TestName = "completion.p016")>]
+[<TestCase(16, TestName = "completion.p017 ", Category = "LongRunning")>]
+[<TestCase(8, TestName = "completion.p020")>]
+[<TestCase(11, TestName = "completion p032")>]
+[<TestCase(18, TestName = "completion.p028", Category = "LongRunning")>]
+[<TestCase(19, TestName = "completion.p029", Category = "LongRunning")>]
+[<TestCase(20, TestName = "completion.p030", Category = "LongRunning")>]
+[<TestCase(23, TestName = "completion.p038", Category = "LongRunning")>]
+[<TestCase(24, TestName = "completion.p039", Category = "LongRunning")>]
+[<TestCase(26, TestName = "completion.p042")>]
+[<TestCase(27, TestName = "completion.p043", Category = "LongRunning")>]
+[<TestCase(36, TestName = "completion.p044", ExpectedException=typeof<System.Collections.Generic.KeyNotFoundException>)>]
+[<TestCase(28, TestName = "completion.p045", Category = "LongRunning")>]
+[<TestCase(32, TestName = "completion.p051")>]
 
-// completion.p051
-[<TestCase(32, TestName = "completion.p052")>]
-
-let ``complete and simplify`` idx =
+let ``complete and simplify tests`` idx =
     let (wts, _, _) = completeAndSimplifyValues.[idx]
     let (_, eqs, _) = completeAndSimplifyValues.[idx]
     let (_, _, result) = completeAndSimplifyValues.[idx]
     complete_and_simplify wts eqs
-    |> should equal result
+    |> should equal result    
+
+let private funpowValues : ( int * (formula<fol> list * formula<fol> list * formula<fol> list -> formula<fol> list * formula<fol> list * formula<fol> list) * (formula<fol> list * formula<fol> list * formula<fol> list) * string list * string list * int)[] = [|
+    ( 
+        // idx 0
+        // completion.p047
+        // Baader & Nipkow #2 
+        122, 
+        (complete1 (lpo_ge (weight ["1"; "*"; "i"]))),
+        ([parse @"f(f(x)) = g(x)"], [],unions (allpairs critical_pairs eqs eqs)),
+        ["<<x2 *1 *x3 =x2 *x3>>";
+        "<<i(x3 *x4 *i(1)) *x3 *x4 *x0 *x1 =x0 *x1>>";
+        "<<i(x1 *x2 *1) *x1 *x2 *x4 *x5 =x4 *x5>>";
+        "<<x1 *x2 *x3 *1 *x0 =x1 *x2 *x3 *x0>>";
+        "<<i(x1 *x2 *i(x4)) *x1 *x2 *1 *x5 =x4 *x5>>";
+        "<<i(x4 *x5 *x6 *x7 *x8 *x3) *x4 *x5 *x6 *x7 *x8 *x3 *x0 =1 *x0>>";
+        "<<i(x4 *x5 *x2 *x7 *x8) *x4 *x5 *x2 *x7 *x8 *x0 =1 *x0>>";
+        "<<i(x1 *x4 *x5 *x6 *x7 *x8 *x9) *x1 *x4 *x5 *x6 *x7 *x8 *x9 *x0 =1 *x0>>";
+        "<<i(x4 *x3) *x4 *x3 *x0 =1 *x0>>";
+        "<<i(x1 *x2 *i(i(x4))) *x1 *x2 *x4 *x5 =1 *x5>>";
+        "<<i(x6 *x5 *x3) *x6 *x5 *x3 *x0 =1 *x0>>";
+        "<<i(x1 *x6 *x5 *x7) *x1 *x6 *x5 *x7 *x0 =1 *x0>>";
+        "<<i(x1 *x2 *x6 *i(x4)) *x1 *x2 *x6 *x5 *x7 =x4 *x5 *x7>>";
+        "<<i(x5 *x6 *i(x1 *x2 *x3)) *x5 *x6 *1 *x0 =x1 *x2 *x3 *x0>>";
+        "<<i(i(x1 *x2 *x3) *x1 *x2 *x3 *x0 *x7) *x0 *x7 *x4 =1 *x4>>";
+        "<<i(1 *x0) *x0 *x4 =1 *x4>>";
+        "<<i(x5 *1 *x0) *x5 *x0 *x4 =1 *x4>>";
+        "<<x2 *i(x4 *x5 *x6) *x4 *x5 *x6 *x1 *x3 =x2 *x1 *x3>>";
+        "<<i(x2 *i(x0)) *x2 *x1 *x3 =x0 *x1 *x3>>";
+        "<<x2 *i(x4 *x5 *x6) *x4 *x5 *x6 *x7 *x8 *x9 *x3 =x2 *x7 *x8 *x9 *x3>>";
+        "<<x2 *i(x4 *x5) *x4 *x5 *x1 *x7 *x8 *x9 =x2 *x1 *x7 *x8 *x9>>";
+        "<<x6 *i(x2 *i(x0)) *x2 *x1 *x3 *x7 =x6 *x0 *x1 *x3 *x7>>";
+        "<<i(i(x0)) *x2 *x3 =x0 *x2 *x3>>";
+        "<<x2 *i(i(x0)) *x1 *x5 =x2 *x0 *x1 *x5>>";
+        "<<i(i(i(x0))) *x0 *x1 =1 *x1>>";
+        "<<x2 *x3 *x4 *i(i(x0)) *x1 *x7 =x2 *x3 *x4 *x0 *x1 *x7>>";
+        "<<i(i(x0)) *x1 *x4 *x5 *x6 *x7 =x0 *x1 *x4 *x5 *x6 *x7>>";
+        "<<(x3 *x4) *x5 =x3 *x4 *x5>>";
+        "<<((x0 *x1) *x2) *i(x6) *(x6 *x7) *x5 =((x0 *x1) *x2) *x7 *x5>>";
+        "<<((x6 *x7) *x8) *x0 *x1 *x10 *(x3 *x4) *x5 =((x6 *x7) *x8) *x0 *x1 *x10 *x3 *x4 *x5>>";
+        "<<((x6 *x7) *x8) *x0 *x1 *x2 *((x3 *x4) *x5) *x11 =((x6 *x7) *x8) *x0 *x1 *x2 *(x3 *x4) *x5 *x11>>";
+        "<<i(1) *x2 *x3 =x2 *x3>>";
+        "<<i(x2 *x3 *x4) *(x2 *x3) *x4 *x1 =1 *x1>>";
+        "<<(x2 *i(x0)) *(x0 *x1) *x5 =(x2 *1) *x1 *x5>>";
+        "<<i(i(x0)) *1 *x1 =x0 *x1>>";
+        "<<((x0 *x1) *x2) *(x5 *x6) *x7 =((x0 *x1) *x2) *x5 *x6 *x7>>";
+        "<<i(x1) *x1 *x2 =1 *x2>>";
+        "<<(x0 *x1 *x4) *x5 =(x0 *x1) *x4 *x5>>";
+        "<<1 *x1 *x2 =x1 *x2>>";
+        "<<f(f(x)) =g(x)>>"],
+        ["<<((1 *x7) *x2) *(x3 *x4) *x5 =((i(x6) *x6 *x7) *x2) *x3 *x4 *x5>>";
+         "<<(1 *x4) *x5 =(i(x3) *x3) *x4 *x5>>"; "<<(x1 *x2) *x3 =(1 *x1) *x2 *x3>>";
+         "<<(x0 *x4 *x5) *x3 =(x0 *1) *(x4 *x5) *x3>>";
+         "<<(x4 *(x0 *x1) *x2 *x6) *x7 =(x4 *x0 *x1 *x2) *x6 *x7>>"],
+         6329   // Note: Only count is given as full list is just unwarranted
+    );
+    ( 
+        // idx 1
+        // completion.p048
+        // Baader & Nipkow #3
+        123, 
+        (complete1 (lpo_ge (weight ["1"; "*"; "i"]))),
+        ([parse @"f(f(x)) = g(x)"], [],unions (allpairs critical_pairs eqs eqs)),
+        ["<<x2 *1 *x3 =x2 *x3>>"; "<<i(x3 *x4 *i(1)) *x3 *x4 *x0 *x1 =x0 *x1>>";
+         "<<i(x1 *x2 *1) *x1 *x2 *x4 *x5 =x4 *x5>>";
+         "<<x1 *x2 *x3 *1 *x0 =x1 *x2 *x3 *x0>>";
+         "<<i(x1 *x2 *i(x4)) *x1 *x2 *1 *x5 =x4 *x5>>";
+         "<<i(x4 *x5 *x6 *x7 *x8 *x3) *x4 *x5 *x6 *x7 *x8 *x3 *x0 =1 *x0>>";
+         "<<i(x4 *x5 *x2 *x7 *x8) *x4 *x5 *x2 *x7 *x8 *x0 =1 *x0>>";
+         "<<i(x1 *x4 *x5 *x6 *x7 *x8 *x9) *x1 *x4 *x5 *x6 *x7 *x8 *x9 *x0 =1 *x0>>";
+         "<<i(x4 *x3) *x4 *x3 *x0 =1 *x0>>";
+         "<<i(x1 *x2 *i(i(x4))) *x1 *x2 *x4 *x5 =1 *x5>>";
+         "<<i(x6 *x5 *x3) *x6 *x5 *x3 *x0 =1 *x0>>";
+         "<<i(x1 *x6 *x5 *x7) *x1 *x6 *x5 *x7 *x0 =1 *x0>>";
+         "<<i(x1 *x2 *x6 *i(x4)) *x1 *x2 *x6 *x5 *x7 =x4 *x5 *x7>>";
+         "<<i(x5 *x6 *i(x1 *x2 *x3)) *x5 *x6 *1 *x0 =x1 *x2 *x3 *x0>>";
+         "<<i(i(x1 *x2 *x3) *x1 *x2 *x3 *x0 *x7) *x0 *x7 *x4 =1 *x4>>";
+         "<<i(1 *x0) *x0 *x4 =1 *x4>>"; "<<i(x5 *1 *x0) *x5 *x0 *x4 =1 *x4>>";
+         "<<x2 *i(x4 *x5 *x6) *x4 *x5 *x6 *x1 *x3 =x2 *x1 *x3>>";
+         "<<i(x2 *i(x0)) *x2 *x1 *x3 =x0 *x1 *x3>>";
+         "<<x2 *i(x4 *x5 *x6) *x4 *x5 *x6 *x7 *x8 *x9 *x3 =x2 *x7 *x8 *x9 *x3>>";
+         "<<x2 *i(x4 *x5) *x4 *x5 *x1 *x7 *x8 *x9 =x2 *x1 *x7 *x8 *x9>>";
+         "<<x6 *i(x2 *i(x0)) *x2 *x1 *x3 *x7 =x6 *x0 *x1 *x3 *x7>>";
+         "<<i(i(x0)) *x2 *x3 =x0 *x2 *x3>>"; "<<x2 *i(i(x0)) *x1 *x5 =x2 *x0 *x1 *x5>>";
+         "<<i(i(i(x0))) *x0 *x1 =1 *x1>>";
+         "<<x2 *x3 *x4 *i(i(x0)) *x1 *x7 =x2 *x3 *x4 *x0 *x1 *x7>>";
+         "<<i(i(x0)) *x1 *x4 *x5 *x6 *x7 =x0 *x1 *x4 *x5 *x6 *x7>>";
+         "<<(x3 *x4) *x5 =x3 *x4 *x5>>";
+         "<<((x0 *x1) *x2) *i(x6) *(x6 *x7) *x5 =((x0 *x1) *x2) *x7 *x5>>";
+         "<<((x6 *x7) *x8) *x0 *x1 *x10 *(x3 *x4) *x5 =((x6 *x7) *x8) *x0 *x1 *x10 *x3 *x4 *x5>>";
+         "<<((x6 *x7) *x8) *x0 *x1 *x2 *((x3 *x4) *x5) *x11 =((x6 *x7) *x8) *x0 *x1 *x2 *(x3 *x4) *x5 *x11>>";
+         "<<i(1) *x2 *x3 =x2 *x3>>"; "<<i(x2 *x3 *x4) *(x2 *x3) *x4 *x1 =1 *x1>>";
+         "<<(x2 *i(x0)) *(x0 *x1) *x5 =(x2 *1) *x1 *x5>>"; "<<i(i(x0)) *1 *x1 =x0 *x1>>";
+         "<<((x0 *x1) *x2) *(x5 *x6) *x7 =((x0 *x1) *x2) *x5 *x6 *x7>>";
+         "<<i(x1) *x1 *x2 =1 *x2>>"; "<<(x0 *x1 *x4) *x5 =(x0 *x1) *x4 *x5>>";
+         "<<1 *x1 *x2 =x1 *x2>>"; "<<f(f(x)) =g(x)>>"],
+        ["<<((1 *x7) *x2) *(x3 *x4) *x5 =((i(x6) *x6 *x7) *x2) *x3 *x4 *x5>>";
+         "<<(1 *x4) *x5 =(i(x3) *x3) *x4 *x5>>"; "<<(x1 *x2) *x3 =(1 *x1) *x2 *x3>>";
+         "<<(x0 *x4 *x5) *x3 =(x0 *1) *(x4 *x5) *x3>>";
+         "<<(x4 *(x0 *x1) *x2 *x6) *x7 =(x4 *x0 *x1 *x2) *x6 *x7>>"],
+         6328   // Note: Only count is given as full list is just unwarranted
+    );
+    |]
+
+[<TestCase(0, TestName = "Baader & Nipkow #2")>]
+[<TestCase(1, TestName = "Baader & Nipkow #3")>]
+
+let ``funpow tests`` idx =
+    let (n, _, _, _, _, _) = funpowValues.[idx]
+    let (_, f, _, _, _, _) = funpowValues.[idx]
+    let (_, _, x, _, _, _) = funpowValues.[idx]
+    let (_, _, _, eqsResult, _, _) = funpowValues.[idx]
+    let (_, _, _, _, defResult, _) = funpowValues.[idx]
+    let (_, _, _, _, _, critsCount) = funpowValues.[idx]
+    let eqs,def,crits = funpow n f x
+    // Note: AST is not used here because they are just to large to be practical here.
+    // Could store them in a seperate file and then use them.
+    List.map sprint_fol_formula eqs
+    |> should equal eqsResult
+    List.map sprint_fol_formula def
+    |> should equal defResult
+    List.length crits
+    |> should equal critsCount
+
+// ========================================================================================
 
 
-// completion.p047
-// Baader & Nipkow #2
-//[<Test>]
-//let ``funpow`` idx =
-//    let eqs036 =  [parse @"f(f(x)) = g(x)"]
-//    let (eqs1,def1,crits1) = funpow 122 (complete1 ord) (eqs036,def,crits)
-//    ()
-//    |> should equal  (
-//        formula<fol>.False,
-//        formula<fol>.False,
-//        formula<fol>.False
-//    )
+// ----------------------------------------------------------------------------------------
 
-let private iproveValues  =  
+let private iproveValues : (formula<fol> list * formula<fol> * formula<fol> list)[] =  
     [|
-        ( // completion.p053  // idx 0
+        ( 
+            // idx 0
+            // completion.p053  
             [],
             (parse @"x + 0 = x"),
             [Atom (R ("=",[Fn ("+",[Var "x"; Fn ("0",[])]); Var "x"]));
@@ -1031,7 +1119,9 @@ let private iproveValues  =
                     ("append",
                         [Fn ("rev",[Var "t"]); Fn ("::",[Var "h"; Fn ("nil",[])])])]))]
         );
-        ( // completion.p054  // idx 1
+        ( 
+            // idx 1
+            // completion.p054  
             [],
             (parse @"x + SUC(y) = SUC(x + y)"),
             [Atom
@@ -1061,7 +1151,9 @@ let private iproveValues  =
                     ("append",
                         [Fn ("rev",[Var "t"]); Fn ("::",[Var "h"; Fn ("nil",[])])])]))]
         );
-        ( // completion.p055  // idx 2
+        ( 
+            // idx 2
+            // completion.p055  
             [],
             (parse @"(x + y) + z = x + y + z"),
             [Atom
@@ -1091,7 +1183,9 @@ let private iproveValues  =
                     ("append",
                         [Fn ("rev",[Var "t"]); Fn ("::",[Var "h"; Fn ("nil",[])])])]))]
         );
-        ( // completion.p056  // idx 3
+        ( 
+            // idx 3
+            // completion.p056  
             [],
             (parse @"length(append(x,y)) = length(x) + length(y)"),
             [Atom
@@ -1121,7 +1215,9 @@ let private iproveValues  =
                     ("append",
                         [Fn ("rev",[Var "t"]); Fn ("::",[Var "h"; Fn ("nil",[])])])]))]
         );
-        ( // completion.p057  // idx 4
+        ( 
+            // idx 4
+            // completion.p057  
             [],
             (parse @"append(append(x,y),z) = append(x,append(y,z))"),
             [Atom
@@ -1151,7 +1247,9 @@ let private iproveValues  =
                     ("append",
                         [Fn ("rev",[Var "t"]); Fn ("::",[Var "h"; Fn ("nil",[])])])]))]
         );
-        ( // completion.p058  // idx 5
+        ( 
+            // idx 5
+            // completion.p058  
             [],
             (parse @"append(x,nil) = x"),
             [Atom (R ("=",[Fn ("append",[Var "x"; Fn ("nil",[])]); Var "x"]));
@@ -1178,7 +1276,9 @@ let private iproveValues  =
                     ("append",
                         [Fn ("rev",[Var "t"]); Fn ("::",[Var "h"; Fn ("nil",[])])])]))]
         );
-        ( // completion.p059  // idx 6
+        ( 
+            // idx 6
+            // completion.p059  
             [parse @"append(append(x,y),z) = append(x,append(y,z))";
             parse @"append(x,nil) = x";],
             (parse @"rev(append(x,y)) = append(rev(y),rev(x))"),
@@ -1214,7 +1314,9 @@ let private iproveValues  =
                     ("append",
                         [Fn ("rev",[Var "t"]); Fn ("::",[Var "h"; Fn ("nil",[])])])]))]
         );
-        ( // completion.p060  // idx 7
+        ( 
+            // idx 7
+            // completion.p060  
             [parse @"rev(append(x,y)) = append(rev(y),rev(x))";
             parse @"append(x,nil) = x";
             parse @"append(append(x,y),z) = append(x,append(y,z))"; ],
@@ -1252,7 +1354,9 @@ let private iproveValues  =
                     ("append",
                         [Fn ("rev",[Var "t"]); Fn ("::",[Var "h"; Fn ("nil",[])])])]))]
         );
-        ( // completion.p061  // idx 8
+        ( 
+            // idx 8
+            // completion.p061  
             [],
             (parse @"rev(rev(x)) = x"),
             [Atom
@@ -1287,12 +1391,16 @@ let private iproveValues  =
                     ("append",
                         [Fn ("rev",[Var "t"]); Fn ("::",[Var "h"; Fn ("nil",[])])])]))]
         );
-        ( // completion.p062  // idx 9
+        ( 
+            // idx 9
+            // completion.p062  
             [(parse @"rev(append(x,y)) = append(rev(y),rev(x))")],
             (parse @"rev(rev(x)) = x"),
-            [formula<fol>.False]        // The result was unknown when test created. False used as place holder.
+            [] // Dummy value used as place holder
         );
-        ( // completion.p063  // idx 10
+        ( 
+            // idx 10
+            // completion.p063  
             [],
             (parse @"length(append(x,y)) = length(x)"),
             [Atom (R ("=",[Fn ("SUC",[Var "x1"]); Var "x1"]));
@@ -1313,7 +1421,20 @@ let private iproveValues  =
         );
     |]
 
-let eqs039 =
+[<TestCase(0, TestName = "completion.p053")>]
+[<TestCase(1, TestName = "completion.p054")>]
+[<TestCase(2, TestName = "completion.p055")>]
+[<TestCase(3, TestName = "completion.p056")>]
+[<TestCase(4, TestName = "completion.p057")>]
+[<TestCase(5, TestName = "completion.p058")>]
+[<TestCase(6, TestName = "completion.p059")>]
+[<TestCase(7, TestName = "completion.p060")>]
+[<TestCase(8, TestName = "completion.p061")>]
+[<TestCase(9, TestName = "completion.p062", Category = "LongRunning")>]
+[<TestCase(10, TestName = "completion.p063")>]
+
+let ``iprove tests`` idx =
+    let eqs039 =
         [parse @"0 + y = y";
         parse @"SUC(x) + y = SUC(x + y)";
         parse @"append(nil,l) = l";
@@ -1322,41 +1443,6 @@ let eqs039 =
         parse @"length(h::t) = SUC(length(t))";
         parse @"rev(nil) = nil";
         parse @"rev(h::t) = append(rev(t),h::nil)"; ]
-
-// completion.p053
-[<TestCase(0, TestName = "completion.p053")>]
-
-// completion.p054
-[<TestCase(1, TestName = "completion.p054")>]
-
-// completion.p055
-[<TestCase(2, TestName = "completion.p055")>]
-
-// completion.p056
-[<TestCase(3, TestName = "completion.p056")>]
-
-// completion.p057
-[<TestCase(4, TestName = "completion.p057")>]
-
-// completion.p058
-[<TestCase(5, TestName = "completion.p058")>]
-
-// completion.p059
-[<TestCase(6, TestName = "completion.p059")>]
-
-// completion.p060
-[<TestCase(7, TestName = "completion.p060")>]
-
-// completion.p061
-[<TestCase(8, TestName = "completion.p061")>]
-
-// completion.p062
-[<TestCase(9, Category = "LongRunning", TestName = "completion.p062")>]
-
-// completion.p063
-[<TestCase(10, TestName = "completion.p064")>]
-
-let ``iprove 1`` idx =
     let iprove eqs' tm =
         complete_and_simplify
             ["0"; "nil"; "SUC"; "::"; "+"; "append"; "rev"; "length"]
