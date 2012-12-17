@@ -115,8 +115,6 @@ let basic_real_qelim vars = function
         casesplit (x::vars) [] pols cont init_sgns
     | _ -> failwith "malformed input";;
 
-// real.p00
 let real_qelim = simplify << evalc << lift_qelim polyatom (simplify << evalc) basic_real_qelim;;
 
-// real.p00
 let real_qelim' = simplify << evalc << lift_qelim polyatom (dnf << cnnf id << evalc) basic_real_qelim;;
