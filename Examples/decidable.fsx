@@ -60,7 +60,7 @@ let los =
     ==> (forall x y. P(x,y)) \/ (forall x y. Q(x,y))")
 
 // decidable.p004
-skolemize(Not los)
+skolemize (Not los)
 
 // pg. 310
 // ------------------------------------------------------------------------- //
@@ -269,6 +269,7 @@ decide_monadic
 //** Our claimed equivalences are indeed correct **//
 
 // decidable.p029
+// Process is terminated due to StackOverflowException.
 meson002 (parse @"
     (exists x y z. forall u.
         R(x,x) \/ ~R(x,u) \/ (R(x,y) /\ R(y,z) /\ ~R(x,z))) <=>
