@@ -10,6 +10,7 @@ open FSharpx.Books.AutomatedReasoning.formulas
 open FSharpx.Books.AutomatedReasoning.prop
 open FSharpx.Books.AutomatedReasoning.fol
 open FSharpx.Books.AutomatedReasoning.skolem
+open FSharpx.Books.AutomatedReasoning.herbrand
 open FSharpx.Books.AutomatedReasoning.meson
 open FSharpx.Books.AutomatedReasoning.interpolation
 
@@ -20,19 +21,19 @@ fsi.AddPrinter sprint_fol_formula
 // Example.                                                                  //
 // ------------------------------------------------------------------------- //
 
-// initialization.p001
+// interpolation.p001
 let p002 = prenex (parse @"(forall x. R(x,f(x))) /\ (forall x y. S(x,y) <=> R(x,y) \/ R(y,x))");;
 
-// initialization.p002
+// interpolation.p002
 let q002 = prenex (parse @"(forall x y z. S(x,y) /\ S(y,z) ==> T(x,z)) /\ ~T(0,0)");;
 
-// initialization.p003
+// interpolation.p003
 let c002 = urinterpolate p002 q002;;
 
-// initialization.p004
+// interpolation.p004
 meson002(Imp(p002,c002));;
 
-// initialization.p005
+// interpolation.p005
 meson002(Imp(q002,Not c002));;
         
 // pg. 433
@@ -40,13 +41,13 @@ meson002(Imp(q002,Not c002));;
 // The same example now gives a true interpolant.                            //
 // ------------------------------------------------------------------------- //
 
-// initialization.p006
+// interpolation.p006
 let c003 = uinterpolate p002 q002;;
 
-// initialization.p007
+// interpolation.p007
 meson002(Imp(p002,c003));;
 
-// initialization.p008
+// interpolation.p008
 meson002(Imp(q002,Not c003));;
         
 // pg. 434
@@ -58,13 +59,13 @@ let p004 = (parse @"(forall x. exists y. R(x,y)) /\ (forall x y. S(v,x,y) <=> R(
 
 let q004 = (parse @"(forall x y z. S(v,x,y) /\ S(v,y,z) ==> T(x,z)) /\ (exists u. ~T(u,u))");;
 
-// initialization.p009
+// interpolation.p009
 let c004 = interpolate p004 q004;;
 
-// initialization.p010
+// interpolation.p010
 meson002(Imp(p004,c004));;
 
-// initialization.p011
+// interpolation.p011
 meson002(Imp(q004,Not c004));;
 
 // ------------------------------------------------------------------------- //
@@ -75,16 +76,16 @@ let p005 = (parse @"(p ==> q /\ r)");;
 
 let q005 = (parse @"~((q ==> p) ==> s ==> (p <=> q))");;
 
-// initialization.p012
+// interpolation.p012
 let c005 = interpolate p005 q005;;
 
-// initialization.p013
+// interpolation.p013
 tautology(Imp(And(p005,q005),False));;
 
-// initialization.p014
+// interpolation.p014
 tautology(Imp(p005,c005));;
 
-// initialization.p015
+// interpolation.p015
 tautology(Imp(q005,Not c005));;
 
 // ------------------------------------------------------------------------- //
@@ -95,7 +96,7 @@ let p006 = (parse @"(forall x. exists y. R(x,y)) /\ (forall x y. S(x,y) <=> R(x,
 
 let q006 = (parse @"(forall x y z. S(x,y) /\ S(y,z) ==> T(x,z)) /\ ~T(u,u)");;
 
-// initialization.p016
+// interpolation.p016
 meson002(Imp(And(p006,q006),False));;
 
 // interpolation.p017
