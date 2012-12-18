@@ -44,7 +44,7 @@ open FsUnit
 // unzip         List.unzip
 // zip           List.zip
 //
-// To ensure that each F# routine it equivelent, 
+// To ensure that each F# routine is equivelent, 
 // both the OCaml and F# routine are run against the 
 // same test cases and test results in the same test.
 // If the results are equivelent, then the F# equivelent 
@@ -181,7 +181,7 @@ let filter p l = fst(partition p l)
 
 // ===========================================================================
 
-// NOTE: In the optimzed version the 
+// NOTE: In the F# optimzed version the 
 // following lib functions are replaced with
 // equivalent F# functions or operators.
 // 
