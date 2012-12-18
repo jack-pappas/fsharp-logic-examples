@@ -25,7 +25,7 @@ open FsUnit
 
 // geom.p001
 [<Test>]
-let ``examples 1``() =
+let ``geom.p001``() =
     @"collinear(a,b,c) ==> collinear(b,a,c)"
     |> parse
     |> coordinate
@@ -54,14 +54,14 @@ let ``examples 1``() =
 
 // geom.p002
 [<Test>]
-let ``examples 2``() =
+let ``geom.p002``() =
     coordinations
     |> List.forall (grobner_decide << invariant_under_translation)
     |> should be True
 
 // geom.p003
 [<Test>]
-let ``examples 3``() =
+let ``geom.p003``() =
     coordinations
     |> List.forall (grobner_decide << invariant_under_rotation)
     |> should be True
@@ -73,7 +73,7 @@ let ``examples 3``() =
 // geom.p004
 // This test case results in StackOverflowException with 1MB stack limit
 [<Test; Category("LongRunning")>]
-let ``examples 4``() =
+let ``geom.p004``() =
     @"forall x y. exists s c. s^2 + c^2 = 1 /\ s * x + c * y = 0"
     |> parse
     |> real_qelim
@@ -85,14 +85,14 @@ let ``examples 4``() =
 
 // geom.p005
 [<Test>]
-let ``examples 5``() =
+let ``geom.p005``() =
     coordinations
     |> List.forall (grobner_decide << invariant_under_scaling)
     |> should be True
 
 // geom.p006
 [<Test>]
-let ``examples 6``() =
+let ``geom.p006``() =
     coordinations
     |> List.partition (grobner_decide << invariant_under_shearing)
     |> should equal (([("collinear",
@@ -172,7 +172,7 @@ let ``examples 6``() =
 
 // geom.p007
 [<Test>]
-let ``examples 7``() =
+let ``geom.p007``() =
     @"is_midpoint(m,a,c) /\ perpendicular(a,c,m,b)
         ==> lengths_eq(a,b,b,c)"
     |> parse
@@ -185,7 +185,7 @@ let ``examples 7``() =
 
 // geom.p008
 [<Test>]
-let ``examples 8``() =
+let ``geom.p008``() =
     @"parallel(a,b,d,c) /\ parallel(a,d,b,c) /\
        is_intersection(e,a,c,b,d)
        ==> lengths_eq(a,e,e,c)"
@@ -195,7 +195,7 @@ let ``examples 8``() =
 
 // geom.p009
 [<Test>]
-let ``examples 9``() =
+let ``geom.p009``() =
     @"parallel(a,b,d,c) /\ parallel(a,d,b,c) /\
        is_intersection(e,a,c,b,d) /\ ~collinear(a,b,c)
        ==> lengths_eq(a,e,e,c)"
@@ -230,7 +230,7 @@ and private simson_zeros =
 
 // geom.p010
 [<Test>]
-let ``examples 10``() =
+let ``geom.p010``() =
     wu simson simson_vars simson_zeros
     |> should equal
     <| [Not
@@ -352,7 +352,7 @@ let ``examples 10``() =
 
 // geom.p011
 [<Test>]
-let ``examples 11``() =
+let ``geom.p011``() =
     wu simson (simson_vars @ simson_zeros) []
     |> should equal
     <| [Not
@@ -549,7 +549,7 @@ and private pappus_zeros =
 
 // geom.p012
 [<Test>]
-let ``examples 12``() =
+let ``geom.p012``() =
     wu pappus pappus_vars pappus_zeros
     |> should equal
     <| [Not
@@ -633,7 +633,7 @@ and private butterfly_zeros =
 
  // geom.p013
 [<Test; Category("LongRunning")>]
-let ``examples 13``() =
+let ``geom.p013``() =
     wu butterfly butterfly_vars butterfly_zeros
     |> should equal
     <| [Not
