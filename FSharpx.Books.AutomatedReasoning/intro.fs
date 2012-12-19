@@ -56,22 +56,10 @@ let rec simplify expr =
 // Lexical analysis.                                                         //
 // ------------------------------------------------------------------------- //
 
-let matches str (c : string) =
-    // Preconditions
-    if String.length c > 1 then
-        invalidArg "c" "The character string contains more than one (1) character."
-
-    let len = String.length str
-    let c' = char c
-
-    let mutable idx = 0
-    let mutable foundMatch = false
-    while idx < len && not foundMatch do
-        if str.[idx] = c' then
-            foundMatch <- true
-        idx <- idx + 1
-
-    foundMatch
+let matches s = 
+    let chars = 
+        explode s 
+    fun c -> mem c chars
         
 let space = matches " \t\n\r"
 

@@ -538,20 +538,14 @@ let allnonemptysubsets s =
 // ------------------------------------------------------------------------- //
 
 // pg. 619
-let explode s =
-    let mutable charList = []
-    for i = (String.length s) - 1 downto 0 do
-        charList <-
-            s.[i].ToString() :: charList
-    charList
+let explode (s : string) =
+    let rec exap n l =
+        if n < 0 then l
+        else exap (n - 1) ((s.Substring(n,1))::l)
+    exap ((String.length s) - 1) []
         
 // pg. 619
-let implode l =
-    let sb = System.Text.StringBuilder ()
-    l |> List.iter (fun (s : string) ->
-        sb.Append s
-        |> ignore)
-    sb.ToString ()
+let implode l = List.foldBack (+) l ""
 
 // ------------------------------------------------------------------------- //
 // Timing; useful for documentation but not logically necessary.             //
