@@ -1247,7 +1247,5 @@ let private truthTableValues : (string * string)[] = [|
 let ``truthTable tests`` idx = 
     let (formula, _) = truthTableValues.[idx]
     let (_, result) = truthTableValues.[idx]
-    let result1 = sprint_truthtable (parse_prop_formula formula)
-    printfn "result1: %A" result1
-    result1
+    sprint_truthtable (parse_prop_formula formula)
     |> should equal result

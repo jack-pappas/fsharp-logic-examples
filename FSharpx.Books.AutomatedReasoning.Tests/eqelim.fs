@@ -205,9 +205,7 @@ let private bmesonValues : (string * int list)[] = [|
 let ``bmeson tests`` idx = 
     let (formula, _) = bmesonValues.[idx]
     let (_, result) = bmesonValues.[idx]
-    let result1 = bmeson (parse formula)
-    printfn "%A" result1
-    result1
+    bmeson (parse formula)
     |> should equal result
 
 let private emesonValues : (string * int list)[] = [| 
@@ -267,7 +265,5 @@ let private emesonValues : (string * int list)[] = [|
 let ``emeson tests`` idx = 
     let (formula, _) = emesonValues.[idx]
     let (_, result) = emesonValues.[idx]
-    let result1 = emeson (parse formula)
-    printfn "%A" result1
-    result1
+    emeson (parse formula)
     |> should equal result

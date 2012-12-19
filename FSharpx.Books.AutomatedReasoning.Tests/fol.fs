@@ -51,9 +51,7 @@ let private folFormulaValues : (formula<fol> * string)[] = [|
 let ``sprint_fol_formula tests`` idx =
     let (formula, _) = folFormulaValues.[idx]
     let (_, stringResult) = folFormulaValues.[idx]
-    let result = sprint_fol_formula formula
-    printfn "%A" result
-    result
+    sprint_fol_formula formula
     |> should equal stringResult
 
 let private parsetValues : (string * term * string)[] = [|
