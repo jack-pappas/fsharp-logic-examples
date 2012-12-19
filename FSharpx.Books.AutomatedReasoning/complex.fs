@@ -314,20 +314,18 @@ let rec poly_nondiv vars sgns p s =
 //  ------------------------------------------------------------------------- //
 //  Main reduction for exists x. all eqs = 0 and all neqs =/= 0, in context.  //
 //  ------------------------------------------------------------------------- //
-
-let rec cqelim vars (eqs, neqs) sgns =
-    match List.tryFind (is_constant vars) eqs with
-    | Some c ->
+                      
+let rec cqelim vars (eqs,neqs) sgns =
+    try 
+        let c = List.find (is_constant vars) eqs
         try 
             let sgns' = assertsign sgns (c, Zero)
             let eqs' = subtract eqs [c]
             And (mk_eq c zero, cqelim vars (eqs', neqs) sgns')
         with 
-        | Failure "assertsign" -> False
-
-    | None ->
-        if eqs = [] then
-            list_conj (List.map (poly_nonzero vars sgns) neqs)
+            Failure "assertsign" -> False
+    with Failure _ ->
+        if eqs = [] then list_conj(List.map (poly_nonzero vars sgns) neqs) 
         else
             let n = List.reduceBack min (List.map (degree vars) eqs)
             let p = List.find (fun p -> degree vars p = n) eqs
@@ -335,15 +333,12 @@ let rec cqelim vars (eqs, neqs) sgns =
             split_zero sgns (head vars p)
                 (cqelim vars (behead vars p :: oeqs, neqs))
                 (fun sgns' ->
-                    let cfn s = snd (pdivide vars s p)
-                    if oeqs <> [] then
-                        cqelim vars (p :: (List.map cfn oeqs), neqs) sgns'
-                    elif neqs = [] then
-                        True
+                    let cfn s = snd(pdivide vars s p)
+                    if oeqs <> [] then cqelim vars (p::(List.map cfn oeqs),neqs) sgns'
+                    elif neqs = [] then True 
                     else
                         let q = List.reduceBack (poly_mul vars) neqs
-                        poly_nondiv vars sgns' p (poly_pow vars q (degree vars p)))            
-
+                        poly_nondiv vars sgns' p (poly_pow vars q (degree vars p)))        
 
 //  pg. 365
 //  ------------------------------------------------------------------------- //

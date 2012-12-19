@@ -84,6 +84,7 @@
     <Compile Include="lcffol.fs" />
     <Compile Include="tactics.fs" />
     <Compile Include="limitations.fs" />
+    <Compile Include="Option.fs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="FSharp.Compatibility.OCaml">

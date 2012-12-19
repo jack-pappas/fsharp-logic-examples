@@ -21,29 +21,20 @@ open defcnf
 // ------------------------------------------------------------------------- //    
       
 let one_literal_rule clauses =
-    let findExpr cl =
-        List.length cl = 1
-
-    match List.tryFind findExpr clauses with
-    | None -> None
-    | Some value -> 
-        let u = List.head value
-        let u' = negate u
-        clauses
-        |> List.filter (fun cl -> not (mem u cl))
-        |> image (fun cl -> subtract cl [u'])
-        |> Some
+  let u = List.head (List.find (fun cl -> List.length cl = 1) clauses)
+  let u' = negate u
+  let clauses1 = List.filter (fun cl -> not (mem u cl)) clauses
+  image (fun cl -> subtract cl [u']) clauses1
         
 let affirmative_negative_rule clauses =
-    let neg', pos = List.partition negative (unions clauses)
-    let neg = image negate neg'
-    let pos_only = subtract pos neg 
-    let neg_only = subtract neg pos
-    let pureItem = union pos_only (image negate neg_only)
-    if pureItem = [] then None
-    else
-        let clauses' = List.filter (fun cl -> intersect cl pureItem = []) clauses
-        Some clauses'
+  let neg',pos = List.partition negative (unions clauses)
+  let neg = image negate neg'
+  let pos_only = subtract pos neg 
+  let neg_only = subtract neg pos
+  let pureItem = union pos_only (image negate neg_only)
+  if pureItem = [] then failwith "affirmative_negative_rule" 
+  else
+    List.filter (fun cl -> intersect cl pureItem = []) clauses
             
 let resolve_on p clauses =
     let p' = negate p 
@@ -74,13 +65,15 @@ let resolution_rule clauses =
 let rec dp clauses =
     if clauses = [] then true 
     elif mem [] clauses then false 
-    else 
-        match one_literal_rule clauses with
-        | Some value -> dp value
-        | None ->
-            match affirmative_negative_rule clauses with
-            | Some value -> dp value
-            | None -> dp (resolution_rule clauses)
+    else
+        try 
+            dp (one_literal_rule clauses) 
+        with 
+            Failure _ ->
+                try 
+                    dp (affirmative_negative_rule clauses) 
+                with Failure _ ->
+                    dp(resolution_rule clauses)
 
 // pg. 84
 // ------------------------------------------------------------------------- //
@@ -101,19 +94,17 @@ let posneg_count cls l =
     let n = List.length (List.filter (mem (negate l)) cls)
     m + n                                  
 
-let rec dpll clauses =       
-    if clauses = [] then true 
-    elif mem [] clauses then false 
-    else
-        match one_literal_rule clauses with
-        | Some value -> dpll value
-        | None ->
-            match affirmative_negative_rule clauses with
-            | Some value -> dpll value
-            | None -> 
-                let pvs = List.filter positive (unions clauses)
-                let p = maximize (posneg_count clauses) pvs
-                dpll (insert [p] clauses) || dpll (insert [negate p] clauses)
+let rec dpll clauses =  
+  if clauses = [] then true 
+  elif mem [] clauses then false 
+  else 
+      try dpll (one_literal_rule clauses) 
+      with Failure _ ->
+          try dpll (affirmative_negative_rule clauses) 
+          with Failure _ ->  
+              let pvs = List.filter positive (unions clauses)
+              let p = maximize (posneg_count clauses) pvs
+              dpll (insert [p] clauses) || dpll (insert [negate p] clauses)
                                                      
 let dpllsat fm = dpll (defcnfs fm)
 
@@ -209,5 +200,3 @@ let rec dplb cls trail =
 let dplbsat fm = dplb (defcnfs fm) []
 
 let dplbtaut fm = not (dplbsat (Not fm))
-
-

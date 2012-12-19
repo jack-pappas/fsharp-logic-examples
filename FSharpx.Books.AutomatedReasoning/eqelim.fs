@@ -38,27 +38,14 @@ open completion
 // ------------------------------------------------------------------------- //
 
 let rec modify_S cl =
-        let dest_eq fm =
-            match fm with
-            | Atom (R ("=", [s;t])) ->
-                Some(s, t)
-            | _ -> None
-
-        let rec tryfind dest_eq l =
-            match l with
-            | [] -> None
-            | h :: t ->
-                match dest_eq h with
-                | Some _ as x -> x
-                | None -> tryfind dest_eq t
-
-        match tryfind dest_eq cl with
-        | None -> [cl]
-        | Some (s, t) -> 
-            let eq1 = mk_eq s t 
-            let eq2 = mk_eq t s
-            let sub = modify_S (subtract cl [eq1])
-            List.map (insert eq1) sub @ List.map (insert eq2) sub
+    try 
+        let (s,t) = tryfind dest_eq cl
+        let eq1 = mk_eq s t 
+        let eq2 = mk_eq t s
+        let sub = modify_S (subtract cl [eq1])
+        List.map (insert eq1) sub @ List.map (insert eq2) sub
+    with 
+        Failure _ -> [cl]
 
 let rec modify_T cl =
     match cl with

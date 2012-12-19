@@ -211,11 +211,12 @@ let dest_def fm =
     | _ -> failwith "dest_def"
 
 let rec redeqs eqs =
-    match List.tryFind (can dest_def) eqs with
-    | None -> eqs
-    | Some eq ->
-        let x, t = dest_def eq
+    try 
+        let eq = List.find (can dest_def) eqs
+        let x,t = dest_def eq
         redeqs (List.map (subst (x |=> t)) (subtract eqs [eq]))
+    with 
+        Failure _ -> eqs
             
 // pg. 443
 // ------------------------------------------------------------------------- //
