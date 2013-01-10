@@ -58,9 +58,9 @@ ispec (parset @"x + y + z") (parse @"forall x y z. x + y + z = y + z + z");;
 ispec (parset @"x + y + z") (parse @"forall x y z. nothing_much");;
 
 // folderived.p010
-// TODO: This is missing a formula in original OCaml code. Need update from John.
 isubst (parset @"x + x") (parset @"2 * x")
-        (parse @"(x + x = y + y) <=> (something \/ y + y + y = x + x + x)");;
+        (parse @"(x + x = y + y) <=> (something \/ y + y + y = x + x + x)")
+        (parse @"(2 * x = y + y) <=> (something \/ y + y + y = x + x + x)");;
 
 // folderived.p011
 isubst (parset @"x + x")  (parset @"2 * x")

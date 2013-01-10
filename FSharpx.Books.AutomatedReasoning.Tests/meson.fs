@@ -257,7 +257,7 @@ let private meson002Values : (string * int list)[] = [|
         (forall x. P(x) ==> R(x)) /\
         (forall x. U(x) /\ V(x) ==> P(x)) /\
         (exists x. R(x) /\ ~Q(x))
-        ==> (forall x. U(x) ==> ~R(x))
+        ==> (forall x. V(x) ==> ~R(x))
             ==> (forall x. U(x) ==> ~V(x))",
         [5]
     );

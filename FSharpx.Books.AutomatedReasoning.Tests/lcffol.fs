@@ -482,37 +482,37 @@ let private lcfValues : (string * thm * string )[] = [|
         (forall x. P(x) ==> R(x)) /\
         (forall x. U(x) /\ V(x) ==> P(x)) /\
         (exists x. R(x) /\ ~Q(x))
-        ==> (forall x. U(x) ==> ~R(x))
+        ==> (forall x. V(x) ==> ~R(x))
             ==> (forall x. U(x) ==> ~V(x))",
         Imp
-            (And
-                (Exists
-                    ("x",
-                    And (Atom (R ("P",[Var "x"])),Not (Atom (R ("Q",[Var "x"]))))),
-                And
-                    (Forall
-                        ("x",
-                        Imp (Atom (R ("P",[Var "x"])),Atom (R ("R",[Var "x"])))),
-                    And
-                        (Forall
-                            ("x",
-                            Imp
-                                (And
-                                    (Atom (R ("U",[Var "x"])),Atom (R ("V",[Var "x"]))),
-                                Atom (R ("P",[Var "x"])))),
-                        Exists
-                            ("x",
-                            And
-                                (Atom (R ("R",[Var "x"])),
-                                Not (Atom (R ("Q",[Var "x"])))))))),
-             Imp
+          (And
+             (Exists
+                ("x",
+                 And (Atom (R ("P",[Var "x"])),Not (Atom (R ("Q",[Var "x"]))))),
+              And
                 (Forall
-                    ("x",
-                    Imp (Atom (R ("U",[Var "x"])),Not (Atom (R ("R",[Var "x"]))))),
-                Forall
-                    ("x",
-                    Imp (Atom (R ("U",[Var "x"])),Not (Atom (R ("V",[Var "x"]))))))),
-        @"|- (exists x. P(x) /\ ~Q(x)) /\ (forall x. P(x) ==> R(x)) /\ (forall x. U(x) /\ V(x) ==> P(x)) /\ (exists x. R(x) /\ ~Q(x)) ==> (forall x. U(x) ==> ~R(x)) ==> (forall x. U(x) ==> ~V(x))"
+                   ("x",
+                    Imp (Atom (R ("P",[Var "x"])),Atom (R ("R",[Var "x"])))),
+                 And
+                   (Forall
+                      ("x",
+                       Imp
+                         (And
+                            (Atom (R ("U",[Var "x"])),Atom (R ("V",[Var "x"]))),
+                          Atom (R ("P",[Var "x"])))),
+                    Exists
+                      ("x",
+                       And
+                         (Atom (R ("R",[Var "x"])),
+                          Not (Atom (R ("Q",[Var "x"])))))))),
+           Imp
+             (Forall
+                ("x",
+                 Imp (Atom (R ("V",[Var "x"])),Not (Atom (R ("R",[Var "x"]))))),
+              Forall
+                ("x",
+                 Imp (Atom (R ("U",[Var "x"])),Not (Atom (R ("V",[Var "x"]))))))),
+        @"|- (exists x. P(x) /\ ~Q(x)) /\ (forall x. P(x) ==> R(x)) /\ (forall x. U(x) /\ V(x) ==> P(x)) /\ (exists x. R(x) /\ ~Q(x)) ==> (forall x. V(x) ==> ~R(x)) ==> (forall x. U(x) ==> ~V(x))"
     );
     (
         // idx 27

@@ -217,11 +217,11 @@ let p26p = time presolution (parse @"
 // resolution.p031
 // Pelletier #27
 let p27p = time presolution (parse @"
-    (exists x. P(x) /\ ~Q(x)) /\ 
-    (forall x. P(x) ==> R(x)) /\ 
-    (forall x. U(x) /\ V(x) ==> P(x)) /\ 
-    (exists x. R(x) /\ ~Q(x)) 
-    ==> (forall x. U(x) ==> ~R(x)) 
+    (exists x. P(x) /\ ~Q(x)) /\
+    (forall x. P(x) ==> R(x)) /\
+    (forall x. U(x) /\ V(x) ==> P(x)) /\
+    (exists x. R(x) /\ ~Q(x))
+    ==> (forall x. V(x) ==> ~R(x))
         ==> (forall x. U(x) ==> ~V(x))");;
 
 // resolution.p032
@@ -683,11 +683,11 @@ let p26r = time resolution003 (parse @"
 // resolution.p093
 // Pelletier #27
 let p27r = time resolution003 (parse @"
-    (exists x. P(x) /\ ~Q(x)) /\ 
-    (forall x. P(x) ==> R(x)) /\ 
-    (forall x. U(x) /\ V(x) ==> P(x)) /\ 
-    (exists x. R(x) /\ ~Q(x)) 
-    ==> (forall x. U(x) ==> ~R(x)) 
+    (exists x. P(x) /\ ~Q(x)) /\
+    (forall x. P(x) ==> R(x)) /\
+    (forall x. U(x) /\ V(x) ==> P(x)) /\
+    (exists x. R(x) /\ ~Q(x))
+    ==> (forall x. V(x) ==> ~R(x))
         ==> (forall x. U(x) ==> ~V(x))");;
 
 // resolution.p094

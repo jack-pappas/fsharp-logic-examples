@@ -274,29 +274,6 @@ let p26 = time splittab (parse @"
     (forall x y. P(x) /\ Q(y) ==> (R(x) <=> U(y)))
     ==> ((forall x. P(x) ==> R(x)) <=> (forall x. Q(x) ==> U(x)))");;
 
-// ==========================================================================================
-// tableaux.p040
-// Pelletier #27
-
-// TODO: Is this a conrrect translation from Pelletier #27? 
-// Should ==> (forall x. U(x) ==> ~R(x))
-// be     ==> (forall x. V(x) ==> ~R(x))
-
-// F -> P
-// G -> Q
-// H -> R
-// J -> U
-// I -> V
-
-//let p27 = time splittab (parse @"
-//	(exists x. P(x) /\ ~Q(x)) /\ 
-//    (forall x. P(x) ==> R(x)) /\ 
-//    (forall x. U(x) /\ V(x) ==> P(x)) /\ 
-//    (exists x. R(x) /\ ~Q(x)) 
-//    ==> (forall x. U(x) ==> ~R(x)) 
-//        ==> (forall x. U(x) ==> ~V(x))");;
-
-// EGT: Should be
 let p27 = time splittab (parse @"
     (exists x. P(x) /\ ~Q(x)) /\ 
     (forall x. P(x) ==> R(x)) /\ 
@@ -304,7 +281,6 @@ let p27 = time splittab (parse @"
     (exists x. R(x) /\ ~Q(x)) 
     ==> (forall x. V(x) ==> ~R(x)) 
         ==> (forall x. U(x) ==> ~V(x))");;
-// ==========================================================================================
 
 // tableaux.p041
 // Pelletier #28

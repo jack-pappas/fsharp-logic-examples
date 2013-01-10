@@ -428,9 +428,35 @@ let private isubstValues : (string * string * string * string * thm * string)[] 
         @"x + x", 
         @"2 * x", 
         "(x + x = y + y) <=> (something \/ y + y + y = x + x + x)", 
-        @"missing formula",
-        formula<fol>.False,
-        @"place_holder"
+        "(2 * x = y + y) <=> (something \/ y + y + y = x + x + x)",
+        Imp
+          (Atom
+             (R ("=",
+                 [Fn ("+",[Var "x"; Var "x"]); Fn ("*",[Fn ("2",[]); Var "x"])])),
+           Imp
+             (Iff
+                (Atom
+                   (R ("=",
+                       [Fn ("+",[Var "x"; Var "x"]);
+                        Fn ("+",[Var "y"; Var "y"])])),
+                 Or
+                   (Atom (R ("something",[])),
+                    Atom
+                      (R ("=",
+                          [Fn ("+",[Var "y"; Fn ("+",[Var "y"; Var "y"])]);
+                           Fn ("+",[Var "x"; Fn ("+",[Var "x"; Var "x"])])])))),
+              Iff
+                (Atom
+                   (R ("=",
+                       [Fn ("*",[Fn ("2",[]); Var "x"]);
+                        Fn ("+",[Var "y"; Var "y"])])),
+                 Or
+                   (Atom (R ("something",[])),
+                    Atom
+                      (R ("=",
+                          [Fn ("+",[Var "y"; Fn ("+",[Var "y"; Var "y"])]);
+                           Fn ("+",[Var "x"; Fn ("+",[Var "x"; Var "x"])])])))))),
+        @"|- x +x =2 *x ==> (x +x =y +y <=> something \/ y +y +y =x +x +x) ==> (2 *x =y +y <=> something \/ y +y +y =x +x +x)"
     );
     (
         // idx 3
@@ -488,6 +514,7 @@ let private isubstValues : (string * string * string * string * thm * string)[] 
 
 [<TestCase(0, TestName = "folderived.p003")>]
 [<TestCase(1, TestName = "folderived.p004")>]
+[<TestCase(2, TestName = "folderived.p010")>]
 [<TestCase(3, TestName = "folderived.p011")>]
 [<TestCase(4, TestName = "folderived.p012")>]
 
@@ -503,6 +530,7 @@ let ``isubst ast tests`` idx =
     
 [<TestCase(0, TestName = "folderived.p003")>]
 [<TestCase(1, TestName = "folderived.p004")>]
+[<TestCase(2, TestName = "folderived.p010")>]
 [<TestCase(3, TestName = "folderived.p011")>]
 [<TestCase(4, TestName = "folderived.p012")>]
 
