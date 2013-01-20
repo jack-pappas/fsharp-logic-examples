@@ -48,21 +48,24 @@
     <None Include="packages.config" />
     <Compile Include="lib.fs" />
     <Compile Include="intro.fs" />
-    <Compile Include="formulas.fs" />
     <Compile Include="prop.fs" />
     <Compile Include="propexamples.fs" />
+    <Compile Include="defcnf.fs" />
     <Compile Include="dp.fs" />
     <Compile Include="stal.fs" />
     <Compile Include="bdd.fs" />
     <Compile Include="fol.fs" />
+    <Compile Include="skolem.fs" />
     <Compile Include="herbrand.fs" />
     <Compile Include="unif.fs" />
     <Compile Include="tableaux.fs" />
     <Compile Include="resolution.fs" />
     <Compile Include="prolog.fs" />
     <Compile Include="meson.fs" />
+    <Compile Include="skolems.fs" />
     <Compile Include="equal.fs" />
     <Compile Include="cong.fs" />
+    <Compile Include="rewrite.fs" />
     <Compile Include="order.fs" />
     <Compile Include="completion.fs" />
     <Compile Include="eqelim.fs" />
@@ -81,6 +84,7 @@
     <Compile Include="lcffol.fs" />
     <Compile Include="tactics.fs" />
     <Compile Include="limitations.fs" />
+    <Compile Include="Option.fs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="FSharp.Compatibility.OCaml">
