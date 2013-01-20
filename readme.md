@@ -151,13 +151,13 @@ Each of the examples fall into one of the following categories (with the associa
 
 ### Unit Testing ###
 
-The `FSharpx.Books.AutomatedReasoning.Tests` project contains all of the examples from the book (plus some additional examples from John Harrison's website), converted into unit test cases with NUnit 2.6.1 and FsUnit. These test cases serve as **evidence** (but not proof!) of correctness as the code base is updated or optimized over time.
+The `FSharpx.Books.AutomatedReasoning.Tests` project contains all of the examples from the book (plus some additional examples from John Harrison's website), converted into unit test cases with NUnit 2.6.2 and FsUnit 1.1.1.0. These test cases serve as **evidence** (but not proof!) of correctness as the code base is updated or optimized over time.
 
 You can execute the tests by building the `FSharpx.Books.AutomatedReasoning.Tests` project, then loading the compiled assembly into a test runner like **[NUnit GUI](http://www.nunit.org/)** or **[TestDriven.NET 3.4.2803 (Beta 3)](http://www.testdriven.net/)**.
 
 *We strongly recommend using the x86 versions of the test runners.* The CLR's default maximum stack size of 1MB is enough for 32-bit processes, but the test cases reliably crash with a `StackOverflowException` on a 64-bit process. This is because many of the library functions are recursive, but not *tail-recursive* -- and since many types double in size on an x64 platform, these functions quickly consume the stack and crash the process.
 
-NOTE: On a 64-bit machine, the NUnit installer only creates a Start Menu shortcut for the 64-bit version so you must create your own shortcut (e.g., on the Desktop) to the x86 version; the x86 version is normally found at `C:\Program Files (x86)\NUnit 2.6.1\bin\nunit-x86.exe`.
+NOTE: On a 64-bit machine, the NUnit installer only creates a Start Menu shortcut for the 64-bit version so you must create your own shortcut (e.g., on the Desktop) to the x86 version; the x86 version is normally found at `C:\Program Files (x86)\NUnit 2.6.2\bin\nunit-x86.exe`.
 
 Once you have installed NUnit, built the `FSharpx.Books.AutomatedReasoning.Tests` project, and opened the NUnit (x86) GUI, follow these steps to run the tests:
 
