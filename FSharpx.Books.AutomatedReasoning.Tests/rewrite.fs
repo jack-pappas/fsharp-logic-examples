@@ -16,7 +16,6 @@ open NUnit.Framework
 open FsUnit
 
 
-
 let private rewriteValues : (formula<fol> list * term * term * string)[] = [|
     (
         // idx 0
@@ -46,9 +45,8 @@ let private rewriteValues : (formula<fol> list * term * term * string)[] = [|
     )
     |]
 
-[<TestCase(0, TestName = "rewrite.p001")>]
-
 [<Test>]
+[<TestCase(0, TestName = "rewrite.p001")>]
 let ``rewrite tests`` idx =
     let (eqs, _, _, _) = rewriteValues.[idx]
     let (_, tm, _, _) = rewriteValues.[idx]

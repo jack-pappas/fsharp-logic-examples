@@ -67,10 +67,9 @@ let private function_congruenceValues : ((string * int) * formula<fol> list)[] =
     );
     |]
 
+[<Test>]
 [<TestCase(0, TestName = "equal.p001")>]
 [<TestCase(1, TestName = "equal.p002")>]
-
-[<Test>]
 let ``function_congruence tests`` idx = 
     let (formula, _) = function_congruenceValues.[idx]
     let (_, result) = function_congruenceValues.[idx]
@@ -211,10 +210,9 @@ let private equalitizeValues : (string * formula<fol> * string)[] = [|
     );
     |]
 
+[<Test>]
 [<TestCase(0, TestName = "Dijkstra 1266a")>]
 [<TestCase(1, TestName = "Wishnu #1")>]
-
-[<Test>]
 let ``equalitize tests`` idx = 
     let (formula, _, _) = equalitizeValues.[idx]
     let (_, astResult, _) = equalitizeValues.[idx]
@@ -358,6 +356,7 @@ let private meson002Values : (formula<fol> * int list)[] = [|
     );
     |]
 
+[<Test>]
 [<TestCase(0, TestName = "equal.p003")>]
 [<TestCase(1, TestName = "equal.p004", Category = "LongRunning")>]
 [<TestCase(2, TestName = "equal.p005", Category = "LongRunning")>]
@@ -367,8 +366,6 @@ let private meson002Values : (formula<fol> * int list)[] = [|
 [<TestCase(6, TestName = "equal.p009", Category = "LongRunning")>]
 [<TestCase(7, TestName = "equal.p010")>]
 [<TestCase(8, TestName = "equal.p011")>]
-
-[<Test>]
 let ``meson002 tests`` idx = 
     let (formula, _) = meson002Values.[idx]
     let (_, result) = meson002Values.[idx]

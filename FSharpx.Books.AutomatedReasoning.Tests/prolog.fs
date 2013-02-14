@@ -47,9 +47,11 @@ let private hornproveValues : (string * (func<string,term> * int))[] = [|
     );
     |]
     
+[<Test>]
 [<TestCase(0, TestName = "prolog.p001")>]
-[<TestCase(1, TestName = "prolog.p002", ExpectedException=typeof<System.Exception>, ExpectedMessage="non-Horn clause")>]
-
+[<TestCase(1, TestName = "prolog.p002",
+    ExpectedException = typeof<System.Exception>,
+    ExpectedMessage = "non-Horn clause")>]
 let ``hornprove tests`` (idx) =
     let (formula, _) = hornproveValues.[idx]
     let (_, result) = hornproveValues.[idx]
@@ -85,9 +87,11 @@ let private simpleprologValues : (string list * string * func<string,term>)[] = 
     );
     |]
     
+[<Test>]
 [<TestCase(0, TestName = "prolog.p003")>]
-[<TestCase(1, TestName = "prolog.p004", ExpectedException=typeof<System.Exception>, ExpectedMessage="tryfind")>]
-
+[<TestCase(1, TestName = "prolog.p004",
+    ExpectedException = typeof<System.Exception>,
+    ExpectedMessage = "tryfind")>]
 let ``simpleprolog tests`` (idx) =
     let (rules, _, _) = simpleprologValues.[idx]
     let (_,  gl, _) = simpleprologValues.[idx]
@@ -105,8 +109,8 @@ let private applyValues : (func<string,term> * string * term)[] = [|
     );
     |]
     
+[<Test>]
 [<TestCase(0, TestName = "prolog.p005")>]
-
 let ``apply tests`` (idx) =
     let (formula, _, _) = applyValues.[idx]
     let (_, x, _) = applyValues.[idx]
@@ -257,13 +261,13 @@ let private prologValues : (string list * string * formula<fol> list)[] =  [|
     );
     |]
     
+[<Test>]
 [<TestCase(0, TestName = "prolog.p006")>]
 [<TestCase(1, TestName = "prolog.p007")>]
 [<TestCase(2, TestName = "prolog.p008")>]
 [<TestCase(3, TestName = "prolog.p009")>]
 [<TestCase(4, TestName = "prolog.p010")>]
 [<TestCase(6, TestName = "prolog.p012")>]
-
 let ``prolog tests`` (idx) =
     let (rules, _, _) = prologValues.[idx]
     let (_, gl, _) = prologValues.[idx]

@@ -12,6 +12,7 @@ open FSharpx.Books.AutomatedReasoning.paramodulation
 open NUnit.Framework
 open FsUnit
 
+
 let private paramodulationValues : (string * bool list)[] = [| 
     (
         // idx 0
@@ -22,9 +23,8 @@ let private paramodulationValues : (string * bool list)[] = [|
     );
     |]
 
-[<TestCase(0, TestName = "paramodulation.p001")>]
-
 [<Test>]
+[<TestCase(0, TestName = "paramodulation.p001")>]
 let ``paramodulation tests`` idx = 
     let (formula, _) = paramodulationValues.[idx]
     let (_, result) = paramodulationValues.[idx]

@@ -33,9 +33,8 @@ let private skolemizesValues : (formula<fol> list * formula<fol> list)[] = [|
     );
     |]
 
-[<TestCase(0, TestName = "skolems.p001")>]
-
 [<Test>]
+[<TestCase(0, TestName = "skolems.p001")>]
 let ``skolemizes tests`` idx = 
     let (formula, _) = skolemizesValues.[idx]
     let (_, result) = skolemizesValues.[idx]

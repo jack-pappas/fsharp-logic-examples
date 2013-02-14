@@ -97,9 +97,8 @@ let private options001Values : (formula<prop> * bool)[] = [|
     );
     |]
 
-[<TestCase(0, TestName = "dp.p002")>]
-
 [<Test>]
+[<TestCase(0, TestName = "dp.p002")>]
 let ``options001 tests`` idx = 
     let (prop_formula, _) = options001Values.[idx]
     let (_, result) = options001Values.[idx]
@@ -117,9 +116,8 @@ let private options002Values : (formula<prop> * bool)[] = [|
     );
     |]
 
-[<TestCase(0, TestName = "dp.p003")>]
-
 [<Test>]
+[<TestCase(0, TestName = "dp.p003")>]
 let ``dplltaut tests`` idx = 
     let (prop_formula, _) = options002Values.[idx]
     let (_, result) = options002Values.[idx]

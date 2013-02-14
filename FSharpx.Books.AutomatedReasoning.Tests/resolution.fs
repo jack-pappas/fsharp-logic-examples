@@ -31,8 +31,8 @@ let private barberValues : (string * formula<fol> list list)[] = [|
     );
     |]
     
+[<Test>]
 [<TestCase(0, TestName = "Barber's paradox")>]
-
 let ``simpcnf tests`` (idx) =
     let (formula, _) = barberValues.[idx]
     let (_, result) = barberValues.[idx]
@@ -828,6 +828,7 @@ let private resolutionValues : (string * bool list)[] = [|
     );
     |]
 
+[<Test>]
 [<TestCase(0, TestName = "Pelletier #01")>]
 [<TestCase(1, TestName = "Pelletier #02")>]
 [<TestCase(2, TestName = "Pelletier #03")>]
@@ -888,13 +889,13 @@ let private resolutionValues : (string * bool list)[] = [|
 [<TestCase(83, TestName = "Gilmore #9", Category = "LongRunning")>]
 [<TestCase(84, TestName = "Davis Putnam #1")>]
 [<TestCase(88, TestName = "Los #1")>]
-
 let ``Pure Resolution`` (idx) =
     let (formula, _) = resolutionValues.[idx]
     let (_, result) = resolutionValues.[idx]
     presolution (parse formula) 
     |> should equal result
 
+[<Test>]
 [<TestCase(0, TestName = "Pelletier #01")>]
 [<TestCase(1, TestName = "Pelletier #02")>]
 [<TestCase(2, TestName = "Pelletier #03")>]
@@ -955,23 +956,22 @@ let ``Pure Resolution`` (idx) =
 [<TestCase(83, TestName = "Gilmore #9", Category = "LongRunning")>]
 [<TestCase(84, TestName = "Davis Putnam #1")>]
 [<TestCase(88, TestName = "Los #1")>]
-
 let ``Positive Resolution`` (idx) =
     let (formula, _) = resolutionValues.[idx]
     let (_, result) = resolutionValues.[idx]
     resolution003 (parse formula) 
     |> should equal result
 
+[<Test>]
 [<TestCase(84, TestName = "Davis Putnam #1")>]
-
 let ``Basic Resolution`` (idx) =
     let (formula, _) = resolutionValues.[idx]
     let (_, result) = resolutionValues.[idx]
     resolution001 (parse formula) 
     |> should equal result
 
+[<Test>]
 [<TestCase(84, TestName = "Davis Putnam #1")>]
-
 let ``Resolution with subsumption and tautology deletion`` (idx) =
     let (formula, _) = resolutionValues.[idx]
     let (_, result) = resolutionValues.[idx]

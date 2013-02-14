@@ -59,11 +59,10 @@ let private meson002Values : (string * int list)[] = [|
     );
     |]
 
+[<Test>]
 [<TestCase(1, TestName = "decidable.p029")>]
 [<TestCase(2, TestName = "decidable.p030")>]
 [<TestCase(3, TestName = "decidable.p031")>]
-
-[<Test>]
 let ``meson002 tests`` idx = 
     let (formula, _) = meson002Values.[idx]
     let (_, result) = meson002Values.[idx]
@@ -122,13 +121,14 @@ let private aedecideValues : (StackSize * string * bool)[] = [|
     );
     |]
 
+[<Test>]
 [<TestCase(0, TestName = "decidable.p006")>]
 [<TestCase(1, TestName = "decidable.p008", Category = "LongRunning")>]
 [<TestCase(2, TestName = "decidable.p009", Category = "LongRunning")>]
 [<TestCase(3, TestName = "decidable.p010")>]
-[<TestCase(4, TestName = "decidable.p011", ExpectedException=typeof<System.Exception>, ExpectedMessage="Not decidable")>]
-
-[<Test>]
+[<TestCase(4, TestName = "decidable.p011",
+    ExpectedException = typeof<System.Exception>,
+    ExpectedMessage = "Not decidable")>]
 let ``aedecide tests`` idx = 
     let (stackSize, _,  _) = aedecideValues.[idx]
     let (_, formula, _) = aedecideValues.[idx]
@@ -149,9 +149,10 @@ let private resolution001Values : (string * bool list)[] = [|
     );
     |]
 
-[<TestCase(0, TestName = "decidable.p003", ExpectedException=typeof<System.Exception>, ExpectedMessage="No proof found")>]
-
 [<Test>]
+[<TestCase(0, TestName = "decidable.p003",
+    ExpectedException = typeof<System.Exception>,
+    ExpectedMessage = "No proof found")>]
 let ``resolution001 tests`` idx = 
     let (formula, _) = resolution001Values.[idx]
     let (_, result) = resolution001Values.[idx]
@@ -196,9 +197,8 @@ let private skolemizeValues : (formula<fol> * formula<fol> * string)[] = [|
     );
     |]
 
-[<TestCase(0, TestName = "decidable.p004")>]
-
 [<Test>]
+[<TestCase(0, TestName = "decidable.p004")>]
 let ``skolemize tests`` idx = 
     let (formula, _, _) = skolemizeValues.[idx]
     let (_, astResult, _) = skolemizeValues.[idx]
@@ -229,10 +229,9 @@ let private davisputnamValues : (string * int)[] = [|
     );
     |]
 
+[<Test>]
 [<TestCase(0, TestName = "decidable.p005")>]
 [<TestCase(1, TestName = "decidable.p012")>]
-
-[<Test>]
 let ``davisputnam tests`` idx = 
     let (formula, _) = davisputnamValues.[idx]
     let (_, result) = davisputnamValues.[idx]
@@ -311,10 +310,9 @@ let private pnfValues : (formula<fol> * formula<fol> * string)[] = [|
     );
     |]
 
+[<Test>]
 [<TestCase(0, TestName = "decidable.p007")>]
 [<TestCase(1, TestName = "decidable.p015")>]
-
-[<Test>]
 let ``pnf 1 tests`` idx = 
     let (formula, _, _) = pnfValues.[idx]
     let (_, astResult, _) = pnfValues.[idx]
@@ -325,9 +323,8 @@ let ``pnf 1 tests`` idx =
     sprint_fol_formula result
     |> should equal stringResult
 
-[<TestCase(2, TestName = "decidable.p017")>]
-
 [<Test>]
+[<TestCase(2, TestName = "decidable.p017")>]
 let ``pnf 2 tests`` idx = 
     let (formula, _, _) = pnfValues.[idx]
     let (_, astResult, _) = pnfValues.[idx]
@@ -347,9 +344,8 @@ let private wangValues : (string * bool)[] = [|
     );
     |]
 
-[<TestCase(0, TestName = "Pelletier #20")>]
-
 [<Test>]
+[<TestCase(0, TestName = "Pelletier #20")>]
 let ``wang tests`` idx = 
     let (formula, _) = wangValues.[idx]
     let (_, result) = wangValues.[idx]
@@ -380,10 +376,9 @@ let private decide_fmpValues : (string * bool)[] = [|
     );
     |]
 
+[<Test>]
 [<TestCase(0, TestName = "decidable.p024")>]
 [<TestCase(1, TestName = "decidable.p025")>]
-
-[<Test>]
 let ``decide_fmp tests`` idx = 
     let (formula, _) = decide_fmpValues.[idx]
     let (_, result) = decide_fmpValues.[idx]
@@ -415,9 +410,8 @@ let private decide_monadicValues : (string * bool)[] = [|
     );
     |]
 
-[<TestCase(0, TestName = "Pelletier #34")>]
-
 [<Test>]
+[<TestCase(0, TestName = "Pelletier #34")>]
 let ``decide_monadic tests`` idx = 
     let (formula, _) = decide_monadicValues.[idx]
     let (_, result) = decide_monadicValues.[idx]

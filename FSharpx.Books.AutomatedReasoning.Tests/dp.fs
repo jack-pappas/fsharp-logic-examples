@@ -25,9 +25,8 @@ let private dptautValues : (formula<prop> * bool)[] = [|
     );
     |]
 
-[<TestCase(0, TestName = "dp.p002")>]
-
 [<Test>]
+[<TestCase(0, TestName = "dp.p002")>]
 let ``dptaut tests`` idx = 
     let (prop_formula, _) = dptautValues.[idx]
     let (_, result) = dptautValues.[idx]
@@ -43,9 +42,8 @@ let private dplltautValues : (formula<prop> * bool)[] = [|
     );
     |]
 
-[<TestCase(0, TestName = "dp.p003")>]
-
 [<Test>]
+[<TestCase(0, TestName = "dp.p003")>]
 let ``dplltaut tests`` idx = 
     let (prop_formula, _) = dplltautValues.[idx]
     let (_, result) = dplltautValues.[idx]
@@ -67,10 +65,9 @@ let private dplitautValues : (formula<prop> * bool)[] = [|
     );
     |]
 
+[<Test>]
 [<TestCase(0, TestName = "dp.p004", Category = "LongRunning")>]
 [<TestCase(1, TestName = "dp.p006")>]
-
-[<Test>]
 let ``dplitaut tests`` idx = 
     let (prop_formula, _) = dplitautValues.[idx]
     let (_, result) = dplitautValues.[idx]
@@ -92,10 +89,9 @@ let private dplbtautValues : (formula<prop> * bool)[] = [|
     );
     |]
 
+[<Test>]
 [<TestCase(0, TestName = "dp.p004", Category = "LongRunning")>]
 [<TestCase(1, TestName = "dp.p006")>]
-
-[<Test>]
 let ``dplbtaut tests`` idx = 
     let (prop_formula, _) = dplbtautValues.[idx]
     let (_, result) = dplbtautValues.[idx]

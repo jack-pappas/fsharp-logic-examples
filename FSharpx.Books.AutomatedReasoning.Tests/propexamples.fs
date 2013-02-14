@@ -52,9 +52,8 @@ let private ramseyValues : (int * int * int * formula<prop> * string)[] = [|
     );
     |]
 
-[<TestCase(0, TestName = "propexamples.p001")>]
-
 [<Test>]
+[<TestCase(0, TestName = "propexamples.p001")>]
 let ``ramsey tests`` idx = 
     let (s, _, _, _, _) = ramseyValues.[idx]
     let (_, t, _, _, _) = ramseyValues.[idx]
@@ -100,13 +99,12 @@ let private tautologyValues : (formula<prop> * bool)[] = [|
     );
     |]
 
+[<Test>]
 [<TestCase(0, TestName = "propexamples.p002")>]
 [<TestCase(1, TestName = "propexamples.p003")>]
 [<TestCase(2, TestName = "propexamples.p005")>]
 [<TestCase(3, TestName = "propexamples.p006")>]
 [<TestCase(4, TestName = "propexamples.p007")>]
-
-[<Test>]
 let ``tautology tests`` idx = 
     let (prop_formula, _) = tautologyValues.[idx]
     let (_, result) = tautologyValues.[idx]
@@ -211,11 +209,10 @@ let private ripplecarryValues : ((int -> formula<prop>) list * int * formula<pro
     );
     |]
 
+[<Test>]
 [<TestCase(0, TestName = "propexamples.p008")>]
 [<TestCase(1, TestName = "propexamples.p004")>]
 [<TestCase(2, TestName = "propexamples.p009")>]
-
-[<Test>]
 let ``ripplecarry tests`` idx = 
     let (formulas, _, _, _) = ripplecarryValues.[idx]
     let (_, n, _, _) = ripplecarryValues.[idx]

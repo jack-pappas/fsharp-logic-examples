@@ -27,9 +27,8 @@ let private termValues : (term * string)[] = [|
     )
     |]
 
-[<TestCase(0, TestName = "fol.p001")>]
-
 [<Test>]
+[<TestCase(0, TestName = "fol.p001")>]
 let ``sprint_term tests`` idx =
     let (term, _) = termValues.[idx]
     let (_, stringResult) = termValues.[idx]
@@ -45,9 +44,8 @@ let private folFormulaValues : (formula<fol> * string)[] = [|
     )
     |]
 
-[<TestCase(0, TestName = "fol.p002")>]
-
 [<Test>]
+[<TestCase(0, TestName = "fol.p002")>]
 let ``sprint_fol_formula tests`` idx =
     let (formula, _) = folFormulaValues.[idx]
     let (_, stringResult) = folFormulaValues.[idx]
@@ -64,9 +62,8 @@ let private parsetValues : (string * term * string)[] = [|
     )
     |]
 
-[<TestCase(0, TestName = "fol.p004")>]
-
 [<Test>]
+[<TestCase(0, TestName = "fol.p004")>]
 let ``parset tests`` idx =
     let (term, _, _) = parsetValues.[idx]
     let (_, astResult, _) = parsetValues.[idx]
@@ -215,11 +212,11 @@ let private parseValues : (string * formula<fol> * string)[] = [|
     )
     |]
     
+[<Test>]
 [<TestCase(0, TestName = "fol.p005")>]
 [<TestCase(1, TestName = "fol.p006")>]
 [<TestCase(2, TestName = "fol.p018")>]
 [<TestCase(3, TestName = "fol.p019")>]
-
 let ``parse tests`` (idx) =
     let (text, _, _) = parseValues.[idx]
     let (_, astResult, _) = parseValues.[idx]
@@ -242,9 +239,8 @@ let private holdsBoolValues : ((bool list * (string -> bool list -> bool) * (str
     );    
     |]
     
-[<TestCase(0, TestName = "fol.p007")>]
-
 [<Test>]
+[<TestCase(0, TestName = "fol.p007")>]
 let ``holds tests (bool)`` idx = 
     let (interpretation, _, _, _) = holdsBoolValues.[idx]
     let (_, valuation, _, _) = holdsBoolValues.[idx]
@@ -290,12 +286,11 @@ let private holdIntValues : ((int list * (string -> int list -> int) * (string -
     );
     |]
     
+[<Test>]
 [<TestCase(0, TestName = "fol.p008")>]
 [<TestCase(1, TestName = "fol.p009")>]
 [<TestCase(2, TestName = "fol.p011")>]
 [<TestCase(3, TestName = "fol.p012")>]
-
-[<Test>]
 let ``holds tests (int)`` idx = 
     let (interpretation, _, _, _) = holdIntValues.[idx]
     let (_, valuation, _, _) = holdIntValues.[idx]
@@ -316,9 +311,8 @@ let private holdRangeValues : ((int -> int list * (string -> int list -> int) * 
     );
     |]
     
-[<TestCase(0, TestName = "fol.p010")>]
-
 [<Test>]
+[<TestCase(0, TestName = "fol.p010")>]
 let ``holds tests (int range)`` idx = 
     let (interpretation, _, _, _, _) = holdRangeValues.[idx]
     let (_, valuation, _, _, _) = holdRangeValues.[idx]
@@ -352,11 +346,10 @@ let private variantValues : (string * string list * string)[] = [|
     ); 
     |]
     
+[<Test>]
 [<TestCase(0, TestName = "fol.p013")>]
 [<TestCase(1, TestName = "fol.p014")>]
 [<TestCase(2, TestName = "fol.p015")>]
-
-[<Test>]
 let ``variant tests`` idx = 
     let (x, _, _) = variantValues.[idx]
     let (_, vars, _) = variantValues.[idx]
@@ -389,10 +382,9 @@ let private substValues : (func<string,term> * string * formula<fol> * string)[]
     );
     |]
     
+[<Test>]
 [<TestCase(0, TestName = "fol.p016")>]
 [<TestCase(1, TestName = "fol.p017")>]
-
-[<Test>]
 let ``subst tests`` idx = 
     let (subfn, _, _, _) = substValues.[idx]
     let (_, fm, _, _) = substValues.[idx]

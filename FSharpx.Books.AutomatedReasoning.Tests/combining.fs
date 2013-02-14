@@ -164,6 +164,7 @@ let private nelopValues : (((string * int -> bool) * (string * int -> bool) * (f
     );
     |]
     
+[<Test>]
 [<TestCase(0, TestName = "combining.p003")>]
 [<TestCase(1, TestName = "combining.p005")>]
 [<TestCase(2, TestName = "combining.p006")>]
@@ -175,15 +176,15 @@ let private nelopValues : (((string * int -> bool) * (string * int -> bool) * (f
 [<TestCase(8, TestName = "combining.p014")>]
 [<TestCase(9, TestName = "combining.p015")>]
 [<TestCase(10, TestName = "combining.p016")>]
-[<TestCase(11, TestName = "combining.p017", ExpectedException=typeof<System.Collections.Generic.KeyNotFoundException>)>]
+[<TestCase(11, TestName = "combining.p017",
+    ExpectedException = typeof<System.Collections.Generic.KeyNotFoundException>)>]
 [<TestCase(12, TestName = "combining.p018")>]
 [<TestCase(13, TestName = "combining.p019")>]
 [<TestCase(14, TestName = "combining.p020")>]
 [<TestCase(15, TestName = "combining.p021")>]
-[<TestCase(16, TestName = "combining.p022", ExpectedException=typeof<System.Collections.Generic.KeyNotFoundException>)>]
+[<TestCase(16, TestName = "combining.p022",
+    ExpectedException = typeof<System.Collections.Generic.KeyNotFoundException>)>]
 [<TestCase(17, TestName = "combining.p023")>]
-
-[<Test>]
 let ``nelop tests`` idx = 
     let (langs, _, _) = nelopValues.[idx]
     let (_, formula, _) = nelopValues.[idx]

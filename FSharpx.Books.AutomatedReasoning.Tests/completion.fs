@@ -33,8 +33,8 @@ let private criticalPairValues : (formula<fol> * formula<fol> list)[] =  [|
     |]
 
 // completion.p001
+[<Test>]
 [<TestCase(0, TestName = "completion.p001")>]
-
 let ``critical pairs tests`` idx =
     let (eq, _) = criticalPairValues.[idx]
     let (_, result) = criticalPairValues.[idx]
@@ -58,8 +58,7 @@ let ord = lpo_ge (weight ["1"; "*"; "i"])
 // evaluated during initilization.
 let eqs' =
     lazy ( 
-        complete ord (eqs, [], unions (allpairs critical_pairs eqs eqs))
-    )   
+        complete ord (eqs, [], unions (allpairs critical_pairs eqs eqs)))
 
 let private rewriteValues : (formula<fol> list * term * term)[] = [|
     ( 
@@ -71,8 +70,8 @@ let private rewriteValues : (formula<fol> list * term * term)[] = [|
     );
     |]
 
+[<Test>]
 [<TestCase(0, TestName = "completion.p002")>]
-
 let ``rewrite tests`` idx =
     let (eqs, _, _) = rewriteValues.[idx]
     let (_, tm, _) = rewriteValues.[idx]
@@ -112,8 +111,8 @@ let private interreduceValues : (formula<fol> list * formula<fol> list * formula
     );
     |]
 
+[<Test>]
 [<TestCase(0, TestName = "completion.p003")>]
-
 let ``interreduce tests`` idx =
     let (dun, _, _) = interreduceValues.[idx]
     let (_, eqs, _) = interreduceValues.[idx]
@@ -131,8 +130,8 @@ let private equivalentValues = [|
     );
     |]
 
+[<Test>]
 [<TestCase(0, TestName = "completion.p005")>]   // completion.p010 is completion.p005
-
 let ``equivalent tests`` idx =
     let (eqs, _) = equivalentValues.[idx]
     let (_, result) = equivalentValues.[idx]
@@ -149,8 +148,8 @@ let private skolemizeEquivalentValues = [|
     );
     |]
 
+[<Test>]
 [<TestCase(0, TestName = "completion.p006")>] // completion.p011 is completion.p006
-
 let ``skolemize tests`` idx =
     let (eqs, _) = skolemizeEquivalentValues.[idx]
     let (_, result) = skolemizeEquivalentValues.[idx]
@@ -916,6 +915,7 @@ let private completeAndSimplifyValues : (string list * formula<fol> list * formu
     );
     |]
     
+[<Test>]
 [<TestCase(15, TestName = "commutativity example", Category = "LongRunning")>]
 [<TestCase(6, TestName = "K&B #1")>]
 [<TestCase(17, TestName = "K&B #3", Category = "LongRunning")>]
@@ -953,7 +953,6 @@ let private completeAndSimplifyValues : (string list * formula<fol> list * formu
 [<TestCase(36, TestName = "completion.p044", ExpectedException=typeof<System.Collections.Generic.KeyNotFoundException>)>]
 [<TestCase(28, TestName = "completion.p045", Category = "LongRunning")>]
 [<TestCase(32, TestName = "completion.p051")>]
-
 let ``complete and simplify tests`` idx =
     let (wts, _, _) = completeAndSimplifyValues.[idx]
     let (_, eqs, _) = completeAndSimplifyValues.[idx]
@@ -1063,9 +1062,9 @@ let private funpowValues : ( int * (formula<fol> list * formula<fol> list * form
     );
     |]
 
+[<Test>]
 [<TestCase(0, TestName = "Baader & Nipkow #2")>]
 [<TestCase(1, TestName = "Baader & Nipkow #3")>]
-
 let ``funpow tests`` idx =
     let (n, _, _, _, _, _) = funpowValues.[idx]
     let (_, f, _, _, _, _) = funpowValues.[idx]
@@ -1421,6 +1420,7 @@ let private iproveValues : (formula<fol> list * formula<fol> * formula<fol> list
         );
     |]
 
+[<Test>]
 [<TestCase(0, TestName = "completion.p053")>]
 [<TestCase(1, TestName = "completion.p054")>]
 [<TestCase(2, TestName = "completion.p055")>]
@@ -1432,7 +1432,6 @@ let private iproveValues : (formula<fol> list * formula<fol> * formula<fol> list
 [<TestCase(8, TestName = "completion.p061")>]
 [<TestCase(9, TestName = "completion.p062", Category = "LongRunning")>]
 [<TestCase(10, TestName = "completion.p063")>]
-
 let ``iprove tests`` idx =
     let eqs039 =
         [parse @"0 + y = y";

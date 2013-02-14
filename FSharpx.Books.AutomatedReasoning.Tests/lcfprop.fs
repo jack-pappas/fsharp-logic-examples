@@ -49,22 +49,20 @@ let private lcfpropValues : (string * thm * string )[] = [|
     );
     |]
     
+[<Test>]
 [<TestCase(0, TestName = "Pelletier #12")>]
 [<TestCase(1, TestName = "Pelletier #16")>]
 [<TestCase(1, TestName = "Harrison #02 - Equations within equations")>]
-
-[<Test>]
 let ``lcftaut ast tests`` idx = 
     let (formula, _, _) = lcfpropValues.[idx]
     let (_, ast_result, _) = lcfpropValues.[idx]
     lcftaut (parse formula)
     |> should equal ast_result
 
+[<Test>]
 [<TestCase(0, TestName = "Pelletier #12")>]
 [<TestCase(1, TestName = "Pelletier #16")>]
 [<TestCase(1, TestName = "Harrison #02 - Equations within equations")>]
-
-[<Test>]
 let ``lcftaut pp tests`` idx = 
     let (formula, _, _) = lcfpropValues.[idx]
     let (_, _, pretty_printer_result) = lcfpropValues.[idx]

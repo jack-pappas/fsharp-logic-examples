@@ -37,9 +37,8 @@ let private triggersValues : (string * ((formula<prop> * formula<prop>) * (formu
     );
     |]
 
-[<TestCase(0, TestName = "stal.p001")>]
-
 [<Test>]
+[<TestCase(0, TestName = "stal.p001")>]
 let triggers idx = 
     let (formula, _) = triggersValues.[idx]
     let (_, result) = triggersValues.[idx]
@@ -61,10 +60,9 @@ let private stalmarckValues : (formula<prop> * bool)[] = [|
     );
     |]
 
+[<Test>]
 [<TestCase(0, TestName = "stal.p002", Category = "LongRunning")>]
 [<TestCase(1, TestName = "stal.p003")>]
-
-[<Test>]
 let ``stalmarck tests`` idx = 
     let (formula, _) = stalmarckValues.[idx]
     let (_, result) = stalmarckValues.[idx]

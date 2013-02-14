@@ -230,6 +230,7 @@ let private qelimValues =
         )
     |]
 
+[<Test>]
 [<TestCase(0, TestName = "qelim.p001")>]
 [<TestCase(1, TestName = "qelim.p002")>]
 [<TestCase(2, TestName = "qelim.p003")>]
@@ -261,7 +262,6 @@ let private qelimValues =
 [<TestCase(28, TestName = "qelim.p029")>]
 [<TestCase(29, TestName = "qelim.p030")>]
 [<TestCase(30, TestName = "qelim.p031")>]
-
 let ``quelim_dlo`` idx =
     let (input, _) = qelimValues.[idx]
     let (_, result) = qelimValues.[idx]

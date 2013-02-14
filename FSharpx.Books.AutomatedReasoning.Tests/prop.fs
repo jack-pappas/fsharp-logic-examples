@@ -62,10 +62,9 @@ let private evalPropFormula_1_Values : (string * (formula<prop> -> formula<prop>
     );
     |]
 
+[<Test>]
 [<TestCase(0, TestName = "prop.p001")>]
 [<TestCase(1, TestName = "prop.p002")>]
-
-[<Test>]
 let ``eval prop formula 1`` idx = 
     let (prop_formula_1, _, _, _) = evalPropFormula_1_Values.[idx]
     let (_, prop_formula_2, _, _) = evalPropFormula_1_Values.[idx]
@@ -110,12 +109,11 @@ let private eavlBoolOperatorValues : ((bool -> bool -> bool) * bool * bool * boo
     );
     |]
 
+[<Test>]
 [<TestCase(0, TestName = "prop.p003")>]
 [<TestCase(1, TestName = "prop.p004")>]
 [<TestCase(2, TestName = "prop.p005")>]
 [<TestCase(3, TestName = "prop.p006")>]
-
-[<Test>]
 let ``eval bool operator`` idx = 
     let (boolOperator, _, _, _) = eavlBoolOperatorValues.[idx]
     let (_, boolValue_1, _, _) = eavlBoolOperatorValues.[idx]
@@ -153,10 +151,9 @@ let private evalPropFormula_2_Values : ((bool -> bool -> bool -> prop -> bool) *
     );
     |]
 
+[<Test>]
 [<TestCase(0, TestName = "prop.p007")>]
 [<TestCase(1, TestName = "prop.p008")>]
-
-[<Test>]
 let ``eval prop formula 2`` idx = 
     let (func, _, _, _, _, _) = evalPropFormula_2_Values.[idx]
     let (_, propFormula, _, _, _, _) = evalPropFormula_2_Values.[idx]
@@ -177,9 +174,8 @@ let private atomValues : (string * prop list)[] = [|
     );
     |]
 
-[<TestCase(0, TestName = "prop.p009")>]
-
 [<Test>]
+[<TestCase(0, TestName = "prop.p009")>]
 let ``atom tests`` idx = 
     let (prop_formula, _) = atomValues.[idx]
     let (_, result) = atomValues.[idx]
@@ -288,6 +284,7 @@ let private tautologyValues : (formula<prop> * bool)[] = [|
     );
     |]
 
+[<Test>]
 [<TestCase(0, TestName = "prop.p014")>]
 [<TestCase(1, TestName = "prop.p015")>]
 [<TestCase(2, TestName = "prop.p016")>]
@@ -303,8 +300,6 @@ let private tautologyValues : (formula<prop> * bool)[] = [|
 [<TestCase(12, TestName = "prop.p031")>]
 [<TestCase(13, TestName = "prop.p039")>]
 [<TestCase(14, TestName = "prop.p041")>]
-
-[<Test>]
 let ``tautology tests`` idx = 
     let (prop_formula, _) = tautologyValues.[idx]
     let (_, result) = tautologyValues.[idx]
@@ -325,9 +320,8 @@ let private psubstValues : (func<prop,formula<prop>> * string * formula<prop> * 
     );
     |]
 
-[<TestCase(0, TestName = "prop.p018")>]
-
 [<Test>]
+[<TestCase(0, TestName = "prop.p018")>]
 let ``psubst tests`` idx = 
     let (subst_function, _, _, _) = psubstValues.[idx]
     let (_, formula, _, _) = psubstValues.[idx]
@@ -361,9 +355,8 @@ let private dualValues : (string * formula<prop> * string)[] = [|
     );
     |]
 
-[<TestCase(0, TestName = "prop.p026")>]
-
 [<Test>]
+[<TestCase(0, TestName = "prop.p026")>]
 let ``dual tests`` idx = 
     let (formula, _, _) = dualValues.[idx]
     let (_, astResult, _) = dualValues.[idx]
@@ -391,10 +384,9 @@ let private psimplifyValues : (string * formula<prop> * string)[] = [|
     );
     |]
 
+[<Test>]
 [<TestCase(0, TestName = "prop.p027")>]
 [<TestCase(1, TestName = "prop.p028")>]
-
-[<Test>]
 let ``psimplify tests`` idx = 
     let (formula, _, _) = psimplifyValues.[idx]
     let (_, astResult, _) = psimplifyValues.[idx]
@@ -1061,10 +1053,9 @@ let private dnfOrigValues : (string * formula<prop> * string)[] = [|
     );
     |]
 
+[<Test>]
 [<TestCase(0, TestName = "prop.p032")>]
 [<TestCase(1, TestName = "prop.p034")>]
-
-[<Test>]
 let ``dnf original tests`` idx = 
     let (formula, _, _) = dnfOrigValues.[idx]
     let (_, astResult, _) = dnfOrigValues.[idx]
@@ -1092,9 +1083,8 @@ let private dnfRawValues : (string * formula<prop> * string)[] = [|
     );
     |]
 
-[<TestCase(0, TestName = "prop.p035")>]
-
 [<Test>]
+[<TestCase(0, TestName = "prop.p035")>]
 let ``dnf raw tests`` idx = 
     let (formula, _, _) = dnfRawValues.[idx]
     let (_, astResult, _) = dnfRawValues.[idx]
@@ -1120,9 +1110,8 @@ let private dnfPureValues : (string * formula<prop> list list * string)[] = [|
     );
     |]
 
-[<TestCase(0, TestName = "prop.p036")>]
-
 [<Test>]
+[<TestCase(0, TestName = "prop.p036")>]
 let ``dnf Pure tests`` idx = 
     let (formula, _, _) = dnfPureValues.[idx]
     let (_, astResult, _) = dnfPureValues.[idx]
@@ -1155,9 +1144,8 @@ let private dnfValues : (string * formula<prop> * string)[] = [|
     );
     |]
 
-[<TestCase(0, TestName = "prop.p038")>]
-
 [<Test>]
+[<TestCase(0, TestName = "prop.p038")>]
 let ``dnf tests`` idx = 
     let (formula, _, _) = dnfValues.[idx]
     let (_, astResult, _) = dnfValues.[idx]
@@ -1183,9 +1171,8 @@ let private cnfValues : (string * formula<prop> * string)[] = [|
     );
     |]
 
-[<TestCase(0, TestName = "prop.p040")>]
-
 [<Test>]
+[<TestCase(0, TestName = "prop.p040")>]
 let ``cnf tests`` idx = 
     let (formula, _, _) = cnfValues.[idx]
     let (_, astResult, _) = cnfValues.[idx]
@@ -1239,11 +1226,10 @@ let private truthTableValues : (string * string)[] = [|
     );
     |]
 
+[<Test>]
 [<TestCase(0, TestName = "prop.p010")>]
 [<TestCase(1, TestName = "prop.p012")>]
 [<TestCase(2, TestName = "prop.p013")>]
-
-[<Test>]
 let ``truthTable tests`` idx = 
     let (formula, _) = truthTableValues.[idx]
     let (_, result) = truthTableValues.[idx]

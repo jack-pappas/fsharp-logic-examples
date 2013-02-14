@@ -212,6 +212,7 @@ let private grobner_decideValues : (string * bool)[] = [|
     );
     |]
 
+[<Test>]
 [<TestCase(0, TestName = "grobner.p001")>]
 [<TestCase(1, TestName = "grobner.p002")>]
 [<TestCase(2, TestName = "grobner.p003")>]
@@ -234,8 +235,6 @@ let private grobner_decideValues : (string * bool)[] = [|
 [<TestCase(19, TestName = "grobner.p026")>]
 [<TestCase(20, TestName = "grobner.p027")>]
 [<TestCase(21, TestName = "grobner.p028")>]
-
-[<Test>]
 let ``grobner_decide tests`` idx = 
     let (formula, _) = grobner_decideValues.[idx]
     let (_, result) = grobner_decideValues.[idx]
@@ -271,11 +270,10 @@ let complex_qelimValues : (formula<fol> * formula<fol>)[] = [|
     );
     |]
 
+[<Test>]
 [<TestCase(0, TestName = "grobner.p004")>]
 [<TestCase(1, TestName = "grobner.p019")>]
 [<TestCase(2, TestName = "grobner.p021")>]
-
-[<Test>]
 let ``complex_qelim tests`` idx = 
     let (formula, _) = complex_qelimValues.[idx]
     let (_, result) = complex_qelimValues.[idx]

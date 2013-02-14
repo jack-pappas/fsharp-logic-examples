@@ -58,11 +58,9 @@ let private interpValues : (string * formula<fol>)[] = [|
     );
     |]
 
-
+[<Test>]
 [<TestCase(0, TestName = "interpolation.p024")>]
 [<TestCase(1, TestName = "interpolation.p025")>]
-
-[<Test>]
 let ``interp tests`` idx = 
     let (formula, _) = interpValues.[idx]
     let (_, result) = interpValues.[idx]
@@ -129,13 +127,12 @@ let private interpolationValues : (formula<fol> * formula<fol> * (formula<fol> -
     );
     |]
 
+[<Test>]
 [<TestCase(0, TestName = "interpolation.p005")>]
 [<TestCase(1, TestName = "interpolation.p008")>]
 [<TestCase(2, TestName = "interpolation.p011")>]
 [<TestCase(3, TestName = "interpolation.p028")>]
 [<TestCase(4, TestName = "interpolation.p028")>]
-
-[<Test>]
 let ``interpolation meson002 1 tests`` idx = 
     let (formula1, _, _, _, _) = interpolationValues.[idx]
     let (_, formula2, _, _, _) = interpolationValues.[idx]
@@ -162,9 +159,8 @@ let private interpolationBoolValues : (formula<fol> * formula<fol> * (formula<fo
     );
     |]
 
-[<TestCase(0, TestName = "interpolation.p015")>]
-
 [<Test>]
+[<TestCase(0, TestName = "interpolation.p015")>]
 let ``interpolation tautology tests`` idx = 
     let (formula1, _, _, _, _, _) = interpolationBoolValues.[idx]
     let (_, formula2, _, _, _, _) = interpolationBoolValues.[idx]
@@ -206,10 +202,9 @@ let private interpolation2Values : (formula<fol> * formula<fol> * (formula<fol> 
     );
     |]
 
+[<Test>]
 [<TestCase(0, TestName = "interpolation.p019")>]
 [<TestCase(1, TestName = "interpolation.p023")>]
-
-[<Test>]
 let ``interpolation meson002 2 tests`` idx = 
     let (formula1, _, _, _, _, _) = interpolation2Values.[idx]
     let (_, formula2, _, _, _, _) = interpolation2Values.[idx]

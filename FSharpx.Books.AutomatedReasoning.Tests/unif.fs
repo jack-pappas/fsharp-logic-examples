@@ -58,11 +58,13 @@ let private unify_and_applyValues : ((term * term) list * (term * term) list)[] 
     );
     |]
     
+[<Test>]
 [<TestCase(0, TestName = "unif.p001")>]
 [<TestCase(1, TestName = "unif.p002")>]
-[<TestCase(2, TestName = "unif.p003", ExpectedException=typeof<System.Exception>, ExpectedMessage="cyclic")>]
+[<TestCase(2, TestName = "unif.p003",
+    ExpectedException = typeof<System.Exception>,
+    ExpectedMessage = "cyclic")>]
 [<TestCase(3, TestName = "unif.p004")>]
-
 let ``unify_and_apply tests`` (idx) =
     let (eqs, _) = unify_and_applyValues.[idx]
     let (_, result) = unify_and_applyValues.[idx]

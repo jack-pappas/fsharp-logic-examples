@@ -21,9 +21,8 @@ let private simplifyValues : (expression * expression)[] = [|
     );
     |]
 
-[<TestCase(0, TestName = "intro.p002")>]
-
 [<Test>]
+[<TestCase(0, TestName = "intro.p002")>]
 let ``simplify tests`` idx = 
     let (expr, _) = simplifyValues.[idx]
     let (_, result) = simplifyValues.[idx]
@@ -45,10 +44,9 @@ let private lexValues : (string * string list)[] = [|
     );
     |]
 
+[<Test>]
 [<TestCase(0, TestName = "intro.p003")>]
 [<TestCase(1, TestName = "intro.p004")>]
-
-[<Test>]
 let ``lex tests`` idx = 
     let (text, _) = lexValues.[idx]
     let (_, result) = lexValues.[idx]
@@ -102,6 +100,7 @@ let private parse_expValues : (string * expression)[] = [|
     );
     |]
 
+[<Test>]
 [<TestCase(0, TestName = "intro.p005")>]
 [<TestCase(1, TestName = "intro.p006")>]
 [<TestCase(2, TestName = "intro.p008")>]
@@ -109,8 +108,6 @@ let private parse_expValues : (string * expression)[] = [|
 [<TestCase(4, TestName = "intro.p010")>]
 [<TestCase(5, TestName = "intro.p011")>]
 [<TestCase(6, TestName = "intro.p012")>]
-
-[<Test>]
 let ``parse_exp tests`` idx = 
     let (text, _) = parse_expValues.[idx]
     let (_, result) = parse_expValues.[idx]
@@ -126,9 +123,8 @@ let private string_of_expValues : (string * string)[] = [|
     );
     |]
 
-[<TestCase(0, TestName = "intro.p007")>]
-
 [<Test>]
+[<TestCase(0, TestName = "intro.p007")>]
 let ``string_of_exp tests`` idx = 
     let (text, _) = string_of_expValues.[idx]
     let (_, result) = string_of_expValues.[idx]

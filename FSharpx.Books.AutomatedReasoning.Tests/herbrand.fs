@@ -62,11 +62,11 @@ let private gilmoreValues : (StackSize * string * int)[] = [|
     );
     |]
     
+[<Test>]
 [<TestCase(0, TestName = "herbrand.p001")>]
 [<TestCase(1, TestName = "herbrand.p003")>]
 [<TestCase(2, TestName = "herbrand.p004")>]
 [<TestCase(3, TestName = "herbrand.p005", Category = "LongRunning")>]
-
 let ``gilmore tests`` (idx) =
     let (stackSize, _,  _) = gilmoreValues.[idx]
     let (_, formula, _) = gilmoreValues.[idx]
@@ -89,8 +89,8 @@ let private davisputnamValues : (string * int)[] = [|
     );
     |]
     
+[<Test>]
 [<TestCase(0, TestName = "herbrand.p001")>]
-
 let ``davisputnam tests`` (idx) =
     let (formula, _) = davisputnamValues.[idx]
     let (_, result) = davisputnamValues.[idx]
@@ -118,10 +118,10 @@ let private davisputnam002Values : (string * int)[] = [|
         5
     );
     |]
-    
+
+[<Test>]    
 [<TestCase(0, TestName = "herbrand.p007")>]
 [<TestCase(1, TestName = "herbrand.p008", Category = "LongRunning")>]
-
 let ``davisputnam002 tests`` (idx) =
     let (formula, _) = davisputnam002Values.[idx]
     let (_, result) = davisputnam002Values.[idx]

@@ -42,10 +42,10 @@ let private tabValues : (string * int)[] = [|
     );
     |]
     
+[<Test>]
 [<TestCase(0, TestName = "meson.p001")>]
 [<TestCase(1, TestName = "meson.p002")>]
 [<TestCase(2, TestName = "meson.p003")>]
-
 let ``tab tests`` (idx) =
     let (formula, _) = tabValues.[idx]
     let (_, result) = tabValues.[idx]
@@ -821,6 +821,7 @@ let private meson002Values : (string * int list)[] = [|
     );
     |]
 
+[<Test>]
 [<TestCase(0, TestName = "Pelletier #01")>]
 [<TestCase(1, TestName = "Pelletier #02")>]
 [<TestCase(2, TestName = "Pelletier #03")>]
@@ -889,7 +890,6 @@ let private meson002Values : (string * int list)[] = [|
 [<TestCase(88, TestName = "Los #1", Category = "LongRunning")>]
 [<TestCase(89, TestName = "Gilmore #9a")>]
 [<TestCase(90, TestName = "Harrison #09")>]
-
 let ``meson002 tests`` (idx) =
     let (formula, _) = meson002Values.[idx]
     let (_, result) = meson002Values.[idx]

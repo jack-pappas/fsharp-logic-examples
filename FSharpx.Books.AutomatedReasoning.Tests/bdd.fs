@@ -24,9 +24,8 @@ let private bddtautValues : (formula<prop> * bool)[] = [|
     );
     |]
 
-[<TestCase(0, TestName = "bdd.p001")>]
-
 [<Test>]
+[<TestCase(0, TestName = "bdd.p001")>]
 let ``bddtaut tests`` idx = 
     let (formula, _) = bddtautValues.[idx]
     let (_, result) = bddtautValues.[idx]
@@ -48,10 +47,9 @@ let private ebddtautValues : (formula<prop> * bool)[] = [|
     );
     |]
 
+[<Test>]
 [<TestCase(0, TestName = "bdd.p002")>]
 [<TestCase(1, TestName = "bdd.p003")>]
-
-[<Test>]
 let ``ebddtaut tests`` idx = 
     let (formula, _) = ebddtautValues.[idx]
     let (_, result) = ebddtautValues.[idx]

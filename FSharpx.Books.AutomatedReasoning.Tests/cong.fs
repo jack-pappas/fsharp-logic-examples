@@ -43,11 +43,10 @@ let private ccvalidValues : (string * bool)[] = [|
     )
     |]
 
+[<Test>]
 [<TestCase(0, TestName = "cong.p001")>]
 [<TestCase(1, TestName = "cong.p002")>]
 [<TestCase(2, TestName = "cong.p003")>]
-
-[<Test>]
 let ``ccvalid tests`` idx =
     let (formula, _) = ccvalidValues.[idx]
     let (_, result) = ccvalidValues.[idx]

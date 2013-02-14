@@ -28,8 +28,8 @@ let private prawitzValues : (string * int)[] = [|
     );
     |]
     
+[<Test>]
 [<TestCase(0, TestName = "Pelletier #20")>]
-
 let ``Prawitz tests`` (idx) =
     let (formula, _) = prawitzValues.[idx]
     let (_, result) = prawitzValues.[idx]
@@ -111,6 +111,7 @@ let private compareValues : (string * (int * int))[] = [|
     );
     |]
     
+[<Test>]
 [<TestCase(0, TestName = "Pelletier #19")>]
 [<TestCase(1, TestName = "Pelletier #20")>]
 [<TestCase(2, TestName = "Pelletier #24")>]
@@ -120,7 +121,6 @@ let private compareValues : (string * (int * int))[] = [|
 [<TestCase(6, TestName = "Pelletier #44")>]
 [<TestCase(7, TestName = "Pelletier #59")>]
 [<TestCase(8, TestName = "Pelletier #60")>]
-
 let ``compare tests`` (idx) =
     let (formula, _) = compareValues.[idx]
     let (_, result) = compareValues.[idx]
@@ -143,8 +143,8 @@ let private tabValues : (string * int)[] = [|
     );
     |]
     
+[<Test>]
 [<TestCase(0, TestName = "Pelletier #38")>]
-
 let ``tab tests`` (idx) =
     let (formula, _) = tabValues.[idx]
     let (_, result) = tabValues.[idx]
@@ -866,6 +866,7 @@ let private splittabIntValues : (string * int list)[] = [|
     );
     |]
 
+[<Test>]
 [<TestCase(0, TestName = "Pelletier #01")>]
 [<TestCase(1, TestName = "Pelletier #02")>]
 [<TestCase(2, TestName = "Pelletier #03")>]
@@ -930,7 +931,6 @@ let private splittabIntValues : (string * int list)[] = [|
 //[<TestCase(85, TestName = "Dijkstra #1")>]
 //[<TestCase(86, TestName = "Dijkstra #2")>]
 //[<TestCase(87, TestName = "Pelletier #58 2")>]
-
 let ``splittab tests`` (idx) =
     let (formula, _) = splittabIntValues.[idx]
     let (_, result) = splittabIntValues.[idx]

@@ -30,16 +30,13 @@ let private godelFormulaValues = [|
     ("0 < 0", (Num.Big_int 1767I))
     |]
 
+[<Test>]
 // limitations.p001
 [<TestCase(0, TestName = "limitation.p001")>]
-
 // limitations.p002
 [<TestCase(1, TestName = "limitation.p002")>]
-
 // limitations.p003
 [<TestCase(2, TestName = "limitation.p003")>]
-
-[<Test>]
 let ``Godel Formula`` idx = 
     let (formula, _) = godelFormulaValues.[idx]
     let (_, result) = godelFormulaValues.[idx]
@@ -59,16 +56,13 @@ let private diag001Values = [|
      "The result of substituting the quotation of `The result of substituting the quotation of x for `x' in x \ has property P' for `x' in `The result of substituting the quotation of x for `x' in x \ has property P' \ has property P")
     |]
 
+[<Test>]
 // limitations.p004
 [<TestCase(0, TestName = "limitation.p004")>]
-
 // limitations.p005
 [<TestCase(1, TestName = "limitation.p005")>]
-
 // limitations.p006
 [<TestCase(2, TestName = "limitation.p006")>]
-
-[<Test>]
 let ``diag001 test`` idx =
     let (value, _) = diag001Values.[idx]
     let (_, result) = diag001Values.[idx]
@@ -82,13 +76,11 @@ let private dholdsValues = [|
     (101, true)
     |]
 
+[<Test>]
 // limitations.p007
 [<TestCase(0, TestName = "limitation.p007")>]
-
 // limitations.p008
 [<TestCase(1, TestName = "limitation.p008")>]
-
-[<Test>]
 let ``dholds prime`` idx =
     let (value, _) = dholdsValues.[idx]
     let (_, result) = dholdsValues.[idx]
@@ -246,10 +238,9 @@ let private robEvalValues : (string * thm ) [] = [|
     )
     |]
 
+[<Test>]
 // limitations.p014
 [<TestCase(0, TestName = "limitation.p014")>]
-
-[<Test>]
 let ``Robinson eval`` idx =
     let (tm, _) = robEvalValues.[idx]
     let (_, result) = robEvalValues.[idx]
@@ -518,17 +509,14 @@ let private robNeValues : (string * string * thm ) [] = [|
     )
     |]
 
+[<Test>]
 // pg. 570
 // limitations.p015
 [<TestCase(0, TestName = "limitation.p015")>]
-
 // limitations.p016
 [<TestCase(1, TestName = "limitation.p016")>]
-
 // limitations.p017
 [<TestCase(2, TestName = "limitation.p017")>]
-
-[<Test>]
 let ``Robinson ne`` idx =
     let (s, _, _) = robNeValues.[idx]
     let (_, t, _) = robNeValues.[idx]
@@ -636,10 +624,9 @@ let private sigmaValues = [|
     )
     |]
 
+[<Test>]
 // limitations.p018
 [<TestCase(0, TestName = "limitation.p018")>]
-
-[<Test>]
 let ``sigma prove`` idx =
     let (formula, _) = sigmaValues.[idx]
     let (_, result) = sigmaValues.[idx]
@@ -741,10 +728,9 @@ let private godelValues = [|
                     Atom (R ("|--",[Var "F"]))))))
     |]
 
+[<Test>]
 // limitations.p020
 [<TestCase(0, TestName = "limitations.p020")>]
-
-[<Test>]
 let ``Godel theorem`` idx =
     let result = godelValues.[idx]
     prove (parse @"(forall p. |--(p) ==> |--(Pr(p))) /\ (forall p q. |--(imp(Pr(imp(p,q)),imp(Pr(p),Pr(q))))) /\ (forall p. |--(imp(Pr(p),Pr(Pr(p))))) ==> (forall p q. |--(imp(p,q)) /\ |--(p) ==> |--(q)) /\ (forall p q. |--(imp(q,imp(p,q)))) /\ (forall p q r. |--(imp(imp(p,imp(q,r)),imp(imp(p,q),imp(p,r))))) ==> |--(imp(G,imp(Pr(G),F))) /\ |--(imp(imp(Pr(G),F),G)) ==> |--(imp(Pr(F),F)) ==> |--(F)") 

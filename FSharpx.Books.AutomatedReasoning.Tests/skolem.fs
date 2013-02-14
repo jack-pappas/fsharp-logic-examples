@@ -30,9 +30,8 @@ let private simplifyValues : (string * formula<fol> * string)[] = [|
     )
     |]
 
-[<TestCase(0, TestName = "skolem.p001")>]
-
 [<Test>]
+[<TestCase(0, TestName = "skolem.p001")>]
 let ``simplify tests`` idx =
     let (formula, _, _) = simplifyValues.[idx]
     let (_, astResult, _) = simplifyValues.[idx]
@@ -69,9 +68,8 @@ let private nnfValues : (string * formula<fol> * string)[] = [|
     )
     |]
 
-[<TestCase(0, TestName = "skolem.p002")>]
-
 [<Test>]
+[<TestCase(0, TestName = "skolem.p002")>]
 let ``nnf tests`` idx =
     let (formula, _, _) = nnfValues.[idx]
     let (_, astResult, _) = nnfValues.[idx]
@@ -106,9 +104,8 @@ let private pnfValues : (string * formula<fol> * string)[] = [|
     )
     |]
 
-[<TestCase(0, TestName = "skolem.p003")>]
-
 [<Test>]
+[<TestCase(0, TestName = "skolem.p003")>]
 let ``pnf tests`` idx =
     let (formula, _, _) = pnfValues.[idx]
     let (_, astResult, _) = pnfValues.[idx]
@@ -149,10 +146,9 @@ let private skolemizeValues : (string * formula<fol> * string)[] = [|
     )
     |]
 
+[<Test>]
 [<TestCase(0, TestName = "skolem.p004")>]
 [<TestCase(1, TestName = "skolem.p005")>]
-
-[<Test>]
 let ``skolemize tests`` idx =
     let (formula, _, _) = skolemizeValues.[idx]
     let (_, astResult, _) = skolemizeValues.[idx]

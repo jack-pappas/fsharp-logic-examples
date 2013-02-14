@@ -1040,6 +1040,7 @@ let private integer_qelimValues1 : (string * formula<fol>)[] = [|
     );
     |]
 
+[<Test>]
 [<TestCase(0, TestName = "cooper.p001")>]
 [<TestCase(1, TestName = "cooper.p002")>]
 [<TestCase(2, TestName = "cooper.p003")>]
@@ -1091,7 +1092,6 @@ let private integer_qelimValues1 : (string * formula<fol>)[] = [|
 [<TestCase(48, TestName = "cooper.p055", Category = "LongRunning")>]
 [<TestCase(49, TestName = "cooper.p056")>]
 [<TestCase(50, TestName = "cooper.p057", Category = "LongRunning")>]
-
 let ``integer_qelim tests`` idx =
     let (formula, _) = integer_qelimValues1.[idx]
     let (_, result) = integer_qelimValues1.[idx]
@@ -1119,10 +1119,10 @@ let private natural_qelimValues1 : (string * formula<fol>)[] = [|
     );
     |]
 
+[<Test>]
 [<TestCase(0, TestName = "cooper.p006")>]
 [<TestCase(1, TestName = "cooper.p008")>]
 [<TestCase(2, TestName = "cooper.p009")>]
-
 let ``natural_qelim tests`` idx =
     let (formula, _) = integer_qelimValues1.[idx]
     let (_, result) = integer_qelimValues1.[idx]

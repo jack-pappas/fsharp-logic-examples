@@ -30,9 +30,8 @@ let private polyatomValues : (string list * string * formula<fol> * string)[] = 
     );
     |]
 
-[<TestCase(0, TestName = "complex.p001")>]
-
 [<Test>]
+[<TestCase(0, TestName = "complex.p001")>]
 let ``polyatom tests`` idx = 
     let (vars, _, _, _) = polyatomValues.[idx]
     let (_, formula, _, _) = polyatomValues.[idx]
@@ -2509,6 +2508,7 @@ let private complex_qelimValues : (string * formula<fol> * string)[] = [|
     );
     |]
 
+[<Test>]
 [<TestCase(0, TestName = "complex.p002")>]
 [<TestCase(1, TestName = "complex.p003")>]
 [<TestCase(2, TestName = "complex.p004")>]
@@ -2576,8 +2576,6 @@ let private complex_qelimValues : (string * formula<fol> * string)[] = [|
 [<TestCase(76, TestName = "complex.p085")>]
 [<TestCase(77, TestName = "complex.p086")>]
 [<TestCase(78, TestName = "complex.p087")>]
-
-[<Test>]
 let ``complex_qelim tests`` idx = 
     let (formula, _, _) = complex_qelimValues.[idx]
     let (_, astResult, _) = complex_qelimValues.[idx]
@@ -2588,11 +2586,10 @@ let ``complex_qelim tests`` idx =
     sprint_fol_formula result
     |> should equal stringResult
 
+[<Test>]
 [<TestCase(33, TestName = "complex.p041")>]
 [<TestCase(50, TestName = "complex.p058")>]
 [<TestCase(52, TestName = "complex.p060")>]
-
-[<Test>]
 let ``complex_qelim 1 tests`` idx = 
     let (formula, _, _) = complex_qelimValues.[idx]
     let (_, astResult, _) = complex_qelimValues.[idx]
@@ -2602,6 +2599,7 @@ let ``complex_qelim 1 tests`` idx =
     result1
     |> should equal stringResult
 
+[<Test>]
 [<TestCase(42, TestName = "complex.p050")>]
 [<TestCase(44, TestName = "complex.p052", Category = "LongRunning")>]
 [<TestCase(45, TestName = "complex.p053", Category = "LongRunning")>]
@@ -2611,8 +2609,6 @@ let ``complex_qelim 1 tests`` idx =
 [<TestCase(49, TestName = "complex.p057", Category = "LongRunning")>]
 [<TestCase(53, TestName = "complex.p061")>]
 [<TestCase(54, TestName = "complex.p062", Category = "LongRunning")>]
-
-[<Test>]
 let ``complex_qelim_all tests`` idx = 
     let complex_qelim_all =
         time complex_qelim << generalize
@@ -2858,6 +2854,7 @@ let polytestValues : (string * term  * string)[] = [|
     );
     |]
 
+[<Test>]
 [<TestCase(0, TestName = "complex.p006")>]
 [<TestCase(1, TestName = "complex.p007")>]
 [<TestCase(2, TestName = "complex.p008")>]
@@ -2865,8 +2862,6 @@ let polytestValues : (string * term  * string)[] = [|
 [<TestCase(4, TestName = "complex.p010")>]
 [<TestCase(5, TestName = "complex.p011")>]
 [<TestCase(0, TestName = "complex.p083")>]
-
-[<Test>]
 let ``polytest tests`` idx = 
     let polytest tm =
         time (polynate (fvt tm)) tm

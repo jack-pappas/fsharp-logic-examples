@@ -48,26 +48,18 @@ let private lcfrefuteValues : (string * thm * string)[] = [|
     );
     |]
 
-// lcffol.p001
-[<TestCase(0, TestName = "lcffol.p001")>]
-
-// lcffol.p002
-[<TestCase(1, TestName = "lcffol.p002")>]
-
 [<Test>]
+[<TestCase(0, TestName = "lcffol.p001")>]
+[<TestCase(1, TestName = "lcffol.p002")>]
 let ``lcfrefute ast tests`` idx = 
     let (formula, _, _) = lcfrefuteValues.[idx]
     let (_, ast_result, _) = lcfrefuteValues.[idx]
     lcfrefute (parse formula) 1 simpcont
     |> should equal ast_result
 
-// lcffol.p001
-[<TestCase(0, TestName = "lcffol.p001")>]
-
-// lcffol.p002
-[<TestCase(1, TestName = "lcffol.p002")>]
-
 [<Test>]
+[<TestCase(0, TestName = "lcffol.p001")>]
+[<TestCase(1, TestName = "lcffol.p002")>]
 let ``lcfrefute pp tests`` idx = 
     let (formula, _, _) = lcfrefuteValues.[idx]
     let (_, _, pretty_printer_result) = lcfrefuteValues.[idx]
@@ -1907,6 +1899,7 @@ let private lcfValues : (string * thm * string )[] = [|
     );
     |]
 
+[<Test>]
 [<TestCase(0, TestName = "Pelletier #01")>]
 [<TestCase(1, TestName = "Pelletier #02")>]
 [<TestCase(2, TestName = "Pelletier #03")>]
@@ -1924,14 +1917,13 @@ let private lcfValues : (string * thm * string )[] = [|
 [<TestCase(14, TestName = "Pelletier #15")>]
 [<TestCase(15, TestName = "Pelletier #16")>]
 [<TestCase(16, TestName = "Pelletier #17")>]
-
-[<Test>]
 let ``lcftaut ast tests`` idx = 
     let (formula, _, _) = lcfValues.[idx]
     let (_, ast_result, _) = lcfValues.[idx]
     lcftaut (parse formula)
     |> should equal ast_result
 
+[<Test>]
 [<TestCase(0, TestName = "Pelletier #01")>]
 [<TestCase(1, TestName = "Pelletier #02")>]
 [<TestCase(2, TestName = "Pelletier #03")>]
@@ -1949,8 +1941,6 @@ let ``lcftaut ast tests`` idx =
 [<TestCase(14, TestName = "Pelletier #15")>]
 [<TestCase(15, TestName = "Pelletier #16")>]
 [<TestCase(16, TestName = "Pelletier #17")>]
-
-[<Test>]
 let ``lcftaut pp tests`` idx = 
     let (formula, _, _) = lcfValues.[idx]
     let (_, _, pretty_printer_result) = lcfValues.[idx]
@@ -1958,6 +1948,7 @@ let ``lcftaut pp tests`` idx =
     |> sprint_thm
     |> should equal pretty_printer_result
    
+[<Test>]
 [<TestCase(0, TestName = "Pelletier #01")>]
 [<TestCase(1, TestName = "Pelletier #02")>]
 [<TestCase(2, TestName = "Pelletier #03")>]
@@ -2019,14 +2010,13 @@ let ``lcftaut pp tests`` idx =
 [<TestCase(84, TestName = "Davis Putnam #1")>]
 [<TestCase(85, TestName = "Dijkstra #1")>]
 [<TestCase(86, TestName = "Dijkstra #2")>]
-
-[<Test>]
 let ``lcffol ast tests`` idx = 
     let (formula, _, _) = lcfValues.[idx]
     let (_, ast_result, _) = lcfValues.[idx]
     lcffol (parse formula)
     |> should equal ast_result
 
+[<Test>]
 [<TestCase(0, TestName = "Pelletier #01")>]
 [<TestCase(1, TestName = "Pelletier #02")>]
 [<TestCase(2, TestName = "Pelletier #03")>]
@@ -2088,8 +2078,6 @@ let ``lcffol ast tests`` idx =
 [<TestCase(84, TestName = "Davis Putnam #1")>]
 [<TestCase(85, TestName = "Dijkstra #1")>]
 [<TestCase(86, TestName = "Dijkstra #2")>]
-
-[<Test>]
 let ``lcffol pp tests`` idx = 
     let (formula, _, _) = lcfValues.[idx]
     let (_, _, pretty_printer_result) = lcfValues.[idx]

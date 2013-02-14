@@ -119,6 +119,7 @@ let private meson002Values : (string * int list)[] = [|
     );
     |]
 
+[<Test>]
 [<TestCase(0, TestName = "eqelim.p001")>]
 [<TestCase(1, TestName = "eqelim.p002")>]
 [<TestCase(2, TestName = "eqelim.p016")>]
@@ -130,8 +131,6 @@ let private meson002Values : (string * int list)[] = [|
 [<TestCase(8, TestName = "eqelim.p022")>]
 [<TestCase(9, TestName = "eqelim.p023")>]
 [<TestCase(10, TestName = "eqelim.p024")>]
-
-[<Test>]
 let ``meson002 tests`` idx = 
     let (formula, _) = meson002Values.[idx]
     let (_, result) = meson002Values.[idx]
@@ -194,14 +193,13 @@ let private bmesonValues : (string * int list)[] = [|
     );
     |]
 
+[<Test>]
 [<TestCase(0, TestName = "eqelim.p003", Category = "LongRunning")>]
 [<TestCase(1, TestName = "eqelim.p005", Category = "LongRunning")>]
 [<TestCase(2, TestName = "eqelim.p006")>]
 [<TestCase(3, TestName = "eqelim.p010", Category = "LongRunning")>]
 [<TestCase(4, TestName = "eqelim.p012", Category = "LongRunning")>]
 [<TestCase(5, TestName = "eqelim.p014", Category = "LongRunning")>]
-
-[<Test>]
 let ``bmeson tests`` idx = 
     let (formula, _) = bmesonValues.[idx]
     let (_, result) = bmesonValues.[idx]
@@ -255,13 +253,12 @@ let private emesonValues : (string * int list)[] = [|
     )
     |]
 
+[<Test>]
 [<TestCase(0, TestName = "eqelim.p014")>]
 [<TestCase(1, TestName = "eqelim.p007")>]
 [<TestCase(2, TestName = "eqelim.p011", Category = "LongRunning")>]
 [<TestCase(3, TestName = "eqelim.p013", Category = "LongRunning")>]
 [<TestCase(4, TestName = "eqelim.p015", Category = "LongRunning")>]
-
-[<Test>]
 let ``emeson tests`` idx = 
     let (formula, _) = emesonValues.[idx]
     let (_, result) = emesonValues.[idx]

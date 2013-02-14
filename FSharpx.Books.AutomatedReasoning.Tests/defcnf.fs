@@ -31,9 +31,8 @@ let private cnfValues : (string * formula<prop> * string )[] = [|
     );
     |]
 
-[<TestCase(0, TestName = "defcnf.p001")>]
-
 [<Test>]
+[<TestCase(0, TestName = "defcnf.p001")>]
 let ``cnf tests`` idx = 
     let (fm, _, _) = cnfValues.[idx]
     let (_, astResult, _) = cnfValues.[idx]
@@ -76,9 +75,8 @@ let private defcnfOrigValues : (string * formula<prop> * string )[] = [|
     );
     |]
 
-[<TestCase(0, TestName = "defcnf.p002")>]
-
 [<Test>]
+[<TestCase(0, TestName = "defcnf.p002")>]
 let ``defcnfOrig tests`` idx = 
     let (fm, _, _) = defcnfOrigValues.[idx]
     let (_, astResult, _) = defcnfOrigValues.[idx]
@@ -106,9 +104,8 @@ let private defcnfValues : (string * formula<prop> * string )[] = [|
     );
     |]
 
-[<TestCase(0, TestName = "defcnf.p003")>]
-
 [<Test>]
+[<TestCase(0, TestName = "defcnf.p003")>]
 let ``defcnf tests`` idx = 
     let (fm, _, _) = defcnfValues.[idx]
     let (_, astResult, _) = defcnfValues.[idx]

@@ -38,9 +38,8 @@ let private icongruenceValues : (string * string * string * string * thm * strin
     );
     |]
 
-[<TestCase(0, TestName = "folderived.p001")>]
-
 [<Test>]
+[<TestCase(0, TestName = "folderived.p001")>]
 let ``icongruence ast tests`` idx = 
     let (s, _, _, _, _, _) = icongruenceValues.[idx]
     let (_, t, _, _, _, _) = icongruenceValues.[idx]
@@ -50,9 +49,8 @@ let ``icongruence ast tests`` idx =
     icongruence (parset s) (parset t) (parset stm) (parset ttm)
     |> should equal ast_result
 
-[<TestCase(0, TestName = "folderived.p001")>]
-
 [<Test>]
+[<TestCase(0, TestName = "folderived.p001")>]
 let ``icongruence pp tests`` idx = 
     let (s, _, _, _, _, _) = icongruenceValues.[idx]
     let (_, t, _, _, _, _) = icongruenceValues.[idx]
@@ -326,6 +324,7 @@ let private ispecValues : (string * string * thm * string)[] = [|
     );
     |]
 
+[<Test>]
 [<TestCase(0, TestName = "folderived.p002")>]
 [<TestCase(1, TestName = "folderived.p005")>]
 [<TestCase(2, TestName = "folderived.p006")>]
@@ -337,8 +336,6 @@ let private ispecValues : (string * string * thm * string)[] = [|
 [<TestCase(8, TestName = "folderived.p015")>]
 [<TestCase(9, TestName = "folderived.p016")>]
 [<TestCase(10, TestName = "folderived.p017")>]
-
-[<Test>]
 let ``ispec ast tests`` idx = 
     let (term, _, _, _) = ispecValues.[idx]
     let (_, formula, _, _) = ispecValues.[idx]
@@ -346,6 +343,7 @@ let ``ispec ast tests`` idx =
     ispec (parset term) (parse formula)
     |> should equal ast_result
 
+[<Test>]
 [<TestCase(0, TestName = "folderived.p002")>]
 [<TestCase(1, TestName = "folderived.p005")>]
 [<TestCase(2, TestName = "folderived.p006")>]
@@ -357,8 +355,6 @@ let ``ispec ast tests`` idx =
 [<TestCase(8, TestName = "folderived.p015")>]
 [<TestCase(9, TestName = "folderived.p016")>]
 [<TestCase(10, TestName = "folderived.p017")>]
-
-[<Test>]
 let ``ispec pp tests`` idx = 
     let (term, _, _, _) = ispecValues.[idx]
     let (_, formula, _, _) = ispecValues.[idx]
@@ -512,13 +508,12 @@ let private isubstValues : (string * string * string * string * thm * string)[] 
     );
     |]
 
+[<Test>]
 [<TestCase(0, TestName = "folderived.p003")>]
 [<TestCase(1, TestName = "folderived.p004")>]
 [<TestCase(2, TestName = "folderived.p010")>]
 [<TestCase(3, TestName = "folderived.p011")>]
 [<TestCase(4, TestName = "folderived.p012")>]
-
-[<Test>]
 let ``isubst ast tests`` idx = 
     let (s, _, _, _, _, _) = isubstValues.[idx]
     let (_, t, _, _, _, _) = isubstValues.[idx]
@@ -528,13 +523,12 @@ let ``isubst ast tests`` idx =
     isubst (parset s) (parset t) (parse stm) (parse ttm)
     |> should equal ast_result
     
+[<Test>]
 [<TestCase(0, TestName = "folderived.p003")>]
 [<TestCase(1, TestName = "folderived.p004")>]
 [<TestCase(2, TestName = "folderived.p010")>]
 [<TestCase(3, TestName = "folderived.p011")>]
 [<TestCase(4, TestName = "folderived.p012")>]
-
-[<Test>]
 let ``isubst pp tests`` idx = 
     let (s, _, _, _, _, _) = isubstValues.[idx]
     let (_, t, _, _, _, _) = isubstValues.[idx]

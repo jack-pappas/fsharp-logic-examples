@@ -372,6 +372,7 @@ let private real_qelimValues : (StackSize * formula<fol> * formula<fol>)[] = [|
     )
     |]
 
+[<Test>]
 [<TestCase(0, TestName = "real.p001")>]
 [<TestCase(1, TestName = "real.p002")>]
 [<TestCase(2, TestName = "real.p003")>]
@@ -382,7 +383,6 @@ let private real_qelimValues : (StackSize * formula<fol> * formula<fol>)[] = [|
 [<TestCase(7, TestName = "real.p008")>]
 [<TestCase(8, TestName = "real.p009")>]
 [<TestCase(9, TestName = "real.p012")>]
-
 let ``real_qelim tests`` idx =
     let (stackSize, _,  _) = real_qelimValues.[idx]
     let (_, formula, _) = real_qelimValues.[idx]
@@ -406,9 +406,8 @@ let private real_qelim001Values : (string * formula<fol>)[] = [|
     );
     |]
 
-[<TestCase(0, TestName = "real.p013")>]
-
 [<Test>]
+[<TestCase(0, TestName = "real.p013")>]
 let ``real_qelim' tests`` idx =
     let (formula, _) = real_qelim001Values.[idx]
     let (_, result) = real_qelim001Values.[idx]
