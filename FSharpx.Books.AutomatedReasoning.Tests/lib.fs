@@ -326,13 +326,12 @@ let private butLastValues : (int list * int list)[] = [|
         [1; 2]
     );
     |]
-
+    
+[<Test>]
 [<TestCase(0, TestName = "lib.butLast.01", ExpectedException=typeof<System.Exception>, ExpectedMessage="butlast")>]
 [<TestCase(1, TestName = "lib.butLast.02")>]
 [<TestCase(2, TestName = "lib.butLast.03")>]
 [<TestCase(3, TestName = "lib.butLast.04")>]
-
-[<Test>]
 let ``List butlast`` idx = 
     let (list, _) = butLastValues.[idx]
     let (_, result) = butLastValues.[idx]
@@ -450,7 +449,8 @@ let private chopListValues : (int * int list * (int list * int list))[] = [|
         ( [], [] ) // Dummy value used as place holder
     );
     |]
-
+    
+[<Test>]
 [<TestCase(0, TestName = "lib.chopList.01")>]
 [<TestCase(1, TestName = "lib.chopList.02", ExpectedException=typeof<System.Exception>, ExpectedMessage="chop_list")>]
 [<TestCase(2, TestName = "lib.chopList.03")>]
@@ -468,8 +468,6 @@ let private chopListValues : (int * int list * (int list * int list))[] = [|
 [<TestCase(14, TestName = "lib.chopList.15", ExpectedException=typeof<System.Exception>, ExpectedMessage="chop_list")>]
 [<TestCase(15, TestName = "lib.chopList.16", ExpectedException=typeof<System.Exception>, ExpectedMessage="chop_list")>]
 [<TestCase(16, TestName = "lib.chopList.17", ExpectedException=typeof<System.Exception>, ExpectedMessage="chop_list")>]
-
-[<Test>]
 let ``List chop_list`` idx = 
     let (n, _, _) = chopListValues.[idx]
     let (_, list, _) = chopListValues.[idx]
@@ -509,14 +507,13 @@ let private distinctpairsValues : (int list * (int * int) list )[] = [|
         [(1, 2); (1, 3); (1, 4); (2, 3); (2, 4); (3, 4)]
     );
     |]
-
+    
+[<Test>]
 [<TestCase(0, TestName = "lib.distinctpairs.01")>]
 [<TestCase(1, TestName = "lib.distinctpairs.02")>]
 [<TestCase(2, TestName = "lib.distinctpairs.03")>]
 [<TestCase(3, TestName = "lib.distinctpairs.04")>]
 [<TestCase(4, TestName = "lib.distinctpairs.05")>]
-
-[<Test>]
 let ``List distinctpairs`` idx = 
     let (list, _) = distinctpairsValues.[idx]
     let (_, result) = distinctpairsValues.[idx]
@@ -1151,7 +1148,8 @@ let private earlierValues : (int list * int * int * bool)[] = [|
         false
     );
     |]
-
+    
+[<Test>]
 [<TestCase(0, TestName = "lib.earlier.001")>]
 [<TestCase(1, TestName = "lib.earlier.002")>]
 [<TestCase(2, TestName = "lib.earlier.003")>]
@@ -1256,8 +1254,6 @@ let private earlierValues : (int list * int * int * bool)[] = [|
 [<TestCase(101, TestName = "lib.earlier.102")>]
 [<TestCase(102, TestName = "lib.earlier.103")>]
 [<TestCase(103, TestName = "lib.earlier.104")>]
-
-[<Test>]
 let ``List earlier`` idx = 
     let (list, _, _, _) = earlierValues.[idx]
     let (_, x, _, _) = earlierValues.[idx]
@@ -1328,7 +1324,8 @@ let private existsValues : (int list * bool)[] = [|
         true
     );
     |]
-
+    
+[<Test>]
 [<TestCase(0, TestName = "lib.exists.01")>]
 [<TestCase(1, TestName = "lib.exists.02")>]
 [<TestCase(2, TestName = "lib.exists.03")>]
@@ -1339,8 +1336,6 @@ let private existsValues : (int list * bool)[] = [|
 [<TestCase(7, TestName = "lib.exists.08")>]
 [<TestCase(8, TestName = "lib.exists.09")>]
 [<TestCase(9, TestName = "lib.exists.10")>]
-
-[<Test>]
 let ``List exists`` idx = 
     let (list, _) = existsValues.[idx]
     let (_, result) = existsValues.[idx]
@@ -1411,7 +1406,8 @@ let private filterValues : (int list * int list)[] = [|
         [2; 4]
     );
     |]
-
+    
+[<Test>]
 [<TestCase(0, TestName = "lib.filter.01")>]
 [<TestCase(1, TestName = "lib.filter.02")>]
 [<TestCase(2, TestName = "lib.filter.03")>]
@@ -1422,8 +1418,6 @@ let private filterValues : (int list * int list)[] = [|
 [<TestCase(7, TestName = "lib.filter.08")>]
 [<TestCase(8, TestName = "lib.filter.09")>]
 [<TestCase(9, TestName = "lib.filter.10")>]
-    
-[<Test>]
 let ``List filter`` idx = 
     let (list, _) = filterValues.[idx]
     let (_, result) = filterValues.[idx]
@@ -1498,7 +1492,8 @@ let private findValues : (int list * int)[] = [|
         2
     );
     |]
-
+    
+[<Test>]
 [<TestCase(0, TestName = "lib.find.01", ExpectedException=typeof<System.Collections.Generic.KeyNotFoundException>)>]
 [<TestCase(1, TestName = "lib.find.02")>]
 [<TestCase(2, TestName = "lib.find.03", ExpectedException=typeof<System.Collections.Generic.KeyNotFoundException>)>]
@@ -1509,8 +1504,6 @@ let private findValues : (int list * int)[] = [|
 [<TestCase(7, TestName = "lib.find.08")>]
 [<TestCase(8, TestName = "lib.find.09")>]
 [<TestCase(9, TestName = "lib.find.10")>]
-   
-[<Test>]
 let ``List find`` idx = 
     let (list, _) = findValues.[idx]
     let (_, result) = findValues.[idx]
@@ -1527,12 +1520,11 @@ let ``List find`` idx =
 // for one test case, thus a second test for the 
 // find exception test case.
 
+[<Test>]
 [<TestCase(0, TestName = "lib.findException.01", ExpectedException=typeof<System.Exception>, ExpectedMessage="find")>]
 [<TestCase(2, TestName = "lib.findException.02", ExpectedException=typeof<System.Exception>, ExpectedMessage="find")>]
 [<TestCase(4, TestName = "lib.findException.03", ExpectedException=typeof<System.Exception>, ExpectedMessage="find")>]
 [<TestCase(6, TestName = "lib.findException.04", ExpectedException=typeof<System.Exception>, ExpectedMessage="find")>]
-
-[<Test>]
 let ``List find exception`` idx = 
     let (list, _) = findValues.[idx]
     let (_, result) = findValues.[idx]
@@ -1601,7 +1593,8 @@ let private foldBackValues : (int list * int * int)[] = [|
         19
     );
     |]
-
+    
+[<Test>]
 [<TestCase(0, TestName = "lib.foldBack.01")>]
 [<TestCase(1, TestName = "lib.foldBack.02")>]
 [<TestCase(2, TestName = "lib.foldBack.03")>]
@@ -1612,8 +1605,6 @@ let private foldBackValues : (int list * int * int)[] = [|
 [<TestCase(7, TestName = "lib.foldBack.08")>]
 [<TestCase(8, TestName = "lib.foldBack.09")>]
 [<TestCase(9, TestName = "lib.foldBack.10")>]
-  
-[<Test>]
 let ``List foldBack`` idx = 
     let (list, _, _) = foldBackValues.[idx]
     let (_, start_value, _) = foldBackValues.[idx]
@@ -1681,7 +1672,8 @@ let private foldBack2Values : (int list * int list * int * int)[] = [|
         10
     );
     |]
-
+    
+[<Test>]
 [<TestCase(0, TestName = "lib.foldBack2.01")>]
 [<TestCase(1, TestName = "lib.foldBack2.02", ExpectedException=typeof<System.ArgumentException>)>]
 [<TestCase(2, TestName = "lib.foldBack2.03", ExpectedException=typeof<System.ArgumentException>)>]
@@ -1691,8 +1683,6 @@ let private foldBack2Values : (int list * int list * int * int)[] = [|
 [<TestCase(6, TestName = "lib.foldBack2.07")>]
 [<TestCase(7, TestName = "lib.foldBack2.08")>]
 [<TestCase(8, TestName = "lib.foldBack2.09")>]
-
-[<Test>]
 let ``List foldBack2`` idx = 
     let (list1, _, _, _) = foldBack2Values.[idx]
     let (_, list2, _, _) = foldBack2Values.[idx]
@@ -1711,10 +1701,9 @@ let ``List foldBack2`` idx =
 // for one test case, thus a second test for the 
 // itlist2 exception test case.
     
+[<Test>]
 [<TestCase(1, TestName = "lib.itlistExcpetion.01", ExpectedException=typeof<System.Exception>, ExpectedMessage="itlist2")>]
 [<TestCase(2, TestName = "lib.itlistExcpetion.02", ExpectedException=typeof<System.Exception>, ExpectedMessage="itlist2")>]
-
-[<Test>]
 let ``List itlist2 exception`` idx = 
     let (list1, _, _, _) = foldBack2Values.[idx]
     let (_, list2, _, _) = foldBack2Values.[idx]
@@ -1815,7 +1804,8 @@ let private forallValues : (int list * bool)[] = [|
         true
     );
     |]
-
+    
+[<Test>]
 [<TestCase(0, TestName = "lib.forall.01")>]
 [<TestCase(1, TestName = "lib.forall.02")>]
 [<TestCase(2, TestName = "lib.forall.03")>]
@@ -1830,8 +1820,6 @@ let private forallValues : (int list * bool)[] = [|
 [<TestCase(12, TestName = "lib.forall.12")>]
 [<TestCase(13, TestName = "lib.forall.13")>]
 [<TestCase(14, TestName = "lib.forall.14")>]
-
-[<Test>]
 let ``List forall`` idx = 
     let (list, _) = forallValues.[idx]
     let (_, result) = forallValues.[idx]
@@ -1990,7 +1978,8 @@ let private forall2Values : (int list * int list * bool)[] = [|
         false
     );
     |]
-
+    
+[<Test>]
 [<TestCase(0, TestName = "lib.forall2.01")>]
 [<TestCase(1, TestName = "lib.forall2.02", ExpectedException=typeof<System.ArgumentException>)>]
 [<TestCase(2, TestName = "lib.forall2.03", ExpectedException=typeof<System.ArgumentException>)>]
@@ -2015,8 +2004,6 @@ let private forall2Values : (int list * int list * bool)[] = [|
 [<TestCase(21, TestName = "lib.forall2.22")>]
 [<TestCase(22, TestName = "lib.forall2.23")>]
 [<TestCase(23, TestName = "lib.forall2.24")>]
-
-[<Test>]
 let ``List forall2`` idx = 
     let (list1, _, _) = forall2Values.[idx]
     let (_, list2, _) = forall2Values.[idx]
@@ -2059,14 +2046,13 @@ let private headValues : (int list * int)[] = [|
         3
     )
     |]
-
+    
+[<Test>]
 [<TestCase(0, TestName = "lib.head.01", ExpectedException=typeof<System.ArgumentException>)>]
 [<TestCase(1, TestName = "lib.head.02")>]
 [<TestCase(2, TestName = "lib.head.03")>]
 [<TestCase(3, TestName = "lib.head.04")>]
 [<TestCase(4, TestName = "lib.head.05")>]
-
-[<Test>]
 let ``List head`` idx = 
     let (list, _) = headValues.[idx]
     let (_, result) = headValues.[idx]
@@ -2083,9 +2069,8 @@ let ``List head`` idx =
 // for one test case, thus a second test for the 
 // hd exception test case.
 
-[<TestCase(0, TestName = "lib.hdException.01", ExpectedException=typeof<System.Exception>, ExpectedMessage="hd")>]
-
 [<Test>]
+[<TestCase(0, TestName = "lib.hdException.01", ExpectedException=typeof<System.Exception>, ExpectedMessage="hd")>]
 let ``List hd exception`` idx = 
     let (list, _) = headValues.[idx]
     let (_, result) = headValues.[idx]
@@ -2196,7 +2181,8 @@ let private imageValues : (int list * int list)[] = [|
         [-1; 0; 1]
     );
     |]
-
+    
+[<Test>]
 [<TestCase(0, TestName = "lib.image.01")>]
 [<TestCase(1, TestName = "lib.image.02")>]
 [<TestCase(2, TestName = "lib.image.03")>]
@@ -2214,8 +2200,6 @@ let private imageValues : (int list * int list)[] = [|
 [<TestCase(14, TestName = "lib.image.15")>]
 [<TestCase(15, TestName = "lib.image.16")>]
 [<TestCase(16, TestName = "lib.image.17")>]
-
-[<Test>]
 let ``List image`` idx = 
     let (list, _) = imageValues.[idx]
     let (_, result) = imageValues.[idx]
@@ -2329,7 +2313,8 @@ let private indexValues : (int * int list * int)[] = [|
         2
     );
     |]
-
+    
+[<Test>]
 [<TestCase(0, TestName = "lib.index.01", ExpectedException=typeof<System.Collections.Generic.KeyNotFoundException>)>]
 [<TestCase(1, TestName = "lib.index.02", ExpectedException=typeof<System.Collections.Generic.KeyNotFoundException>)>]
 [<TestCase(2, TestName = "lib.index.03", ExpectedException=typeof<System.Collections.Generic.KeyNotFoundException>)>]
@@ -2346,8 +2331,6 @@ let private indexValues : (int * int list * int)[] = [|
 [<TestCase(13, TestName = "lib.index.14")>]
 [<TestCase(14, TestName = "lib.index.15", ExpectedException=typeof<System.Collections.Generic.KeyNotFoundException>)>]
 [<TestCase(15, TestName = "lib.index.16")>]
-
-[<Test>]
 let ``List index`` idx = 
     let (searchValue, _, _) = indexValues.[idx]
     let (_, list, _) = indexValues.[idx]
@@ -2365,6 +2348,7 @@ let ``List index`` idx =
 // for one test case, thus a second test for the 
 // index exception test case.
 
+[<Test>]
 [<TestCase(0, TestName = "lib.indexException.01", ExpectedException=typeof<System.Exception>, ExpectedMessage="index")>]
 [<TestCase(1, TestName = "lib.indexException.02", ExpectedException=typeof<System.Exception>, ExpectedMessage="index")>]
 [<TestCase(2, TestName = "lib.indexException.03", ExpectedException=typeof<System.Exception>, ExpectedMessage="index")>]
@@ -2372,8 +2356,6 @@ let ``List index`` idx =
 [<TestCase(5, TestName = "lib.indexException.05", ExpectedException=typeof<System.Exception>, ExpectedMessage="index")>]
 [<TestCase(8, TestName = "lib.indexException.06", ExpectedException=typeof<System.Exception>, ExpectedMessage="index")>]
 [<TestCase(14, TestName = "lib.indexException.07", ExpectedException=typeof<System.Exception>, ExpectedMessage="index")>]
-
-[<Test>]
 let ``List index exception`` idx = 
     let (searchValue, _, _) = indexValues.[idx]
     let (_, list, _) = indexValues.[idx]
@@ -2485,7 +2467,8 @@ let private insertValues : (int * int list * int list)[] = [|
         [-1; 1; 2]
     );
     |]
-
+    
+[<Test>]
 [<TestCase(0, TestName = "lib.insert.01")>]
 [<TestCase(1, TestName = "lib.insert.02")>]
 [<TestCase(2, TestName = "lib.insert.03")>]
@@ -2503,8 +2486,6 @@ let private insertValues : (int * int list * int list)[] = [|
 [<TestCase(14, TestName = "lib.insert.15")>]
 [<TestCase(15, TestName = "lib.insert.16")>]
 [<TestCase(16, TestName = "lib.insert.17")>]
-
-[<Test>]
 let ``List insert`` idx = 
     let (insertValue, _, _) = insertValues.[idx]
     let (_, list, _) = insertValues.[idx]
@@ -2590,7 +2571,8 @@ let private insertatValues : (int * int * int list * int list)[] = [|
         [2; 4; 6; 5]
     );
     |]
-
+    
+[<Test>]
 [<TestCase(0, TestName = "lib.insertat.01", ExpectedException=typeof<System.Exception>)>]
 [<TestCase(1, TestName = "lib.insertat.02", ExpectedException=typeof<System.Exception>)>]
 [<TestCase(2, TestName = "lib.insertat.03")>]
@@ -2603,8 +2585,6 @@ let private insertatValues : (int * int * int list * int list)[] = [|
 [<TestCase(9, TestName = "lib.insertat.10")>]
 [<TestCase(10, TestName = "lib.insertat.11")>]
 [<TestCase(11, TestName = "lib.insertat.12")>]
-
-[<Test>]
 let ``List insertat`` idx = 
     let (position, _, _, _) = insertatValues.[idx]
     let (_, insertValue, _, _) = insertatValues.[idx]
@@ -2717,7 +2697,8 @@ let private intersectValues : (int list * int list * int list)[] = [|
         [1; 2; 3]
     );
     |]
-
+    
+[<Test>]
 [<TestCase(0, TestName = "lib.intersect.01")>]
 [<TestCase(1, TestName = "lib.intersect.02")>]
 [<TestCase(2, TestName = "lib.intersect.03")>]
@@ -2735,8 +2716,6 @@ let private intersectValues : (int list * int list * int list)[] = [|
 [<TestCase(14, TestName = "lib.intersect.15")>]
 [<TestCase(15, TestName = "lib.intersect.16")>]
 [<TestCase(16, TestName = "lib.intersect.17")>]
-
-[<Test>]
 let ``List intersect`` idx = 
     let (list1, _, _) = intersectValues.[idx]
     let (_, list2, _) = intersectValues.[idx]
@@ -2772,7 +2751,8 @@ let private iterValues : (string list * string)[] = [|
         @"The quick brown fox"
     );
     |]
-
+    
+[<Test>]
 [<TestCase(0, TestName = "lib.iter.01")>]
 [<TestCase(1, TestName = "lib.iter.02")>]
 [<TestCase(2, TestName = "lib.iter.03")>]
@@ -2783,7 +2763,6 @@ let private iterValues : (string list * string)[] = [|
 // or a mutable value :(
 // to have some output to test against
 // i.e. sb.Append.
-[<Test>]
 let ``List iter`` idx = 
     let (list, _) = iterValues.[idx]
     let (_, result) = iterValues.[idx]
@@ -2833,14 +2812,13 @@ let private lastValues : (int list * int)[] = [|
         1
     )
     |]
-
+    
+[<Test>]
 [<TestCase(0, TestName = "lib.last.01", ExpectedException=typeof<System.Exception>, ExpectedMessage="Cannot get the last element of an empty list.")>]
 [<TestCase(1, TestName = "lib.last.02")>]
 [<TestCase(2, TestName = "lib.last.03")>]
 [<TestCase(3, TestName = "lib.last.04")>]
 [<TestCase(4, TestName = "lib.last.05")>]
-
-[<Test>]
 let ``List last`` idx = 
     let (list, _) = lastValues.[idx]
     let (_, result) = lastValues.[idx]
@@ -2885,15 +2863,14 @@ let private lengthValues : (int list * int)[] = [|
         8
     )
     |]
-
+    
+[<Test>]
 [<TestCase(0, TestName = "lib.length.01")>]
 [<TestCase(1, TestName = "lib.length.02")>]
 [<TestCase(2, TestName = "lib.length.03")>]
 [<TestCase(3, TestName = "lib.length.04")>]
 [<TestCase(4, TestName = "lib.length.05")>]
 [<TestCase(5, TestName = "lib.length.06")>]
-
-[<Test>]
 let ``List length`` idx = 
     let (list, _) = lengthValues.[idx]
     let (_, result) = lengthValues.[idx]
@@ -2928,13 +2905,12 @@ let private listMapValues : (int list * int list)[] = [|
         [6; 7; 8]
     );
     |]
-
+    
+[<Test>]
 [<TestCase(0, TestName = "lib.map.01")>]
 [<TestCase(1, TestName = "lib.map.02")>]
 [<TestCase(2, TestName = "lib.map.03")>]
 [<TestCase(3, TestName = "lib.map.04")>]
-
-[<Test>]
 let ``List map`` idx = 
     let (list, _) = listMapValues.[idx]
     let (_, result) = listMapValues.[idx]
@@ -3001,7 +2977,8 @@ let private map2Values : (int list * int list * int list)[] = [|
         [4; 4; 4]
     );
     |]
-
+    
+[<Test>]
 [<TestCase(0, TestName = "lib.map2.01")>]
 [<TestCase(1, TestName = "lib.map2.02", ExpectedException=typeof<System.ArgumentException>)>]
 [<TestCase(2, TestName = "lib.map2.03", ExpectedException=typeof<System.ArgumentException>)>]
@@ -3011,8 +2988,6 @@ let private map2Values : (int list * int list * int list)[] = [|
 [<TestCase(6, TestName = "lib.map2.07")>]
 [<TestCase(7, TestName = "lib.map2.08")>]
 [<TestCase(8, TestName = "lib.map2.09")>]
-
-[<Test>]
 let ``List map2`` idx = 
     let (list1, _, _) = map2Values.[idx]
     let (_, list2, _) = map2Values.[idx]
@@ -3084,7 +3059,8 @@ let private mapfilterValues : (int list * bool list)[] = [|
         [true; false; true]
     );
     |]
-
+        
+[<Test>]
 [<TestCase(0, TestName = "lib.mapfilter.01")>]
 [<TestCase(1, TestName = "lib.mapfilter.02")>]
 [<TestCase(2, TestName = "lib.mapfilter.03")>]
@@ -3095,8 +3071,6 @@ let private mapfilterValues : (int list * bool list)[] = [|
 [<TestCase(7, TestName = "lib.mapfilter.08")>]
 [<TestCase(8, TestName = "lib.mapfilter.09")>]
 [<TestCase(9, TestName = "lib.mapfilter.10")>]
-    
-[<Test>]
 let ``List mapfilter`` idx = 
     let (list, _) = mapfilterValues.[idx]
     let (_, result) = mapfilterValues.[idx]
@@ -3142,15 +3116,14 @@ let private maximizeValues : (int list * int)[] = [|
         -6
     );
     |]
-
+    
+[<Test>]
 [<TestCase(0, TestName = "lib.maximize.01", ExpectedException=typeof<System.ArgumentException>)>]
 [<TestCase(1, TestName = "lib.maximize.02")>]
 [<TestCase(2, TestName = "lib.maximize.03")>]
 [<TestCase(3, TestName = "lib.maximize.04")>]
 [<TestCase(4, TestName = "lib.maximize.05")>]
 [<TestCase(5, TestName = "lib.maximize.06")>]
-
-[<Test>]
 let ``List maximize`` idx = 
     let (list, _) = maximizeValues.[idx]
     let (_, result) = maximizeValues.[idx]
@@ -3175,9 +3148,8 @@ let ``List maximize`` idx =
 //
 // The second test is to show the different results
 // for the same input.
-[<TestCase(0, TestName = "lib.MaxByException.01", ExpectedException=typeof<System.ArgumentException>)>]
-
 [<Test>]
+[<TestCase(0, TestName = "lib.MaxByException.01", ExpectedException=typeof<System.ArgumentException>)>]
 let ``List MaxBy Exception`` idx = 
     let (list, _) = maximizeValues.[idx]
     let (_, maxByResult) = maximizeValues.[idx]
@@ -3208,11 +3180,10 @@ let private maximizeVsMaxByValues : (int list * int * int)[] = [|
     ); 
     |]
     
+[<Test>]
 [<TestCase(0, TestName = "lib.maximizeVsMaxBy.01")>]
 [<TestCase(1, TestName = "lib.maximizeVsMaxBy.02")>]
 [<TestCase(2, TestName = "lib.maximizeVsMaxBy.03")>]
-
-[<Test>]
 let ``List maximize Vs MaxBy`` idx = 
     let (list, _, _) = maximizeVsMaxByValues.[idx]
     let (_, maximizeResult, _) = maximizeVsMaxByValues.[idx]
@@ -3273,6 +3244,7 @@ let private memValues : (int * int list * bool)[] = [|
     );
     |]
 
+[<Test>]
 [<TestCase(0, TestName = "lib.mem.01")>]
 [<TestCase(1, TestName = "lib.mem.02")>]
 [<TestCase(2, TestName = "lib.mem.03")>]
@@ -3281,8 +3253,6 @@ let private memValues : (int * int list * bool)[] = [|
 [<TestCase(5, TestName = "lib.mem.06")>]
 [<TestCase(6, TestName = "lib.mem.07")>]
 [<TestCase(7, TestName = "lib.mem.08")>]
-
-[<Test>]
 let ``List mem`` idx = 
     let (elem, _, _) = memValues.[idx]
     let (_, list, _) = memValues.[idx]
@@ -3481,7 +3451,8 @@ let private mergeValues : (int list * int list * int list * int list * int list 
         [1; 2; 3; -2; -1; 0; 1; 2; 3; 4]
     );
     |]
-
+    
+[<Test>]
 [<TestCase(0, TestName = "lib.merge.01")>]
 [<TestCase(1, TestName = "lib.merge.02")>]
 [<TestCase(2, TestName = "lib.merge.03")>]
@@ -3499,8 +3470,6 @@ let private mergeValues : (int list * int list * int list * int list * int list 
 [<TestCase(14, TestName = "lib.merge.15")>]
 [<TestCase(15, TestName = "lib.merge.16")>]
 [<TestCase(16, TestName = "lib.merge.17")>]
-
-[<Test>]
 let ``List merge`` idx = 
     let (list1, _, _, _, _, _, _, _) = mergeValues.[idx]
     let (_, list2, _, _, _, _, _, _) = mergeValues.[idx]
@@ -3562,15 +3531,14 @@ let private minimizeValues : (int list * int)[] = [|
         -6
     );
     |]
-
+    
+[<Test>]
 [<TestCase(0, TestName = "lib.minimize.01", ExpectedException=typeof<System.ArgumentException>)>]
 [<TestCase(1, TestName = "lib.minimize.02")>]
 [<TestCase(2, TestName = "lib.minimize.03")>]
 [<TestCase(3, TestName = "lib.minimize.04")>]
 [<TestCase(4, TestName = "lib.minimize.05")>]
 [<TestCase(5, TestName = "lib.minimize.06")>]
-
-[<Test>]
 let ``List minimize`` idx = 
     let (list, _) = minimizeValues.[idx]
     let (_, result) = minimizeValues.[idx]
@@ -3595,9 +3563,9 @@ let ``List minimize`` idx =
 //
 // The second test is to show the different results
 // for the same input.
-[<TestCase(0, TestName = "lib.minByException.01", ExpectedException=typeof<System.ArgumentException>)>]
 
 [<Test>]
+[<TestCase(0, TestName = "lib.minByException.01", ExpectedException=typeof<System.ArgumentException>)>]
 let ``List minBy Exception`` idx = 
     let (list, _) = minimizeValues.[idx]
     let (_, minByResult) = minimizeValues.[idx]
@@ -3628,11 +3596,10 @@ let private minimizeVsminByValues : (int list * int * int)[] = [|
     ); 
     |]
     
+[<Test>]
 [<TestCase(0, TestName = "lib.minimizeVsminBy.01")>]
 [<TestCase(1, TestName = "lib.minimizeVsminBy.02")>]
 [<TestCase(2, TestName = "lib.minimizeVsminBy.03")>]
-
-[<Test>]
 let ``List minimize Vs minBy`` idx = 
     let (list, _, _) = minimizeVsminByValues.[idx]
     let (_, minimizeResult, _) = minimizeVsminByValues.[idx]
@@ -3699,7 +3666,8 @@ let private nthValues : (int list * int * int)[] = [|
         7
     );
     |]
-
+    
+[<Test>]
 [<TestCase(0, TestName = "lib.nth.01", ExpectedException=typeof<System.ArgumentException>)>]
 [<TestCase(1, TestName = "lib.nth.02", ExpectedException=typeof<System.ArgumentException>)>]
 [<TestCase(2, TestName = "lib.nth.03")>]
@@ -3709,8 +3677,6 @@ let private nthValues : (int list * int * int)[] = [|
 [<TestCase(6, TestName = "lib.nth.07")>]
 [<TestCase(7, TestName = "lib.nth.08")>]
 [<TestCase(8, TestName = "lib.nth.09")>]
-
-[<Test>]
 let ``List nth`` idx = 
     let (list, _, _) = nthValues.[idx]
     let (_, elem, result) = nthValues.[idx]
@@ -3729,10 +3695,9 @@ let ``List nth`` idx =
 // for one test case, thus a second test for the 
 // el exception test case.
 
+[<Test>]
 [<TestCase(0, TestName = "lib.elException.01", ExpectedException=typeof<System.ArgumentException>)>]
 [<TestCase(1, TestName = "lib.elException.02", ExpectedException=typeof<System.ArgumentException>)>]
-
-[<Test>]
 let ``List el exception`` idx = 
     let (list, _, _) = nthValues.[idx]
     let (_, elem, result) = nthValues.[idx]
@@ -3779,14 +3744,13 @@ let private rangeIntValues : (int * int * int list)[] = [|
         [-5; -4; -3; -2; -1; 0; 1; 2; 3; 4; 5]
     ); 
     |]
-
+    
+[<Test>]
 [<TestCase(0, TestName = "lib.rangeInt.01")>]
 [<TestCase(1, TestName = "lib.rangeInt.02")>]
 [<TestCase(2, TestName = "lib.rangeInt.03")>]
 [<TestCase(3, TestName = "lib.rangeInt.04")>]
 [<TestCase(4, TestName = "lib.rangeInt.05")>]
-
-[<Test>]
 let ``List operator range (Int)`` idx = 
     let (start, _, _) = rangeIntValues.[idx]
     let (_, stop, result) = rangeIntValues.[idx]
@@ -3839,14 +3803,13 @@ let private rangeNumValues : (Num * Num * Num list)[] = [|
         [(num_of_int -5); (num_of_int -4); (num_of_int -3); (num_of_int -2); (num_of_int -1); (num_of_int 0); (num_of_int 1); (num_of_int 2); (num_of_int 3); (num_of_int 4); (num_of_int 5)]
     ); 
     |]
-
+    
+[<Test>]
 [<TestCase(0, TestName = "lib.rangeNum.01")>]
 [<TestCase(1, TestName = "lib.rangeNum.02")>]
 [<TestCase(2, TestName = "lib.rangeNum.03")>]
 [<TestCase(3, TestName = "lib.rangeNum.04")>]
 [<TestCase(4, TestName = "lib.rangeNum.05")>]
-
-[<Test>]
 let ``List operator range (Num)`` idx = 
     let (start, _, _) = rangeNumValues.[idx]
     let (_, stop, _) = rangeNumValues.[idx]
@@ -3918,7 +3881,8 @@ let private listPartitionValues : (int list * (int list * int list))[] = [|
         ( [2; 4], [3] )
     ); 
     |]
-
+    
+[<Test>]
 [<TestCase(0, TestName = "lib.partition.01")>]
 [<TestCase(1, TestName = "lib.partition.02")>]
 [<TestCase(2, TestName = "lib.partition.03")>]
@@ -3929,8 +3893,6 @@ let private listPartitionValues : (int list * (int list * int list))[] = [|
 [<TestCase(7, TestName = "lib.partition.08")>]
 [<TestCase(8, TestName = "lib.partition.09")>]
 [<TestCase(9, TestName = "lib.partition.10")>]
-
-[<Test>]
 let ``List partition`` idx = 
     let (list, _) = listPartitionValues.[idx]
     let (_, result ) = listPartitionValues.[idx]
@@ -4043,7 +4005,8 @@ let private psubsetValues : (int list * int list * bool)[] = [|
         true
     );
     |]
-
+    
+[<Test>]
 [<TestCase(0, TestName = "lib.psubset.01")>]
 [<TestCase(1, TestName = "lib.psubset.02")>]
 [<TestCase(2, TestName = "lib.psubset.03")>]
@@ -4061,8 +4024,6 @@ let private psubsetValues : (int list * int list * bool)[] = [|
 [<TestCase(14, TestName = "lib.psubset.15")>]
 [<TestCase(15, TestName = "lib.psubset.16")>]
 [<TestCase(16, TestName = "lib.psubset.17")>]
-
-[<Test>]
 let ``List psubset`` idx = 
     let (list1, _, _) = psubsetValues.[idx]
     let (_, list2, _) = psubsetValues.[idx]
@@ -4106,14 +4067,13 @@ let private reduceBackValues : (int list * int)[] = [|
         24
     );
     |]
-
+    
+[<Test>]
 [<TestCase(0, TestName = "lib.reduceBack.01", ExpectedException=typeof<System.ArgumentException>)>]
 [<TestCase(1, TestName = "lib.reduceBack.02")>]
 [<TestCase(2, TestName = "lib.reduceBack.03")>]
 [<TestCase(3, TestName = "lib.reduceBack.04")>]
 [<TestCase(4, TestName = "lib.reduceBack.05")>]
-
-[<Test>]
 let ``List reduceBack`` idx = 
     let (list, _) = reduceBackValues.[idx]
     let (_, result) = reduceBackValues.[idx]
@@ -4130,9 +4090,8 @@ let ``List reduceBack`` idx =
 // for one test case, thus a second test for the 
 // end_itlist exception test case.
 
-[<TestCase(0, TestName = "lib.end_itlistException.01", ExpectedException=typeof<System.Exception>, ExpectedMessage="end_itlist")>]
-
 [<Test>]
+[<TestCase(0, TestName = "lib.end_itlistException.01", ExpectedException=typeof<System.Exception>, ExpectedMessage="end_itlist")>]
 let ``List end_itlist Exception`` idx = 
     let (list, _) = minimizeValues.[idx]
     let (_, result) = minimizeValues.[idx]
@@ -4179,15 +4138,14 @@ let private replicateValues : (int * string * string list)[] = [|
         [ "a"; "a"; "a"; "a"; "a"; "a"; "a"; "a"; "a"; "a" ]
     );
     |]
-
+    
+[<Test>]
 [<TestCase(0, TestName = "lib.replicate.01", ExpectedException=typeof<System.ArgumentException>)>]
 [<TestCase(1, TestName = "lib.replicate.02")>]
 [<TestCase(2, TestName = "lib.replicate.03")>]
 [<TestCase(3, TestName = "lib.replicate.04")>]
 [<TestCase(4, TestName = "lib.replicate.05")>]
 [<TestCase(5, TestName = "lib.replicate.06")>]
-
-[<Test>]
 let ``List replicate`` idx = 
     let (count, _, _) = replicateValues.[idx]
     let (_, initial, _) = replicateValues.[idx]
@@ -4206,9 +4164,8 @@ let ``List replicate`` idx =
 // for one test case, thus a second test for the 
 // OCaml replicate test case.
 
-[<TestCase(0, TestName = "lib.replicateDifference.01")>]
-
 [<Test>]
+[<TestCase(0, TestName = "lib.replicateDifference.01")>]
 let ``List replicate (OCaml) negative count`` idx = 
     let (count, _, _) = replicateValues.[idx]
     let (_, initial, _) = replicateValues.[idx]
@@ -4254,15 +4211,14 @@ let private revValues : (int list * int list)[] = [|
         [2; 6; 11; 5; 9; 4]
     );
     |]
-
+    
+[<Test>]
 [<TestCase(0, TestName = "lib.rev.01")>]
 [<TestCase(1, TestName = "lib.rev.02")>]
 [<TestCase(2, TestName = "lib.rev.03")>]
 [<TestCase(3, TestName = "lib.rev.04")>]
 [<TestCase(4, TestName = "lib.rev.05")>]
 [<TestCase(5, TestName = "lib.rev.06")>]
-
-[<Test>]
 let ``List rev`` idx = 
     let (list, _) = revValues.[idx]
     let (_, result) = revValues.[idx]
@@ -4435,7 +4391,8 @@ let private set_eqValues : (int list * int list * bool)[] = [|
         true
     );
     |]
-
+    
+[<Test>]
 [<TestCase(0, TestName = "lib.set_eq.01")>]
 [<TestCase(1, TestName = "lib.set_eq.02")>]
 [<TestCase(2, TestName = "lib.set_eq.03")>]
@@ -4463,8 +4420,6 @@ let private set_eqValues : (int list * int list * bool)[] = [|
 [<TestCase(24, TestName = "lib.set_eq.25")>]
 [<TestCase(25, TestName = "lib.set_eq.26")>]
 [<TestCase(26, TestName = "lib.set_eq.27")>]
-
-[<Test>]
 let ``List set_eq`` idx = 
     let (list1, _, _) = set_eqValues.[idx]
     let (_, list2, _) = set_eqValues.[idx]
@@ -4549,7 +4504,8 @@ let private setifyValues : (int list * int list)[] = [|
         [1; 2; 3; 4; 5; 6; 7; 8; 9]
     );
     |]
-
+    
+[<Test>]
 [<TestCase(0, TestName = "lib.setify.01")>]
 [<TestCase(1, TestName = "lib.setify.02")>]
 [<TestCase(2, TestName = "lib.setify.03")>]
@@ -4562,8 +4518,6 @@ let private setifyValues : (int list * int list)[] = [|
 [<TestCase(9, TestName = "lib.setify.10")>]
 [<TestCase(10, TestName = "lib.setify.11")>]
 [<TestCase(11, TestName = "lib.setify.12")>]
-
-[<Test>]
 let ``List setify`` idx = 
     let (list, _) = setifyValues.[idx]
     let (_, result) = setifyValues.[idx]
@@ -4740,7 +4694,8 @@ let private sortValues : (int list * int list * int list * int list * int list *
         [5; 5; 3; 4; 1; 3; 1; 2; 6; 5; 9]
     );
     |]
-
+    
+[<Test>]
 [<TestCase(0, TestName = "lib.sort.01")>]
 [<TestCase(1, TestName = "lib.sort.02")>]
 [<TestCase(2, TestName = "lib.sort.03")>]
@@ -4756,8 +4711,6 @@ let private sortValues : (int list * int list * int list * int list * int list *
 [<TestCase(12, TestName = "lib.sort.13")>]
 [<TestCase(13, TestName = "lib.sort.14")>]
 [<TestCase(14, TestName = "lib.sort.15")>]
-
-[<Test>]
 let ``List sort`` idx = 
     let (list, _, _, _, _, _, _) = sortValues.[idx]
     let (_, greaterThanResult, _, _, _, _, _) = sortValues.[idx]
@@ -4883,7 +4836,8 @@ let private subsetValues : (int list * int list * bool)[] = [|
         true
     );
     |]
-
+    
+[<Test>]
 [<TestCase(0, TestName = "lib.subset.01")>]
 [<TestCase(1, TestName = "lib.subset.02")>]
 [<TestCase(2, TestName = "lib.subset.03")>]
@@ -4901,8 +4855,6 @@ let private subsetValues : (int list * int list * bool)[] = [|
 [<TestCase(14, TestName = "lib.subset.15")>]
 [<TestCase(15, TestName = "lib.subset.16")>]
 [<TestCase(16, TestName = "lib.subset.17")>]
-
-[<Test>]
 let ``List subset`` idx = 
     let (list1, _, _) = subsetValues.[idx]
     let (_, list2, _) = subsetValues.[idx]
@@ -5040,7 +4992,8 @@ let private subtractValues : (int list * int list * int list)[] = [|
         [1]
     );
     |]
-
+    
+[<Test>]
 [<TestCase(0, TestName = "lib.subtract.01")>]
 [<TestCase(1, TestName = "lib.subtract.02")>]
 [<TestCase(2, TestName = "lib.subtract.03")>]
@@ -5062,8 +5015,6 @@ let private subtractValues : (int list * int list * int list)[] = [|
 [<TestCase(18, TestName = "lib.subtract.19")>]
 [<TestCase(19, TestName = "lib.subtract.20")>]
 [<TestCase(20, TestName = "lib.subtract.21")>]
-
-[<Test>]
 let ``List subtract`` idx = 
     let (list1, _, _) = subtractValues.[idx]
     let (_, list2, _) = subtractValues.[idx]
@@ -5106,14 +5057,13 @@ let private tailValues : (int list * int list)[] = [|
         [2; 1]
     )
     |]
-
+    
+[<Test>]
 [<TestCase(0, TestName = "lib.tail.01", ExpectedException=typeof<System.ArgumentException>)>]
 [<TestCase(1, TestName = "lib.tail.02")>]
 [<TestCase(2, TestName = "lib.tail.03")>]
 [<TestCase(3, TestName = "lib.tail.04")>]
 [<TestCase(4, TestName = "lib.tail.05")>]
-
-[<Test>]
 let ``List tail`` idx = 
     let (list, _) = tailValues.[idx]
     let (_, result) = tailValues.[idx]
@@ -5130,9 +5080,8 @@ let ``List tail`` idx =
 // for one test case, thus a second test for the 
 // tl exception test case.
 
-[<TestCase(0, TestName = "lib.tlException.01", ExpectedException=typeof<System.Exception>, ExpectedMessage="tl")>]
-
 [<Test>]
+[<TestCase(0, TestName = "lib.tlException.01", ExpectedException=typeof<System.Exception>, ExpectedMessage="tl")>]
 let ``List tl exception`` idx = 
     let (list, _) = tailValues.[idx]
     let (_, result) = tailValues.[idx]
@@ -5309,7 +5258,8 @@ let private unionValues : (int list * int list * int list)[] = [|
         [1; 2; 3; 4; 5; 6; 7; 8; 9; 10]
     );
     |]
-
+    
+[<Test>]
 [<TestCase(0, TestName = "lib.union.01")>]
 [<TestCase(1, TestName = "lib.union.02")>]
 [<TestCase(2, TestName = "lib.union.03")>]
@@ -5338,8 +5288,6 @@ let private unionValues : (int list * int list * int list)[] = [|
 [<TestCase(25, TestName = "lib.union.26")>]
 [<TestCase(26, TestName = "lib.union.27")>]
 [<TestCase(27, TestName = "lib.union.28")>]
-
-[<Test>]
 let ``List union`` idx = 
     let (list1, _, _) = unionValues.[idx]
     let (_, list2, _) = unionValues.[idx]
@@ -5724,6 +5672,7 @@ let private unionsValues : (int list list * int list)[] = [|
     );
     |]
     
+[<Test>]
 [<TestCase(0, TestName = "lib.unions.01")>]
 [<TestCase(1, TestName = "lib.unions.02")>]
 [<TestCase(2, TestName = "lib.unions.03")>]
@@ -5786,8 +5735,6 @@ let private unionsValues : (int list list * int list)[] = [|
 [<TestCase(59, TestName = "lib.unions.60")>]
 [<TestCase(60, TestName = "lib.unions.61")>]
 [<TestCase(61, TestName = "lib.unions.62")>]
-
-[<Test>]
 let ``List unions`` idx = 
     let (lists, _) = unionsValues.[idx]
     let (_, result) = unionsValues.[idx]
@@ -5828,12 +5775,11 @@ let private unzipValues : ((int * int) list * (int list * int list))[] = [|
     ); 
     |]
     
+[<Test>]
 [<TestCase(0, TestName = "lib.unzip.01")>]
 [<TestCase(1, TestName = "lib.unzip.02")>]
 [<TestCase(2, TestName = "lib.unzip.03")>]
 [<TestCase(3, TestName = "lib.unzip.04")>]
-
-[<Test>]
 let ``List unzip`` idx = 
     let (list, _) = unzipValues.[idx]
     let (_, result) = unzipValues.[idx]
@@ -5891,6 +5837,7 @@ let private zipValues : (int list * int list * (int * int) list)[] = [|
     ); 
     |]
     
+[<Test>]
 [<TestCase(0, TestName = "lib.zip.01")>]
 [<TestCase(1, TestName = "lib.zip.02",ExpectedException=typeof<System.ArgumentException>)>]
 [<TestCase(2, TestName = "lib.zip.03",ExpectedException=typeof<System.ArgumentException>)>]
@@ -5898,8 +5845,6 @@ let private zipValues : (int list * int list * (int * int) list)[] = [|
 [<TestCase(4, TestName = "lib.zip.05")>]
 [<TestCase(5, TestName = "lib.zip.06")>]
 [<TestCase(6, TestName = "lib.zip.07")>]
-
-[<Test>]
 let ``List zip`` idx = 
     let (list1, _, _) = zipValues.[idx]
     let (_, list2, _) = zipValues.[idx]
@@ -5917,10 +5862,9 @@ let ``List zip`` idx =
 // for one test case, thus a second test for the 
 // zip exception test case.
 
+[<Test>]
 [<TestCase(1, TestName = "lib.zipException.01",ExpectedException=typeof<System.Exception>, ExpectedMessage="zip")>]
 [<TestCase(2, TestName = "lib.zipException.02",ExpectedException=typeof<System.Exception>, ExpectedMessage="zip")>]
-
-[<Test>]
 let ``List zip exception`` idx = 
     let (list1, _, _) = zipValues.[idx]
     let (_, list2, _) = zipValues.[idx]
@@ -5955,12 +5899,11 @@ let private allnonemptysubsetsValues : (int list * int list list)[] = [|
     ); 
     |]
     
+[<Test>]
 [<TestCase(0, TestName = "lib.allnonemptysubsets.01")>]
 [<TestCase(1, TestName = "lib.allnonemptysubsets.02")>]
 [<TestCase(2, TestName = "lib.allnonemptysubsets.03")>]
 [<TestCase(3, TestName = "lib.allnonemptysubsets.04")>]
-
-[<Test>]
 let ``List allnonemptysubsets`` idx = 
     let (list, _) = allnonemptysubsetsValues.[idx]
     let (_, result) = allnonemptysubsetsValues.[idx]
@@ -6072,6 +6015,7 @@ let private allpairsValues : (int list * int list * int list)[] = [|
     );
     |]
     
+[<Test>]
 [<TestCase(0, TestName = "lib.allpairs.01")>]
 [<TestCase(1, TestName = "lib.allpairs.02")>]
 [<TestCase(2, TestName = "lib.allpairs.03")>]
@@ -6089,8 +6033,6 @@ let private allpairsValues : (int list * int list * int list)[] = [|
 [<TestCase(14, TestName = "lib.allpairs.15")>]
 [<TestCase(15, TestName = "lib.allpairs.16")>]
 [<TestCase(16, TestName = "lib.allpairs.17")>]
-
-[<Test>]
 let ``List allpairs`` idx = 
     let (list1, _, _) = allpairsValues.[idx]
     let (_, list2, _) = allpairsValues.[idx]
@@ -6197,6 +6139,7 @@ let private allsetsValues : (int * int list * int list list)[] = [|
     ); 
     |]
     
+[<Test>]
 [<TestCase(0, TestName = "lib.allsets.01")>]
 [<TestCase(1, TestName = "lib.allsets.02")>]
 [<TestCase(2, TestName = "lib.allsets.03")>]
@@ -6213,8 +6156,6 @@ let private allsetsValues : (int * int list * int list list)[] = [|
 [<TestCase(13, TestName = "lib.allsets.14")>]
 [<TestCase(14, TestName = "lib.allsets.15")>]
 [<TestCase(15, TestName = "lib.allsets.16")>]
-
-[<Test>]
 let ``List allsets`` idx = 
     let (size, _, _) = allsetsValues.[idx]
     let (_, list, _) = allsetsValues.[idx]
@@ -6249,12 +6190,11 @@ let private allsubsetsValues : (int list * int list list)[] = [|
     ); 
     |]
     
+[<Test>]
 [<TestCase(0, TestName = "lib.allsubsets.01")>]
 [<TestCase(1, TestName = "lib.allsubsets.02")>]
 [<TestCase(2, TestName = "lib.allsubsets.03")>]
 [<TestCase(3, TestName = "lib.allsubsets.04")>]
-
-[<Test>]
 let ``List allsubsets`` idx = 
     let (list, _) = allsubsetsValues.[idx]
     let (_, result) = allsubsetsValues.[idx]
@@ -6384,6 +6324,7 @@ let private gcd_numValues : (num * num * num)[] = [|
     );
     |]
     
+[<Test>]
 [<TestCase(0, TestName = "lib.gcd_num.01")>]
 [<TestCase(1, TestName = "lib.gcd_num.02")>]
 [<TestCase(2, TestName = "lib.gcd_num.03")>]
@@ -6404,8 +6345,6 @@ let private gcd_numValues : (num * num * num)[] = [|
 [<TestCase(17, TestName = "lib.gcd_num.18")>]
 [<TestCase(18, TestName = "lib.gcd_num.19")>]
 [<TestCase(19, TestName = "lib.gcd_num.20")>]
-
-[<Test>]
 let ``math gcd (Num)`` idx = 
     let (value1, _, _) = gcd_numValues.[idx]
     let (_, value2, _) = gcd_numValues.[idx]
@@ -6536,6 +6475,7 @@ let private lcm_numValues : (num * num * num)[] = [|
     );
     |]
     
+[<Test>]
 [<TestCase(0, TestName = "lib.lcm_num.01", ExpectedException=typeof<System.Exception>, ExpectedMessage="Division_by_zero")>]
 [<TestCase(1, TestName = "lib.lcm_num.02")>]
 [<TestCase(2, TestName = "lib.lcm_num.03")>]
@@ -6556,8 +6496,6 @@ let private lcm_numValues : (num * num * num)[] = [|
 [<TestCase(17, TestName = "lib.lcm_num.18")>]
 [<TestCase(18, TestName = "lib.lcm_num.19")>]
 [<TestCase(19, TestName = "lib.lcm_num.20")>]
-
-[<Test>]
 let ``math lcm (Num)`` idx = 
     let (value1, _, _) = lcm_numValues.[idx]
     let (_, value2, _) = lcm_numValues.[idx]
@@ -6591,13 +6529,12 @@ let private explodeValues : (string * string list)[] = [|
         ["a"; "b"; "c"]
     );
     |]
-    
+   
+[<Test>] 
 [<TestCase(0, TestName = "lib.explode.01")>]
 [<TestCase(1, TestName = "lib.explode.02")>]
 [<TestCase(2, TestName = "lib.explode.03")>]
 [<TestCase(3, TestName = "lib.explode.04")>]
-
-[<Test>]
 let ``String explode`` idx = 
     let (string1, _) = explodeValues.[idx]
     let (_, result) = explodeValues.[idx]
@@ -6631,12 +6568,11 @@ let private implodeValues : (string list * string)[] = [|
     );
     |]
     
+[<Test>]
 [<TestCase(0, TestName = "lib.implode.01")>]
 [<TestCase(1, TestName = "lib.implode.02")>]
 [<TestCase(2, TestName = "lib.implode.03")>]
 [<TestCase(3, TestName = "lib.implode.04")>]
-
-[<Test>]
 let ``String implode`` idx = 
     let (list, _) = implodeValues.[idx]
     let (_, result) = implodeValues.[idx]
@@ -6796,6 +6732,7 @@ let private increasingValues : (int * int * bool)[] = [|
     );
     |]
     
+[<Test>]
 [<TestCase(0, TestName = "lib.increasing.01")>]
 [<TestCase(1, TestName = "lib.increasing.02")>]
 [<TestCase(2, TestName = "lib.increasing.03")>]
@@ -6821,8 +6758,6 @@ let private increasingValues : (int * int * bool)[] = [|
 [<TestCase(22, TestName = "lib.increasing.23")>]
 [<TestCase(23, TestName = "lib.increasing.24")>]
 [<TestCase(24, TestName = "lib.increasing.25")>]
-
-[<Test>]
 let ``Predicate increasing`` idx = 
     let (x, _, _) = increasingValues.[idx]
     let (_, y, _) = increasingValues.[idx]
@@ -6983,6 +6918,7 @@ let private decreasingValues : (int * int * bool)[] = [|
     );
     |]
     
+[<Test>]
 [<TestCase(0, TestName = "lib.decreasing.01")>]
 [<TestCase(1, TestName = "lib.decreasing.02")>]
 [<TestCase(2, TestName = "lib.decreasing.03")>]
@@ -7008,8 +6944,6 @@ let private decreasingValues : (int * int * bool)[] = [|
 [<TestCase(22, TestName = "lib.decreasing.23")>]
 [<TestCase(23, TestName = "lib.decreasing.24")>]
 [<TestCase(24, TestName = "lib.decreasing.25")>]
-
-[<Test>]
 let ``Predicate decreasing`` idx = 
     let (x, _, _) = decreasingValues.[idx]
     let (_, y, _) = decreasingValues.[idx]
@@ -7051,14 +6985,13 @@ let private assocValues : (int * (int * int) list * int)[] = [|
         16
     );
     |]
-
+    
+[<Test>]
 [<TestCase(0, TestName = "lib.assoc.01", ExpectedException=typeof<System.Exception>, ExpectedMessage="find")>]
 [<TestCase(1, TestName = "lib.assoc.02", ExpectedException=typeof<System.Exception>, ExpectedMessage="find")>]
 [<TestCase(2, TestName = "lib.assoc.03")>]
 [<TestCase(3, TestName = "lib.assoc.04")>]
 [<TestCase(4, TestName = "lib.assoc.05")>]
-
-[<Test>]
 let ``Association List assoc`` idx = 
     let (x, _, _) = assocValues.[idx]
     let (_, list, _) = assocValues.[idx]
@@ -7101,14 +7034,13 @@ let private rev_assocValues : (int * (int * int) list * int)[] = [|
         4
     );
     |]
-
+    
+[<Test>]
 [<TestCase(0, TestName = "lib.rev_assoc.01", ExpectedException=typeof<System.Exception>, ExpectedMessage="find")>]
 [<TestCase(1, TestName = "lib.rev_assoc.02")>]
 [<TestCase(2, TestName = "lib.rev_assoc.03", ExpectedException=typeof<System.Exception>, ExpectedMessage="find")>]
 [<TestCase(3, TestName = "lib.rev_assoc.04")>]
 [<TestCase(4, TestName = "lib.rev_assoc.05")>]
-
-[<Test>]
 let ``Association List rev_assoc`` idx = 
     let (x, _, _) = rev_assocValues.[idx]
     let (_, list, _) = rev_assocValues.[idx]
@@ -7175,19 +7107,19 @@ let private canValues : ((int -> bool) * int * int)[] = [|
     |]
 
 // Run the can test with the false value to show that an exception will occur.
+[<Test>]
 [<TestCase(0, TestName = "lib.can_Exception.01", ExpectedException=typeof<System.Exception>, ExpectedMessage="divide by zero.")>]
 [<TestCase(1, TestName = "lib.can_Exception.02", ExpectedException=typeof<System.ArgumentException>, ExpectedMessage="x")>]
 [<TestCase(2, TestName = "lib.can_Exception.03", ExpectedException=typeof<System.ArgumentException>)>]
 [<TestCase(3, TestName = "lib.can_Exception.04", ExpectedException=typeof<System.ArgumentException>)>]
 [<TestCase(4, TestName = "lib.can_Exception.05", ExpectedException=typeof<System.Collections.Generic.KeyNotFoundException>, ExpectedMessage="x")>]
-
-[<Test>]
 let ``function can exception`` idx =
     let (func, _, _) = canValues.[idx]
     let (_, _, falseValue) = canValues.[idx]
     func falseValue
     |> should equal () // Dummy value used as place holder
-
+    
+[<Test>]
 [<TestCase(0, TestName = "lib.can.01")>]
 [<TestCase(1, TestName = "lib.can.02")>]
 [<TestCase(2, TestName = "lib.can.03")>]
@@ -7197,7 +7129,6 @@ let ``function can exception`` idx =
 // Run the can test with both the true and the false value to show that
 // the results are either true or false, and that no exception is returned
 // when the false value is used.
-[<Test>]
 let ``function can`` idx =
     let (func, _, _) = canValues.[idx]
     let (_, trueValue, _) = canValues.[idx]
@@ -7247,14 +7178,13 @@ let private stepTwoValues : (int * int * int)[] = [|
         199
     );
     |]
-
+    
+[<Test>]
 [<TestCase(0, TestName = "lib.funpow.stepTwo.01")>]
 [<TestCase(1, TestName = "lib.funpow.stepTwo.02")>]
 [<TestCase(2, TestName = "lib.funpow.stepTwo.03")>]
 [<TestCase(3, TestName = "lib.funpow.stepTwo.04")>]
 [<TestCase(4, TestName = "lib.funpow.stepTwo.05")>]
-
-[<Test>]
 let ``function funpow stepTwo`` idx =
     let (reps, _, _) = stepTwoValues.[idx]
     let (_, init, _) = stepTwoValues.[idx]
@@ -7303,14 +7233,13 @@ let private rndValues : (int * int * int)[] = [|
         402220219
     );
     |]
-
+    
+[<Test>]
 [<TestCase(0, TestName = "lib.funpow.rnd.01")>]
 [<TestCase(1, TestName = "lib.funpow.rnd.02")>]
 [<TestCase(2, TestName = "lib.funpow.rnd.03")>]
 [<TestCase(3, TestName = "lib.funpow.rnd.04")>]
 [<TestCase(4, TestName = "lib.funpow.rnd.05")>]
-
-[<Test>]
 let ``function funpow rnd`` idx =
     let (reps, _, _) = rndValues.[idx]
     let (_, init, _) = rndValues.[idx]
@@ -7358,14 +7287,13 @@ let private piValues : (int * double * double)[] = [|
         3.1415926535897931
     );
     |]
-
+    
+[<Test>]
 [<TestCase(0, TestName = "lib.funpow.pi.01")>]
 [<TestCase(1, TestName = "lib.funpow.pi.02")>]
 [<TestCase(2, TestName = "lib.funpow.pi.03")>]
 [<TestCase(3, TestName = "lib.funpow.pi.04")>]
 [<TestCase(4, TestName = "lib.funpow.pi.05")>]
-
-[<Test>]
 let ``function funpow pi`` idx =
     let (reps, _, _) = piValues.[idx]
     let (_, init, _) = piValues.[idx]
@@ -7425,13 +7353,12 @@ let private truthCaseGeneratorValues : (int * string list * string list)[] = [|
     );
     |]
 
+[<Test>]
 [<TestCase(0, TestName = "lib.funpow.truthCaseGenerator.01")>]
 [<TestCase(1, TestName = "lib.funpow.truthCaseGenerator.02")>]
 [<TestCase(2, TestName = "lib.funpow.truthCaseGenerator.03")>]
 [<TestCase(3, TestName = "lib.funpow.truthCaseGenerator.04")>]
 [<TestCase(4, TestName = "lib.funpow.truthCaseGenerator.05")>]
-
-[<Test>]
 let ``function funpow truthCaseGenerator`` idx =
     let (reps, _, _) = truthCaseGeneratorValues.[idx]
     let (_, init, _) = truthCaseGeneratorValues.[idx]
@@ -7542,7 +7469,8 @@ let private tryFindValues : ((int list) * bool)[] = [|
         false
     );
     |]
-
+    
+[<Test>]
 [<TestCase(0, TestName = "lib.tryFind.01")>]
 [<TestCase(1, TestName = "lib.tryFind.02")>]
 [<TestCase(2, TestName = "lib.tryFind.03")>]
@@ -7552,8 +7480,6 @@ let private tryFindValues : ((int list) * bool)[] = [|
 [<TestCase(6, TestName = "lib.tryFind.07")>]
 [<TestCase(7, TestName = "lib.tryFind.08")>]
 [<TestCase(8, TestName = "lib.tryFind.09")>]
-
-[<Test>]
 let ``function tryfind`` idx =
     let (list, _) = tryFindValues.[idx]
     let (_, result) = tryFindValues.[idx]
@@ -7588,11 +7514,10 @@ let private nonValues : (int * bool)[] = [|
     );
     |]
 
+[<Test>]
 [<TestCase(0, TestName = "lib.non.01")>]
 [<TestCase(1, TestName = "lib.non.02")>]
 [<TestCase(2, TestName = "lib.non.03")>]
-
-[<Test>]
 let ``function non`` idx =
     let (value, _) = nonValues.[idx]
     let (_, result) = nonValues.[idx]
@@ -7659,14 +7584,13 @@ let private patriciaTreeValues : (int list * int list * func<int,int> * (int * i
         false
     );
     |]
-
+    
+[<Test>]
 [<TestCase(0, TestName = "lib.patriciaTree.creation.01")>]
 [<TestCase(1, TestName = "lib.patriciaTree.creation.02")>]
 [<TestCase(2, TestName = "lib.patriciaTree.creation.03")>]
 [<TestCase(3, TestName = "lib.patriciaTree.creation.04")>]
 [<TestCase(4, TestName = "lib.patriciaTree.creation.05")>]
-
-[<Test>]
 let ``finite partial function creation`` idx =
     let (keys, _, _, _, _) = patriciaTreeValues.[idx]
     let (_, values, _, _, _) = patriciaTreeValues.[idx]
@@ -7681,13 +7605,12 @@ let ``finite partial function creation`` idx =
     |> graph_opt
     |> should equal graphResult
 
+[<Test>]
 [<TestCase(0, TestName = "lib.patriciaTree.is_undefined.01")>]
 [<TestCase(1, TestName = "lib.patriciaTree.is_undefined.02")>]
 [<TestCase(2, TestName = "lib.patriciaTree.is_undefined.03")>]
 [<TestCase(3, TestName = "lib.patriciaTree.is_undefined.04")>]
 [<TestCase(4, TestName = "lib.patriciaTree.is_undefined.05")>]
-
-[<Test>]
 let ``finite partial function is_undefined`` idx =
     let (keys, _, _, _, _) = patriciaTreeValues.[idx]
     let (_, values, _, _, _) = patriciaTreeValues.[idx]
@@ -7896,7 +7819,8 @@ let private partitionValues : ( (int * int) list * int list * int list * int * i
         [1;2;4;5;8;10]
     );
     |]
-
+    
+[<Test>]
 [<TestCase(0, TestName = "lib.partition.canonize.01")>]
 [<TestCase(1, TestName = "lib.partition.canonize.02")>]
 [<TestCase(2, TestName = "lib.partition.canonize.03")>]
@@ -7908,8 +7832,6 @@ let private partitionValues : ( (int * int) list * int list * int list * int * i
 [<TestCase(8, TestName = "lib.partition.canonize.09")>]
 [<TestCase(9, TestName = "lib.partition.canonize.10")>]
 [<TestCase(10, TestName = "lib.partition.canonize.11")>]
-
-[<Test>]
 let ``Partition canonize`` idx =
     let (pairs, _, _, _, _, _, _) = partitionValues.[idx]
     let (_, keys, _, _, _, _, _) = partitionValues.[idx]
@@ -7917,7 +7839,8 @@ let ``Partition canonize`` idx =
     let ptn = pairsToPartition pairs
     List.map (fun x -> canonize ptn x) keys
     |> should equal canonizeResult
-
+    
+[<Test>]
 [<TestCase(0, TestName = "lib.partition.equivalent.01")>]
 [<TestCase(1, TestName = "lib.partition.equivalent.02")>]
 [<TestCase(2, TestName = "lib.partition.equivalent.03")>]
@@ -7929,8 +7852,6 @@ let ``Partition canonize`` idx =
 [<TestCase(8, TestName = "lib.partition.equivalent.09")>]
 [<TestCase(9, TestName = "lib.partition.equivalent.10")>]
 [<TestCase(10, TestName = "lib.partition.equivalent.11")>]
-
-[<Test>]
 let ``Partition equivalent`` idx =
     let (pairs, _, _, _, _, _, _) = partitionValues.[idx]
     let (_, _, _, start, _, _, _) = partitionValues.[idx]
@@ -7958,6 +7879,7 @@ let ``Partition equivalent`` idx =
     |> List.map simplifyEq
     |> should equal equivalentResult
 
+[<Test>]
 [<TestCase(0, TestName = "lib.partition.equated.01")>]
 [<TestCase(1, TestName = "lib.partition.equated.02")>]
 [<TestCase(2, TestName = "lib.partition.equated.03")>]
@@ -7969,8 +7891,6 @@ let ``Partition equivalent`` idx =
 [<TestCase(8, TestName = "lib.partition.equated.09")>]
 [<TestCase(9, TestName = "lib.partition.equated.10")>]
 [<TestCase(10, TestName = "lib.partition.equated.11")>]
-
-[<Test>]
 let ``Partition equated`` idx =
     let (pairs, _, _, _, _, _, _) = partitionValues.[idx]
     let (_, _, _, _, _, _, equatedResult) = partitionValues.[idx]
@@ -8021,12 +7941,11 @@ let private fpfValues : ( int list * int list * (int * int) list * int list * in
     );
     |]
 
+[<Test>]
 [<TestCase(0, TestName = "lib.fpf.graph.creation.01")>]
 [<TestCase(1, TestName = "lib.fpf.graph.creation.02")>]
 [<TestCase(2, TestName = "lib.fpf.graph.creation.03")>]
 [<TestCase(3, TestName = "lib.fpf.graph.creation.04")>]
-
-[<Test>]
 let ``finite partial function graph creation`` idx =
     let (keys, _, _, _, _) = fpfValues.[idx]
     let (_, values, _, _, _) = fpfValues.[idx]
@@ -8038,12 +7957,11 @@ let ``finite partial function graph creation`` idx =
     |> graph_opt
     |> should equal result
 
+[<Test>]
 [<TestCase(0, TestName = "lib.fpf.graph.domain.01")>]
 [<TestCase(1, TestName = "lib.fpf.graph.domain.02")>]
 [<TestCase(2, TestName = "lib.fpf.graph.domain.03")>]
 [<TestCase(3, TestName = "lib.fpf.graph.domain.04")>]
-
-[<Test>]
 let ``finite partial function graph domain`` idx =
     let (keys, _, _, _, _) = fpfValues.[idx]
     let (_, values, _, _, _) = fpfValues.[idx]
@@ -8055,12 +7973,11 @@ let ``finite partial function graph domain`` idx =
     |> dom_opt
     |> should equal domain
     
+[<Test>]
 [<TestCase(0, TestName = "lib.fpf.graph.range.01")>]
 [<TestCase(1, TestName = "lib.fpf.graph.range.02")>]
 [<TestCase(2, TestName = "lib.fpf.graph.range.03")>]
 [<TestCase(3, TestName = "lib.fpf.graph.range.04")>]
-
-[<Test>]
 let ``finite partial function graph range`` idx =
     let (keys, _, _, _, _) = fpfValues.[idx]
     let (_, values, _, _, _) = fpfValues.[idx]
@@ -8131,6 +8048,7 @@ let private fpfApplyValues : ( int list * int list * int * int)[] = [|
     );
     |]
     
+[<Test>]
 [<TestCase(0, TestName = "lib.fpf.apply.01", ExpectedException=typeof<System.Exception>, ExpectedMessage="apply")>]
 [<TestCase(1, TestName = "lib.fpf.apply.02")>]
 [<TestCase(2, TestName = "lib.fpf.apply.03", ExpectedException=typeof<System.Exception>, ExpectedMessage="apply")>]
@@ -8139,8 +8057,6 @@ let private fpfApplyValues : ( int list * int list * int * int)[] = [|
 [<TestCase(5, TestName = "lib.fpf.apply.06")>]
 [<TestCase(6, TestName = "lib.fpf.apply.07")>]
 [<TestCase(7, TestName = "lib.fpf.apply.08")>]
-
-[<Test>]
 let ``finite partial function graph apply`` idx =
     let (keys, _, _, _) = fpfApplyValues.[idx]
     let (_, values, _, _) = fpfApplyValues.[idx]
@@ -8191,13 +8107,12 @@ let private undefineValues : ( int list * int list * int * (int * int) list )[] 
     );
     |]
 
+[<Test>]
 [<TestCase(0, TestName = "lib.fpf.graph.undefine.01")>]
 [<TestCase(1, TestName = "lib.fpf.graph.undefine.02")>]
 [<TestCase(2, TestName = "lib.fpf.graph.undefine.03")>]
 [<TestCase(3, TestName = "lib.fpf.graph.undefine.04")>]
 [<TestCase(4, TestName = "lib.fpf.graph.undefine.05")>]
-
-[<Test>]
 let ``finite partial function graph undefine`` idx =
     let (keys, _, _, _) = undefineValues.[idx]
     let (_, values, _, _) = undefineValues.[idx]
@@ -8242,13 +8157,12 @@ let private updateValues : ( int list * int list * int * int * (int * int) list 
         [ (1,-6); (2, 4); (3, 9) ]
     );
     |]
-
+    
+[<Test>]
 [<TestCase(0, TestName = "lib.fpf.graph.update.01")>]
 [<TestCase(1, TestName = "lib.fpf.graph.update.02")>]
 [<TestCase(2, TestName = "lib.fpf.graph.update.03")>]
 [<TestCase(3, TestName = "lib.fpf.graph.update.04")>]
-
-[<Test>]
 let ``finite partial function graph operator update (|->)`` idx =
     let (keys, _, _, _, _) = updateValues.[idx]
     let (_, values, _, _, _) = updateValues.[idx]
@@ -8278,11 +8192,10 @@ let private independentFunctionValues : (int * int * (int * int) list )[] = [|
         [(2, 4)]
     );
     |]
-
+    
+[<Test>]
 [<TestCase(0, TestName = "lib.fpf.graph.independentFunction.01")>]
 [<TestCase(1, TestName = "lib.fpf.graph.independentFunction.02")>]
-
-[<Test>]
 let ``finite partial function graph operator independent function (|=>)`` idx =
     let (key, _, _) = independentFunctionValues.[idx]
     let (_, value, _) = independentFunctionValues.[idx]
@@ -8328,12 +8241,11 @@ let private undefFunctionValues : ((int -> int -> int) list * int)[] = [|
     //);
     |]
 
+[<Test>]
 [<TestCase(0, TestName = "lib.fpf.undef.Function.01", ExpectedException=typeof<System.Exception>, ExpectedMessage="undefined function")>]
 [<TestCase(1, TestName = "lib.fpf.undef.Function.02")>]
 [<TestCase(2, TestName = "lib.fpf.undef.Function.03")>]
 [<TestCase(3, TestName = "lib.fpf.undef.Function.04")>]
-
-[<Test>]
 let ``finite partial function undef function`` idx =
     let (funcs, _) = undefFunctionValues.[idx]
     let (_, result) = undefFunctionValues.[idx]
@@ -8360,12 +8272,11 @@ let private mapfValues : (int list * int list * ( int * int) list)[] = [|
         [(1,5); (2,20); (3,45); (4,80); (5,125); (6,180); (7,245); (8,320); (9,405); (10,500)]
     );
     |]
-
+    
+[<Test>]
 [<TestCase(0, TestName = "lib.fpf.mapf.01")>]
 [<TestCase(1, TestName = "lib.fpf.mapf.02")>]
 [<TestCase(2, TestName = "lib.fpf.mapf.03")>]
-
-[<Test>]
 let ``finite partial function graph mapf`` idx =
     let (keys, _, _) = mapfValues.[idx]
     let (_, values, _) = mapfValues.[idx]
@@ -8420,13 +8331,12 @@ let private foldlValues : (int list * int list * int)[] = [|
     );
     |]
 
+[<Test>]
 [<TestCase(0, TestName = "lib.fpf.graph.foldl.01")>]
 [<TestCase(1, TestName = "lib.fpf.graph.foldl.02")>]
 [<TestCase(2, TestName = "lib.fpf.graph.foldl.03")>]
 [<TestCase(3, TestName = "lib.fpf.graph.foldl.04")>]
 [<TestCase(4, TestName = "lib.fpf.graph.foldl.05")>]
-
-[<Test>]
 let ``finite partial function graph foldl`` idx =
     let (keys, _, _) = foldlValues.[idx]
     let (_, values, _) = foldlValues.[idx]
@@ -8438,13 +8348,12 @@ let ``finite partial function graph foldl`` idx =
     |> foldl_opt (fun state key value -> state + (key * 2) + value) 0
     |> should equal result
 
+[<Test>]
 [<TestCase(0, TestName = "lib.fpf.graph.foldr.01")>]
 [<TestCase(1, TestName = "lib.fpf.graph.foldr.02")>]
 [<TestCase(2, TestName = "lib.fpf.graph.foldr.03")>]
 [<TestCase(3, TestName = "lib.fpf.graph.foldr.04")>]
 [<TestCase(4, TestName = "lib.fpf.graph.foldr.05")>]
-
-[<Test>]
 let ``finite partial function graph foldr`` idx =
     let (keys, _, _) = foldlValues.[idx]
     let (_, values, _) = foldlValues.[idx]
@@ -8523,6 +8432,7 @@ let private tryapplydValues : ( int list * int list * int * int * int)[] = [|
     );
     |]
 
+[<Test>]
 [<TestCase(0, TestName = "lib.fpf.graph.tryapplyd.01")>]
 [<TestCase(1, TestName = "lib.fpf.graph.tryapplyd.02")>]
 [<TestCase(2, TestName = "lib.fpf.graph.tryapplyd.03")>]
@@ -8531,8 +8441,6 @@ let private tryapplydValues : ( int list * int list * int * int * int)[] = [|
 [<TestCase(5, TestName = "lib.fpf.graph.tryapplyd.06")>]
 [<TestCase(6, TestName = "lib.fpf.graph.tryapplyd.07")>]
 [<TestCase(7, TestName = "lib.fpf.graph.tryapplyd.08")>]
-
-[<Test>]
 let ``finite partial function graph tryapplyd`` idx =
     let (keys, _, _, _, _) = tryapplydValues.[idx]
     let (_, values, _, _, _) = tryapplydValues.[idx]
@@ -8604,7 +8512,8 @@ let private tryapplylValues : ( int list * (int list) list * int * int list)[] =
         [9]
     );
     |]
-
+    
+[<Test>]
 [<TestCase(0, TestName = "lib.fpf.graph.tryapplyl.01")>]
 [<TestCase(1, TestName = "lib.fpf.graph.tryapplyl.02")>]
 [<TestCase(2, TestName = "lib.fpf.graph.tryapplyl.03")>]
@@ -8613,8 +8522,6 @@ let private tryapplylValues : ( int list * (int list) list * int * int list)[] =
 [<TestCase(5, TestName = "lib.fpf.graph.tryapplyl.06")>]
 [<TestCase(6, TestName = "lib.fpf.graph.tryapplyl.07")>]
 [<TestCase(7, TestName = "lib.fpf.graph.tryapplyl.08")>]
-
-[<Test>]
 let ``finite partial function graph tryapplyl`` idx =
     let (keys, _, _, _) = tryapplylValues.[idx]
     let (_, values, _, _) = tryapplylValues.[idx]
@@ -8664,14 +8571,13 @@ let private definedValues : (int list * int list * int * bool)[] = [|
         false
     );
     |]
-
+    
+[<Test>]
 [<TestCase(0, TestName = "lib.fpf.defined.01")>]
 [<TestCase(1, TestName = "lib.fpf.defined.02")>]
 [<TestCase(2, TestName = "lib.fpf.defined.03")>]
 [<TestCase(3, TestName = "lib.fpf.defined.04")>]
 [<TestCase(4, TestName = "lib.fpf.defined.05")>]
-
-[<Test>]
 let ``finite partial function graph defined`` idx =
     let (keys, _, _, _) = definedValues.[idx]
     let (_, values, _, _) = definedValues.[idx]
@@ -8735,7 +8641,8 @@ let private valmodValues : (int * int * int list * int list)[] = [|
         [1; 1; 1; 1]
     );
     |]
-
+    
+[<Test>]
 [<TestCase(0, TestName = "lib.fpf.valmod.01")>]
 [<TestCase(1, TestName = "lib.fpf.valmod.02")>]
 [<TestCase(2, TestName = "lib.fpf.valmod.03")>]
@@ -8743,8 +8650,6 @@ let private valmodValues : (int * int * int list * int list)[] = [|
 [<TestCase(4, TestName = "lib.fpf.valmod.05")>]
 [<TestCase(5, TestName = "lib.fpf.valmod.06")>]
 [<TestCase(6, TestName = "lib.fpf.valmod.07")>]
-
-[<Test>]
 let ``finite partial function valdmod`` idx =
     let (a, _, _, _) = valmodValues.[idx]
     let (_, x, _, _) = valmodValues.[idx]
