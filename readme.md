@@ -17,7 +17,7 @@ Our ported F# code aims to stay as close as possible to the original OCaml to ma
 There are two solutions: `*.VS10.sln` and `*.VS11.sln` for Visual Studio 2010 and Visual Studio 2012, respectively.
 Both solutions target .NET 4.0.
 
-[NuGet](http://nuget.org) is used to manage external packages; the easiest way to [install NuGet](http://visualstudiogallery.msdn.microsoft.com/27077b70-9dad-4c64-adcf-c7cf6bc9970c) is by downloading it (for free) from the [Visual Studio Extension Gallery](http://visualstudiogallery.msdn.microsoft.com/27077b70-9dad-4c64-adcf-c7cf6bc9970c). If you do not have NuGet, or are running a version prior to `2.0`, you *must* install it (or upgrade) before you will be able to build the projects.
+[NuGet](http://nuget.org) is used to manage external packages; the easiest way to [install NuGet](http://visualstudiogallery.msdn.microsoft.com/27077b70-9dad-4c64-adcf-c7cf6bc9970c) is by downloading it (for free) from the [Visual Studio Extension Gallery](http://visualstudiogallery.msdn.microsoft.com/27077b70-9dad-4c64-adcf-c7cf6bc9970c). If you do not have NuGet, or are running a version prior to `2.5`, you *must* install it (or upgrade) before you will be able to build the projects.
 
 The solution uses the *Package Restore* feature of NuGet to automatically download any missing packages when the project is built. This requires that you have the "[Allow NuGet to download missing packages during build](http://docs.nuget.org/docs/workflows/using-nuget-without-committing-packages)" setting enabled; in Visual Studio, you can find the setting under `Options -> Package Manager -> General`.
 
