@@ -1,6 +1,8 @@
 language: objective-c
 
 env:
+  global:
+    - EnableNuGetPackageRestore=true
   matrix:
     - MONO_VERSION="3.2.5"
 
@@ -11,5 +13,5 @@ install:
 
 script: 
   - xbuild /property:Configuration=Release FSharpx.Books.AutomatedReasoning.VS11.sln
-  - mono --runtime=v4.0.30319 ./tools/NUnit.Runners.2.6.2/tools/nunit-console.exe ./FSharpx.Books.AutomatedReasoning.Tests/bin/Release/FSharpx.Books.AutomatedReasoning.Tests.dll /exclude:LongRunning
+  - mono --runtime=v4.0.30319 ./tools/NUnit.Runners.2.6.2/tools/nunit-console.exe ./FSharpx.Books.AutomatedReasoning.Tests/bin/Release/FSharpx.Books.AutomatedReasoning.Tests.dll -exclude:LongRunning
 
