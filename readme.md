@@ -192,3 +192,7 @@ The traceability comments were put into a version of the OCaml source code, a ru
 
 Note: The OCaml code includes many more examples than are in the book. When the OCaml code was run, there were many additional examples that were commented out. We are working toward adding all of the examples to the PDF document. If you look at the OCaml run output for unif.ml you will notice that the traceability comment for unify.p003 is missing. This is because the code for unify.p003 was commented out when the run occurred. Also, there were no tests in the original OCaml code for the lib module. As this is a port, many new tests were created for the lib module in the F# code, these test currently have not been created for the OCaml version for comparison, but we are working toward that also.
 
+## Build Status ##
+
+The build status above is via travis-ci. More info on travis-ci can be fount at the [travis-ci Github page](https://github.com/travis-ci/travis-ci).
+
