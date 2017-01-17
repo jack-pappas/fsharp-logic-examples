@@ -1,17 +1,21 @@
-language: objective-c
+language: csharp
+
+# Use container-based infrastructure with Ubuntu Trusty (14.04)
+dist: trusty
+sudo: false
+
+# TODO : Enable both mono and dotnet builds: https://docs.travis-ci.com/user/languages/csharp/#Testing-Against-Mono-and-.NET-Core
+mono:
+  - latest
 
 env:
   global:
     - EnableNuGetPackageRestore=true
-  matrix:
-    - MONO_VERSION="3.2.5"
 
 install:
-  - wget "http://download.xamarin.com/MonoFrameworkMDK/Macx86/MonoFramework-MDK-${MONO_VERSION}.macos10.xamarin.x86.pkg"
-  - sudo installer -pkg "MonoFramework-MDK-${MONO_VERSION}.macos10.xamarin.x86.pkg" -target /
-  - mono .nuget/NuGet.exe install NUnit.Runners -Version 2.6.3 -OutputDirectory tools
+  - nuget restore FSharpx.Books.AutomatedReasoning.VS11.sln
+  - nuget install NUnit.Runners -Version 2.6.4 -OutputDirectory tools
 
 script: 
   - xbuild /property:Configuration=Release FSharpx.Books.AutomatedReasoning.VS11.sln
-  - mono --runtime=v4.0.30319 ./tools/NUnit.Runners.2.6.3/tools/nunit-console.exe ./FSharpx.Books.AutomatedReasoning.Tests/bin/Release/FSharpx.Books.AutomatedReasoning.Tests.dll -exclude:LongRunning
-
+  - mono --runtime=v4.0.30319 ./tools/NUnit.Runners.2.6.4/tools/nunit-console.exe ./FSharpx.Books.AutomatedReasoning.Tests/bin/Release/FSharpx.Books.AutomatedReasoning.Tests.dll -exclude:LongRunning
